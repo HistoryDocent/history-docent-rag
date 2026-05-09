@@ -11,10 +11,10 @@
 
 ## Next
 
-- [ ] `document_analysis_results.json` shape 분석
-- [ ] parser normalization pipeline 구현
-- [ ] global page recovery 구현
-- [ ] parser quality flags 구현
+- [x] `document_analysis_results.json` shape 분석
+- [x] parser normalization pipeline 구현
+- [x] global page recovery 구현
+- [x] parser quality flags 구현
 - [ ] parser quality report 생성
 - [ ] `01_data_manifest_audit.ipynb` 작성
 - [ ] `02_parser_quality_check.ipynb` 작성

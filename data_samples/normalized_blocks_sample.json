@@ -1,0 +1,168 @@
+{
+  "report_version": "normalized-blocks/v1",
+  "source_root": "<private_path>",
+  "normalized_blocks": [
+    {
+      "block_id": "block-벌거벗은한국사-고려편-000000-heading1-0",
+      "doc_id": "벌거벗은한국사-고려편",
+      "doc_title": "벌거벗은한국사-고려편",
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "element_type": "heading1",
+      "page_span": {
+        "page_local_start": 0,
+        "page_local_end": 0,
+        "page_global_start": 0,
+        "page_global_end": 0
+      },
+      "element_refs": [
+        {
+          "element_id": "0",
+          "element_type": "heading1",
+          "element_index": 0
+        }
+      ],
+      "text_hash": "ea72a2faac23ea2c5c44f8f4818af1d4d13c2fb597b2dcd178de05fa60284a1d",
+      "text_length": 28,
+      "provenance": {
+        "source_file_name": "벌거벗은한국사-고려편.pdf",
+        "parser_artifact_path_alias": "PARSER_DIR/벌거벗은한국사-고려편/document_analysis_results.json",
+        "extraction_method": "upstage_parser"
+      },
+      "quality_flags": [],
+      "public_allowed": false
+    },
+    {
+      "block_id": "block-벌거벗은한국사-고려편-000000-paragraph-2",
+      "doc_id": "벌거벗은한국사-고려편",
+      "doc_title": "벌거벗은한국사-고려편",
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "element_type": "paragraph",
+      "page_span": {
+        "page_local_start": 0,
+        "page_local_end": 0,
+        "page_global_start": 0,
+        "page_global_end": 0
+      },
+      "element_refs": [
+        {
+          "element_id": "2",
+          "element_type": "paragraph",
+          "element_index": 1
+        }
+      ],
+      "text_hash": "e73f95fc424658588d42b9108afab5e77cfa4f32d149637f7e1936789c45402c",
+      "text_length": 27,
+      "provenance": {
+        "source_file_name": "벌거벗은한국사-고려편.pdf",
+        "parser_artifact_path_alias": "PARSER_DIR/벌거벗은한국사-고려편/document_analysis_results.json",
+        "extraction_method": "upstage_parser"
+      },
+      "quality_flags": [],
+      "public_allowed": false
+    },
+    {
+      "block_id": "block-벌거벗은한국사-고려편-000000-paragraph-3",
+      "doc_id": "벌거벗은한국사-고려편",
+      "doc_title": "벌거벗은한국사-고려편",
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "element_type": "paragraph",
+      "page_span": {
+        "page_local_start": 0,
+        "page_local_end": 0,
+        "page_global_start": 0,
+        "page_global_end": 0
+      },
+      "element_refs": [
+        {
+          "element_id": "3",
+          "element_type": "paragraph",
+          "element_index": 2
+        }
+      ],
+      "text_hash": "5618e7f738f408a756872b97e61a733e81b559883b75f6d86090d299a0ac6acf",
+      "text_length": 61,
+      "provenance": {
+        "source_file_name": "벌거벗은한국사-고려편.pdf",
+        "parser_artifact_path_alias": "PARSER_DIR/벌거벗은한국사-고려편/document_analysis_results.json",
+        "extraction_method": "upstage_parser"
+      },
+      "quality_flags": [],
+      "public_allowed": false
+    },
+    {
+      "block_id": "block-벌거벗은한국사-고려편-000000-paragraph-4",
+      "doc_id": "벌거벗은한국사-고려편",
+      "doc_title": "벌거벗은한국사-고려편",
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "element_type": "paragraph",
+      "page_span": {
+        "page_local_start": 0,
+        "page_local_end": 0,
+        "page_global_start": 0,
+        "page_global_end": 0
+      },
+      "element_refs": [
+        {
+          "element_id": "4",
+          "element_type": "paragraph",
+          "element_index": 3
+        }
+      ],
+      "text_hash": "8e59af0fd8e11700d8c359eeddbd597a29f5573a1529307b99ee6d369df23c79",
+      "text_length": 19,
+      "provenance": {
+        "source_file_name": "벌거벗은한국사-고려편.pdf",
+        "parser_artifact_path_alias": "PARSER_DIR/벌거벗은한국사-고려편/document_analysis_results.json",
+        "extraction_method": "upstage_parser"
+      },
+      "quality_flags": [],
+      "public_allowed": false
+    },
+    {
+      "block_id": "block-벌거벗은한국사-고려편-000000-paragraph-5",
+      "doc_id": "벌거벗은한국사-고려편",
+      "doc_title": "벌거벗은한국사-고려편",
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "element_type": "paragraph",
+      "page_span": {
+        "page_local_start": 0,
+        "page_local_end": 0,
+        "page_global_start": 0,
+        "page_global_end": 0
+      },
+      "element_refs": [
+        {
+          "element_id": "5",
+          "element_type": "paragraph",
+          "element_index": 4
+        }
+      ],
+      "text_hash": "6edf9fa1091aba26334bf1a072b7e577eed65a955ca9a3e4c5f2ac2f2b6942a8",
+      "text_length": 18,
+      "provenance": {
+        "source_file_name": "벌거벗은한국사-고려편.pdf",
+        "parser_artifact_path_alias": "PARSER_DIR/벌거벗은한국사-고려편/document_analysis_results.json",
+        "extraction_method": "upstage_parser"
+      },
+      "quality_flags": [],
+      "public_allowed": false
+    }
+  ],
+  "quality_summary": {
+    "document_count": 12,
+    "normalized_block_count": 13685,
+    "skipped_empty_text_element_count": 61,
+    "duplicate_block_id_count": 0,
+    "negative_page_global_count": 0,
+    "invalid_page_range_count": 0,
+    "empty_element_refs_count": 0,
+    "missing_text_hash_count": 0,
+    "negative_text_length_count": 0,
+    "private_path_leakage_count": 0
+  },
+  "data_policy": {
+    "public_sample_contains_source_text": false,
+    "public_sample_contains_private_paths": false,
+    "full_source_data_storage": "private_data only"
+  }
+}
