@@ -26,11 +26,13 @@
 - [x] parent-child chunking 구현
 - [x] chunking quality report 생성
 - [x] `04_chunking_quality_analysis.ipynb` 작성
+- [x] BM25 retrieval input contract 정의
+- [x] retrieval seed 평가셋 작성
+- [x] `06_bm25_baseline_evaluation.ipynb` 평가 계약 셀 작성
 
 ## Later
 
 - [ ] place catalog seed 작성
-- [ ] BM25 retrieval input contract 정의
 - [ ] BM25 baseline 구현
 - [ ] Dense/Hybrid retrieval 구현
 - [ ] retrieval evaluation harness 구현

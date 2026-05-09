@@ -157,7 +157,9 @@ canonical source를 `History_Docent`로 고정했고, 원본 PDF와 Upstage Pars
 
 parent-child chunking 전략과 gate를 문서로 고정했고, 실제 chunking pipeline도 통과했다.
 
-다음 단계는 BM25 baseline retrieval input contract와 평가셋 초안이다.
+BM25 baseline retrieval input contract와 seed 평가셋을 고정했다.
+
+다음 단계는 BM25 baseline retriever 구현과 정량/정성 평가 리포트 작성이다.
 
 ## 실행 전략
 
@@ -175,6 +177,8 @@ parent-child chunking 전략과 gate를 문서로 고정했고, 실제 chunking 
 | [Chunking Strategy](docs/CHUNKING_STRATEGY.md) | parent-child chunking grain, boundary, filtering, citation 정책 |
 | [Chunking Gates](docs/CHUNKING_GATES.md) | chunking 구현 후 통과해야 할 정량 gate |
 | [Chunking Quality Report](docs/CHUNKING_QUALITY_REPORT.md) | parent-child chunking 결과의 정량/정성 평가 |
+| [BM25 Baseline Plan](docs/BM25_BASELINE_PLAN.md) | BM25 baseline 입력 계약, metric, 실패 분석 계획 |
+| [Retrieval Eval Dataset](docs/RETRIEVAL_EVAL_DATASET.md) | retrieval seed 평가셋의 정량/정성 품질 보고서 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |
