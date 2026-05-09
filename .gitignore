@@ -44,6 +44,7 @@ evals/results/raw/
 logs/
 *.log
 .cache/
+.ipynb_checkpoints/
 
 # OS / IDE
 .DS_Store
