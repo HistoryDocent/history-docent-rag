@@ -2,61 +2,61 @@
 
 ## Phase 0. Repository Foundation
 
-- create public repository
-- add safety-focused `.gitignore`
-- define project scope
-- define data policy
-- define evaluation plan
+- public repository 생성
+- 안전 중심 `.gitignore` 추가
+- project scope 정의
+- data policy 정의
+- evaluation plan 정의
 
 ## Phase 1. Parser Normalization
 
-- load Upstage Parser outputs from private local path
-- reconstruct global page numbers
-- preserve element-level metadata
-- generate parser quality report
+- private local path에서 Upstage Parser outputs 로드
+- global page number 복구
+- element-level metadata 보존
+- parser quality report 생성
 
 ## Phase 2. Structure-Preserving Chunking
 
-- create parent and child chunks
-- preserve section path and page provenance
-- filter OCR noise and invalid summary artifacts
-- export public sample chunks
+- parent chunk와 child chunk 생성
+- section path와 page provenance 보존
+- OCR noise와 invalid summary artifacts 필터링
+- public sample chunks 생성
 
 ## Phase 3. Retrieval Baselines
 
-- implement BM25 baseline
-- implement dense retrieval
-- implement hybrid retrieval
-- record Recall@k, MRR, nDCG, latency
+- BM25 baseline 구현
+- dense retrieval 구현
+- hybrid retrieval 구현
+- Recall@k, MRR, nDCG, latency 기록
 
 ## Phase 4. Citation RAG
 
-- implement evidence packing
-- implement Solar Pro 3 provider
-- generate answer with citations
-- detect unsupported claims
+- evidence packing 구현
+- Solar Pro 3 provider 구현
+- citation 기반 답변 생성
+- unsupported claims 탐지
 
 ## Phase 5. API
 
-- implement FastAPI chat endpoint
-- add readiness health check
-- add validation, rate limit, retry, timeout, and structured logs
+- FastAPI chat endpoint 구현
+- readiness health check 추가
+- validation, rate limit, retry, timeout, structured logs 추가
 
 ## Phase 6. Evaluation Harness
 
-- create dev, holdout, external, and stress eval sets
-- implement retrieval and generation graders
-- report confidence intervals
-- create ablation report
+- dev, holdout, external, stress eval set 생성
+- retrieval grader와 generation grader 구현
+- confidence interval 보고
+- ablation report 생성
 
 ## Phase 7. Advanced Retrieval Experiments
 
-- add RAPTOR-lite for overview questions
-- add GraphRAG-lite for relationship questions
-- add query-type router only if metrics justify it
+- overview 질문용 RAPTOR-lite 추가
+- relationship 질문용 GraphRAG-lite 추가
+- metric이 정당화할 때만 query-type router 추가
 
 ## Phase 8. Voice Demo
 
-- add STT/TTS demo after backend validation
-- preserve short-answer and citation display behavior
-- keep voice UI separate from the RAG backend if it grows large
+- backend validation 이후 STT/TTS demo 추가
+- 짧은 답변과 citation display 동작 보존
+- 규모가 커지면 voice UI를 RAG backend와 분리

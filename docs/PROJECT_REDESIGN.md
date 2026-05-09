@@ -1,25 +1,25 @@
-# Project Redesign
+# 프로젝트 재설계
 
-## Final Product Identity
+## 최종 제품 정체성
 
-History Docent RAG is an evidence-centric backend for Korean history question answering.
+History Docent RAG는 한국사 질의응답을 위한 근거 중심 RAG 백엔드다.
 
-The portfolio claim is narrow:
+포트폴리오에서 주장할 내용은 좁게 잡는다.
 
-> I rebuilt a Korean history PDF RAG pipeline around parser quality, citation provenance, retrieval evaluation, and grounded answer generation.
+> 한국사 장문 PDF 기반 RAG pipeline을 parser 품질, citation provenance, retrieval 평가, grounded answer generation 중심으로 재설계했다.
 
-The project should not be positioned as a finished consumer chatbot until the RAG backend is validated.
+RAG 백엔드가 검증되기 전까지 완성형 소비자 챗봇으로 포장하지 않는다.
 
-## Design Principles
+## 설계 원칙
 
-1. Evidence before answer.
-2. Parser quality is part of RAG quality.
-3. Every answer must trace back to document, page, section, and chunk.
-4. Retrieval and generation metrics must be separated.
-5. New RAG techniques must beat the baseline by query type, not by narrative.
-6. Public repo must not leak copyrighted source text.
+1. 답변보다 근거를 먼저 설계한다.
+2. parser 품질을 RAG 품질의 일부로 본다.
+3. 모든 답변은 문서, 페이지, 섹션, chunk로 역추적 가능해야 한다.
+4. retrieval metric과 generation metric을 분리한다.
+5. 새로운 RAG 기법은 narrative가 아니라 query type별 metric으로 판단한다.
+6. public repo에는 저작권 원문을 대량 포함하지 않는다.
 
-## Core Pipeline
+## 핵심 Pipeline
 
 ```text
 source documents
@@ -35,22 +35,22 @@ source documents
 -> citations and eval logs
 ```
 
-## Module Plan
+## 모듈 계획
 
 ### 1. Parser Normalization
 
-Input:
+입력:
 
-- original PDF metadata
+- 원본 PDF metadata
 - Upstage Parser JSON outputs
 
-Output:
+출력:
 
 - `normalized_blocks.jsonl`
 - `data_manifest.json`
 - `parser_quality_report.md`
 
-Required fields:
+필수 field:
 
 - `doc_id`
 - `doc_title`
@@ -67,12 +67,12 @@ Required fields:
 
 ### 2. Chunking
 
-Default chunking:
+기본 chunk 구조:
 
 - child chunk: paragraph-level search unit
 - parent chunk: section-level context unit
 
-Required metadata:
+필수 metadata:
 
 - `chunk_id`
 - `parent_chunk_id`
@@ -98,14 +98,14 @@ Main candidate:
 
 Experimental candidates:
 
-- RAPTOR-lite for overview questions
-- GraphRAG-lite for relationship questions
+- overview 질문용 RAPTOR-lite
+- relationship 질문용 GraphRAG-lite
 
 ### 4. Generation
 
 Provider:
 
-- Upstage Solar Pro 3 through a provider abstraction
+- provider abstraction을 통한 Upstage Solar Pro 3
 
 Answer contract:
 
@@ -118,53 +118,53 @@ Answer contract:
 
 ### 5. API
 
-Initial endpoints:
+초기 endpoint:
 
 - `GET /api/v1/health/live`
 - `GET /api/v1/health/ready`
 - `POST /api/v1/chat`
 
-Non-negotiable requirements:
+필수 요구사항:
 
 - schema validation
 - timeout
-- retry for provider 429/5xx only
+- provider 429/5xx 한정 retry
 - rate limit
-- no stack trace exposure
-- structured logs
+- stack trace 비노출
+- structured logging
 
-## RAG Technique Decision
+## RAG 기법 결정
 
-Default:
+기본 구조:
 
 ```text
 Hybrid + Query Rewrite + Parent-Child + Citation RAG
 ```
 
-Reason:
+이유:
 
-- Korean history questions often contain exact names, dates, dynasties, and events.
-- BM25 is strong for exact historical terms.
-- dense retrieval helps abstract and paraphrased questions.
-- parent-child chunking restores context without overloading the prompt.
-- citation RAG makes the answer auditable.
+- 한국사 질문은 인물, 연도, 왕조, 사건처럼 정확한 용어가 많다.
+- BM25는 정확한 역사 용어 검색에 강하다.
+- dense retrieval은 추상 질문과 paraphrase 질문을 보완한다.
+- parent-child chunking은 prompt를 과도하게 키우지 않고 문맥을 복구한다.
+- citation RAG는 답변의 검증 가능성을 만든다.
 
 RAPTOR-lite:
 
-- useful for overview and flow questions
-- used as experiment, not default
-- summaries are navigation nodes, not final evidence
+- 전체 흐름, 배경, 비교 질문에 유리하다.
+- 기본 구조가 아니라 실험군으로 둔다.
+- summary는 탐색용 node이며 최종 답변 근거가 아니다.
 
 GraphRAG-lite:
 
-- useful for person/event/institution relationship questions
-- used as experiment, not default
-- graph triples are retrieval hints, not final evidence
+- 인물, 사건, 제도 간 관계 질문에 유리하다.
+- 기본 구조가 아니라 실험군으로 둔다.
+- graph triple은 retrieval hint이며 최종 답변 근거가 아니다.
 
-## Explicit Non-Goals
+## 명시적 Non-Goals
 
-- no public release of full copyrighted source text
-- no large frontend before backend validation
-- no voice UI before query rewrite and answer style control
-- no GraphRAG-first architecture
-- no vague metric claims without confidence intervals
+- 전체 저작권 원문 공개 금지
+- 백엔드 검증 전 대형 frontend 금지
+- query rewrite와 answer style control 검증 전 voice UI 금지
+- GraphRAG-first architecture 금지
+- confidence interval 없는 성능 개선 주장 금지
