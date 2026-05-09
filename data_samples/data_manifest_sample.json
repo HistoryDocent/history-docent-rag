@@ -1,0 +1,150 @@
+{
+  "report_version": "data-manifest/v1",
+  "generated_at_utc": "2026-05-09T15:23:48+00:00",
+  "source_alias": "History_Docent",
+  "source_root": "<private_path>",
+  "source_documents": [
+    {
+      "doc_id": "벌거벗은한국사-고려편",
+      "doc_title": "벌거벗은한국사-고려편",
+      "source_file_name": "벌거벗은한국사-고려편.pdf",
+      "source_sha256_prefix": "678f9a7d5011",
+      "source_size_bytes": 97713870,
+      "public_allowed": false
+    },
+    {
+      "doc_id": "벌거벗은한국사-권력편",
+      "doc_title": "벌거벗은한국사-권력편",
+      "source_file_name": "벌거벗은한국사-권력편.pdf",
+      "source_sha256_prefix": "59f60eec7fd3",
+      "source_size_bytes": 109426956,
+      "public_allowed": false
+    },
+    {
+      "doc_id": "벌거벗은한국사-근현대편",
+      "doc_title": "벌거벗은한국사-근현대편",
+      "source_file_name": "벌거벗은한국사-근현대편.pdf",
+      "source_sha256_prefix": "08b73db6d84c",
+      "source_size_bytes": 80900659,
+      "public_allowed": false
+    }
+  ],
+  "parser_runs": [
+    {
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "parser_model": "upstage-document-parse",
+      "source_alias": "History_Docent",
+      "document_count": 12,
+      "artifact_count": 12,
+      "created_at_utc": "2026-05-09T15:23:48+00:00"
+    }
+  ],
+  "parser_artifacts": [
+    {
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "doc_id": "벌거벗은한국사-고려편",
+      "artifact_kind": "document_analysis",
+      "parser_artifact_path_alias": "PARSER_DIR/벌거벗은한국사-고려편/document_analysis_results.json",
+      "file_name": "document_analysis_results.json",
+      "size_bytes": 27486778,
+      "sha256_prefix": "e162c3129ec2",
+      "top_level_keys": [
+        "analyzed_files",
+        "batch_size",
+        "filepath",
+        "image_summary",
+        "image_summary_data_batches",
+        "images",
+        "page_elements",
+        "page_metadata",
+        "page_numbers",
+        "split_filepaths",
+        "table_markdown",
+        "table_summary",
+        "table_summary_data_batches",
+        "tables",
+        "text_summary",
+        "texts"
+      ],
+      "page_count": 212,
+      "private_path_reference_count": 0,
+      "public_allowed": false
+    },
+    {
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "doc_id": "벌거벗은한국사-권력편",
+      "artifact_kind": "document_analysis",
+      "parser_artifact_path_alias": "PARSER_DIR/벌거벗은한국사-권력편/document_analysis_results.json",
+      "file_name": "document_analysis_results.json",
+      "size_bytes": 26454239,
+      "sha256_prefix": "0190d7cb4045",
+      "top_level_keys": [
+        "analyzed_files",
+        "batch_size",
+        "filepath",
+        "image_summary",
+        "image_summary_data_batches",
+        "images",
+        "page_elements",
+        "page_metadata",
+        "page_numbers",
+        "split_filepaths",
+        "table_markdown",
+        "table_summary",
+        "table_summary_data_batches",
+        "tables",
+        "text_summary",
+        "texts"
+      ],
+      "page_count": 223,
+      "private_path_reference_count": 0,
+      "public_allowed": false
+    },
+    {
+      "parser_run_id": "upstage-parser-6472a1415d70",
+      "doc_id": "벌거벗은한국사-근현대편",
+      "artifact_kind": "document_analysis",
+      "parser_artifact_path_alias": "PARSER_DIR/벌거벗은한국사-근현대편/document_analysis_results.json",
+      "file_name": "document_analysis_results.json",
+      "size_bytes": 23798730,
+      "sha256_prefix": "1723b79d7ad7",
+      "top_level_keys": [
+        "analyzed_files",
+        "batch_size",
+        "filepath",
+        "image_summary",
+        "image_summary_data_batches",
+        "images",
+        "page_elements",
+        "page_metadata",
+        "page_numbers",
+        "split_filepaths",
+        "table_markdown",
+        "table_summary",
+        "table_summary_data_batches",
+        "tables",
+        "text_summary",
+        "texts"
+      ],
+      "page_count": 198,
+      "private_path_reference_count": 0,
+      "public_allowed": false
+    }
+  ],
+  "normalized_blocks": [],
+  "quality_summary": {
+    "source_document_count": 12,
+    "parser_artifact_count": 12,
+    "normalized_block_count": 0,
+    "duplicate_doc_id_count": 0,
+    "required_field_null_count": 0,
+    "private_path_leakage_count": 0,
+    "negative_page_global_count": 0
+  },
+  "quality_warnings": [],
+  "data_policy": {
+    "public_sample_contains_source_text": false,
+    "public_sample_contains_private_paths": false,
+    "full_source_data_storage": "private_data only"
+  }
+}

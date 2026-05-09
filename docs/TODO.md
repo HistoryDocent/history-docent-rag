@@ -4,13 +4,14 @@
 
 - [ ] `notebooks/` numbered skeleton 확인
 - [ ] `docs/PRD.md` 기준으로 README 첫 화면 재정리
-- [ ] `data_manifest` schema 설계
-- [ ] `normalized_blocks` schema 설계
-- [ ] schema unit test 작성
-- [ ] public sample leakage test 작성
+- [x] `data_manifest` schema 설계
+- [x] `normalized_blocks` schema 설계
+- [x] schema unit test 작성
+- [x] public sample leakage test 작성
 
 ## Next
 
+- [ ] `document_analysis_results.json` shape 분석
 - [ ] parser normalization pipeline 구현
 - [ ] global page recovery 구현
 - [ ] parser quality flags 구현
