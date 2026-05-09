@@ -155,9 +155,9 @@ canonical source를 `History_Docent`로 고정했고, 원본 PDF와 Upstage Pars
 
 `data_manifest`와 `normalized_blocks` schema를 고정했고, parser normalization pipeline과 parser quality report도 통과했다.
 
-parent-child chunking 전략과 gate를 문서로 고정했다.
+parent-child chunking 전략과 gate를 문서로 고정했고, 실제 chunking pipeline도 통과했다.
 
-다음 단계는 parent-child chunking schema와 pipeline 구현이다.
+다음 단계는 BM25 baseline retrieval input contract와 평가셋 초안이다.
 
 ## 실행 전략
 
@@ -174,6 +174,7 @@ parent-child chunking 전략과 gate를 문서로 고정했다.
 | [Parser Quality Report](docs/PARSER_QUALITY_REPORT.md) | 청킹 전 parser/block 품질 지표와 해석 |
 | [Chunking Strategy](docs/CHUNKING_STRATEGY.md) | parent-child chunking grain, boundary, filtering, citation 정책 |
 | [Chunking Gates](docs/CHUNKING_GATES.md) | chunking 구현 후 통과해야 할 정량 gate |
+| [Chunking Quality Report](docs/CHUNKING_QUALITY_REPORT.md) | parent-child chunking 결과의 정량/정성 평가 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |

@@ -80,6 +80,7 @@ hard_gates:
   private_path_leakage_count: 0
   public_sample_raw_text_count: 0
   public_sample_private_path_count: 0
+  public_candidate_path_secret_leakage_count: 0
 
 blocking_quality_gates:
   minimum_citation_recoverability: 1.0

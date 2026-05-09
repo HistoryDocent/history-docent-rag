@@ -22,13 +22,15 @@
 - [x] parent-child chunking 설계 문서 작성
 - [x] chunking gate 문서 작성
 - [x] 기본 chunking config 작성
+- [x] `ChunkSourceRef`, `ParentChunk`, `ChildChunk`, `ChunkingQualityReport` schema 구현
+- [x] parent-child chunking 구현
+- [x] chunking quality report 생성
+- [x] `04_chunking_quality_analysis.ipynb` 작성
 
 ## Later
 
 - [ ] place catalog seed 작성
-- [ ] `ChunkSourceRef`, `ParentChunk`, `ChildChunk`, `ChunkingQualityReport` schema 구현
-- [ ] parent-child chunking 구현
-- [ ] `04_chunking_quality_analysis.ipynb` 작성
+- [ ] BM25 retrieval input contract 정의
 - [ ] BM25 baseline 구현
 - [ ] Dense/Hybrid retrieval 구현
 - [ ] retrieval evaluation harness 구현

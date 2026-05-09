@@ -40,6 +40,7 @@ parent-child chunking 구현 후 통과해야 하는 정량 gate를 정의한다
 | `private_path_leakage_count` | 0 |
 | `public_sample_raw_text_count` | 0 |
 | `public_sample_private_path_count` | 0 |
+| `public_candidate_path_secret_leakage_count` | 0 |
 
 ## Blocking Quality Gate
 
