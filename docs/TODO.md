@@ -29,11 +29,12 @@
 - [x] BM25 retrieval input contract 정의
 - [x] retrieval seed 평가셋 작성
 - [x] `06_bm25_baseline_evaluation.ipynb` 평가 계약 셀 작성
+- [x] BM25 baseline 구현
+- [x] BM25 baseline 정량/정성 평가 리포트 작성
 
 ## Later
 
 - [ ] place catalog seed 작성
-- [ ] BM25 baseline 구현
 - [ ] Dense/Hybrid retrieval 구현
 - [ ] retrieval evaluation harness 구현
 - [ ] place-aware query rewrite 구현

@@ -159,7 +159,11 @@ parent-child chunking 전략과 gate를 문서로 고정했고, 실제 chunking 
 
 BM25 baseline retrieval input contract와 seed 평가셋을 고정했다.
 
-다음 단계는 BM25 baseline retriever 구현과 정량/정성 평가 리포트 작성이다.
+BM25 baseline retriever를 구현했고, seed 평가셋 기준 정량/정성 리포트를 생성했다.
+
+현재 BM25 baseline 결과는 `Recall@5=0.250000`, `MRR=0.152778`, `nDCG@5=0.120124`다. 이 수치는 성능 개선 주장이 아니라 Dense/Hybrid/query rewrite 비교를 위한 기준선이다.
+
+다음 단계는 Dense retrieval과 Hybrid retrieval을 같은 평가셋에서 비교하는 것이다.
 
 ## 실행 전략
 
@@ -179,6 +183,7 @@ BM25 baseline retrieval input contract와 seed 평가셋을 고정했다.
 | [Chunking Quality Report](docs/CHUNKING_QUALITY_REPORT.md) | parent-child chunking 결과의 정량/정성 평가 |
 | [BM25 Baseline Plan](docs/BM25_BASELINE_PLAN.md) | BM25 baseline 입력 계약, metric, 실패 분석 계획 |
 | [Retrieval Eval Dataset](docs/RETRIEVAL_EVAL_DATASET.md) | retrieval seed 평가셋의 정량/정성 품질 보고서 |
+| [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |
