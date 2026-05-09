@@ -1,0 +1,233 @@
+{
+  "report_version": "source-inventory/v1",
+  "generated_at_utc": "2026-05-09T15:14:00+00:00",
+  "canonical_source_alias": "History_Docent",
+  "source_root": "<private_path>",
+  "source_root_exists": true,
+  "pdf_summary": {
+    "pdf_dir_exists": true,
+    "pdf_count": 12,
+    "files": [
+      {
+        "file_name": "벌거벗은한국사-고려편.pdf",
+        "size_bytes": 97713870,
+        "sha256_prefix": "678f9a7d5011"
+      },
+      {
+        "file_name": "벌거벗은한국사-권력편.pdf",
+        "size_bytes": 109426956,
+        "sha256_prefix": "59f60eec7fd3"
+      },
+      {
+        "file_name": "벌거벗은한국사-근현대편.pdf",
+        "size_bytes": 80900659,
+        "sha256_prefix": "08b73db6d84c"
+      },
+      {
+        "file_name": "벌거벗은한국사-사건편.pdf",
+        "size_bytes": 44904988,
+        "sha256_prefix": "5ea792ef38ea"
+      },
+      {
+        "file_name": "벌거벗은한국사-영웅편.pdf",
+        "size_bytes": 40988785,
+        "sha256_prefix": "643562dc3986"
+      },
+      {
+        "file_name": "벌거벗은한국사-인물편.pdf",
+        "size_bytes": 99806394,
+        "sha256_prefix": "69e133bc500b"
+      },
+      {
+        "file_name": "벌거벗은한국사-조선편.pdf",
+        "size_bytes": 94622859,
+        "sha256_prefix": "95a02b4e173c"
+      },
+      {
+        "file_name": "조선왕조실록1.pdf",
+        "size_bytes": 24106731,
+        "sha256_prefix": "eff0092802bb"
+      },
+      {
+        "file_name": "조선왕조실록2.pdf",
+        "size_bytes": 24537570,
+        "sha256_prefix": "867d41b5d957"
+      },
+      {
+        "file_name": "조선왕조실록3.pdf",
+        "size_bytes": 24563979,
+        "sha256_prefix": "4a733bc6c0da"
+      },
+      {
+        "file_name": "조선왕조실록4.pdf",
+        "size_bytes": 21923558,
+        "sha256_prefix": "660f3819e244"
+      },
+      {
+        "file_name": "조선왕조실록5.pdf",
+        "size_bytes": 24648815,
+        "sha256_prefix": "4100eb27fe30"
+      }
+    ]
+  },
+  "parser_summary": {
+    "parser_dir_exists": true,
+    "document_count": 12,
+    "document_analysis_count": 12,
+    "zero_byte_file_count": 0,
+    "total_batch_json_count": 205,
+    "total_batch_pdf_count": 205,
+    "extension_counts": {
+      ".json": 253,
+      ".pdf": 217,
+      ".pkl": 12,
+      ".png": 631,
+      ".py": 1,
+      ".pyc": 1
+    }
+  },
+  "documents": [
+    {
+      "document_id": "벌거벗은한국사-고려편",
+      "document_title": "벌거벗은한국사-고려편",
+      "document_dir_name": "벌거벗은한국사-고려편",
+      "artifact_counts_by_extension": {
+        ".json": 26,
+        ".pdf": 23,
+        ".pkl": 1,
+        ".png": 69
+      },
+      "zero_byte_file_count": 0,
+      "batch_json_count": 22,
+      "batch_pdf_count": 22,
+      "document_analysis_present": true,
+      "document_analysis_size_bytes": 27486778,
+      "document_analysis_sha256_prefix": "e162c3129ec2",
+      "document_analysis_top_level_keys": [
+        "analyzed_files",
+        "batch_size",
+        "filepath",
+        "image_summary",
+        "image_summary_data_batches",
+        "images",
+        "page_elements",
+        "page_metadata",
+        "page_numbers",
+        "split_filepaths",
+        "table_markdown",
+        "table_summary",
+        "table_summary_data_batches",
+        "tables",
+        "text_summary",
+        "texts"
+      ],
+      "page_element_page_count": 212,
+      "page_element_total_count": 212,
+      "private_path_reference_count": 0,
+      "quality_warnings": []
+    },
+    {
+      "document_id": "벌거벗은한국사-권력편",
+      "document_title": "벌거벗은한국사-권력편",
+      "document_dir_name": "벌거벗은한국사-권력편",
+      "artifact_counts_by_extension": {
+        ".json": 27,
+        ".pdf": 24,
+        ".pkl": 1,
+        ".png": 91
+      },
+      "zero_byte_file_count": 0,
+      "batch_json_count": 23,
+      "batch_pdf_count": 23,
+      "document_analysis_present": true,
+      "document_analysis_size_bytes": 26454239,
+      "document_analysis_sha256_prefix": "0190d7cb4045",
+      "document_analysis_top_level_keys": [
+        "analyzed_files",
+        "batch_size",
+        "filepath",
+        "image_summary",
+        "image_summary_data_batches",
+        "images",
+        "page_elements",
+        "page_metadata",
+        "page_numbers",
+        "split_filepaths",
+        "table_markdown",
+        "table_summary",
+        "table_summary_data_batches",
+        "tables",
+        "text_summary",
+        "texts"
+      ],
+      "page_element_page_count": 223,
+      "page_element_total_count": 223,
+      "private_path_reference_count": 0,
+      "quality_warnings": []
+    },
+    {
+      "document_id": "벌거벗은한국사-근현대편",
+      "document_title": "벌거벗은한국사-근현대편",
+      "document_dir_name": "벌거벗은한국사-근현대편",
+      "artifact_counts_by_extension": {
+        ".json": 24,
+        ".pdf": 21,
+        ".pkl": 1,
+        ".png": 87
+      },
+      "zero_byte_file_count": 0,
+      "batch_json_count": 20,
+      "batch_pdf_count": 20,
+      "document_analysis_present": true,
+      "document_analysis_size_bytes": 23798730,
+      "document_analysis_sha256_prefix": "1723b79d7ad7",
+      "document_analysis_top_level_keys": [
+        "analyzed_files",
+        "batch_size",
+        "filepath",
+        "image_summary",
+        "image_summary_data_batches",
+        "images",
+        "page_elements",
+        "page_metadata",
+        "page_numbers",
+        "split_filepaths",
+        "table_markdown",
+        "table_summary",
+        "table_summary_data_batches",
+        "tables",
+        "text_summary",
+        "texts"
+      ],
+      "page_element_page_count": 198,
+      "page_element_total_count": 198,
+      "private_path_reference_count": 0,
+      "quality_warnings": []
+    }
+  ],
+  "legacy_chunk_summary": {
+    "exists": true,
+    "size_bytes": 4890639,
+    "sha256_prefix": "c98bfd2653b4",
+    "chunk_count": 3719,
+    "chunk_fields": [
+      "chunk_id",
+      "metadata",
+      "text"
+    ],
+    "metadata_fields": [
+      "page",
+      "source",
+      "type"
+    ],
+    "replacement_char_chunk_count": 1033,
+    "untitled_like_chunk_count": 237,
+    "json_error": null
+  },
+  "quality_warnings": [],
+  "data_policy": {
+    "public_sample_contains_source_text": false,
+    "public_sample_contains_private_paths": false,
+    "full_source_data_storage": "private_data only"
+  }
+}
