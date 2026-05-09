@@ -1,0 +1,140 @@
+version: 1
+name: parent_child_default
+
+inputs:
+  normalized_blocks_artifact: private_data/reports/normalized_blocks.json
+  parser_quality_artifact: private_data/reports/parser_quality_report.json
+
+outputs:
+  private_chunk_artifact: private_data/reports/parent_child_chunks.json
+  private_chunking_report: private_data/reports/chunking_quality_report.json
+  public_chunking_sample: data_samples/chunking_quality_sample.json
+
+parent_policy:
+  boundary_element_types:
+    - heading1
+  front_matter_parent_title: front_matter
+  soft_max_chars: 6000
+  allow_cross_document: false
+  split_oversized_parent_by:
+    - page_span
+    - heading_like_block
+
+child_policy:
+  min_chars: 250
+  target_chars: 700
+  max_chars: 1100
+  overlap_blocks: 1
+  allow_cross_parent: false
+  allow_cross_document: false
+  merge_short_blocks: true
+  short_block_threshold_chars: 20
+  preserve_element_types:
+    - table
+  mergeable_element_types:
+    - paragraph
+    - list
+  context_metadata_element_types:
+    - heading1
+  excluded_from_retrieval_element_types:
+    - header
+    - footer
+
+citation_policy:
+  final_citation_grain: normalized_block
+  require_source_block_ids: true
+  require_page_span_coverage: true
+  require_element_refs: true
+  require_source_file_name: true
+  minimum_citation_recoverability: 1.0
+
+public_data_policy:
+  allow_raw_text_in_public_sample: false
+  allow_private_paths_in_public_sample: false
+  allowed_public_sample_fields:
+    - parent_id
+    - child_id
+    - doc_id
+    - doc_title
+    - source_block_ids
+    - page_span
+    - text_hash
+    - text_length
+    - element_type_mix
+    - quality_flags
+    - public_allowed
+
+hard_gates:
+  duplicate_parent_id_count: 0
+  duplicate_child_id_count: 0
+  orphan_child_count: 0
+  parent_without_child_count: 0
+  empty_child_count: 0
+  missing_source_block_ref_count: 0
+  unknown_element_ref_count: 0
+  invalid_page_range_count: 0
+  cross_document_parent_count: 0
+  cross_document_child_count: 0
+  header_footer_retrieval_child_count: 0
+  table_provenance_loss_count: 0
+  private_path_leakage_count: 0
+  public_sample_raw_text_count: 0
+  public_sample_private_path_count: 0
+
+blocking_quality_gates:
+  minimum_citation_recoverability: 1.0
+  minimum_retrievable_block_coverage: 1.0
+  enforce_child_length_p95_under_max_chars: true
+  short_standalone_child_count: 0
+
+report_only_metrics:
+  report_child_length_p50: true
+  report_parent_length_p50: true
+  report_parent_length_p95: true
+  report_micro_parent_count: true
+  report_replacement_char_child_rate: true
+  report_duplicate_child_text_hash_count: true
+
+coverage_policy:
+  retrievable_block_coverage_grain: unique_source_block_id
+  exclude_element_types_from_denominator:
+    - header
+    - footer
+    - heading1
+  exclude_empty_text_blocks_from_denominator: true
+  count_overlap_once: true
+
+leakage_scan_policy:
+  allow_repository_relative_private_alias: true
+  path_and_secret_scan_targets:
+    - data_samples/*.json
+    - configs/*.yaml
+    - docs/*.md
+    - README.md
+    - notebooks/*.ipynb
+    - app/**/*.py
+    - pipelines/**/*.py
+    - tests/**/*.py
+    - pyproject.toml
+    - .env.example
+    - git ls-files -co --exclude-standard content
+    - git diff
+    - git diff --cached
+  public_sample_field_scan_targets:
+    - data_samples/*.json
+  forbidden_path_patterns:
+    - "[A-Za-z]:\\\\"
+  forbidden_secret_patterns:
+    - "sk-[A-Za-z0-9]"
+  forbidden_credential_field_names:
+    - api_key
+    - apikey
+    - password
+    - token
+    - secret
+  forbidden_public_sample_field_names:
+    - text
+    - raw_text
+    - content
+    - markdown
+    - html

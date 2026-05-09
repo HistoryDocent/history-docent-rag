@@ -155,7 +155,9 @@ canonical source를 `History_Docent`로 고정했고, 원본 PDF와 Upstage Pars
 
 `data_manifest`와 `normalized_blocks` schema를 고정했고, parser normalization pipeline과 parser quality report도 통과했다.
 
-다음 단계는 parent-child chunking 설계다.
+parent-child chunking 전략과 gate를 문서로 고정했다.
+
+다음 단계는 parent-child chunking schema와 pipeline 구현이다.
 
 ## 실행 전략
 
@@ -170,6 +172,8 @@ canonical source를 `History_Docent`로 고정했고, 원본 PDF와 Upstage Pars
 | [Data Contracts](docs/DATA_CONTRACTS.md) | data manifest와 normalized block 계약 |
 | [Normalization](docs/NORMALIZATION.md) | parser 결과를 NormalizedBlock으로 변환하는 규칙과 gate |
 | [Parser Quality Report](docs/PARSER_QUALITY_REPORT.md) | 청킹 전 parser/block 품질 지표와 해석 |
+| [Chunking Strategy](docs/CHUNKING_STRATEGY.md) | parent-child chunking grain, boundary, filtering, citation 정책 |
+| [Chunking Gates](docs/CHUNKING_GATES.md) | chunking 구현 후 통과해야 할 정량 gate |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |
