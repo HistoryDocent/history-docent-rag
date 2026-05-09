@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Local data and generated artifacts
+data/
+raw_data/
+private_data/
+parser_outputs/
+chunks/
+indexes/
+vector_db/
+chroma/
+*.sqlite
+*.db
+
+# Copyright-sensitive source material
+*.pdf
+*.epub
+*.mobi
+
+# Large or derived evaluation artifacts
+evals/results/*.csv
+evals/results/*.jsonl
+evals/results/*.parquet
+evals/results/raw/
+
+# Logs and cache
+logs/
+*.log
+.cache/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
