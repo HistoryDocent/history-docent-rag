@@ -15,14 +15,15 @@
 - [x] parser normalization pipeline 구현
 - [x] global page recovery 구현
 - [x] parser quality flags 구현
-- [ ] parser quality report 생성
+- [x] parser quality report 생성
 - [ ] `01_data_manifest_audit.ipynb` 작성
-- [ ] `02_parser_quality_check.ipynb` 작성
-- [ ] `03_normalized_blocks_validation.ipynb` 작성
+- [x] `02_parser_quality_check.ipynb` 작성
+- [x] `03_normalized_blocks_validation.ipynb` 작성
 
 ## Later
 
 - [ ] place catalog seed 작성
+- [ ] parent-child chunking 설계 문서 작성
 - [ ] parent-child chunking 구현
 - [ ] BM25 baseline 구현
 - [ ] Dense/Hybrid retrieval 구현

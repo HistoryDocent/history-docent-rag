@@ -1,0 +1,96 @@
+{
+  "report_version": "parser-quality/v1",
+  "source_root": "<private_path>",
+  "quality_summary": {
+    "document_count": 12,
+    "expected_document_count": 12,
+    "normalized_block_count": 13685,
+    "short_block_threshold": 20,
+    "long_block_threshold": 1200,
+    "short_block_count": 3121,
+    "long_block_count": 0,
+    "duplicate_text_hash_count": 1228,
+    "duplicate_block_id_count": 0,
+    "replacement_char_block_count": 1273,
+    "empty_element_refs_count": 0,
+    "invalid_page_range_count": 0,
+    "missing_provenance_count": 0,
+    "private_path_leakage_count": 0
+  },
+  "block_count_by_doc": {
+    "벌거벗은한국사-고려편": 1346,
+    "벌거벗은한국사-권력편": 1557,
+    "벌거벗은한국사-근현대편": 1396,
+    "벌거벗은한국사-사건편": 1352,
+    "벌거벗은한국사-영웅편": 1385
+  },
+  "block_count_by_element_type": {
+    "caption": 5,
+    "chart": 1,
+    "footer": 724,
+    "header": 108,
+    "heading1": 2503,
+    "index": 6,
+    "list": 22,
+    "paragraph": 10296,
+    "table": 20
+  },
+  "page_count_by_doc": {
+    "벌거벗은한국사-사건편": 220,
+    "벌거벗은한국사-영웅편": 213,
+    "벌거벗은한국사-근현대편": 198,
+    "벌거벗은한국사-고려편": 204,
+    "벌거벗은한국사-권력편": 222
+  },
+  "page_coverage_by_doc": {
+    "벌거벗은한국사-사건편": {
+      "parser_page_count": 229,
+      "covered_page_count": 220,
+      "missing_page_count": 9,
+      "min_page_local": 1,
+      "max_page_local": 228
+    },
+    "벌거벗은한국사-영웅편": {
+      "parser_page_count": 215,
+      "covered_page_count": 213,
+      "missing_page_count": 2,
+      "min_page_local": 0,
+      "max_page_local": 214
+    },
+    "벌거벗은한국사-근현대편": {
+      "parser_page_count": 198,
+      "covered_page_count": 198,
+      "missing_page_count": 0,
+      "min_page_local": 0,
+      "max_page_local": 197
+    },
+    "벌거벗은한국사-고려편": {
+      "parser_page_count": 212,
+      "covered_page_count": 204,
+      "missing_page_count": 8,
+      "min_page_local": 0,
+      "max_page_local": 211
+    },
+    "벌거벗은한국사-권력편": {
+      "parser_page_count": 223,
+      "covered_page_count": 222,
+      "missing_page_count": 1,
+      "min_page_local": 0,
+      "max_page_local": 222
+    }
+  },
+  "text_length_stats": {
+    "min": 1,
+    "max": 1016,
+    "mean": 120.57,
+    "p50": 111,
+    "p90": 257,
+    "p95": 298
+  },
+  "quality_warnings": [],
+  "data_policy": {
+    "public_sample_contains_source_text": false,
+    "public_sample_contains_private_paths": false,
+    "full_source_data_storage": "private_data only"
+  }
+}
