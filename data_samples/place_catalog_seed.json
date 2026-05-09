@@ -1,0 +1,455 @@
+{
+  "catalog_version": "place-catalog/v1",
+  "places": [
+    {
+      "aliases": [
+        {
+          "alias": "경복궁",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Gyeongbokgung",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Gyeongbokgung Palace",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "景福宮",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "경복궁",
+      "category": "palace",
+      "place_id": "gyeongbokgung",
+      "public_allowed": true,
+      "related_place_ids": [
+        "gwanghwamun",
+        "changdeokgung"
+      ],
+      "relations": [
+        {
+          "rationale": "광화문과 경복궁을 같은 궁궐 진입 동선으로 묶는다.",
+          "relation_type": "route_neighbor",
+          "target_place_id": "gwanghwamun"
+        },
+        {
+          "rationale": "창덕궁과 함께 조선 왕실 공간 비교 질문에 사용한다.",
+          "relation_type": "historical_context",
+          "target_place_id": "changdeokgung"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "palace",
+        "joseon_foundation",
+        "royal_authority"
+      ]
+    },
+    {
+      "aliases": [
+        {
+          "alias": "광화문",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Gwanghwamun",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Gwanghwamun Square",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "光化門",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "광화문",
+      "category": "gate_square",
+      "place_id": "gwanghwamun",
+      "public_allowed": true,
+      "related_place_ids": [
+        "gyeongbokgung",
+        "jongno"
+      ],
+      "relations": [
+        {
+          "rationale": "경복궁 전면부와 서울 도심 방문 맥락을 연결한다.",
+          "relation_type": "route_neighbor",
+          "target_place_id": "gyeongbokgung"
+        },
+        {
+          "rationale": "종로 축과 광화문 일대의 도심 이동 질문에 사용한다.",
+          "relation_type": "same_area",
+          "target_place_id": "jongno"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "gate",
+        "civic_square",
+        "city_axis"
+      ]
+    },
+    {
+      "aliases": [
+        {
+          "alias": "종묘",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Jongmyo",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Jongmyo Shrine",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "宗廟",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "종묘",
+      "category": "shrine",
+      "place_id": "jongmyo",
+      "public_allowed": true,
+      "related_place_ids": [
+        "changdeokgung",
+        "jongno"
+      ],
+      "relations": [
+        {
+          "rationale": "창덕궁과 함께 왕실 의례와 궁궐 생활 질문에 사용한다.",
+          "relation_type": "nearby",
+          "target_place_id": "changdeokgung"
+        },
+        {
+          "rationale": "종로 일대 답사 동선에서 의례 공간으로 확장한다.",
+          "relation_type": "route_neighbor",
+          "target_place_id": "jongno"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "royal_ritual",
+        "ancestral_shrine",
+        "joseon_state"
+      ]
+    },
+    {
+      "aliases": [
+        {
+          "alias": "창덕궁",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Changdeokgung",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Changdeokgung Palace",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "昌德宮",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "창덕궁",
+      "category": "palace",
+      "place_id": "changdeokgung",
+      "public_allowed": true,
+      "related_place_ids": [
+        "gyeongbokgung",
+        "jongmyo"
+      ],
+      "relations": [
+        {
+          "rationale": "경복궁과 궁궐 기능 비교 질문에 사용한다.",
+          "relation_type": "historical_context",
+          "target_place_id": "gyeongbokgung"
+        },
+        {
+          "rationale": "종묘와 가까운 왕실 공간 동선으로 연결한다.",
+          "relation_type": "nearby",
+          "target_place_id": "jongmyo"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "palace",
+        "royal_residence",
+        "joseon_court"
+      ]
+    },
+    {
+      "aliases": [
+        {
+          "alias": "북촌",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Bukchon",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Bukchon Hanok Village",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "北村",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "북촌",
+      "category": "district",
+      "place_id": "bukchon",
+      "public_allowed": true,
+      "related_place_ids": [
+        "gyeongbokgung",
+        "changdeokgung"
+      ],
+      "relations": [
+        {
+          "rationale": "경복궁과 창덕궁 사이의 생활권 질문에 사용한다.",
+          "relation_type": "same_area",
+          "target_place_id": "gyeongbokgung"
+        },
+        {
+          "rationale": "창덕궁 주변 답사에서 주거지 맥락으로 확장한다.",
+          "relation_type": "route_neighbor",
+          "target_place_id": "changdeokgung"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "district",
+        "hanok",
+        "urban_life"
+      ]
+    },
+    {
+      "aliases": [
+        {
+          "alias": "한양도성",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Hanyangdoseong",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Seoul City Wall",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "漢陽都城",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "한양도성",
+      "category": "city_wall",
+      "place_id": "hanyangdoseong",
+      "public_allowed": true,
+      "related_place_ids": [
+        "namsan",
+        "jongno"
+      ],
+      "relations": [
+        {
+          "rationale": "남산 구간과 성곽 조망 질문을 연결한다.",
+          "relation_type": "viewpoint",
+          "target_place_id": "namsan"
+        },
+        {
+          "rationale": "종로 도심과 한양 경계 설명을 연결한다.",
+          "relation_type": "historical_context",
+          "target_place_id": "jongno"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "city_wall",
+        "capital_boundary",
+        "route_context"
+      ]
+    },
+    {
+      "aliases": [
+        {
+          "alias": "남산",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Namsan",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Namsan Mountain",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "木覓山",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "남산",
+      "category": "mountain",
+      "place_id": "namsan",
+      "public_allowed": true,
+      "related_place_ids": [
+        "hanyangdoseong",
+        "deoksugung"
+      ],
+      "relations": [
+        {
+          "rationale": "한양도성 답사에서 조망과 성곽 동선을 연결한다.",
+          "relation_type": "viewpoint",
+          "target_place_id": "hanyangdoseong"
+        },
+        {
+          "rationale": "덕수궁 권역에서 서울 중심부 조망 질문으로 확장한다.",
+          "relation_type": "nearby",
+          "target_place_id": "deoksugung"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "mountain",
+        "viewpoint",
+        "city_landscape"
+      ]
+    },
+    {
+      "aliases": [
+        {
+          "alias": "덕수궁",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Deoksugung",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Deoksugung Palace",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "德壽宮",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "덕수궁",
+      "category": "palace",
+      "place_id": "deoksugung",
+      "public_allowed": true,
+      "related_place_ids": [
+        "gwanghwamun",
+        "namsan"
+      ],
+      "relations": [
+        {
+          "rationale": "광화문 권역과 도심 궁궐 답사 흐름을 연결한다.",
+          "relation_type": "same_area",
+          "target_place_id": "gwanghwamun"
+        },
+        {
+          "rationale": "남산 조망과 근현대 서울 중심부 질문에 사용한다.",
+          "relation_type": "nearby",
+          "target_place_id": "namsan"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "palace",
+        "downtown",
+        "modern_transition"
+      ]
+    },
+    {
+      "aliases": [
+        {
+          "alias": "종로",
+          "alias_type": "primary",
+          "language": "ko"
+        },
+        {
+          "alias": "Jongno",
+          "alias_type": "transliteration",
+          "language": "en"
+        },
+        {
+          "alias": "Jongno Street",
+          "alias_type": "tourism",
+          "language": "en"
+        },
+        {
+          "alias": "鐘路",
+          "alias_type": "historic",
+          "language": "hanja"
+        }
+      ],
+      "canonical_name": "종로",
+      "category": "route_anchor",
+      "place_id": "jongno",
+      "public_allowed": true,
+      "related_place_ids": [
+        "gwanghwamun",
+        "jongmyo"
+      ],
+      "relations": [
+        {
+          "rationale": "광화문에서 이어지는 도심 축 질문에 사용한다.",
+          "relation_type": "route_neighbor",
+          "target_place_id": "gwanghwamun"
+        },
+        {
+          "rationale": "종묘와 연결되는 도심 답사 맥락을 제공한다.",
+          "relation_type": "same_area",
+          "target_place_id": "jongmyo"
+        }
+      ],
+      "source_policy": "manual_public_seed",
+      "tour_context_tags": [
+        "route_anchor",
+        "downtown_axis",
+        "street_history"
+      ]
+    }
+  ]
+}

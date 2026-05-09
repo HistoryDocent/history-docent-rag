@@ -163,6 +163,8 @@ BM25 baseline retriever를 구현했고, seed 평가셋 기준 정량/정성 리
 
 현재 BM25 baseline 결과는 `Recall@5=0.250000`, `MRR=0.152778`, `nDCG@5=0.120124`다. 이 수치는 성능 개선 주장이 아니라 Dense/Hybrid/query rewrite 비교를 위한 기준선이다.
 
+서울/한양 장소 catalog seed를 공개 가능한 형태로 작성했고, alias/relation/public leakage gate를 통과했다.
+
 다음 단계는 Dense retrieval과 Hybrid retrieval을 같은 평가셋에서 비교하는 것이다.
 
 ## 실행 전략
@@ -181,6 +183,8 @@ BM25 baseline retriever를 구현했고, seed 평가셋 기준 정량/정성 리
 | [Chunking Strategy](docs/CHUNKING_STRATEGY.md) | parent-child chunking grain, boundary, filtering, citation 정책 |
 | [Chunking Gates](docs/CHUNKING_GATES.md) | chunking 구현 후 통과해야 할 정량 gate |
 | [Chunking Quality Report](docs/CHUNKING_QUALITY_REPORT.md) | parent-child chunking 결과의 정량/정성 평가 |
+| [Place Catalog](docs/PLACE_CATALOG.md) | 서울/한양 장소 seed, alias, relation, 공개 정책 |
+| [Place Catalog Validation Report](evals/reports/place_catalog_validation_report.md) | 장소 catalog seed의 정량/정성 gate 결과 |
 | [BM25 Baseline Plan](docs/BM25_BASELINE_PLAN.md) | BM25 baseline 입력 계약, metric, 실패 분석 계획 |
 | [Retrieval Eval Dataset](docs/RETRIEVAL_EVAL_DATASET.md) | retrieval seed 평가셋의 정량/정성 품질 보고서 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |

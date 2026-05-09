@@ -36,12 +36,19 @@
 
 ## Place Catalog Gate
 
-- [ ] 초기 장소 7개 이상 등록
+- [ ] 초기 장소 8개 이상 등록
 - [ ] `place_id` 중복 0
-- [ ] modern name 중복 0
-- [ ] alias 검색 실패 0
-- [ ] 장소별 related term 존재
-- [ ] seed/manual link와 automatic link 구분
+- [ ] canonical name 중복 0
+- [ ] alias 중복 0
+- [ ] alias 20개 이상 등록
+- [ ] unknown related place 0
+- [ ] self relation 0
+- [ ] 장소별 related place 존재
+- [ ] 장소별 context tag 존재
+- [ ] seed/manual relation과 automatic link 구분
+- [ ] public raw text leakage 0
+- [ ] private path leakage 0
+- [ ] secret-like leakage 0
 
 ## Retrieval Gate
 
