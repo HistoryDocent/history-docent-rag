@@ -1,7 +1,7 @@
 [project]
 name = "history-docent-rag"
 version = "0.1.0"
-description = "Evidence-centric Korean history RAG backend built from Upstage Parser outputs"
+description = "Evidence-centric Seoul and Hanyang history docent RAG backend built from Upstage Parser outputs"
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.115.0",

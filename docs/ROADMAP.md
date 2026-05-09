@@ -15,47 +15,57 @@
 - element-level metadata 보존
 - parser quality report 생성
 
-## Phase 2. Structure-Preserving Chunking
+## Phase 2. Seoul/Hanyang Place Catalog
+
+- 서울 주요 관광지 seed catalog 작성
+- 현대 장소명과 역사 명칭 연결
+- 장소별 관련 인물, 사건, 제도 mapping
+- `place_id`와 관련 chunk 연결 구조 정의
+
+## Phase 3. Structure-Preserving Chunking
 
 - parent chunk와 child chunk 생성
 - section path와 page provenance 보존
 - OCR noise와 invalid summary artifacts 필터링
 - public sample chunks 생성
 
-## Phase 3. Retrieval Baselines
+## Phase 4. Retrieval Baselines
 
 - BM25 baseline 구현
 - dense retrieval 구현
 - hybrid retrieval 구현
 - Recall@k, MRR, nDCG, latency 기록
 
-## Phase 4. Citation RAG
+## Phase 5. Place-Aware Citation RAG
 
 - evidence packing 구현
 - Solar Pro 3 provider 구현
+- 장소 기반 query rewrite 구현
 - citation 기반 답변 생성
+- 음성용 짧은 답변 field 생성
 - unsupported claims 탐지
 
-## Phase 5. API
+## Phase 6. API
 
 - FastAPI chat endpoint 구현
+- place search endpoint 구현
 - readiness health check 추가
 - validation, rate limit, retry, timeout, structured logs 추가
 
-## Phase 6. Evaluation Harness
+## Phase 7. Evaluation Harness
 
 - dev, holdout, external, stress eval set 생성
 - retrieval grader와 generation grader 구현
 - confidence interval 보고
 - ablation report 생성
 
-## Phase 7. Advanced Retrieval Experiments
+## Phase 8. Advanced Retrieval Experiments
 
 - overview 질문용 RAPTOR-lite 추가
 - relationship 질문용 GraphRAG-lite 추가
 - metric이 정당화할 때만 query-type router 추가
 
-## Phase 8. Voice Demo
+## Phase 9. Voice Demo
 
 - backend validation 이후 STT/TTS demo 추가
 - 짧은 답변과 citation display 동작 보존
