@@ -18,6 +18,20 @@ RETRIEVAL_EVAL_DATASET_VERSION = "retrieval-eval-dataset/v2"
 RETRIEVAL_EVAL_MIN_QUERIES_PER_TYPE = 2
 RETRIEVAL_EVAL_TARGET_DEV_PER_QUERY_TYPE = 10
 RETRIEVAL_EVAL_TARGET_TEST_PER_QUERY_TYPE = 5
+MAX_PUBLIC_EVAL_TEXT_VALUE_LENGTH = 600
+SECRET_VALUE_MARKERS = (
+    "sk-",
+    "api_" + "key=",
+    "api" + "key=",
+    "ghp_",
+    "github_pat_",
+    "hf_",
+    "xoxb-",
+    "bearer ",
+    "pass" + "word=",
+    "to" + "ken=",
+    "sec" + "ret=",
+)
 
 QueryType = Literal[
     "place_fact",
@@ -60,6 +74,10 @@ FORBIDDEN_PUBLIC_EVAL_FIELDS: frozenset[str] = frozenset(
     }
 )
 _PRIVATE_PATH_PATTERN = re.compile(r"([A-Za-z]:[\\/]|\\\\[^\\/]+[\\/][^\\/]+)")
+_POSIX_PRIVATE_PATH_PATTERN = re.compile(
+    r"(^|\s)/(home|users|mnt|var|tmp|private|runner|workspace|root)/",
+    re.IGNORECASE,
+)
 
 
 class RetrievalModel(BaseModel):
@@ -233,6 +251,37 @@ class RetrievalEvalDatasetSummary(RetrievalModel):
     private_path_leakage_count: int = Field(ge=0)
 
 
+class RetrievalTargetInventory(RetrievalModel):
+    child_ids: frozenset[str] = Field(default_factory=frozenset)
+    parent_ids: frozenset[str] = Field(default_factory=frozenset)
+    doc_ids: frozenset[str] = Field(default_factory=frozenset)
+
+
+class RetrievalEvalTargetResolvabilitySummary(RetrievalModel):
+    query_count: int = Field(ge=0)
+    judgment_count: int = Field(ge=0)
+    answerable_query_count: int = Field(ge=0)
+    no_answer_query_count: int = Field(ge=0)
+    searchable_child_count: int = Field(ge=0)
+    searchable_parent_count: int = Field(ge=0)
+    searchable_doc_count: int = Field(ge=0)
+    judgment_target_count: int = Field(ge=0)
+    child_target_count: int = Field(ge=0)
+    resolved_child_target_count: int = Field(ge=0)
+    missing_child_target_count: int = Field(ge=0)
+    parent_target_count: int = Field(ge=0)
+    resolved_parent_target_count: int = Field(ge=0)
+    missing_parent_target_count: int = Field(ge=0)
+    doc_target_count: int = Field(ge=0)
+    resolved_doc_target_count: int = Field(ge=0)
+    missing_doc_target_count: int = Field(ge=0)
+    answerable_without_child_or_parent_target_count: int = Field(ge=0)
+    no_answer_with_positive_target_count: int = Field(ge=0)
+    public_raw_text_leakage_count: int = Field(ge=0)
+    private_path_leakage_count: int = Field(ge=0)
+    secret_like_leakage_count: int = Field(ge=0)
+
+
 class RetrievalMetricSummary(RetrievalModel):
     method: RetrievalMethod
     query_count: int = Field(ge=0)
@@ -272,6 +321,17 @@ def build_retrieval_document_from_child(
         public_allowed=False,
         search_text=child.text if include_private_text else None,
         context_text=child.context_text if include_private_text else None,
+    )
+
+
+def build_retrieval_target_inventory(
+    children: list[ChildChunk],
+) -> RetrievalTargetInventory:
+    searchable_children = [child for child in children if child.text]
+    return RetrievalTargetInventory(
+        child_ids=frozenset(child.child_id for child in searchable_children),
+        parent_ids=frozenset(child.parent_id for child in searchable_children),
+        doc_ids=frozenset(child.doc_id for child in searchable_children),
     )
 
 
@@ -399,8 +459,87 @@ def summarize_retrieval_eval_dataset(
         missing_required_query_type_count=len(set(REQUIRED_QUERY_TYPES) - set(query_types)),
         missing_expected_target_count=missing_expected_target_count,
         judgment_query_mismatch_count=judgment_query_mismatch_count,
-        public_raw_text_leakage_count=_count_forbidden_public_eval_fields(payload),
+        public_raw_text_leakage_count=_count_public_raw_text_leakage(payload),
         private_path_leakage_count=_count_private_path_leakage(payload),
+    )
+
+
+def summarize_retrieval_eval_target_resolvability(
+    *,
+    items: list[RetrievalEvalItem],
+    inventory: RetrievalTargetInventory,
+) -> RetrievalEvalTargetResolvabilitySummary:
+    child_targets = [
+        target
+        for item in items
+        for judgment in item.judgments
+        for target in judgment.relevant_child_ids
+    ]
+    parent_targets = [
+        target
+        for item in items
+        for judgment in item.judgments
+        for target in judgment.relevant_parent_ids
+    ]
+    doc_targets = [
+        target
+        for item in items
+        for judgment in item.judgments
+        for target in judgment.relevant_doc_ids
+    ]
+    payload = [item.model_dump(mode="json") for item in items]
+    return RetrievalEvalTargetResolvabilitySummary(
+        query_count=len(items),
+        judgment_count=sum(len(item.judgments) for item in items),
+        answerable_query_count=sum(
+            1 for item in items if item.query.expected_behavior == "retrieve"
+        ),
+        no_answer_query_count=sum(
+            1 for item in items if item.query.expected_behavior == "abstain"
+        ),
+        searchable_child_count=len(inventory.child_ids),
+        searchable_parent_count=len(inventory.parent_ids),
+        searchable_doc_count=len(inventory.doc_ids),
+        judgment_target_count=len(child_targets) + len(parent_targets) + len(doc_targets),
+        child_target_count=len(child_targets),
+        resolved_child_target_count=sum(
+            1 for target in child_targets if target in inventory.child_ids
+        ),
+        missing_child_target_count=sum(
+            1 for target in child_targets if target not in inventory.child_ids
+        ),
+        parent_target_count=len(parent_targets),
+        resolved_parent_target_count=sum(
+            1 for target in parent_targets if target in inventory.parent_ids
+        ),
+        missing_parent_target_count=sum(
+            1 for target in parent_targets if target not in inventory.parent_ids
+        ),
+        doc_target_count=len(doc_targets),
+        resolved_doc_target_count=sum(
+            1 for target in doc_targets if target in inventory.doc_ids
+        ),
+        missing_doc_target_count=sum(
+            1 for target in doc_targets if target not in inventory.doc_ids
+        ),
+        answerable_without_child_or_parent_target_count=sum(
+            1
+            for item in items
+            if item.query.expected_behavior == "retrieve"
+            and not any(
+                judgment.relevant_child_ids or judgment.relevant_parent_ids
+                for judgment in item.judgments
+            )
+        ),
+        no_answer_with_positive_target_count=sum(
+            1
+            for item in items
+            if item.query.expected_behavior == "abstain"
+            and any(judgment.has_expected_target() for judgment in item.judgments)
+        ),
+        public_raw_text_leakage_count=_count_public_raw_text_leakage(payload),
+        private_path_leakage_count=_count_private_path_leakage(payload),
+        secret_like_leakage_count=_count_secret_like_leakage(payload),
     )
 
 
@@ -432,6 +571,29 @@ def collect_retrieval_eval_dataset_failures(
         failures.append("public_raw_text_leakage")
     if summary.private_path_leakage_count:
         failures.append("private_path_leakage")
+    return failures
+
+
+def collect_retrieval_eval_target_resolvability_failures(
+    summary: RetrievalEvalTargetResolvabilitySummary,
+) -> list[str]:
+    failures: list[str] = []
+    if summary.missing_child_target_count:
+        failures.append("missing_child_targets")
+    if summary.missing_parent_target_count:
+        failures.append("missing_parent_targets")
+    if summary.missing_doc_target_count:
+        failures.append("missing_doc_targets")
+    if summary.answerable_without_child_or_parent_target_count:
+        failures.append("answerable_without_child_or_parent_target")
+    if summary.no_answer_with_positive_target_count:
+        failures.append("no_answer_with_positive_target")
+    if summary.public_raw_text_leakage_count:
+        failures.append("public_raw_text_leakage")
+    if summary.private_path_leakage_count:
+        failures.append("private_path_leakage")
+    if summary.secret_like_leakage_count:
+        failures.append("secret_like_leakage")
     return failures
 
 
@@ -656,12 +818,47 @@ def _count_forbidden_public_eval_fields(payload: Any) -> int:
     return 0
 
 
+def _count_public_raw_text_leakage(payload: Any) -> int:
+    return _count_forbidden_public_eval_fields(payload) + sum(
+        1 for value in _iter_string_values(payload) if _is_source_text_like(value)
+    )
+
+
 def _count_private_path_leakage(payload: Any) -> int:
     return sum(
         1
         for value in _iter_string_values(payload)
-        if _PRIVATE_PATH_PATTERN.search(value.replace("/", "\\"))
+        if _contains_private_path(value)
     )
+
+
+def _count_secret_like_leakage(payload: Any) -> int:
+    return sum(
+        1
+        for value in _iter_string_values(payload)
+        if _contains_secret_like_value(value)
+    )
+
+
+def _is_source_text_like(value: str) -> bool:
+    stripped = value.strip()
+    return bool(
+        ("\n" in stripped)
+        or ("\r" in stripped)
+        or len(stripped) > MAX_PUBLIC_EVAL_TEXT_VALUE_LENGTH
+    )
+
+
+def _contains_private_path(value: str) -> bool:
+    return bool(
+        _PRIVATE_PATH_PATTERN.search(value.replace("/", "\\"))
+        or _POSIX_PRIVATE_PATH_PATTERN.search(value)
+    )
+
+
+def _contains_secret_like_value(value: str) -> bool:
+    lowered = value.lower()
+    return any(marker in lowered for marker in SECRET_VALUE_MARKERS)
 
 
 def _iter_string_values(payload: Any) -> list[str]:

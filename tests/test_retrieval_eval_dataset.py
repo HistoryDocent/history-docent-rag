@@ -184,3 +184,19 @@ def test_retrieval_eval_dataset_report_uses_per_split_counts() -> None:
     )
 
     assert "| place_fact | 1 | 1 | 0 | 10 | 5 |" in markdown
+
+
+def test_retrieval_eval_dataset_report_redacts_absolute_dataset_path(
+    tmp_path: Path,
+) -> None:
+    items = load_retrieval_eval_jsonl(Path("evals/datasets/retrieval_eval_seed.jsonl"))
+    summary = summarize_retrieval_eval_dataset(items)
+    dataset_path = tmp_path / "retrieval_eval_seed.jsonl"
+
+    markdown = build_retrieval_eval_dataset_report_markdown(
+        summary=summary,
+        dataset_path=dataset_path,
+    )
+
+    assert str(dataset_path).replace("\\", "/") not in markdown
+    assert "<public retrieval eval dataset: retrieval_eval_seed.jsonl>" in markdown

@@ -174,6 +174,8 @@ retrieval evaluation harness를 공통화했고, BM25 baseline을 새 harness에
 
 retrieval 평가셋 v2 metadata contract와 dev/test split readiness gate를 추가했다. 현재 seed-only 상태라 contract gate는 통과하고 split readiness gate는 실패 상태다.
 
+retrieval judgment target resolvability gate를 추가해 seed 평가셋의 child/parent/doc target이 실제 검색 corpus에 매핑되는지 검증했다.
+
 다음 단계는 query type별 dev/test 평가 문항을 확장하고, chunking ablation으로 검색 단위를 먼저 고정한 뒤 Dense retrieval과 Hybrid retrieval을 같은 평가셋에서 비교하는 것이다.
 
 ## 실행 전략
@@ -197,6 +199,7 @@ retrieval 평가셋 v2 metadata contract와 dev/test split readiness gate를 추
 | [BM25 Baseline Plan](docs/BM25_BASELINE_PLAN.md) | BM25 baseline 입력 계약, metric, 실패 분석 계획 |
 | [Retrieval Eval Dataset](docs/RETRIEVAL_EVAL_DATASET.md) | retrieval seed 평가셋의 정량/정성 품질 보고서 |
 | [Retrieval Eval Dataset Report](evals/reports/retrieval_eval_dataset_report.md) | retrieval 평가셋 v2 contract와 split gate 결과 |
+| [Retrieval Eval Target Resolvability Report](evals/reports/retrieval_eval_target_resolvability_report.md) | retrieval judgment target의 corpus 매핑 검증 결과 |
 | [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md) | 실서비스 기준 RAG 비교 실험 순서, 논문 매핑, 선택 기준 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |

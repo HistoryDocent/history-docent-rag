@@ -76,7 +76,7 @@ retrieval 평가셋 v2 contract와 split gate를 검증한다.
 | 항목 | 값 |
 | --- | --- |
 | report_version | `{RETRIEVAL_EVAL_DATASET_REPORT_VERSION}` |
-| dataset_path | `{dataset_path.as_posix()}` |
+| dataset_path | `{_public_dataset_path_alias(dataset_path)}` |
 | dataset_version | `{summary.dataset_version}` |
 | contract_status | `{"PASS" if not contract_failures else "FAIL"}` |
 | split_readiness_status | `{"PASS" if not split_readiness_failures else "FAIL"}` |
@@ -199,6 +199,17 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET_PATH)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT_PATH)
     return parser.parse_args()
+
+
+def _public_dataset_path_alias(dataset_path: Path) -> str:
+    if dataset_path.is_absolute():
+        try:
+            return dataset_path.relative_to(Path.cwd()).as_posix()
+        except ValueError:
+            return f"<public retrieval eval dataset: {dataset_path.name}>"
+    if ".." in dataset_path.parts:
+        return f"<public retrieval eval dataset: {dataset_path.name}>"
+    return dataset_path.as_posix()
 
 
 if __name__ == "__main__":

@@ -186,7 +186,7 @@ path와 secret 의심 pattern은 다음 공개 후보 전체를 대상으로 sca
 ```text
 Windows drive path: [A-Za-z]:\\
 user home path: Windows user-home absolute path
-secret-like key: sk-[A-Za-z0-9]
+secret-like key: provider-key prefix pattern
 credential fields: api_key, apikey, password, token, secret
 ```
 

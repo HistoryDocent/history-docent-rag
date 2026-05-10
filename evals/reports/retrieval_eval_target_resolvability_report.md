@@ -1,0 +1,75 @@
+# Retrieval Eval Target Resolvability Report
+
+## 목적
+
+retrieval 평가셋의 judgment target이 실제 검색 corpus에 존재하는지 검증한다.
+
+이 리포트는 성능 개선 결과가 아니다. dev/test 평가셋 확장과 retrieval ablation 전에 정답 target의 corpus 매핑 가능성을 고정하기 위한 정량/정성 보고서다.
+
+## 실행 정보
+
+| 항목 | 값 |
+| --- | --- |
+| report_version | `retrieval-eval-target-resolvability/v1` |
+| dataset_path | `evals/datasets/retrieval_eval_seed.jsonl` |
+| chunks_path_alias | `<private parent_child_chunks report>` |
+| target_resolvability_status | `PASS` |
+
+## Grain
+
+`RetrievalEvalItem`의 grain은 질문 1개다.
+
+target resolvability의 검증 grain은 judgment target 1개다.
+
+검증 대상:
+
+- `relevant_child_ids`
+- `relevant_parent_ids`
+- `relevant_doc_ids`
+
+## 정량 리포트
+
+| metric | value |
+| --- | ---: |
+| query_count | 14 |
+| judgment_count | 12 |
+| answerable_query_count | 12 |
+| no_answer_query_count | 2 |
+| searchable_child_count | 3141 |
+| searchable_parent_count | 1882 |
+| searchable_doc_count | 12 |
+| judgment_target_count | 81 |
+| child_target_count | 36 |
+| resolved_child_target_count | 36 |
+| missing_child_target_count | 0 |
+| parent_target_count | 28 |
+| resolved_parent_target_count | 28 |
+| missing_parent_target_count | 0 |
+| doc_target_count | 17 |
+| resolved_doc_target_count | 17 |
+| missing_doc_target_count | 0 |
+| answerable_without_child_or_parent_target_count | 0 |
+| no_answer_with_positive_target_count | 0 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+## Gate Result
+
+```text
+target_resolvability_failures=[]
+```
+
+## 정성 리포트
+
+- target ID는 실제 검색 가능한 child corpus 기준으로 검증한다.
+- answerable query는 최소 child 또는 parent target을 가져야 한다.
+- `no_answer` query는 positive target을 가지면 안 된다.
+- public report에는 원문 chunk text, parser text, OCR text, private path, secret-like 값을 포함하지 않는다.
+- 이 gate를 통과해야 dev/test 평가셋 확장과 chunking ablation을 신뢰할 수 있다.
+
+## 다음 단계
+
+1. dev/test 평가 문항을 query type별로 확장한다.
+2. target resolvability gate를 통과한 평가셋만 retrieval 비교에 사용한다.
+3. chunking ablation은 동일 target contract를 유지한 상태에서 실행한다.
