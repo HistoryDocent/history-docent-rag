@@ -34,11 +34,12 @@
 - [x] `06_bm25_baseline_evaluation.ipynb` 평가 계약 셀 작성
 - [x] BM25 baseline 구현
 - [x] BM25 baseline 정량/정성 평가 리포트 작성
+- [x] retrieval evaluation harness 구현
+- [x] `07_dense_hybrid_retrieval_comparison.ipynb` 공통 harness 셀 작성
 
 ## Later
 
 - [ ] Dense/Hybrid retrieval 구현
-- [ ] retrieval evaluation harness 구현
 - [ ] place-aware query rewrite 구현
 - [ ] citation RAG answer contract 구현
 - [ ] Solar Pro 3 provider 구현

@@ -165,6 +165,8 @@ BM25 baseline retriever를 구현했고, seed 평가셋 기준 정량/정성 리
 
 서울/한양 장소 catalog seed를 공개 가능한 형태로 작성했고, alias/relation/public leakage gate를 통과했다.
 
+retrieval evaluation harness를 공통화했고, BM25 baseline을 새 harness에서 재현했다.
+
 다음 단계는 Dense retrieval과 Hybrid retrieval을 같은 평가셋에서 비교하는 것이다.
 
 ## 실행 전략
@@ -188,6 +190,7 @@ BM25 baseline retriever를 구현했고, seed 평가셋 기준 정량/정성 리
 | [BM25 Baseline Plan](docs/BM25_BASELINE_PLAN.md) | BM25 baseline 입력 계약, metric, 실패 분석 계획 |
 | [Retrieval Eval Dataset](docs/RETRIEVAL_EVAL_DATASET.md) | retrieval seed 평가셋의 정량/정성 품질 보고서 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
+| [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |

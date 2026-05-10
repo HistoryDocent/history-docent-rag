@@ -1,0 +1,252 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from app.domain.retrieval_experiment import collect_public_retrieval_artifact_failures
+from pipelines.run_retrieval_experiment import run_retrieval_experiment
+
+
+def _write_json(path: Path, payload: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+
+def _write_jsonl(path: Path, rows: list[dict[str, object]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "\n".join(json.dumps(row, ensure_ascii=False) for row in rows) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _child_payload(
+    *,
+    child_id: str,
+    parent_id: str,
+    doc_id: str,
+    text: str,
+) -> dict[str, object]:
+    return {
+        "child_id": child_id,
+        "parent_id": parent_id,
+        "doc_id": doc_id,
+        "doc_title": doc_id,
+        "parser_run_id": "parser-run",
+        "source_block_ids": [f"block-{child_id}"],
+        "context_block_ids": [],
+        "page_span": {
+            "page_local_start": 1,
+            "page_local_end": 1,
+            "page_global_start": 1,
+            "page_global_end": 1,
+        },
+        "text_hash": "a" * 64,
+        "text_length": len(text),
+        "element_type_mix": {"paragraph": 1},
+        "citation_refs": [
+            {
+                "block_id": f"block-{child_id}",
+                "doc_id": doc_id,
+                "element_type": "paragraph",
+                "page_span": {
+                    "page_local_start": 1,
+                    "page_local_end": 1,
+                    "page_global_start": 1,
+                    "page_global_end": 1,
+                },
+                "element_refs": [
+                    {
+                        "element_id": f"element-{child_id}",
+                        "element_type": "paragraph",
+                        "element_index": 1,
+                    }
+                ],
+                "source_file_name": f"{doc_id}.pdf",
+                "text_hash": "b" * 64,
+                "text_length": len(text),
+                "quality_flags": [],
+            }
+        ],
+        "quality_flags": [],
+        "public_allowed": False,
+        "text": text,
+        "context_text": None,
+    }
+
+
+def _eval_item_payload(
+    *,
+    query_id: str,
+    query_type: str,
+    query_text: str,
+    expected_behavior: str,
+    child_id: str | None = None,
+    parent_id: str | None = None,
+    doc_id: str | None = None,
+) -> dict[str, object]:
+    judgments: list[dict[str, object]] = []
+    if expected_behavior == "retrieve":
+        judgments.append(
+            {
+                "query_id": query_id,
+                "relevant_child_ids": [child_id],
+                "relevant_parent_ids": [parent_id],
+                "relevant_doc_ids": [doc_id],
+                "relevance_grade": 3,
+                "rationale_summary": "test judgment ids only",
+                "public_allowed": True,
+            }
+        )
+    return {
+        "dataset_version": "retrieval-eval-dataset/v1",
+        "query": {
+            "query_id": query_id,
+            "query_type": query_type,
+            "query_text": query_text,
+            "language": "ko",
+            "expected_behavior": expected_behavior,
+            "user_context": None,
+            "public_allowed": True,
+        },
+        "judgments": judgments,
+    }
+
+
+def test_run_retrieval_experiment_writes_bm25_results_and_report(tmp_path: Path) -> None:
+    chunks_path = tmp_path / "parent_child_chunks.json"
+    dataset_path = tmp_path / "retrieval_eval_seed.jsonl"
+    results_dir = tmp_path / "results"
+    report_path = tmp_path / "retrieval_harness_report.md"
+    _write_json(
+        chunks_path,
+        {
+            "report_version": "chunking-quality/v1",
+            "chunking_run_id": "chunking-test",
+            "children": [
+                _child_payload(
+                    child_id="child-palace",
+                    parent_id="parent-palace",
+                    doc_id="doc-joseon",
+                    text="private source text 경복궁 한양 천도 정도전",
+                ),
+                _child_payload(
+                    child_id="child-modern",
+                    parent_id="parent-modern",
+                    doc_id="doc-modern",
+                    text="private source text 지하철 카페 막차",
+                ),
+            ],
+        },
+    )
+    _write_jsonl(
+        dataset_path,
+        [
+            _eval_item_payload(
+                query_id="q-one",
+                query_type="relationship",
+                query_text="경복궁 한양 천도 정도전",
+                expected_behavior="retrieve",
+                child_id="child-palace",
+                parent_id="parent-palace",
+                doc_id="doc-joseon",
+            ),
+            _eval_item_payload(
+                query_id="q-no-answer",
+                query_type="no_answer",
+                query_text="오늘 지하철 막차 시간",
+                expected_behavior="abstain",
+            ),
+        ],
+    )
+
+    report = run_retrieval_experiment(
+        chunks_path=chunks_path,
+        dataset_path=dataset_path,
+        results_dir=results_dir,
+        report_path=report_path,
+        methods=["bm25"],
+        top_k=2,
+    )
+
+    result_path = results_dir / "retrieval_experiment_bm25_results.jsonl"
+    result_text = result_path.read_text(encoding="utf-8")
+    report_text = report_path.read_text(encoding="utf-8")
+
+    assert report.baseline_method == "bm25"
+    assert report.method_runs[0].method == "bm25"
+    assert report.method_runs[0].metric_summary.query_count == 2
+    assert report.method_runs[0].metric_summary.missing_result_count == 0
+    assert report.output_quality.public_raw_text_leakage_count == 0
+    assert report.output_quality.private_path_leakage_count == 0
+    assert collect_public_retrieval_artifact_failures(report.output_quality) == []
+    assert result_path.exists()
+    assert report_path.exists()
+    assert "private source text" not in result_text
+    assert "private source text" not in report_text
+
+
+def test_retrieval_harness_report_contains_quantitative_and_qualitative_sections(
+    tmp_path: Path,
+) -> None:
+    chunks_path = tmp_path / "parent_child_chunks.json"
+    dataset_path = tmp_path / "retrieval_eval_seed.jsonl"
+    report_path = tmp_path / "retrieval_harness_report.md"
+    _write_json(
+        chunks_path,
+        {
+            "report_version": "chunking-quality/v1",
+            "chunking_run_id": "chunking-test",
+            "children": [
+                _child_payload(
+                    child_id="child-palace",
+                    parent_id="parent-palace",
+                    doc_id="doc-joseon",
+                    text="경복궁 한양 천도 정도전",
+                )
+            ],
+        },
+    )
+    _write_jsonl(
+        dataset_path,
+        [
+            _eval_item_payload(
+                query_id="q-one",
+                query_type="place_fact",
+                query_text="경복궁",
+                expected_behavior="retrieve",
+                child_id="child-palace",
+                parent_id="parent-palace",
+                doc_id="doc-joseon",
+            )
+        ],
+    )
+
+    run_retrieval_experiment(
+        chunks_path=chunks_path,
+        dataset_path=dataset_path,
+        results_dir=tmp_path / "results",
+        report_path=report_path,
+        methods=["bm25"],
+        top_k=1,
+    )
+    markdown = report_path.read_text(encoding="utf-8")
+
+    assert "## 정량 리포트" in markdown
+    assert "## Query Type Breakdown" in markdown
+    assert "## Baseline Delta" in markdown
+    assert "## 정성 리포트" in markdown
+    assert "성능 개선 주장이 아니다" in markdown
+
+
+def test_retrieval_experiment_rejects_unimplemented_methods(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="unsupported retrieval methods"):
+        run_retrieval_experiment(
+            chunks_path=tmp_path / "missing.json",
+            dataset_path=tmp_path / "missing.jsonl",
+            results_dir=tmp_path / "results",
+            report_path=tmp_path / "report.md",
+            methods=["dense"],  # type: ignore[list-item]
+        )

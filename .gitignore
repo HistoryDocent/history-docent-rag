@@ -39,6 +39,7 @@ chroma/
 evals/results/*.csv
 evals/results/*.jsonl
 !evals/results/bm25_baseline_results.jsonl
+!evals/results/retrieval_experiment_bm25_results.jsonl
 evals/results/*.parquet
 evals/results/raw/
 
