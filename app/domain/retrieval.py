@@ -14,7 +14,10 @@ from app.domain.data_contracts import PageSpan
 
 
 RETRIEVAL_CONTRACT_VERSION = "retrieval-contract/v1"
-RETRIEVAL_EVAL_DATASET_VERSION = "retrieval-eval-dataset/v1"
+RETRIEVAL_EVAL_DATASET_VERSION = "retrieval-eval-dataset/v2"
+RETRIEVAL_EVAL_MIN_QUERIES_PER_TYPE = 2
+RETRIEVAL_EVAL_TARGET_DEV_PER_QUERY_TYPE = 10
+RETRIEVAL_EVAL_TARGET_TEST_PER_QUERY_TYPE = 5
 
 QueryType = Literal[
     "place_fact",
@@ -28,8 +31,12 @@ QueryType = Literal[
 LanguageCode = Literal["ko", "en", "mixed"]
 ExpectedBehavior = Literal["retrieve", "abstain"]
 RetrievalMethod = Literal["bm25", "dense", "hybrid_weighted", "hybrid_rrf"]
+RetrievalEvalSplit = Literal["seed", "dev", "test"]
+RetrievalQueryDifficulty = Literal["easy", "medium", "hard"]
+RetrievalAnswerability = Literal["answerable", "unanswerable"]
+RetrievalReviewStatus = Literal["draft", "reviewed", "locked"]
 
-REQUIRED_QUERY_TYPES: tuple[str, ...] = (
+REQUIRED_QUERY_TYPES: tuple[QueryType, ...] = (
     "place_fact",
     "place_story",
     "relationship",
@@ -118,13 +125,27 @@ class RetrievalJudgment(RetrievalModel):
         )
 
 
+class RetrievalEvalMetadata(RetrievalModel):
+    split: RetrievalEvalSplit
+    difficulty: RetrievalQueryDifficulty
+    place_ids: list[str] = Field(default_factory=list)
+    requires_context: bool = False
+    answerability: RetrievalAnswerability
+    review_status: RetrievalReviewStatus
+
+
 class RetrievalEvalItem(RetrievalModel):
     dataset_version: str = RETRIEVAL_EVAL_DATASET_VERSION
     query: RetrievalQuery
     judgments: list[RetrievalJudgment] = Field(default_factory=list)
+    metadata: RetrievalEvalMetadata
 
     @model_validator(mode="after")
     def validate_judgments(self) -> "RetrievalEvalItem":
+        if self.dataset_version != RETRIEVAL_EVAL_DATASET_VERSION:
+            raise ValueError(
+                f"retrieval eval dataset_version must be {RETRIEVAL_EVAL_DATASET_VERSION}"
+            )
         mismatched = [
             judgment.query_id
             for judgment in self.judgments
@@ -139,6 +160,18 @@ class RetrievalEvalItem(RetrievalModel):
                 raise ValueError("retrieve query must include at least one judgment")
             if not any(judgment.has_expected_target() for judgment in self.judgments):
                 raise ValueError("retrieve query must include at least one expected target")
+        if (
+            self.metadata.answerability == "unanswerable"
+            and self.query.expected_behavior != "abstain"
+        ):
+            raise ValueError("unanswerable metadata must use expected_behavior='abstain'")
+        if (
+            self.metadata.answerability == "answerable"
+            and self.query.expected_behavior != "retrieve"
+        ):
+            raise ValueError("answerable metadata must use expected_behavior='retrieve'")
+        if self.query.query_type == "voice_followup" and not self.metadata.requires_context:
+            raise ValueError("voice_followup metadata must use requires_context=true")
         return self
 
 
@@ -173,9 +206,26 @@ class RetrievalEvalDatasetSummary(RetrievalModel):
     dataset_version: str
     query_count: int = Field(ge=0)
     query_type_distribution: dict[str, int]
+    split_distribution: dict[str, int]
+    query_type_by_split: dict[str, dict[str, int]]
+    difficulty_distribution: dict[str, int]
+    answerability_distribution: dict[str, int]
+    review_status_distribution: dict[str, int]
     judgment_count: int = Field(ge=0)
     retrieve_query_count: int = Field(ge=0)
     abstain_query_count: int = Field(ge=0)
+    dataset_version_mismatch_count: int = Field(ge=0)
+    query_type_min_shortfall_count: int = Field(ge=0)
+    dev_query_count: int = Field(ge=0)
+    test_query_count: int = Field(ge=0)
+    dev_target_shortfall_count: int = Field(ge=0)
+    test_target_shortfall_count: int = Field(ge=0)
+    duplicate_query_id_count: int = Field(ge=0)
+    missing_metadata_count: int = Field(ge=0)
+    answerability_mismatch_count: int = Field(ge=0)
+    voice_followup_context_missing_count: int = Field(ge=0)
+    requires_context_count: int = Field(ge=0)
+    place_id_count: int = Field(ge=0)
     missing_required_query_type_count: int = Field(ge=0)
     missing_expected_target_count: int = Field(ge=0)
     judgment_query_mismatch_count: int = Field(ge=0)
@@ -241,6 +291,19 @@ def summarize_retrieval_eval_dataset(
     items: list[RetrievalEvalItem],
 ) -> RetrievalEvalDatasetSummary:
     query_types = Counter(item.query.query_type for item in items)
+    query_ids = [item.query.query_id for item in items]
+    split_distribution = Counter(
+        item.metadata.split for item in items if item.metadata is not None
+    )
+    difficulty_distribution = Counter(
+        item.metadata.difficulty for item in items if item.metadata is not None
+    )
+    answerability_distribution = Counter(
+        item.metadata.answerability for item in items if item.metadata is not None
+    )
+    review_status_distribution = Counter(
+        item.metadata.review_status for item in items if item.metadata is not None
+    )
     payload = [item.model_dump(mode="json") for item in items]
     missing_expected_target_count = sum(
         1
@@ -254,19 +317,84 @@ def summarize_retrieval_eval_dataset(
         for judgment in item.judgments
         if judgment.query_id != item.query.query_id
     )
+    answerability_mismatch_count = sum(
+        1
+        for item in items
+        if item.metadata is not None
+        and (
+            (
+                item.metadata.answerability == "answerable"
+                and item.query.expected_behavior != "retrieve"
+            )
+            or (
+                item.metadata.answerability == "unanswerable"
+                and item.query.expected_behavior != "abstain"
+            )
+        )
+    )
+    voice_followup_context_missing_count = sum(
+        1
+        for item in items
+        if item.query.query_type == "voice_followup"
+        and not item.metadata.requires_context
+    )
     dataset_versions = {item.dataset_version for item in items}
-    dataset_version = next(iter(dataset_versions), RETRIEVAL_EVAL_DATASET_VERSION)
+    dataset_version = (
+        RETRIEVAL_EVAL_DATASET_VERSION
+        if not dataset_versions
+        else next(iter(dataset_versions))
+        if len(dataset_versions) == 1
+        else "mixed"
+    )
 
     return RetrievalEvalDatasetSummary(
         dataset_version=dataset_version,
         query_count=len(items),
         query_type_distribution=dict(sorted(query_types.items())),
+        split_distribution=dict(sorted(split_distribution.items())),
+        query_type_by_split=_count_query_types_by_split(items),
+        difficulty_distribution=dict(sorted(difficulty_distribution.items())),
+        answerability_distribution=dict(sorted(answerability_distribution.items())),
+        review_status_distribution=dict(sorted(review_status_distribution.items())),
         judgment_count=sum(len(item.judgments) for item in items),
         retrieve_query_count=sum(
             1 for item in items if item.query.expected_behavior == "retrieve"
         ),
         abstain_query_count=sum(
             1 for item in items if item.query.expected_behavior == "abstain"
+        ),
+        dataset_version_mismatch_count=sum(
+            1
+            for item in items
+            if item.dataset_version != RETRIEVAL_EVAL_DATASET_VERSION
+        ),
+        query_type_min_shortfall_count=sum(
+            max(0, RETRIEVAL_EVAL_MIN_QUERIES_PER_TYPE - query_types.get(query_type, 0))
+            for query_type in REQUIRED_QUERY_TYPES
+        ),
+        dev_query_count=split_distribution.get("dev", 0),
+        test_query_count=split_distribution.get("test", 0),
+        dev_target_shortfall_count=_count_query_type_split_shortfall(
+            items=items,
+            split="dev",
+            target_per_query_type=RETRIEVAL_EVAL_TARGET_DEV_PER_QUERY_TYPE,
+        ),
+        test_target_shortfall_count=_count_query_type_split_shortfall(
+            items=items,
+            split="test",
+            target_per_query_type=RETRIEVAL_EVAL_TARGET_TEST_PER_QUERY_TYPE,
+        ),
+        duplicate_query_id_count=len(query_ids) - len(set(query_ids)),
+        missing_metadata_count=0,
+        answerability_mismatch_count=answerability_mismatch_count,
+        voice_followup_context_missing_count=voice_followup_context_missing_count,
+        requires_context_count=sum(1 for item in items if item.metadata.requires_context),
+        place_id_count=len(
+            {
+                place_id
+                for item in items
+                for place_id in item.metadata.place_ids
+            }
         ),
         missing_required_query_type_count=len(set(REQUIRED_QUERY_TYPES) - set(query_types)),
         missing_expected_target_count=missing_expected_target_count,
@@ -284,6 +412,18 @@ def collect_retrieval_eval_dataset_failures(
         failures.append("empty_eval_dataset")
     if summary.missing_required_query_type_count:
         failures.append("missing_required_query_types")
+    if summary.dataset_version_mismatch_count:
+        failures.append("dataset_version_mismatch")
+    if summary.query_type_min_shortfall_count:
+        failures.append("query_type_min_shortfall")
+    if summary.duplicate_query_id_count:
+        failures.append("duplicate_query_ids")
+    if summary.missing_metadata_count:
+        failures.append("missing_eval_metadata")
+    if summary.answerability_mismatch_count:
+        failures.append("answerability_mismatch")
+    if summary.voice_followup_context_missing_count:
+        failures.append("voice_followup_context_missing")
     if summary.missing_expected_target_count:
         failures.append("missing_expected_targets")
     if summary.judgment_query_mismatch_count:
@@ -293,6 +433,49 @@ def collect_retrieval_eval_dataset_failures(
     if summary.private_path_leakage_count:
         failures.append("private_path_leakage")
     return failures
+
+
+def collect_retrieval_eval_split_readiness_failures(
+    summary: RetrievalEvalDatasetSummary,
+) -> list[str]:
+    failures: list[str] = []
+    if summary.split_distribution.get("dev", 0) == 0:
+        failures.append("missing_dev_split")
+    if summary.split_distribution.get("test", 0) == 0:
+        failures.append("missing_test_split")
+    if summary.dev_target_shortfall_count:
+        failures.append("dev_query_type_target_shortfall")
+    if summary.test_target_shortfall_count:
+        failures.append("test_query_type_target_shortfall")
+    return failures
+
+
+def _count_query_types_by_split(
+    items: list[RetrievalEvalItem],
+) -> dict[str, dict[str, int]]:
+    counts: dict[str, Counter[str]] = {}
+    for item in items:
+        if item.metadata is None:
+            continue
+        split_counts = counts.setdefault(item.metadata.split, Counter())
+        split_counts[item.query.query_type] += 1
+    return {
+        split: dict(sorted(split_counts.items()))
+        for split, split_counts in sorted(counts.items())
+    }
+
+
+def _count_query_type_split_shortfall(
+    *,
+    items: list[RetrievalEvalItem],
+    split: RetrievalEvalSplit,
+    target_per_query_type: int,
+) -> int:
+    type_counts = _count_query_types_by_split(items).get(split, {})
+    return sum(
+        max(0, target_per_query_type - type_counts.get(query_type, 0))
+        for query_type in REQUIRED_QUERY_TYPES
+    )
 
 
 def compute_retrieval_metrics(

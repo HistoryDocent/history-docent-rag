@@ -11,6 +11,7 @@ from app.domain.retrieval import (
     RetrievedCandidate,
     RetrievalDocument,
     RetrievalEvalItem,
+    RetrievalEvalMetadata,
     RetrievalJudgment,
     RetrievalQuery,
     RetrievalRunResult,
@@ -87,6 +88,14 @@ def _eval_item() -> RetrievalEvalItem:
                 rationale_summary="expected target ids only",
             )
         ],
+        metadata=RetrievalEvalMetadata(
+            split="dev",
+            difficulty="medium",
+            place_ids=["gyeongbokgung"],
+            requires_context=False,
+            answerability="answerable",
+            review_status="draft",
+        ),
     )
 
 
@@ -139,6 +148,120 @@ def test_retrieval_eval_item_validates_expected_behavior() -> None:
                     rationale_summary="no-answer must not include positive judgment",
                 )
             ],
+            metadata=RetrievalEvalMetadata(
+                split="dev",
+                difficulty="easy",
+                place_ids=[],
+                requires_context=False,
+                answerability="unanswerable",
+                review_status="draft",
+            ),
+        )
+
+
+def test_retrieval_eval_metadata_validates_answerability_and_context() -> None:
+    with pytest.raises(ValidationError):
+        RetrievalEvalItem(
+            query=RetrievalQuery(
+                query_id="q-bad-answerability",
+                query_type="place_fact",
+                query_text="경복궁 근거를 찾아줘",
+                language="ko",
+                expected_behavior="retrieve",
+            ),
+            metadata=RetrievalEvalMetadata(
+                split="dev",
+                difficulty="medium",
+                place_ids=["gyeongbokgung"],
+                requires_context=False,
+                answerability="unanswerable",
+                review_status="draft",
+            ),
+            judgments=[
+                RetrievalJudgment(
+                    query_id="q-bad-answerability",
+                    relevant_doc_ids=["doc-one"],
+                    rationale_summary="answerability must match expected behavior",
+                )
+            ],
+        )
+
+    with pytest.raises(ValidationError):
+        RetrievalEvalItem(
+            query=RetrievalQuery(
+                query_id="q-bad-followup",
+                query_type="voice_followup",
+                query_text="그 사람은 어떻게 됐어?",
+                language="ko",
+                expected_behavior="retrieve",
+            ),
+            metadata=RetrievalEvalMetadata(
+                split="dev",
+                difficulty="hard",
+                place_ids=["gyeongbokgung"],
+                requires_context=False,
+                answerability="answerable",
+                review_status="draft",
+            ),
+            judgments=[
+                RetrievalJudgment(
+                    query_id="q-bad-followup",
+                    relevant_doc_ids=["doc-one"],
+                    rationale_summary="voice followup must require context",
+                )
+            ],
+        )
+
+
+def test_retrieval_eval_dataset_rejects_old_dataset_version() -> None:
+    with pytest.raises(ValidationError):
+        RetrievalEvalItem(
+            dataset_version="retrieval-eval-dataset/v1",
+            query=RetrievalQuery(
+                query_id="q-old-version",
+                query_type="place_fact",
+                query_text="경복궁 근거를 찾아줘",
+                language="ko",
+                expected_behavior="retrieve",
+            ),
+            metadata=RetrievalEvalMetadata(
+                split="dev",
+                difficulty="medium",
+                place_ids=["gyeongbokgung"],
+                requires_context=False,
+                answerability="answerable",
+                review_status="draft",
+            ),
+            judgments=[
+                RetrievalJudgment(
+                    query_id="q-old-version",
+                    relevant_doc_ids=["doc-one"],
+                    rationale_summary="dataset version must match v2 contract",
+                )
+            ],
+        )
+
+
+def test_retrieval_eval_dataset_rejects_missing_metadata() -> None:
+    with pytest.raises(ValidationError):
+        RetrievalEvalItem.model_validate(
+            {
+                "dataset_version": "retrieval-eval-dataset/v2",
+                "query": {
+                    "query_id": "q-missing-metadata",
+                    "query_type": "place_fact",
+                    "query_text": "경복궁 근거를 찾아줘",
+                    "language": "ko",
+                    "expected_behavior": "retrieve",
+                },
+                "judgments": [
+                    {
+                        "query_id": "q-missing-metadata",
+                        "relevant_doc_ids": ["doc-one"],
+                        "rationale_summary": "metadata is required in v2",
+                    }
+                ],
+            }
         )
 
 
@@ -161,6 +284,14 @@ def test_compute_retrieval_metrics_uses_same_items_for_bm25_and_later_methods() 
             expected_behavior="abstain",
         ),
         judgments=[],
+        metadata=RetrievalEvalMetadata(
+            split="dev",
+            difficulty="easy",
+            place_ids=[],
+            requires_context=False,
+            answerability="unanswerable",
+            review_status="draft",
+        ),
     )
     results = [
         RetrievalRunResult(
@@ -235,6 +366,14 @@ def test_ndcg_supports_multiple_relevant_child_ids_in_one_judgment() -> None:
                 rationale_summary="multiple relevant child ids can satisfy one relationship query",
             )
         ],
+        metadata=RetrievalEvalMetadata(
+            split="dev",
+            difficulty="hard",
+            place_ids=["gyeongbokgung"],
+            requires_context=False,
+            answerability="answerable",
+            review_status="draft",
+        ),
     )
     result = RetrievalRunResult(
         query_id="q-multi",

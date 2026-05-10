@@ -41,7 +41,7 @@
 ## Later
 
 - [ ] retrieval 평가셋 105개 확장 계획 구현
-- [ ] retrieval dev/test split contract 고정
+- [x] retrieval dev/test split contract 고정
 - [ ] chunking ablation runner 구현
 - [ ] Dense/Hybrid retrieval 구현
 - [ ] reranker comparison 구현

@@ -50,7 +50,7 @@ def _doc(identifier: str) -> RetrievalDocument:
 def _item(query_id: str, query_type: QueryType, child_id: str) -> RetrievalEvalItem:
     return RetrievalEvalItem.model_validate(
         {
-            "dataset_version": "retrieval-eval-dataset/v1",
+            "dataset_version": "retrieval-eval-dataset/v2",
             "query": {
                 "query_id": query_id,
                 "query_type": query_type,
@@ -70,6 +70,14 @@ def _item(query_id: str, query_type: QueryType, child_id: str) -> RetrievalEvalI
                     "public_allowed": True,
                 }
             ],
+            "metadata": {
+                "split": "dev",
+                "difficulty": "hard" if query_type == "route_context" else "medium",
+                "place_ids": ["gyeongbokgung"],
+                "requires_context": query_type in {"route_context", "voice_followup"},
+                "answerability": "answerable",
+                "review_status": "draft",
+            },
         }
     )
 

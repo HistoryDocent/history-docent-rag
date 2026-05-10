@@ -100,8 +100,9 @@ def _eval_item_payload(
                 "public_allowed": True,
             }
         )
+    answerability = "unanswerable" if expected_behavior == "abstain" else "answerable"
     return {
-        "dataset_version": "retrieval-eval-dataset/v1",
+        "dataset_version": "retrieval-eval-dataset/v2",
         "query": {
             "query_id": query_id,
             "query_type": query_type,
@@ -112,6 +113,14 @@ def _eval_item_payload(
             "public_allowed": True,
         },
         "judgments": judgments,
+        "metadata": {
+            "split": "dev",
+            "difficulty": "hard" if query_type in {"relationship", "route_context"} else "medium",
+            "place_ids": ["gyeongbokgung"] if expected_behavior == "retrieve" else [],
+            "requires_context": query_type in {"route_context", "voice_followup"},
+            "answerability": answerability,
+            "review_status": "draft",
+        },
     }
 
 
