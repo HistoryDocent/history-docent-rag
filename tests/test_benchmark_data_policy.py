@@ -73,6 +73,12 @@ def test_public_reports_describe_private_benchmark_paths_as_aliases() -> None:
             Path("evals/reports/retrieval_eval_expansion_report.md").read_text(
                 encoding="utf-8"
             ),
+            Path("evals/reports/retrieval_eval_private_dev_expansion_report.md").read_text(
+                encoding="utf-8"
+            ),
+            Path("evals/reports/retrieval_eval_private_dev_target_report.md").read_text(
+                encoding="utf-8"
+            ),
         ]
     )
 
@@ -80,6 +86,38 @@ def test_public_reports_describe_private_benchmark_paths_as_aliases() -> None:
     assert "`private_data/evals/datasets/`" not in report_text
     assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" not in report_text
     assert "private_data/evals/datasets/retrieval_eval_test.jsonl" not in report_text
+
+
+def test_public_private_dev_reports_do_not_expose_source_material_or_secrets() -> None:
+    report_text = "\n".join(
+        [
+            Path("evals/reports/retrieval_eval_private_dev_expansion_report.md").read_text(
+                encoding="utf-8"
+            ),
+            Path("evals/reports/retrieval_eval_private_dev_target_report.md").read_text(
+                encoding="utf-8"
+            ),
+        ]
+    )
+
+    forbidden_fragments = [
+        "private_data/evals/datasets/retrieval_eval_dev.jsonl",
+        "private_data/reports/parent_child_chunks.json",
+        "search_text",
+        "context_text",
+        "source_text",
+        '"raw_text"',
+        "`raw_text`",
+        "| raw_text |",
+        "C:" + "\\",
+        "F:" + "\\",
+        "sk-",
+        "api_key",
+    ]
+
+    assert "<private retrieval eval dataset: retrieval_eval_dev.jsonl>" in report_text
+    assert "<private parent_child_chunks report>" in report_text
+    assert [fragment for fragment in forbidden_fragments if fragment in report_text] == []
 
 
 def test_dataset_report_redacts_private_benchmark_dataset_path() -> None:

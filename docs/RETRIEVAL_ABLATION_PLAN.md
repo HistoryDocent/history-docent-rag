@@ -470,17 +470,20 @@ latency/cost 악화 설명 없음
 다음 구현 순서는 이 문서를 따른다.
 
 1. 평가셋 확장 schema와 dev/test split 문서화
-2. chunking config ablation runner
-3. Dense retrieval baseline
-4. Hybrid RRF/Weighted retrieval
-5. reranker comparison
-6. place-aware deterministic query expansion
-7. Solar Pro 3 answer contract
-8. generation eval harness
-9. Qdrant production candidate
-10. RAPTOR-lite
-11. GraphRAG-lite
-12. final ablation report
+2. private dev 평가셋 35개 1차 draft 작성과 target resolvability 검증
+3. private dev 평가셋 35개 2차 draft 작성과 human review
+4. private test 평가셋 35개 locked 작성
+5. chunking config ablation runner
+6. Dense retrieval baseline
+7. Hybrid RRF/Weighted retrieval
+8. reranker comparison
+9. place-aware deterministic query expansion
+10. Solar Pro 3 answer contract
+11. generation eval harness
+12. Qdrant production candidate
+13. RAPTOR-lite
+14. GraphRAG-lite
+15. final ablation report
 
 ## 포트폴리오 메시지
 

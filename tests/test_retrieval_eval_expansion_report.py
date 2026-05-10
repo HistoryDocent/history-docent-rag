@@ -189,6 +189,41 @@ def test_retrieval_eval_expansion_report_markdown_matches_seed_counts() -> None:
     assert "overall_query_target_shortfall" in markdown
 
 
+def test_retrieval_eval_expansion_report_describes_dev_only_progress() -> None:
+    items = [
+        _eval_item(query_id=f"q-dev-place-fact-{index:03d}").model_copy(
+            update={
+                "metadata": _eval_item().metadata.model_copy(
+                    update={"split": "dev", "review_status": "draft"}
+                )
+            }
+        )
+        for index in range(1, 6)
+    ]
+    dataset_summary = summarize_retrieval_eval_dataset(items)
+    expansion_summary = summarize_retrieval_eval_expansion(items)
+    target_summary = summarize_retrieval_eval_target_resolvability(
+        items=items,
+        inventory=build_retrieval_target_inventory([_child()]),
+    )
+
+    markdown = build_retrieval_eval_expansion_report_markdown(
+        dataset_summary=dataset_summary,
+        expansion_summary=expansion_summary,
+        target_summary=target_summary,
+        dataset_path=Path("private_data/evals/datasets/retrieval_eval_dev.jsonl"),
+        chunks_path_alias=PRIVATE_CHUNKS_PATH_ALIAS,
+    )
+
+    assert "<private retrieval eval dataset: retrieval_eval_dev.jsonl>" in markdown
+    assert "현재 입력 평가셋은 dev 5개로 구성되어 있으며 총 5개다." in markdown
+    assert "| dev_query_count | 5 |" in markdown
+    assert "| draft_query_count | 5 |" in markdown
+    assert "다음 작성 우선순위는 dev 부족분이 남은" in markdown
+    assert "query type별 private dev 부족분을 채워 dev 10개씩 맞춘다." in markdown
+    assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" not in markdown
+
+
 def test_retrieval_eval_expansion_report_deduplicates_public_safety_failures() -> None:
     child = _child()
     item = _eval_item()

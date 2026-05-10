@@ -82,6 +82,9 @@ def build_retrieval_eval_expansion_report_markdown(
     )
     authoring_status = "PASS" if not blocking_failures else "FAIL"
     expansion_status = "PASS" if not expansion_failures else "INCOMPLETE"
+    split_summary_text = _split_summary_text(expansion_summary)
+    priority_text = _next_authoring_priority_text(expansion_summary)
+    next_steps_text = _next_steps_markdown(expansion_summary)
     return f"""# Retrieval Eval Expansion Report
 
 ## 목적
@@ -155,10 +158,10 @@ blocking_failures={blocking_failures}
 
 ## 정성 리포트
 
-- 현재 평가셋은 query type별 seed 2개씩 총 14개다.
+- 현재 입력 평가셋은 {split_summary_text} 총 {expansion_summary.current_query_count}개다.
 - 목표는 query type별 dev 10개, test 5개로 총 105개다.
-- 현재 전체 부족분은 91개지만, dev/test split 기준 부족분은 105개다. seed는 smoke test로 유지하고 최종 비교 튜닝에는 사용하지 않는다.
-- 다음 작성 우선순위는 `voice_followup`, `relationship`, `route_context`, `no_answer`다. 이 네 유형이 실제 도슨트 서비스 실패를 가장 많이 드러낸다.
+- 현재 전체 부족분은 {expansion_summary.overall_shortfall_count}개이고, dev/test split 기준 부족분은 {expansion_summary.dev_test_shortfall_count}개다. seed는 smoke test로 유지하고 최종 비교 튜닝에는 사용하지 않는다.
+- 다음 작성 우선순위는 {priority_text}다.
 - test split은 최종 ablation 확인 전까지 튜닝에 사용하지 않는다.
 - public dataset에는 원문 answer, chunk text, OCR text, parser text, private path, secret-like 값을 넣지 않는다.
 - public evaluation example은 원문 인용 없이 직접 작성한 paraphrase만 허용한다.
@@ -166,10 +169,7 @@ blocking_failures={blocking_failures}
 
 ## 다음 단계
 
-1. query type별 private dev 후보 10개를 먼저 draft로 작성한다.
-2. target resolvability gate를 통과한 항목만 reviewed로 승격한다.
-3. private test 후보 5개는 dev 튜닝 후 별도 locked 상태로 고정한다.
-4. 이후 chunking ablation runner를 BM25 기준으로 실행한다.
+{next_steps_text}
 """
 
 
@@ -258,6 +258,71 @@ def _query_type_row_markdown(
         f"{row.target_test_query_count} | {row.dev_shortfall_count} | "
         f"{row.test_shortfall_count} | {row.current_total_query_count} | "
         f"{row.target_total_query_count} | {row.total_shortfall_count} |"
+    )
+
+
+def _split_summary_text(summary: RetrievalEvalExpansionSummary) -> str:
+    split_parts = []
+    if summary.seed_query_count:
+        split_parts.append(f"seed {summary.seed_query_count}개")
+    if summary.dev_query_count:
+        split_parts.append(f"dev {summary.dev_query_count}개")
+    if summary.test_query_count:
+        split_parts.append(f"test {summary.test_query_count}개")
+    if not split_parts:
+        return "비어 있으며"
+    return ", ".join(split_parts) + "로 구성되어 있으며"
+
+
+def _next_authoring_priority_text(summary: RetrievalEvalExpansionSummary) -> str:
+    dev_shortfalls = [
+        f"`{query_type}`"
+        for query_type, row in summary.query_type_rows.items()
+        if row.dev_shortfall_count
+    ]
+    test_shortfalls = [
+        f"`{query_type}`"
+        for query_type, row in summary.query_type_rows.items()
+        if row.test_shortfall_count
+    ]
+    if dev_shortfalls:
+        return f"dev 부족분이 남은 {', '.join(dev_shortfalls)}"
+    if test_shortfalls:
+        return f"test 부족분이 남은 {', '.join(test_shortfalls)}"
+    return "review status 승격과 locked split 검수"
+
+
+def _next_steps_markdown(summary: RetrievalEvalExpansionSummary) -> str:
+    has_dev_shortfall = any(
+        row.dev_shortfall_count for row in summary.query_type_rows.values()
+    )
+    has_test_shortfall = any(
+        row.test_shortfall_count for row in summary.query_type_rows.values()
+    )
+    if has_dev_shortfall:
+        return "\n".join(
+            [
+                "1. query type별 private dev 부족분을 채워 dev 10개씩 맞춘다.",
+                "2. target resolvability gate를 통과한 항목만 reviewed로 승격한다.",
+                "3. private test 후보 5개는 dev 튜닝 후 별도 locked 상태로 고정한다.",
+                "4. 이후 chunking ablation runner를 BM25 기준으로 실행한다.",
+            ]
+        )
+    if has_test_shortfall:
+        return "\n".join(
+            [
+                "1. private dev 항목을 human review 후 reviewed로 승격한다.",
+                "2. private test 후보를 query type별 5개씩 locked 상태로 작성한다.",
+                "3. test split은 최종 ablation 확인 전까지 튜닝에 사용하지 않는다.",
+                "4. 이후 chunking ablation runner를 BM25 기준으로 실행한다.",
+            ]
+        )
+    return "\n".join(
+        [
+            "1. private dev/test lock 상태와 leakage gate를 재검수한다.",
+            "2. chunking ablation runner를 BM25 기준으로 실행한다.",
+            "3. Dense, Hybrid, Reranker 비교로 넘어간다.",
+        ]
     )
 
 

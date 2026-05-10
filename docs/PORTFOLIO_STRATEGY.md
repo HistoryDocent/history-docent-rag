@@ -24,9 +24,9 @@
 ```text
 HistoryDocent | 서울/한양 역사 관광 도슨트 RAG 백엔드 | 개인 프로젝트
 - Upstage Parser 기반 한국사 도서 데이터를 element 단위로 정규화하고 page/section/chunk provenance를 보존하는 전처리 pipeline 설계
-- 서울 주요 장소와 한양 역사 맥락을 연결하기 위해 place-aware query rewrite, parent-child chunking, hybrid retrieval 구조 구현
-- BM25, Dense, Hybrid, RAPTOR-lite, GraphRAG-lite를 고정 평가셋으로 비교하고 Recall@k, MRR, Correct-with-Evidence 기준으로 성능 검증
-- Solar Pro 3 provider abstraction과 FastAPI 기반 citation RAG API를 구현하고 rate limit, timeout, retry, structured logging 적용
+- 서울 주요 장소와 한양 역사 맥락을 연결하기 위해 place catalog, parent-child chunking, BM25 baseline, retrieval evaluation harness 구현
+- Dense, Hybrid, Reranker, Query Rewrite, RAPTOR-lite, GraphRAG-lite 비교를 위한 dev/test 평가셋과 ablation 계획 설계
+- Solar Pro 3 기반 citation RAG API는 answer contract와 evaluation gate를 먼저 고정한 뒤 구현 예정
 ```
 
 실제 수치 확보 전에는 “개선” 문장을 쓰지 않는다.

@@ -30,7 +30,7 @@
 - Upstage Parser 결과 정규화
 - 서울/한양 장소 catalog 설계
 - parent-child chunking 재설계
-- BM25/Dense/Hybrid retrieval 비교
+- BM25 baseline 구현과 Dense/Hybrid retrieval 비교 설계
 - citation RAG answer contract 설계
 - 단계별 evaluation gate 구축
 
@@ -55,9 +55,9 @@
 - 서울/한양 장소 catalog 설계
 - 구조 보존 parent/child chunking
 - BM25 baseline retrieval
-- dense retrieval 및 hybrid retrieval 실험
+- dense retrieval 및 hybrid retrieval 실험 설계
 - 장소명, 지시어, 짧은 음성형 질문을 위한 query rewrite
-- Solar Pro 3 기반 citation RAG 답변 생성
+- Solar Pro 3 기반 citation RAG 답변 생성 계약
 - retrieval/generation 평가 harness
 - 실패 분석과 ablation report
 
@@ -180,7 +180,9 @@ retrieval 평가셋 확장 리포트를 추가했다. 현재 `authoring_status=P
 
 105개 full benchmark는 public repository에 직접 올리지 않고 `private_data/evals/datasets/`에서 관리한다. public에는 seed/sample과 집계 report만 남긴다.
 
-다음 단계는 query type별 private dev 평가 문항을 먼저 draft로 작성하고, target resolvability gate와 human review를 통과한 항목만 reviewed로 승격하는 것이다.
+private dev 평가셋 1차 draft 35개를 작성했고, public-safe 집계 리포트 기준 `target_resolvability_status=PASS`, `missing_child_target_count=0`, `public_raw_text_leakage_count=0`이다. private dev 원본 JSONL은 public repository에 commit하지 않는다.
+
+다음 단계는 query type별 private dev 평가 문항 35개를 추가 작성해 dev 70개를 채우고, target resolvability gate와 human review를 통과한 항목만 reviewed로 승격하는 것이다.
 
 ## 실행 전략
 
@@ -206,6 +208,8 @@ retrieval 평가셋 확장 리포트를 추가했다. 현재 `authoring_status=P
 | [Retrieval Eval Dataset Report](evals/reports/retrieval_eval_dataset_report.md) | retrieval 평가셋 v2 contract와 split gate 결과 |
 | [Retrieval Eval Target Resolvability Report](evals/reports/retrieval_eval_target_resolvability_report.md) | retrieval judgment target의 corpus 매핑 검증 결과 |
 | [Retrieval Eval Expansion Report](evals/reports/retrieval_eval_expansion_report.md) | retrieval dev/test 평가셋 확장 현황과 부족분 |
+| [Private Dev Eval Expansion Report](evals/reports/retrieval_eval_private_dev_expansion_report.md) | private dev 1차 draft의 집계 현황과 부족분 |
+| [Private Dev Eval Target Report](evals/reports/retrieval_eval_private_dev_target_report.md) | private dev 1차 draft의 target resolvability 검증 결과 |
 | [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md) | 실서비스 기준 RAG 비교 실험 순서, 논문 매핑, 선택 기준 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |
