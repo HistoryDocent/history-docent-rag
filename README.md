@@ -176,7 +176,9 @@ retrieval 평가셋 v2 metadata contract와 dev/test split readiness gate를 추
 
 retrieval judgment target resolvability gate를 추가해 seed 평가셋의 child/parent/doc target이 실제 검색 corpus에 매핑되는지 검증했다.
 
-다음 단계는 query type별 dev/test 평가 문항을 확장하고, chunking ablation으로 검색 단위를 먼저 고정한 뒤 Dense retrieval과 Hybrid retrieval을 같은 평가셋에서 비교하는 것이다.
+retrieval 평가셋 확장 리포트를 추가했다. 현재 `authoring_status=PASS`, `expansion_readiness_status=INCOMPLETE`, `target_query_count=105`, `current_query_count=14`, `overall_shortfall_count=91`, `dev_test_shortfall_count=105`다.
+
+다음 단계는 query type별 dev 평가 문항을 먼저 draft로 작성하고, target resolvability gate를 통과한 항목만 reviewed로 승격하는 것이다.
 
 ## 실행 전략
 
@@ -200,6 +202,7 @@ retrieval judgment target resolvability gate를 추가해 seed 평가셋의 chil
 | [Retrieval Eval Dataset](docs/RETRIEVAL_EVAL_DATASET.md) | retrieval seed 평가셋의 정량/정성 품질 보고서 |
 | [Retrieval Eval Dataset Report](evals/reports/retrieval_eval_dataset_report.md) | retrieval 평가셋 v2 contract와 split gate 결과 |
 | [Retrieval Eval Target Resolvability Report](evals/reports/retrieval_eval_target_resolvability_report.md) | retrieval judgment target의 corpus 매핑 검증 결과 |
+| [Retrieval Eval Expansion Report](evals/reports/retrieval_eval_expansion_report.md) | retrieval dev/test 평가셋 확장 현황과 부족분 |
 | [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md) | 실서비스 기준 RAG 비교 실험 순서, 논문 매핑, 선택 기준 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |

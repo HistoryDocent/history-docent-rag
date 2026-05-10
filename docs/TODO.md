@@ -40,7 +40,9 @@
 
 ## Later
 
-- [ ] retrieval 평가셋 105개 확장 계획 구현
+- [x] retrieval 평가셋 105개 확장 workflow와 부족분 리포트 추가
+- [ ] retrieval 평가셋 dev 후보 70개 draft 작성
+- [ ] retrieval 평가셋 test 후보 35개 locked 작성
 - [x] retrieval dev/test split contract 고정
 - [x] retrieval judgment target 검증 gate 추가
 - [ ] chunking ablation runner 구현

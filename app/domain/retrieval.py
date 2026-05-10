@@ -282,6 +282,41 @@ class RetrievalEvalTargetResolvabilitySummary(RetrievalModel):
     secret_like_leakage_count: int = Field(ge=0)
 
 
+class RetrievalEvalExpansionTypeRow(RetrievalModel):
+    query_type: QueryType
+    seed_query_count: int = Field(ge=0)
+    dev_query_count: int = Field(ge=0)
+    test_query_count: int = Field(ge=0)
+    target_dev_query_count: int = Field(ge=0)
+    target_test_query_count: int = Field(ge=0)
+    target_total_query_count: int = Field(ge=0)
+    current_total_query_count: int = Field(ge=0)
+    dev_shortfall_count: int = Field(ge=0)
+    test_shortfall_count: int = Field(ge=0)
+    total_shortfall_count: int = Field(ge=0)
+
+
+class RetrievalEvalExpansionSummary(RetrievalModel):
+    dataset_version: str
+    target_query_count: int = Field(ge=0)
+    current_query_count: int = Field(ge=0)
+    overall_shortfall_count: int = Field(ge=0)
+    seed_query_count: int = Field(ge=0)
+    dev_query_count: int = Field(ge=0)
+    test_query_count: int = Field(ge=0)
+    dev_test_target_query_count: int = Field(ge=0)
+    dev_test_current_query_count: int = Field(ge=0)
+    dev_test_shortfall_count: int = Field(ge=0)
+    draft_query_count: int = Field(ge=0)
+    reviewed_query_count: int = Field(ge=0)
+    locked_query_count: int = Field(ge=0)
+    review_status_distribution: dict[str, int]
+    query_type_rows: dict[str, RetrievalEvalExpansionTypeRow]
+    public_raw_text_leakage_count: int = Field(ge=0)
+    private_path_leakage_count: int = Field(ge=0)
+    secret_like_leakage_count: int = Field(ge=0)
+
+
 class RetrievalMetricSummary(RetrievalModel):
     method: RetrievalMethod
     query_count: int = Field(ge=0)
@@ -543,6 +578,73 @@ def summarize_retrieval_eval_target_resolvability(
     )
 
 
+def summarize_retrieval_eval_expansion(
+    items: list[RetrievalEvalItem],
+) -> RetrievalEvalExpansionSummary:
+    dataset_summary = summarize_retrieval_eval_dataset(items)
+    target_total_per_type = (
+        RETRIEVAL_EVAL_TARGET_DEV_PER_QUERY_TYPE
+        + RETRIEVAL_EVAL_TARGET_TEST_PER_QUERY_TYPE
+    )
+    query_type_rows: dict[str, RetrievalEvalExpansionTypeRow] = {}
+    for query_type in REQUIRED_QUERY_TYPES:
+        seed_count = dataset_summary.query_type_by_split.get("seed", {}).get(query_type, 0)
+        dev_count = dataset_summary.query_type_by_split.get("dev", {}).get(query_type, 0)
+        test_count = dataset_summary.query_type_by_split.get("test", {}).get(query_type, 0)
+        current_total = seed_count + dev_count + test_count
+        query_type_rows[query_type] = RetrievalEvalExpansionTypeRow(
+            query_type=query_type,
+            seed_query_count=seed_count,
+            dev_query_count=dev_count,
+            test_query_count=test_count,
+            target_dev_query_count=RETRIEVAL_EVAL_TARGET_DEV_PER_QUERY_TYPE,
+            target_test_query_count=RETRIEVAL_EVAL_TARGET_TEST_PER_QUERY_TYPE,
+            target_total_query_count=target_total_per_type,
+            current_total_query_count=current_total,
+            dev_shortfall_count=max(
+                0,
+                RETRIEVAL_EVAL_TARGET_DEV_PER_QUERY_TYPE - dev_count,
+            ),
+            test_shortfall_count=max(
+                0,
+                RETRIEVAL_EVAL_TARGET_TEST_PER_QUERY_TYPE - test_count,
+            ),
+            total_shortfall_count=max(0, target_total_per_type - current_total),
+        )
+
+    payload = [item.model_dump(mode="json") for item in items]
+    return RetrievalEvalExpansionSummary(
+        dataset_version=dataset_summary.dataset_version,
+        target_query_count=len(REQUIRED_QUERY_TYPES) * target_total_per_type,
+        current_query_count=dataset_summary.query_count,
+        overall_shortfall_count=sum(
+            row.total_shortfall_count for row in query_type_rows.values()
+        ),
+        seed_query_count=dataset_summary.split_distribution.get("seed", 0),
+        dev_query_count=dataset_summary.dev_query_count,
+        test_query_count=dataset_summary.test_query_count,
+        dev_test_target_query_count=len(REQUIRED_QUERY_TYPES) * target_total_per_type,
+        dev_test_current_query_count=(
+            dataset_summary.dev_query_count + dataset_summary.test_query_count
+        ),
+        dev_test_shortfall_count=(
+            dataset_summary.dev_target_shortfall_count
+            + dataset_summary.test_target_shortfall_count
+        ),
+        draft_query_count=dataset_summary.review_status_distribution.get("draft", 0),
+        reviewed_query_count=dataset_summary.review_status_distribution.get(
+            "reviewed",
+            0,
+        ),
+        locked_query_count=dataset_summary.review_status_distribution.get("locked", 0),
+        review_status_distribution=dataset_summary.review_status_distribution,
+        query_type_rows=query_type_rows,
+        public_raw_text_leakage_count=dataset_summary.public_raw_text_leakage_count,
+        private_path_leakage_count=dataset_summary.private_path_leakage_count,
+        secret_like_leakage_count=_count_secret_like_leakage(payload),
+    )
+
+
 def collect_retrieval_eval_dataset_failures(
     summary: RetrievalEvalDatasetSummary,
 ) -> list[str]:
@@ -571,6 +673,29 @@ def collect_retrieval_eval_dataset_failures(
         failures.append("public_raw_text_leakage")
     if summary.private_path_leakage_count:
         failures.append("private_path_leakage")
+    return failures
+
+
+def collect_retrieval_eval_expansion_readiness_failures(
+    summary: RetrievalEvalExpansionSummary,
+) -> list[str]:
+    failures: list[str] = []
+    if summary.overall_shortfall_count:
+        failures.append("overall_query_target_shortfall")
+    if summary.dev_query_count == 0:
+        failures.append("missing_dev_split")
+    if summary.test_query_count == 0:
+        failures.append("missing_test_split")
+    if any(row.dev_shortfall_count for row in summary.query_type_rows.values()):
+        failures.append("dev_query_type_target_shortfall")
+    if any(row.test_shortfall_count for row in summary.query_type_rows.values()):
+        failures.append("test_query_type_target_shortfall")
+    if summary.public_raw_text_leakage_count:
+        failures.append("public_raw_text_leakage")
+    if summary.private_path_leakage_count:
+        failures.append("private_path_leakage")
+    if summary.secret_like_leakage_count:
+        failures.append("secret_like_leakage")
     return failures
 
 
