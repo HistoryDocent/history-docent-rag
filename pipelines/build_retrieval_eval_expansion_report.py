@@ -90,6 +90,8 @@ retrieval 평가셋을 seed smoke test에서 dev/test 비교 평가셋으로 확
 
 이 리포트는 성능 개선 결과가 아니다. 청킹, Dense, Hybrid, Reranker 비교 전에 질문 수량, split, review status, target resolvability, 공개 안전성을 확인하는 정량/정성 보고서다.
 
+full dev/test benchmark는 public repository에 직접 저장하지 않는다. public에는 seed/sample과 집계 report만 남기고, full benchmark path는 public report에서 alias로만 표기한다.
+
 ## 실행 정보
 
 | 항목 | 값 |
@@ -159,13 +161,14 @@ blocking_failures={blocking_failures}
 - 다음 작성 우선순위는 `voice_followup`, `relationship`, `route_context`, `no_answer`다. 이 네 유형이 실제 도슨트 서비스 실패를 가장 많이 드러낸다.
 - test split은 최종 ablation 확인 전까지 튜닝에 사용하지 않는다.
 - public dataset에는 원문 answer, chunk text, OCR text, parser text, private path, secret-like 값을 넣지 않는다.
+- public evaluation example은 원문 인용 없이 직접 작성한 paraphrase만 허용한다.
 - gold judgment는 가능한 한 `relevant_child_ids`를 우선하고, child 판단이 어려울 때만 parent/doc target을 보조로 둔다.
 
 ## 다음 단계
 
-1. query type별 dev 후보 10개를 먼저 draft로 작성한다.
+1. query type별 private dev 후보 10개를 먼저 draft로 작성한다.
 2. target resolvability gate를 통과한 항목만 reviewed로 승격한다.
-3. test 후보 5개는 dev 튜닝 후 별도 locked 상태로 고정한다.
+3. private test 후보 5개는 dev 튜닝 후 별도 locked 상태로 고정한다.
 4. 이후 chunking ablation runner를 BM25 기준으로 실행한다.
 """
 
@@ -291,14 +294,28 @@ def _unique_failures(failures: list[str]) -> list[str]:
 
 
 def _public_dataset_path_alias(dataset_path: Path) -> str:
+    if _is_private_benchmark_dataset_path(dataset_path):
+        return f"<private retrieval eval dataset: {dataset_path.name}>"
     if dataset_path.is_absolute():
         try:
-            return dataset_path.relative_to(Path.cwd()).as_posix()
+            relative_path = dataset_path.relative_to(Path.cwd())
         except ValueError:
             return f"<public retrieval eval dataset: {dataset_path.name}>"
+        if _is_private_benchmark_dataset_path(relative_path):
+            return f"<private retrieval eval dataset: {dataset_path.name}>"
+        return relative_path.as_posix()
     if ".." in dataset_path.parts:
         return f"<public retrieval eval dataset: {dataset_path.name}>"
     return dataset_path.as_posix()
+
+
+def _is_private_benchmark_dataset_path(dataset_path: Path) -> bool:
+    normalized_parts = tuple(part.lower() for part in dataset_path.parts)
+    return (
+        "private_data" in normalized_parts
+        or dataset_path.name.startswith("retrieval_eval_dev")
+        or dataset_path.name.startswith("retrieval_eval_test")
+    )
 
 
 if __name__ == "__main__":

@@ -56,13 +56,14 @@
 | --- | --- | --- | --- | --- |
 | 5.1 | BM25 baseline | retrieval module | Recall@k/MRR 측정 | `feat: add bm25 retrieval baseline` |
 | 5.2 | 평가셋 확장 workflow | expansion report | 목표 105개 대비 부족분과 public gate 기록 | `평가: retrieval 평가셋 확장 리포트 추가` |
-| 5.3 | dev/test 평가셋 확장 | retrieval eval dataset | query type별 dev/test split 고정 | `test: expand retrieval eval dataset` |
-| 5.4 | chunking ablation | chunking experiment runner | C0/C1/C2/C3 비교와 winner 기록 | `test: add chunking ablation runner` |
-| 5.5 | Dense retrieval | retrieval module | 동일 평가셋 비교 가능 | `feat: add dense retrieval baseline` |
-| 5.6 | Hybrid retrieval | retrieval module | weighted/RRF 비교 가능 | `feat: add hybrid retrieval experiment` |
-| 5.7 | Reranker comparison | retrieval module | top30/top50 rerank 비교 | `feat: add reranker comparison` |
-| 5.8 | evaluation harness | evals module | query type별 metric과 latency 출력 | `test: add retrieval evaluation harness` |
-| 5.9 | notebooks | `06`, `07`, `09` notebooks | baseline/chunking/dense/hybrid 비교표 생성 | `docs: add retrieval evaluation notebooks` |
+| 5.3 | benchmark 공개 범위 정책 | data policy, gitignore | full dev/test는 private, public은 sample/report만 허용 | `문서: benchmark 공개 범위 정책 고정` |
+| 5.4 | private dev/test 평가셋 확장 | retrieval eval dataset | query type별 private dev/test split 고정 | `test: expand retrieval eval dataset` |
+| 5.5 | chunking ablation | chunking experiment runner | C0/C1/C2/C3 비교와 winner 기록 | `test: add chunking ablation runner` |
+| 5.6 | Dense retrieval | retrieval module | 동일 평가셋 비교 가능 | `feat: add dense retrieval baseline` |
+| 5.7 | Hybrid retrieval | retrieval module | weighted/RRF 비교 가능 | `feat: add hybrid retrieval experiment` |
+| 5.8 | Reranker comparison | retrieval module | top30/top50 rerank 비교 | `feat: add reranker comparison` |
+| 5.9 | evaluation harness | evals module | query type별 metric과 latency 출력 | `test: add retrieval evaluation harness` |
+| 5.10 | notebooks | `06`, `07`, `09` notebooks | baseline/chunking/dense/hybrid 비교표 생성 | `docs: add retrieval evaluation notebooks` |
 
 ## Phase 6. Query Rewrite와 Citation RAG
 

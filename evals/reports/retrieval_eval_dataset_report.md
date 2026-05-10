@@ -6,6 +6,8 @@ retrieval 평가셋 v2 contract와 split gate를 검증한다.
 
 이 리포트는 성능 개선 결과가 아니다. Dense/Hybrid/Reranker 비교 전에 평가셋의 grain, split, judgment, 공개 정책을 고정하기 위한 정량/정성 보고서다.
 
+full dev/test benchmark는 public repository에 직접 저장하지 않는다. public에는 seed/sample과 집계 report만 남기고, full benchmark path는 public report에서 alias로만 표기한다.
+
 ## 실행 정보
 
 | 항목 | 값 |
@@ -110,9 +112,10 @@ split_readiness_failures=['missing_dev_split', 'missing_test_split', 'dev_query_
 - `voice_followup`은 `requires_context=true`를 강제해 대화 맥락 없는 검색과 구분한다.
 - `no_answer`는 `answerability=unanswerable`과 positive judgment 없음으로 환각 방지 평가에 사용한다.
 - public dataset에는 원문 answer, chunk text, OCR text, parser text, private path를 포함하지 않는다.
+- public evaluation example은 원문 직접 인용 없이 직접 작성한 paraphrase만 허용한다.
 
 ## 다음 단계
 
-1. query type별 dev 10개, test 5개 목표를 채운다.
+1. query type별 private dev 10개, private test 5개 목표를 채운다.
 2. test split은 최종 ablation 전까지 튜닝에 사용하지 않는다.
 3. Dense/Hybrid 비교는 이 v2 contract가 유지된 상태에서만 진행한다.

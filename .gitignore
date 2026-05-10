@@ -36,6 +36,9 @@ chroma/
 *.mobi
 
 # Large or derived evaluation artifacts
+private_data/evals/
+evals/datasets/retrieval_eval_dev*.jsonl
+evals/datasets/retrieval_eval_test*.jsonl
 evals/results/*.csv
 evals/results/*.jsonl
 !evals/results/bm25_baseline_results.jsonl

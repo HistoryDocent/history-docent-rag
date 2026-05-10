@@ -8,8 +8,10 @@
 - [ ] 전체 OCR text가 포함되지 않았다.
 - [ ] 전체 chunk text가 포함되지 않았다.
 - [ ] raw eval CSV/JSONL이 포함되지 않았다.
+- [ ] full dev/test benchmark JSONL이 public repo에 포함되지 않았다.
 - [ ] `.env` 또는 API key가 포함되지 않았다.
 - [ ] public sample에 private absolute path가 없다.
+- [ ] public evaluation example에 원문 직접 인용이 없다.
 - [ ] README와 docs는 한글이다.
 - [ ] 코드 identifier, API field, metric 이름은 영어다.
 

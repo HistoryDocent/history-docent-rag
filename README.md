@@ -178,7 +178,9 @@ retrieval judgment target resolvability gate를 추가해 seed 평가셋의 chil
 
 retrieval 평가셋 확장 리포트를 추가했다. 현재 `authoring_status=PASS`, `expansion_readiness_status=INCOMPLETE`, `target_query_count=105`, `current_query_count=14`, `overall_shortfall_count=91`, `dev_test_shortfall_count=105`다.
 
-다음 단계는 query type별 dev 평가 문항을 먼저 draft로 작성하고, target resolvability gate를 통과한 항목만 reviewed로 승격하는 것이다.
+105개 full benchmark는 public repository에 직접 올리지 않고 `private_data/evals/datasets/`에서 관리한다. public에는 seed/sample과 집계 report만 남긴다.
+
+다음 단계는 query type별 private dev 평가 문항을 먼저 draft로 작성하고, target resolvability gate와 human review를 통과한 항목만 reviewed로 승격하는 것이다.
 
 ## 실행 전략
 
@@ -189,6 +191,7 @@ retrieval 평가셋 확장 리포트를 추가했다. 현재 `authoring_status=P
 | 문서 | 목적 |
 | --- | --- |
 | [PRD](docs/PRD.md) | 제품 목적, MVP, non-goal, 성공 기준 |
+| [Data Policy](docs/DATA_POLICY.md) | public/private 데이터와 benchmark 공개 범위 정책 |
 | [Source Data Decision](docs/SOURCE_DATA_DECISION.md) | canonical source 선정과 첫 번째 데이터 gate |
 | [Data Contracts](docs/DATA_CONTRACTS.md) | data manifest와 normalized block 계약 |
 | [Normalization](docs/NORMALIZATION.md) | parser 결과를 NormalizedBlock으로 변환하는 규칙과 gate |
