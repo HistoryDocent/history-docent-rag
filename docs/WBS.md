@@ -55,10 +55,13 @@
 | ID | 작업 | 산출물 | 완료 기준 | Commit |
 | --- | --- | --- | --- | --- |
 | 5.1 | BM25 baseline | retrieval module | Recall@k/MRR 측정 | `feat: add bm25 retrieval baseline` |
-| 5.2 | Dense retrieval | retrieval module | 동일 평가셋 비교 가능 | `feat: add dense retrieval baseline` |
-| 5.3 | Hybrid retrieval | retrieval module | weighted/RRF 비교 가능 | `feat: add hybrid retrieval experiment` |
-| 5.4 | evaluation harness | evals module | query type별 metric 출력 | `test: add retrieval evaluation harness` |
-| 5.5 | notebooks | `06`, `07` notebooks | baseline 비교표 생성 | `docs: add retrieval evaluation notebooks` |
+| 5.2 | dev/test 평가셋 확장 | retrieval eval dataset | query type별 dev/test split 고정 | `test: expand retrieval eval dataset` |
+| 5.3 | chunking ablation | chunking experiment runner | C0/C1/C2/C3 비교와 winner 기록 | `test: add chunking ablation runner` |
+| 5.4 | Dense retrieval | retrieval module | 동일 평가셋 비교 가능 | `feat: add dense retrieval baseline` |
+| 5.5 | Hybrid retrieval | retrieval module | weighted/RRF 비교 가능 | `feat: add hybrid retrieval experiment` |
+| 5.6 | Reranker comparison | retrieval module | top30/top50 rerank 비교 | `feat: add reranker comparison` |
+| 5.7 | evaluation harness | evals module | query type별 metric과 latency 출력 | `test: add retrieval evaluation harness` |
+| 5.8 | notebooks | `06`, `07`, `09` notebooks | baseline/chunking/dense/hybrid 비교표 생성 | `docs: add retrieval evaluation notebooks` |
 
 ## Phase 6. Query Rewrite와 Citation RAG
 
@@ -67,8 +70,9 @@
 | 6.1 | rewrite contract | application module | invalid JSON 0 | `feat: add place aware query rewrite` |
 | 6.2 | answer contract | schema/service | answer/spoken_answer/citations 반환 | `feat: add citation rag answer contract` |
 | 6.3 | Solar provider | provider abstraction | fake provider와 real provider 분리 | `feat: add solar provider abstraction` |
-| 6.4 | generation eval | eval harness | Correct-with-Evidence 측정 | `test: add generation evaluation harness` |
-| 6.5 | notebook | `08`, `09`, `10` notebooks | rewrite/chunk/generation ablation | `docs: add citation rag notebooks` |
+| 6.4 | evidence packing | application module | citation recoverability 유지 | `feat: add evidence packing policies` |
+| 6.5 | generation eval | eval harness | Correct-with-Evidence와 unsupported claim 측정 | `test: add generation evaluation harness` |
+| 6.6 | notebook | `08`, `10` notebooks | rewrite/evidence/generation ablation | `docs: add citation rag notebooks` |
 
 ## Phase 7. FastAPI 백엔드
 

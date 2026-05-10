@@ -102,6 +102,9 @@ Place-aware Hybrid Retrieval + Query Rewrite + Parent-Child Chunking + Citation 
 
 RAPTOR-lite와 GraphRAG-lite는 초기 기본 구조가 아니라 비교 실험군으로 둔다.
 
+비교 실험의 순서와 후보군은 [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md)에 고정한다.
+이 계획은 chunking, embedding, hybrid retrieval, reranker, query rewrite, evidence packing, Solar Pro 3 generation, RAPTOR-lite, GraphRAG-lite를 한 번에 섞지 않고 단계별로 검증하기 위한 문서다.
+
 ## 제품 목표
 
 최종 서비스는 서울 관광 중 사용할 수 있는 역사 도슨트다.
@@ -167,7 +170,9 @@ BM25 baseline retriever를 구현했고, seed 평가셋 기준 정량/정성 리
 
 retrieval evaluation harness를 공통화했고, BM25 baseline을 새 harness에서 재현했다.
 
-다음 단계는 Dense retrieval과 Hybrid retrieval을 같은 평가셋에서 비교하는 것이다.
+실서비스 기준의 RAG ablation 비교 실험 계획을 문서화했다.
+
+다음 단계는 평가셋 확장 계획을 실제 dataset contract로 옮기고, chunking ablation으로 검색 단위를 먼저 고정한 뒤 Dense retrieval과 Hybrid retrieval을 같은 평가셋에서 비교하는 것이다.
 
 ## 실행 전략
 
@@ -189,6 +194,7 @@ retrieval evaluation harness를 공통화했고, BM25 baseline을 새 harness에
 | [Place Catalog Validation Report](evals/reports/place_catalog_validation_report.md) | 장소 catalog seed의 정량/정성 gate 결과 |
 | [BM25 Baseline Plan](docs/BM25_BASELINE_PLAN.md) | BM25 baseline 입력 계약, metric, 실패 분석 계획 |
 | [Retrieval Eval Dataset](docs/RETRIEVAL_EVAL_DATASET.md) | retrieval seed 평가셋의 정량/정성 품질 보고서 |
+| [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md) | 실서비스 기준 RAG 비교 실험 순서, 논문 매핑, 선택 기준 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |

@@ -80,15 +80,19 @@ public repo에는 sample과 aggregate metric만 둔다.
 비교 기준은 다음 순서다.
 
 1. parser/chunk 품질 평가
-2. BM25/Dense/Hybrid baseline 재현
-3. place catalog + query rewrite 평가
-4. parent-child citation RAG 평가
-5. Solar Pro 3 generation 평가
-6. external_human + stress_set 구축
-7. RAPTOR-lite 비교
-8. GraphRAG-lite 비교
-9. query-type router 판단
-10. ablation/failure report 작성
+2. retrieval dev/test 평가셋 고정
+3. chunking ablation으로 검색 단위 선택
+4. Dense retrieval baseline 재현
+5. Hybrid RRF/Weighted retrieval 비교
+6. reranker top-k 비교
+7. place catalog + query rewrite 평가
+8. evidence packing 평가
+9. Solar Pro 3 citation generation 평가
+10. external_human + stress_set 구축
+11. RAPTOR-lite 비교
+12. GraphRAG-lite 비교
+13. query-type router 판단
+14. ablation/failure report 작성
 
 대표 지표:
 
@@ -570,7 +574,7 @@ latency/cost delta
 개선 주장 허용:
 
 ```text
-Recall@5 +2%p 이상
+Retrieval Recall@5 +5%p 이상
 Correct-with-Evidence +3%p 이상
 citation_precision +3%p 이상
 p95 latency +20% 이내

@@ -53,6 +53,10 @@ notebook은 구현체가 아니라 분석, 검증, 의사결정 기록이다.
 
 ## Notebook 목록
 
+세부 실험 순서는 [Retrieval Ablation Plan](RETRIEVAL_ABLATION_PLAN.md)을 따른다.
+
+번호는 프로젝트 재시작 당시의 분석 흐름을 유지한다. ablation stage 순서와 notebook 번호가 항상 1:1로 대응하지는 않는다.
+
 | 번호 | 파일 | 목적 |
 | --- | --- | --- |
 | 00 | `00_project_scope.ipynb` | 제품 범위와 평가 기준 확인 |
@@ -62,10 +66,10 @@ notebook은 구현체가 아니라 분석, 검증, 의사결정 기록이다.
 | 04 | `04_chunking_quality_analysis.ipynb` | parent/child chunk 품질 분석 |
 | 05 | `05_place_catalog_validation.ipynb` | place catalog alias와 관련성 검증 |
 | 06 | `06_bm25_baseline_evaluation.ipynb` | BM25 기준선 평가 |
-| 07 | `07_dense_hybrid_retrieval_comparison.ipynb` | Dense/Hybrid 비교 |
+| 07 | `07_dense_hybrid_retrieval_comparison.ipynb` | Dense/Hybrid/Reranker 비교와 latency 기록 |
 | 08 | `08_query_rewrite_ablation.ipynb` | query rewrite on/off 비교 |
-| 09 | `09_parent_child_retrieval_ablation.ipynb` | parent-child 효과 비교 |
-| 10 | `10_citation_rag_generation_eval.ipynb` | citation RAG 생성 평가 |
+| 09 | `09_parent_child_retrieval_ablation.ipynb` | Stage 1 parent-child와 chunking config ablation |
+| 10 | `10_citation_rag_generation_eval.ipynb` | evidence packing과 citation RAG 생성 평가 |
 | 11 | `11_raptor_lite_experiment.ipynb` | RAPTOR-lite 실험 |
 | 12 | `12_graphrag_lite_experiment.ipynb` | GraphRAG-lite 실험 |
 | 13 | `13_final_ablation_report.ipynb` | 최종 결과 정리 |

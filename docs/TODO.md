@@ -2,6 +2,7 @@
 
 ## Now
 
+- [x] 현업형 RAG ablation 비교 실험 계획 문서화
 - [ ] `notebooks/` numbered skeleton 확인
 - [ ] `docs/PRD.md` 기준으로 README 첫 화면 재정리
 - [x] `data_manifest` schema 설계
@@ -39,9 +40,15 @@
 
 ## Later
 
+- [ ] retrieval 평가셋 105개 확장 계획 구현
+- [ ] retrieval dev/test split contract 고정
+- [ ] chunking ablation runner 구현
 - [ ] Dense/Hybrid retrieval 구현
+- [ ] reranker comparison 구현
+- [ ] evidence packing 비교 구현
 - [ ] place-aware query rewrite 구현
 - [ ] citation RAG answer contract 구현
+- [ ] generation evaluation harness 구현
 - [ ] Solar Pro 3 provider 구현
 - [ ] FastAPI `/chat` contract 구현
 
@@ -49,6 +56,8 @@
 
 - [ ] RAPTOR-lite overview/place_story 비교
 - [ ] GraphRAG-lite relationship 비교
+- [ ] HyDE overview/relationship subset 비교
+- [ ] ColBERT style late interaction hard subset 검토
 - [ ] query-type router 채택 여부 판단
 - [ ] final ablation report 작성
 

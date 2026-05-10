@@ -4,6 +4,8 @@
 
 성능 개선은 평균 점수만으로 주장하지 않는다.
 
+비교 실험의 실행 순서와 후보군은 [Retrieval Ablation Plan](RETRIEVAL_ABLATION_PLAN.md)을 기준으로 한다.
+
 필수 조건:
 
 - query 단위 paired comparison
@@ -88,6 +90,7 @@ citation_recoverability >= 0.99
 - Dense
 - Hybrid Weighted
 - Hybrid RRF
+- Reranker applied top-k
 
 정량 지표:
 
@@ -105,6 +108,42 @@ citation_recoverability >= 0.99
 - query type별 breakdown이 존재한다.
 - 실패 유형이 분류된다.
 - latency가 같이 보고된다.
+- `dataset_fingerprint`, `corpus_fingerprint`, `method_config_fingerprint`가 존재한다.
+- dev set에서 선택한 조합을 test set에서 별도로 확인한다.
+
+## Ablation Gate
+
+비교 순서:
+
+1. Chunking
+2. Dense embedding
+3. Hybrid retrieval
+4. Reranker
+5. Query rewrite
+6. Evidence packing
+7. Solar Pro 3 generation
+8. RAPTOR-lite / GraphRAG-lite
+
+통과 기준:
+
+```text
+one_major_variable_changed = true
+same_eval_dataset = true
+same_judgment = true
+same_metric_definition = true
+query_type_breakdown_exists = true
+failure_analysis_exists = true
+public_leakage_count = 0
+```
+
+금지:
+
+```text
+chunking, embedding, reranker를 동시에 바꾼 결과를 단일 개선으로 주장
+dev set에서 고른 조합을 test set 없이 최종 성능으로 주장
+Solar Pro 3 rewrite 비용을 숨김
+GraphRAG/RAPTOR 결과를 전체 query type 개선으로 포장
+```
 
 ## Query Rewrite Gate
 
@@ -175,7 +214,7 @@ citation backtracking 성공률 >= 95%
 ## 개선 주장 허용 기준
 
 ```text
-Recall@5 +2%p 이상
+Retrieval Recall@5 +5%p 이상
 Correct-with-Evidence +3%p 이상
 citation_precision +3%p 이상
 p95 latency +20% 이내
