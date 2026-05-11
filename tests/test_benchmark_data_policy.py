@@ -79,6 +79,9 @@ def test_public_reports_describe_private_benchmark_paths_as_aliases() -> None:
             Path("evals/reports/retrieval_eval_private_dev_target_report.md").read_text(
                 encoding="utf-8"
             ),
+            Path("evals/reports/retrieval_eval_private_dev_review_report.md").read_text(
+                encoding="utf-8"
+            ),
         ]
     )
 
@@ -95,6 +98,9 @@ def test_public_private_dev_reports_do_not_expose_source_material_or_secrets() -
                 encoding="utf-8"
             ),
             Path("evals/reports/retrieval_eval_private_dev_target_report.md").read_text(
+                encoding="utf-8"
+            ),
+            Path("evals/reports/retrieval_eval_private_dev_review_report.md").read_text(
                 encoding="utf-8"
             ),
         ]

@@ -50,7 +50,7 @@ GraphRAG는 relationship 질문에 유리하지만 entity extraction과 canonica
 
 ### 성능을 어떻게 검증했는가
 
-retrieval과 generation을 분리했다. Retrieval은 Recall@k, MRR, nDCG로 보고, 최종 답변은 Correct-with-Evidence와 citation precision/recall로 판단했다. 개선 여부는 query 단위 paired comparison과 bootstrap confidence interval로 판단했다.
+retrieval과 generation을 분리했다. 현재는 BM25 baseline, retrieval evaluation harness, private dev 1차 reviewed 평가셋까지 구축했다. Retrieval 비교는 Recall@k, MRR, nDCG로 진행하고, 최종 답변은 후속 generation 단계에서 Correct-with-Evidence와 citation precision/recall로 판단하도록 gate를 설계했다. 개선 여부는 query 단위 paired comparison과 bootstrap confidence interval 조건을 만족한 뒤에만 주장한다.
 
 ### 저작권 데이터는 어떻게 처리했는가
 
@@ -58,7 +58,7 @@ retrieval과 generation을 분리했다. Retrieval은 Recall@k, MRR, nDCG로 보
 
 ### 음성 서비스와 RAG 백엔드는 어떻게 연결되는가
 
-음성 UI보다 먼저 짧은 질문 처리, 지시어 해소, spoken_answer 생성, citation display 구조를 백엔드에서 검증했다. STT/TTS는 그 다음 단계로 분리했다.
+음성 UI보다 먼저 짧은 질문 처리, 지시어 해소, `spoken_answer`, citation display를 백엔드 계약으로 분리했다. 현재 검증 완료 범위는 retrieval 평가셋과 BM25 baseline이며, `spoken_answer` 생성과 STT/TTS는 Solar Pro 3 generation 단계 이후로 분리했다.
 
 ## 금지 표현
 

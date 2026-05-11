@@ -11,6 +11,7 @@ from app.domain.retrieval import (
     build_retrieval_target_inventory,
     collect_retrieval_eval_dataset_failures,
     collect_retrieval_eval_expansion_readiness_failures,
+    collect_retrieval_eval_review_readiness_failures,
     collect_retrieval_eval_target_resolvability_failures,
     load_retrieval_eval_jsonl,
     summarize_retrieval_eval_dataset,
@@ -65,23 +66,27 @@ def build_retrieval_eval_expansion_report_markdown(
     expansion_failures = collect_retrieval_eval_expansion_readiness_failures(
         expansion_summary
     )
+    review_failures = collect_retrieval_eval_review_readiness_failures(
+        expansion_summary
+    )
     target_failures = collect_retrieval_eval_target_resolvability_failures(
         target_summary
     )
+    safety_failures = _public_safety_failures(
+        expansion_summary=expansion_summary,
+        target_summary=target_summary,
+    )
     blocking_failures = _unique_failures(
-        contract_failures
-        + target_failures
-        + _public_safety_failures(
-            expansion_summary=expansion_summary,
-            target_summary=target_summary,
-        )
+        contract_failures + target_failures + safety_failures
     )
     row_text = "\n".join(
         _query_type_row_markdown(expansion_summary, query_type)
         for query_type in REQUIRED_QUERY_TYPES
     )
-    authoring_status = "PASS" if not blocking_failures else "FAIL"
+    contract_status = "PASS" if not contract_failures else "FAIL"
+    review_status = "PASS" if not review_failures else "INCOMPLETE"
     expansion_status = "PASS" if not expansion_failures else "INCOMPLETE"
+    public_safety_status = "PASS" if not safety_failures else "FAIL"
     split_summary_text = _split_summary_text(expansion_summary)
     priority_text = _next_authoring_priority_text(expansion_summary)
     next_steps_text = _next_steps_markdown(expansion_summary)
@@ -103,9 +108,11 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 | dataset_path | `{_public_dataset_path_alias(dataset_path)}` |
 | chunks_path_alias | `{chunks_path_alias}` |
 | dataset_version | `{expansion_summary.dataset_version}` |
-| authoring_status | `{authoring_status}` |
+| contract_status | `{contract_status}` |
+| review_readiness_status | `{review_status}` |
 | expansion_readiness_status | `{expansion_status}` |
 | target_resolvability_status | `{"PASS" if not target_failures else "FAIL"}` |
+| public_safety_status | `{public_safety_status}` |
 
 ## 정량 리포트
 
@@ -151,6 +158,7 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 
 ```text
 contract_failures={contract_failures}
+review_readiness_failures={review_failures}
 expansion_readiness_failures={expansion_failures}
 target_resolvability_failures={target_failures}
 blocking_failures={blocking_failures}
@@ -160,6 +168,7 @@ blocking_failures={blocking_failures}
 
 - 현재 입력 평가셋은 {split_summary_text} 총 {expansion_summary.current_query_count}개다.
 - 목표는 query type별 dev 10개, test 5개로 총 105개다.
+- `contract_status`는 schema와 hard gate 상태만 의미한다. review 완료, dev/test 확장 완료, 성능 개선을 의미하지 않는다.
 - 현재 전체 부족분은 {expansion_summary.overall_shortfall_count}개이고, dev/test split 기준 부족분은 {expansion_summary.dev_test_shortfall_count}개다. seed는 smoke test로 유지하고 최종 비교 튜닝에는 사용하지 않는다.
 - 다음 작성 우선순위는 {priority_text}다.
 - test split은 최종 ablation 확인 전까지 튜닝에 사용하지 않는다.
@@ -204,10 +213,15 @@ def main() -> int:
     expansion_failures = collect_retrieval_eval_expansion_readiness_failures(
         expansion_summary
     )
+    review_failures = collect_retrieval_eval_review_readiness_failures(
+        expansion_summary
+    )
     print(
         "retrieval_eval_expansion "
-        f"authoring_status={'PASS' if not blocking_failures else 'FAIL'} "
+        f"contract_status={'PASS' if not contract_failures else 'FAIL'} "
+        f"review_readiness_status={'PASS' if not review_failures else 'INCOMPLETE'} "
         f"expansion_readiness_status={'PASS' if not expansion_failures else 'INCOMPLETE'} "
+        f"target_resolvability_status={'PASS' if not target_failures else 'FAIL'} "
         f"target_query_count={expansion_summary.target_query_count} "
         f"current_query_count={expansion_summary.current_query_count} "
         f"overall_shortfall_count={expansion_summary.overall_shortfall_count} "
@@ -303,7 +317,7 @@ def _next_steps_markdown(summary: RetrievalEvalExpansionSummary) -> str:
         return "\n".join(
             [
                 "1. query type별 private dev 부족분을 채워 dev 10개씩 맞춘다.",
-                "2. target resolvability gate를 통과한 항목만 reviewed로 승격한다.",
+                "2. target resolvability gate와 review rubric을 통과한 항목만 reviewed로 승격한다.",
                 "3. private test 후보 5개는 dev 튜닝 후 별도 locked 상태로 고정한다.",
                 "4. 이후 chunking ablation runner를 BM25 기준으로 실행한다.",
             ]

@@ -699,6 +699,26 @@ def collect_retrieval_eval_expansion_readiness_failures(
     return failures
 
 
+def collect_retrieval_eval_review_readiness_failures(
+    summary: RetrievalEvalExpansionSummary,
+) -> list[str]:
+    failures: list[str] = []
+    accepted_query_count = summary.reviewed_query_count + summary.locked_query_count
+    if summary.current_query_count == 0:
+        failures.append("empty_eval_dataset")
+    if summary.draft_query_count:
+        failures.append("draft_queries_remaining")
+    if accepted_query_count != summary.current_query_count:
+        failures.append("unreviewed_queries_remaining")
+    if summary.public_raw_text_leakage_count:
+        failures.append("public_raw_text_leakage")
+    if summary.private_path_leakage_count:
+        failures.append("private_path_leakage")
+    if summary.secret_like_leakage_count:
+        failures.append("secret_like_leakage")
+    return failures
+
+
 def collect_retrieval_eval_target_resolvability_failures(
     summary: RetrievalEvalTargetResolvabilitySummary,
 ) -> list[str]:

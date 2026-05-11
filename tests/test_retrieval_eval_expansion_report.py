@@ -14,6 +14,7 @@ from app.domain.retrieval import (
     RetrievalQuery,
     build_retrieval_target_inventory,
     collect_retrieval_eval_expansion_readiness_failures,
+    collect_retrieval_eval_review_readiness_failures,
     load_retrieval_eval_jsonl,
     summarize_retrieval_eval_dataset,
     summarize_retrieval_eval_expansion,
@@ -156,6 +157,7 @@ def test_retrieval_eval_expansion_summary_matches_seed_targets() -> None:
         "dev_query_type_target_shortfall",
         "test_query_type_target_shortfall",
     ]
+    assert collect_retrieval_eval_review_readiness_failures(summary) == []
     assert {
         query_type: row.total_shortfall_count
         for query_type, row in summary.query_type_rows.items()
@@ -179,8 +181,10 @@ def test_retrieval_eval_expansion_report_markdown_matches_seed_counts() -> None:
         chunks_path_alias=PRIVATE_CHUNKS_PATH_ALIAS,
     )
 
-    assert "| authoring_status | `PASS` |" in markdown
+    assert "| contract_status | `PASS` |" in markdown
+    assert "| review_readiness_status | `PASS` |" in markdown
     assert "| expansion_readiness_status | `INCOMPLETE` |" in markdown
+    assert "| public_safety_status | `PASS` |" in markdown
     assert "| target_query_count | 105 |" in markdown
     assert "| current_query_count | 14 |" in markdown
     assert "| overall_shortfall_count | 91 |" in markdown
@@ -217,8 +221,10 @@ def test_retrieval_eval_expansion_report_describes_dev_only_progress() -> None:
 
     assert "<private retrieval eval dataset: retrieval_eval_dev.jsonl>" in markdown
     assert "현재 입력 평가셋은 dev 5개로 구성되어 있으며 총 5개다." in markdown
+    assert "| review_readiness_status | `INCOMPLETE` |" in markdown
     assert "| dev_query_count | 5 |" in markdown
     assert "| draft_query_count | 5 |" in markdown
+    assert "draft_queries_remaining" in markdown
     assert "다음 작성 우선순위는 dev 부족분이 남은" in markdown
     assert "query type별 private dev 부족분을 채워 dev 10개씩 맞춘다." in markdown
     assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" not in markdown
@@ -289,8 +295,10 @@ def test_checked_in_expansion_docs_match_seed_summary() -> None:
         f"| current_query_count | {summary.current_query_count} |",
         f"| overall_shortfall_count | {summary.overall_shortfall_count} |",
         f"| dev_test_shortfall_count | {summary.dev_test_shortfall_count} |",
-        "| authoring_status | `PASS` |",
+        "| contract_status | `PASS` |",
+        "| review_readiness_status | `PASS` |",
         "| expansion_readiness_status | `INCOMPLETE` |",
+        "| public_safety_status | `PASS` |",
     ]
     assert [fragment for fragment in table_fragments if fragment not in report] == []
     assert [fragment for fragment in table_fragments if fragment not in dataset_doc] == []
@@ -322,7 +330,8 @@ def test_retrieval_eval_expansion_pipeline_writes_public_safe_report(
     report = report_path.read_text(encoding="utf-8")
 
     assert summary.current_query_count == 1
-    assert "| authoring_status | `FAIL` |" in report
+    assert "| contract_status | `FAIL` |" in report
+    assert "| review_readiness_status | `PASS` |" in report
     assert "| expansion_readiness_status | `INCOMPLETE` |" in report
     assert "private source text" not in report
     assert str(chunks_path) not in report

@@ -16,9 +16,11 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 | dataset_path | `evals/datasets/retrieval_eval_seed.jsonl` |
 | chunks_path_alias | `<private parent_child_chunks report>` |
 | dataset_version | `retrieval-eval-dataset/v2` |
-| authoring_status | `PASS` |
+| contract_status | `PASS` |
+| review_readiness_status | `PASS` |
 | expansion_readiness_status | `INCOMPLETE` |
 | target_resolvability_status | `PASS` |
+| public_safety_status | `PASS` |
 
 ## 정량 리포트
 
@@ -70,6 +72,7 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 
 ```text
 contract_failures=[]
+review_readiness_failures=[]
 expansion_readiness_failures=['overall_query_target_shortfall', 'missing_dev_split', 'missing_test_split', 'dev_query_type_target_shortfall', 'test_query_type_target_shortfall']
 target_resolvability_failures=[]
 blocking_failures=[]
@@ -79,6 +82,7 @@ blocking_failures=[]
 
 - 현재 입력 평가셋은 seed 14개로 구성되어 있으며 총 14개다.
 - 목표는 query type별 dev 10개, test 5개로 총 105개다.
+- `contract_status`는 schema와 hard gate 상태만 의미한다. review 완료, dev/test 확장 완료, 성능 개선을 의미하지 않는다.
 - 현재 전체 부족분은 91개이고, dev/test split 기준 부족분은 105개다. seed는 smoke test로 유지하고 최종 비교 튜닝에는 사용하지 않는다.
 - 다음 작성 우선순위는 dev 부족분이 남은 `place_fact`, `place_story`, `relationship`, `overview`, `route_context`, `voice_followup`, `no_answer`다.
 - test split은 최종 ablation 확인 전까지 튜닝에 사용하지 않는다.
@@ -89,6 +93,6 @@ blocking_failures=[]
 ## 다음 단계
 
 1. query type별 private dev 부족분을 채워 dev 10개씩 맞춘다.
-2. target resolvability gate를 통과한 항목만 reviewed로 승격한다.
+2. target resolvability gate와 review rubric을 통과한 항목만 reviewed로 승격한다.
 3. private test 후보 5개는 dev 튜닝 후 별도 locked 상태로 고정한다.
 4. 이후 chunking ablation runner를 BM25 기준으로 실행한다.

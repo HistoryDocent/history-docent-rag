@@ -470,8 +470,8 @@ latency/cost 악화 설명 없음
 다음 구현 순서는 이 문서를 따른다.
 
 1. 평가셋 확장 schema와 dev/test split 문서화
-2. private dev 평가셋 35개 1차 draft 작성과 target resolvability 검증
-3. private dev 평가셋 35개 2차 draft 작성과 human review
+2. private dev 평가셋 35개 1차 작성, target resolvability 검증, reviewed 승격
+3. private dev 평가셋 35개 2차 작성과 review rubric 통과
 4. private test 평가셋 35개 locked 작성
 5. chunking config ablation runner
 6. Dense retrieval baseline
@@ -487,7 +487,13 @@ latency/cost 악화 설명 없음
 
 ## 포트폴리오 메시지
 
-면접에서 주장할 수 있는 문장:
+현재 면접에서 주장할 수 있는 문장:
+
+```text
+서울/한양 역사 도슨트 RAG를 재설계하면서 원본 데이터 공개 제한을 지키기 위해 public/private benchmark 경계를 먼저 고정했고, BM25 baseline과 retrieval evaluation harness, private dev 1차 reviewed 평가셋까지 구축했습니다. 이후 Dense, Hybrid, Reranker, Query Rewrite, Generation은 같은 평가셋과 같은 metric으로 단계별 비교할 계획입니다.
+```
+
+최종 ablation 완료 후에만 주장할 수 있는 문장:
 
 ```text
 RAG 성능을 단일 모델 교체로 주장하지 않고, chunking, dense embedding, hybrid retrieval, reranking, query rewrite, evidence packing, generation을 단계별 ablation으로 분리해 평가했습니다. 최종 선택은 Recall@k뿐 아니라 citation precision, unsupported claim rate, no-answer abstention, latency, cost를 함께 기준으로 삼았습니다.
