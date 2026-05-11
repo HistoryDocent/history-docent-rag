@@ -84,6 +84,15 @@ def test_public_reports_describe_private_benchmark_paths_as_aliases() -> None:
             Path("evals/reports/retrieval_eval_private_dev_review_report.md").read_text(
                 encoding="utf-8"
             ),
+            Path("evals/reports/retrieval_eval_private_test_target_report.md").read_text(
+                encoding="utf-8"
+            ),
+            Path("evals/reports/retrieval_eval_private_test_lock_report.md").read_text(
+                encoding="utf-8"
+            ),
+            Path(
+                "evals/reports/retrieval_eval_private_benchmark_readiness_report.md"
+            ).read_text(encoding="utf-8"),
         ]
     )
 
@@ -105,11 +114,21 @@ def test_public_private_dev_reports_do_not_expose_source_material_or_secrets() -
             Path("evals/reports/retrieval_eval_private_dev_review_report.md").read_text(
                 encoding="utf-8"
             ),
+            Path("evals/reports/retrieval_eval_private_test_target_report.md").read_text(
+                encoding="utf-8"
+            ),
+            Path("evals/reports/retrieval_eval_private_test_lock_report.md").read_text(
+                encoding="utf-8"
+            ),
+            Path(
+                "evals/reports/retrieval_eval_private_benchmark_readiness_report.md"
+            ).read_text(encoding="utf-8"),
         ]
     )
 
     forbidden_fragments = [
         _private_eval_path("retrieval_eval_dev.jsonl"),
+        _private_eval_path("retrieval_eval_test.jsonl"),
         _private_chunks_path(),
         "search_text",
         "context_text",
@@ -124,6 +143,7 @@ def test_public_private_dev_reports_do_not_expose_source_material_or_secrets() -
     ]
 
     assert "<private retrieval eval dataset: retrieval_eval_dev.jsonl>" in report_text
+    assert "<private retrieval eval dataset: retrieval_eval_test.jsonl>" in report_text
     assert "<private parent_child_chunks report>" in report_text
     assert [fragment for fragment in forbidden_fragments if fragment in report_text] == []
 

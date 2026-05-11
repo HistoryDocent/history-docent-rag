@@ -50,7 +50,7 @@ GraphRAG는 relationship 질문에 유리하지만 entity extraction과 canonica
 
 ### 성능을 어떻게 검증했는가
 
-retrieval과 generation을 분리했다. 현재는 BM25 baseline, retrieval evaluation harness, private dev 70개 reviewed 평가셋까지 구축했다. Retrieval 비교는 Recall@k, MRR, nDCG로 진행하고, 최종 답변은 후속 generation 단계에서 Correct-with-Evidence와 citation precision/recall로 판단하도록 gate를 설계했다. 개선 여부는 locked test set에서 query 단위 paired comparison과 bootstrap confidence interval 조건을 만족한 뒤에만 주장한다.
+retrieval과 generation을 분리했다. 현재는 BM25 baseline, retrieval evaluation harness, private dev 70개 reviewed 평가셋, private test 35개 locked 평가셋까지 구축했다. Retrieval 비교는 Recall@k, MRR, nDCG로 진행하고, 최종 답변은 후속 generation 단계에서 Correct-with-Evidence와 citation precision/recall로 판단하도록 gate를 설계했다. 개선 여부는 locked test set에서 query 단위 paired comparison과 bootstrap confidence interval 조건을 만족한 뒤에만 주장한다.
 
 ### 저작권 데이터는 어떻게 처리했는가
 

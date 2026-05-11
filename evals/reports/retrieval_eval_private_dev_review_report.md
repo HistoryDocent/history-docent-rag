@@ -98,6 +98,6 @@ gate_failures=[]
 
 ## 한계
 
-- 이번 리포트는 dev 70개에 대한 review다. test 목표 35개는 아직 남아 있다.
-- dev review는 튜닝용 데이터 검수다. 최종 locked test 작성 전에는 추가 cross-check가 필요하다.
+- 이번 리포트는 dev 70개에 대한 review다. locked test와 full benchmark readiness는 별도 report에서 확인한다.
+- dev review는 튜닝용 데이터 검수다. 최종 성능 개선 판단에는 locked test split의 별도 평가가 필요하다.
 - 이 리포트는 retrieval/generation 성능 개선을 주장하지 않는다.

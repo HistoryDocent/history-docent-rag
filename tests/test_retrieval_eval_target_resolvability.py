@@ -298,7 +298,7 @@ def test_target_report_pipeline_writes_public_safe_report(tmp_path: Path) -> Non
     assert str(dataset_path).replace("\\", "/") not in report
 
 
-def test_target_report_points_completed_private_dev_to_locked_test() -> None:
+def test_target_report_points_completed_private_dev_to_benchmark_readiness() -> None:
     summary = RetrievalEvalTargetResolvabilitySummary(
         query_count=70,
         judgment_count=60,
@@ -330,9 +330,49 @@ def test_target_report_points_completed_private_dev_to_locked_test() -> None:
         chunks_path_alias="<private parent_child_chunks report>",
     )
 
-    assert "private test 평가 문항 35개를 locked 상태로 작성한다." in markdown
+    assert "private test lock report를 확인한다." in markdown
+    assert "private benchmark readiness report를 확인한다." in markdown
     assert "private dev/test 평가 문항을 query type별로 확장한다." not in markdown
     assert _private_eval_dataset_path().as_posix() not in markdown
+
+
+def test_target_report_points_completed_private_test_to_ablation_runner() -> None:
+    summary = RetrievalEvalTargetResolvabilitySummary(
+        query_count=35,
+        judgment_count=30,
+        answerable_query_count=30,
+        no_answer_query_count=5,
+        searchable_child_count=10,
+        searchable_parent_count=10,
+        searchable_doc_count=3,
+        judgment_target_count=90,
+        child_target_count=30,
+        resolved_child_target_count=30,
+        missing_child_target_count=0,
+        parent_target_count=30,
+        resolved_parent_target_count=30,
+        missing_parent_target_count=0,
+        doc_target_count=30,
+        resolved_doc_target_count=30,
+        missing_doc_target_count=0,
+        answerable_without_child_or_parent_target_count=0,
+        no_answer_with_positive_target_count=0,
+        public_raw_text_leakage_count=0,
+        private_path_leakage_count=0,
+        secret_like_leakage_count=0,
+    )
+    dataset_path = Path("private_data") / "evals" / "datasets" / "retrieval_eval_test.jsonl"
+
+    markdown = build_retrieval_eval_target_report_markdown(
+        summary=summary,
+        dataset_path=dataset_path,
+        chunks_path_alias="<private parent_child_chunks report>",
+    )
+
+    assert "private benchmark readiness report를 확인한다." in markdown
+    assert "BM25 기준 chunking ablation runner를 구현한다." in markdown
+    assert "private dev/test 평가 문항을 query type별로 확장한다." not in markdown
+    assert dataset_path.as_posix() not in markdown
 
 
 def test_target_report_blocks_next_steps_when_target_gate_fails() -> None:
@@ -369,4 +409,4 @@ def test_target_report_blocks_next_steps_when_target_gate_fails() -> None:
 
     assert "| target_resolvability_status | `FAIL` |" in markdown
     assert "target resolvability failure를 먼저 해소한다." in markdown
-    assert "private test 평가 문항 35개를 locked 상태로 작성한다." not in markdown
+    assert "private test lock report를 확인한다." not in markdown

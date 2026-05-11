@@ -489,7 +489,7 @@ latency/cost 악화 설명 없음
 현재 면접에서 주장할 수 있는 문장:
 
 ```text
-서울/한양 역사 도슨트 RAG를 재설계하면서 원본 데이터 공개 제한을 지키기 위해 public/private benchmark 경계를 먼저 고정했고, BM25 baseline과 retrieval evaluation harness, private dev 70개 reviewed 평가셋까지 구축했습니다. 이후 locked test set, Dense, Hybrid, Reranker, Query Rewrite, Generation은 같은 평가셋과 같은 metric으로 단계별 비교할 계획입니다.
+서울/한양 역사 도슨트 RAG를 재설계하면서 원본 데이터 공개 제한을 지키기 위해 public/private benchmark 경계를 먼저 고정했고, BM25 baseline과 retrieval evaluation harness, private dev 70개 reviewed 평가셋, private test 35개 locked 평가셋까지 구축했습니다. 이후 chunking, Dense, Hybrid, Reranker, Query Rewrite, Generation을 같은 평가셋과 같은 metric으로 단계별 비교할 계획입니다.
 ```
 
 최종 ablation 완료 후에만 주장할 수 있는 문장:

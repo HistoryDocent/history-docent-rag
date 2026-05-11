@@ -13,7 +13,7 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 | 항목 | 값 |
 | --- | --- |
 | report_version | `retrieval-eval-target-resolvability/v1` |
-| dataset_path | `<private retrieval eval dataset: retrieval_eval_dev.jsonl>` |
+| dataset_path | `<private retrieval eval dataset: retrieval_eval_test.jsonl>` |
 | chunks_path_alias | `<private parent_child_chunks report>` |
 | target_resolvability_status | `PASS` |
 
@@ -33,22 +33,22 @@ target resolvability의 검증 grain은 judgment target 1개다.
 
 | metric | value |
 | --- | ---: |
-| query_count | 70 |
-| judgment_count | 60 |
-| answerable_query_count | 60 |
-| no_answer_query_count | 10 |
+| query_count | 35 |
+| judgment_count | 30 |
+| answerable_query_count | 30 |
+| no_answer_query_count | 5 |
 | searchable_child_count | 3141 |
 | searchable_parent_count | 1882 |
 | searchable_doc_count | 12 |
-| judgment_target_count | 393 |
-| child_target_count | 171 |
-| resolved_child_target_count | 171 |
+| judgment_target_count | 90 |
+| child_target_count | 30 |
+| resolved_child_target_count | 30 |
 | missing_child_target_count | 0 |
-| parent_target_count | 140 |
-| resolved_parent_target_count | 140 |
+| parent_target_count | 30 |
+| resolved_parent_target_count | 30 |
 | missing_parent_target_count | 0 |
-| doc_target_count | 82 |
-| resolved_doc_target_count | 82 |
+| doc_target_count | 30 |
+| resolved_doc_target_count | 30 |
 | missing_doc_target_count | 0 |
 | answerable_without_child_or_parent_target_count | 0 |
 | no_answer_with_positive_target_count | 0 |
@@ -72,6 +72,6 @@ target_resolvability_failures=[]
 
 ## 다음 단계
 
-1. private test lock report를 확인한다.
-2. private benchmark readiness report를 확인한다.
-3. chunking ablation은 동일 target contract를 유지한 상태에서 실행한다.
+1. private benchmark readiness report를 확인한다.
+2. BM25 기준 chunking ablation runner를 구현한다.
+3. locked test split은 최종 확인 전까지 튜닝 의사결정에 사용하지 않는다.

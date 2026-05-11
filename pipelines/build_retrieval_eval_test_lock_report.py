@@ -26,17 +26,19 @@ from pipelines.build_retrieval_eval_target_report import (
 
 DEFAULT_CHUNKS_PATH = Path("private_data") / "reports" / "parent_child_chunks.json"
 DEFAULT_DATASET_PATH = (
-    Path("private_data") / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
+    Path("private_data") / "evals" / "datasets" / "retrieval_eval_test.jsonl"
 )
-DEFAULT_REPORT_PATH = Path("evals/reports/retrieval_eval_private_dev_review_report.md")
-RETRIEVAL_EVAL_REVIEW_REPORT_VERSION = "retrieval-eval-review/v1"
-PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE = 10
-PRIVATE_DEV_REVIEW_TARGET_QUERY_COUNT = (
-    len(REQUIRED_QUERY_TYPES) * PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE
+DEFAULT_REPORT_PATH = Path("evals/reports/retrieval_eval_private_test_lock_report.md")
+RETRIEVAL_EVAL_TEST_LOCK_REPORT_VERSION = "retrieval-eval-test-lock/v1"
+PRIVATE_TEST_LOCK_TARGET_PER_QUERY_TYPE = 5
+PRIVATE_TEST_LOCK_TARGET_QUERY_COUNT = (
+    len(REQUIRED_QUERY_TYPES) * PRIVATE_TEST_LOCK_TARGET_PER_QUERY_TYPE
 )
+PRIVATE_TEST_LOCK_ANSWERABLE_QUERY_COUNT = 30
+PRIVATE_TEST_LOCK_NO_ANSWER_QUERY_COUNT = 5
 
 
-def build_retrieval_eval_review_report(
+def build_retrieval_eval_test_lock_report(
     *,
     dataset_path: Path = DEFAULT_DATASET_PATH,
     chunks_path: Path = DEFAULT_CHUNKS_PATH,
@@ -52,7 +54,7 @@ def build_retrieval_eval_review_report(
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
-        build_retrieval_eval_review_report_markdown(
+        build_retrieval_eval_test_lock_report_markdown(
             items=items,
             dataset_summary=dataset_summary,
             expansion_summary=expansion_summary,
@@ -65,7 +67,7 @@ def build_retrieval_eval_review_report(
     return expansion_summary
 
 
-def build_retrieval_eval_review_report_markdown(
+def build_retrieval_eval_test_lock_report_markdown(
     *,
     items: list[RetrievalEvalItem],
     dataset_summary: RetrievalEvalDatasetSummary,
@@ -94,10 +96,9 @@ def build_retrieval_eval_review_report_markdown(
         + rubric_failures
     )
     query_type_rows = "\n".join(
-        _query_type_review_row(items, expansion_summary, query_type)
+        _query_type_lock_row(items, expansion_summary, query_type)
         for query_type in REQUIRED_QUERY_TYPES
     )
-    query_type_balance_text = _query_type_balance_text(items)
     answerable_without_child_target_count = _answerable_without_child_target_count(items)
     requires_context_without_user_context_count = (
         _requires_context_without_user_context_count(items)
@@ -105,13 +106,13 @@ def build_retrieval_eval_review_report_markdown(
     voice_followup_query_count = sum(
         1 for item in items if item.query.query_type == "voice_followup"
     )
-    return f"""# Retrieval Eval Private Dev Review Report
+    return f"""# Retrieval Eval Private Test Lock Report
 
 ## 목적
 
-private dev 평가셋 70개를 retrieval ablation에 사용할 수 있는 `reviewed` 상태로 승격했는지 검수한다.
+private test 평가셋 35개가 최종 retrieval ablation 검증에 사용할 수 있는 `locked` 상태인지 검수한다.
 
-이 리포트는 성능 개선 결과가 아니다. 질문 의도, query type, answerability, context 필요성, target ID 매핑, 공개 안전성을 확인한 정량/정성 review gate다.
+이 리포트는 성능 개선 결과가 아니다. test split을 튜닝에 사용하지 않기 위해 수량, query type, answerability, context 필요성, target ID 매핑, 공개 안전성을 고정하는 정량/정성 gate다.
 
 full dev/test benchmark는 public repository에 직접 저장하지 않는다. public에는 seed/sample과 집계 report만 남기고, full benchmark path는 public report에서 alias로만 표기한다.
 
@@ -119,28 +120,29 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 
 | 항목 | 값 |
 | --- | --- |
-| report_version | `{RETRIEVAL_EVAL_REVIEW_REPORT_VERSION}` |
+| report_version | `{RETRIEVAL_EVAL_TEST_LOCK_REPORT_VERSION}` |
 | dataset_path | `{_public_dataset_path_alias(dataset_path)}` |
 | chunks_path_alias | `{chunks_path_alias}` |
 | dataset_version | `{expansion_summary.dataset_version}` |
-| review_gate_status | `{"PASS" if not gate_failures else "FAIL"}` |
+| test_lock_gate_status | `{"PASS" if not gate_failures else "FAIL"}` |
 | target_resolvability_status | `{"PASS" if not target_failures else "FAIL"}` |
 | public_safety_status | `{"PASS" if not safety_failures else "FAIL"}` |
 
-## Review Rubric
+## Lock Rubric
 
 검수 단위는 `RetrievalEvalItem` 1개다.
 
 통과 기준:
 
 1. `dataset_version`은 `retrieval-eval-dataset/v2`다.
-2. `split=dev`이고 `review_status=reviewed`다.
-3. query type은 7개 모두 포함하고, query type별 dev {PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE}개다.
-4. `voice_followup`은 `requires_context=true`와 `user_context`를 모두 가진다.
-5. `no_answer`는 `expected_behavior=abstain`, `answerability=unanswerable`, positive judgment 없음이다.
-6. answerable query는 positive judgment와 child target을 가진다.
-7. 모든 child/parent/doc target은 검색 가능한 corpus에 존재한다.
-8. public-safe field에 원문 직접 인용, private path, secret-like 값이 없다.
+2. `split=test`이고 `review_status=locked`다.
+3. query type은 7개 모두 포함하고, query type별 test {PRIVATE_TEST_LOCK_TARGET_PER_QUERY_TYPE}개다.
+4. answerable query는 {PRIVATE_TEST_LOCK_ANSWERABLE_QUERY_COUNT}개, `no_answer` query는 {PRIVATE_TEST_LOCK_NO_ANSWER_QUERY_COUNT}개다.
+5. `voice_followup`은 `requires_context=true`와 `user_context`를 모두 가진다.
+6. `no_answer`는 `expected_behavior=abstain`, `answerability=unanswerable`, positive judgment 없음이다.
+7. answerable query는 positive judgment와 child target을 가진다.
+8. 모든 child/parent/doc target은 검색 가능한 corpus에 존재한다.
+9. public-safe field에 원문 직접 인용, private path, secret-like 값이 없다.
 
 ## 정량 리포트
 
@@ -171,9 +173,9 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 | private_path_leakage_count | {_public_safety_count(expansion_summary.private_path_leakage_count, target_summary.private_path_leakage_count)} |
 | secret_like_leakage_count | {_public_safety_count(expansion_summary.secret_like_leakage_count, target_summary.secret_like_leakage_count)} |
 
-## Query Type Review Matrix
+## Query Type Lock Matrix
 
-| query_type | dev | draft | reviewed | locked | target_dev | remaining_dev_shortfall |
+| query_type | test | draft | reviewed | locked | target_test | remaining_test_shortfall |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 {query_type_rows}
 
@@ -190,18 +192,19 @@ gate_failures={gate_failures}
 
 ## 정성 리포트
 
-- private dev {dataset_summary.query_count}개는 {query_type_balance_text}.
+- private test {dataset_summary.query_count}개는 {_query_type_balance_text(items)}.
 - {target_summary.answerable_query_count}개 answerable query는 child target을 포함한다. 이후 metric 계산은 child target을 우선한다.
 - {target_summary.no_answer_query_count}개 `no_answer` query는 `expected_behavior=abstain`이며 positive judgment가 없다.
 - {voice_followup_query_count}개 `voice_followup` query는 `requires_context=true`와 `user_context`를 가진다.
+- test split은 최종 비교와 회귀 확인에만 사용하고, chunking/embedding/retriever 튜닝 의사결정에는 사용하지 않는다.
 - target resolvability는 ID 존재를 검증한다. 역사적 정답성의 최종 보장은 이후 retrieval 실패 분석과 generation review에서 다시 확인해야 한다.
-- 자동 gate는 query wording이 실제 지시어형인지, `no_answer`가 실제 corpus 밖인지, rationale이 near-verbatim이 아닌지를 의미론적으로 증명하지 않는다. 이 항목은 review rubric의 수동 검수 범위로 남긴다.
+- 자동 gate는 query wording이 실제 지시어형인지, `no_answer`가 실제 corpus 밖인지, rationale이 near-verbatim이 아닌지를 의미론적으로 증명하지 않는다. 이 항목은 lock rubric의 수동 검수 범위로 남긴다.
 
 ## 한계
 
-- 이번 리포트는 dev 70개에 대한 review다. locked test와 full benchmark readiness는 별도 report에서 확인한다.
-- dev review는 튜닝용 데이터 검수다. 최종 성능 개선 판단에는 locked test split의 별도 평가가 필요하다.
-- 이 리포트는 retrieval/generation 성능 개선을 주장하지 않는다.
+- 이 리포트는 locked test 35개의 데이터 준비 상태를 검수한다.
+- retrieval/generation 성능 개선을 주장하지 않는다.
+- 성능 개선 주장은 동일 test set에서 paired comparison과 bootstrap confidence interval 조건을 통과한 뒤에만 허용한다.
 """
 
 
@@ -217,7 +220,7 @@ def main() -> int:
     )
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(
-        build_retrieval_eval_review_report_markdown(
+        build_retrieval_eval_test_lock_report_markdown(
             items=items,
             dataset_summary=dataset_summary,
             expansion_summary=expansion_summary,
@@ -238,10 +241,10 @@ def main() -> int:
         + _rubric_failures(items)
     )
     print(
-        "retrieval_eval_review "
-        f"review_gate_status={'PASS' if not gate_failures else 'FAIL'} "
+        "retrieval_eval_test_lock "
+        f"test_lock_gate_status={'PASS' if not gate_failures else 'FAIL'} "
         f"query_count={dataset_summary.query_count} "
-        f"reviewed_query_count={expansion_summary.reviewed_query_count} "
+        f"locked_query_count={expansion_summary.locked_query_count} "
         f"draft_query_count={expansion_summary.draft_query_count} "
         f"gate_failures={len(gate_failures)}"
     )
@@ -250,7 +253,7 @@ def main() -> int:
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build private retrieval eval review report."
+        description="Build private retrieval eval test lock report."
     )
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET_PATH)
     parser.add_argument("--chunks", type=Path, default=DEFAULT_CHUNKS_PATH)
@@ -258,7 +261,7 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _query_type_review_row(
+def _query_type_lock_row(
     items: list[RetrievalEvalItem],
     summary: RetrievalEvalExpansionSummary,
     query_type: str,
@@ -273,35 +276,49 @@ def _query_type_review_row(
         for status in ("draft", "reviewed", "locked")
     }
     return (
-        f"| {query_type} | {row.dev_query_count} | {review_counts['draft']} | "
+        f"| {query_type} | {row.test_query_count} | {review_counts['draft']} | "
         f"{review_counts['reviewed']} | {review_counts['locked']} | "
-        f"{row.target_dev_query_count} | {row.dev_shortfall_count} |"
+        f"{row.target_test_query_count} | {row.test_shortfall_count} |"
     )
 
 
 def _rubric_failures(items: list[RetrievalEvalItem]) -> list[str]:
     failures: list[str] = []
-    if len(items) != PRIVATE_DEV_REVIEW_TARGET_QUERY_COUNT:
-        failures.append("private_dev_review_query_count_mismatch")
+    if len(items) != PRIVATE_TEST_LOCK_TARGET_QUERY_COUNT:
+        failures.append("private_test_lock_query_count_mismatch")
     if any(
         _query_type_item_count(items, query_type)
-        != PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE
+        != PRIVATE_TEST_LOCK_TARGET_PER_QUERY_TYPE
         for query_type in REQUIRED_QUERY_TYPES
     ):
-        failures.append("private_dev_review_query_type_count_mismatch")
-    if any(item.metadata.split != "dev" for item in items):
-        failures.append("non_dev_split")
-    if any(item.metadata.review_status != "reviewed" for item in items):
-        failures.append("dev_review_status_not_reviewed")
+        failures.append("private_test_lock_query_type_count_mismatch")
+    if any(item.metadata.split != "test" for item in items):
+        failures.append("non_test_split")
+    if any(item.metadata.review_status != "locked" for item in items):
+        failures.append("test_review_status_not_locked")
+    if _answerable_query_count(items) != PRIVATE_TEST_LOCK_ANSWERABLE_QUERY_COUNT:
+        failures.append("private_test_answerability_distribution_mismatch")
+    if _no_answer_query_count(items) != PRIVATE_TEST_LOCK_NO_ANSWER_QUERY_COUNT:
+        failures.append("private_test_answerability_distribution_mismatch")
+    if _query_type_item_count(items, "voice_followup") != PRIVATE_TEST_LOCK_TARGET_PER_QUERY_TYPE:
+        failures.append("private_test_voice_followup_count_mismatch")
     if _requires_context_without_user_context_count(items):
         failures.append("requires_context_without_user_context")
     if _answerable_without_child_target_count(items):
         failures.append("answerable_without_child_target")
-    return failures
+    return _unique_failures(failures)
 
 
 def _query_type_item_count(items: list[RetrievalEvalItem], query_type: str) -> int:
     return sum(1 for item in items if item.query.query_type == query_type)
+
+
+def _answerable_query_count(items: list[RetrievalEvalItem]) -> int:
+    return sum(1 for item in items if item.query.expected_behavior == "retrieve")
+
+
+def _no_answer_query_count(items: list[RetrievalEvalItem]) -> int:
+    return sum(1 for item in items if item.query.expected_behavior == "abstain")
 
 
 def _query_type_balance_text(items: list[RetrievalEvalItem]) -> str:
@@ -310,14 +327,14 @@ def _query_type_balance_text(items: list[RetrievalEvalItem]) -> str:
         for query_type in REQUIRED_QUERY_TYPES
     }
     if all(
-        count == PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE
+        count == PRIVATE_TEST_LOCK_TARGET_PER_QUERY_TYPE
         for count in counts.values()
     ):
         return (
-            "query type별 dev "
-            f"{PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE}개로 균형이 맞는다"
+            "query type별 test "
+            f"{PRIVATE_TEST_LOCK_TARGET_PER_QUERY_TYPE}개로 균형이 맞는다"
         )
-    return f"query type별 dev 분포가 {counts}로 남아 있어 dev review 기준을 충족하지 못한다"
+    return f"query type별 test 분포가 {counts}로 남아 있어 test lock 기준을 충족하지 못한다"
 
 
 def _requires_context_without_user_context_count(

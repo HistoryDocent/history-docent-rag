@@ -157,12 +157,23 @@ def _target_report_next_steps(
     is_private_dev = _is_private_benchmark_dataset_path(dataset_path) and (
         dataset_path.name.startswith("retrieval_eval_dev")
     )
+    is_private_test = _is_private_benchmark_dataset_path(dataset_path) and (
+        dataset_path.name.startswith("retrieval_eval_test")
+    )
     if is_private_dev and summary.query_count >= 70:
         return "\n".join(
             [
-                "1. private test 평가 문항 35개를 locked 상태로 작성한다.",
-                "2. private test target resolvability와 public-safety gate를 통과시킨다.",
+                "1. private test lock report를 확인한다.",
+                "2. private benchmark readiness report를 확인한다.",
                 "3. chunking ablation은 동일 target contract를 유지한 상태에서 실행한다.",
+            ]
+        )
+    if is_private_test and summary.query_count >= 35:
+        return "\n".join(
+            [
+                "1. private benchmark readiness report를 확인한다.",
+                "2. BM25 기준 chunking ablation runner를 구현한다.",
+                "3. locked test split은 최종 확인 전까지 튜닝 의사결정에 사용하지 않는다.",
             ]
         )
     return "\n".join(

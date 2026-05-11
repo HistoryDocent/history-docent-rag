@@ -193,7 +193,9 @@ retrieval 평가셋 확장 리포트를 추가했다. public seed 기준 현재 
 
 private dev 평가셋 70개를 작성하고 review rubric 기준으로 `reviewed` 승격했다. public-safe 집계 리포트 기준 `review_gate_status=PASS`, `target_resolvability_status=PASS`, `missing_child_target_count=0`, `public_raw_text_leakage_count=0`이다. private dev 원본 JSONL은 public repository에 commit하지 않는다.
 
-다음 단계는 private test 평가 문항 35개를 `locked` 상태로 작성하고, target resolvability gate와 public-safety gate를 통과시킨 뒤 BM25 기준 chunking ablation runner를 구현하는 것이다.
+private test 평가셋 35개를 작성하고 `locked` 상태로 고정했다. public-safe 집계 리포트 기준 `test_lock_gate_status=PASS`, `target_resolvability_status=PASS`, `benchmark_readiness_status=PASS`, `missing_child_target_count=0`, `public_raw_text_leakage_count=0`이다. private test 원본 JSONL은 public repository에 commit하지 않는다.
+
+다음 단계는 BM25 기준 chunking ablation runner를 구현하고, dev split에서만 chunking 후보를 비교한 뒤 locked test split으로 최종 확인하는 것이다.
 
 ## 실행 전략
 
@@ -223,6 +225,9 @@ private dev 평가셋 70개를 작성하고 review rubric 기준으로 `reviewed
 | [Private Dev Eval Expansion Report](evals/reports/retrieval_eval_private_dev_expansion_report.md) | private dev reviewed 70개 집계 현황과 test 부족분 |
 | [Private Dev Eval Target Report](evals/reports/retrieval_eval_private_dev_target_report.md) | private dev reviewed 70개 target resolvability 검증 결과 |
 | [Private Dev Eval Review Report](evals/reports/retrieval_eval_private_dev_review_report.md) | private dev 70개 review gate 결과 |
+| [Private Test Eval Target Report](evals/reports/retrieval_eval_private_test_target_report.md) | private test locked 35개 target resolvability 검증 결과 |
+| [Private Test Eval Lock Report](evals/reports/retrieval_eval_private_test_lock_report.md) | private test 35개 lock gate 결과 |
+| [Private Benchmark Readiness Report](evals/reports/retrieval_eval_private_benchmark_readiness_report.md) | private dev 70개와 test 35개의 ablation benchmark readiness 결과 |
 | [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md) | 실서비스 기준 RAG 비교 실험 순서, 논문 매핑, 선택 기준 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |

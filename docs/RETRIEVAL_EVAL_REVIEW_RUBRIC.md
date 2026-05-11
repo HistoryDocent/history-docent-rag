@@ -149,4 +149,29 @@ public artifact 금지:
 - no_answer positive target count = 0
 - voice_followup context missing count = 0
 
-현재 private dev 70개는 `reviewed` 상태지만 locked test 35개 작성 전까지 최종 성능 개선 주장은 금지한다.
+## Private Test Lock 기준
+
+대상:
+
+```text
+<private retrieval eval dataset: retrieval_eval_test.jsonl>
+```
+
+lock 조건:
+
+- split = `test`
+- review_status = `locked`
+- query_count = 35
+- test_query_count = 35
+- query type별 test 5개
+- answerable_query_count = 30
+- no_answer_query_count = 5
+- draft_query_count = 0
+- reviewed_query_count = 0
+- locked_query_count = 35
+- target missing count = 0
+- public leakage count = 0
+- no_answer positive target count = 0
+- voice_followup context missing count = 0
+
+현재 private dev 70개는 `reviewed`, private test 35개는 `locked` 상태다. 성능 개선 주장은 chunking/retrieval/generation ablation 실행 전까지 금지한다.
