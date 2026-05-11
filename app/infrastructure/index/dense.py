@@ -5,6 +5,7 @@ import json
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Any, Literal, Protocol
 
 import numpy as np
 from sklearn.decomposition import TruncatedSVD
@@ -22,11 +23,27 @@ from app.infrastructure.index.bm25 import bm25_tokenize
 
 
 DENSE_ENCODER_ID = "sklearn-tfidf-svd-v1"
+DenseEncoderBackend = Literal["sklearn_tfidf_svd", "sentence_transformers"]
+
+
+class DenseEncoder(Protocol):
+    def fit_transform(self, texts: list[str]) -> np.ndarray:
+        ...
+
+    def transform(self, texts: list[str]) -> np.ndarray:
+        ...
 
 
 @dataclass(frozen=True)
 class DenseRetrievalConfig:
     encoder_id: str = DENSE_ENCODER_ID
+    backend: DenseEncoderBackend = "sklearn_tfidf_svd"
+    model_name: str | None = None
+    device: str = "cpu"
+    batch_size: int = 16
+    query_prefix: str = ""
+    document_prefix: str = ""
+    show_progress_bar: bool = False
     n_components: int = 128
     max_features: int = 50000
     ngram_min: int = 1
@@ -35,21 +52,43 @@ class DenseRetrievalConfig:
     include_doc_title: bool = True
     random_state: int = 42
 
-    def to_method_config_summary(self, *, top_k: int, embedding_dim: int) -> dict[str, str | int | float | bool]:
-        return {
+    def to_method_config_summary(
+        self,
+        *,
+        top_k: int,
+        embedding_dim: int,
+    ) -> dict[str, str | int | float | bool]:
+        summary: dict[str, str | int | float | bool] = {
             "method": "dense",
             "top_k": top_k,
             "encoder_id": self.encoder_id,
+            "encoder_backend": self.backend,
             "embedding_dim": embedding_dim,
-            "n_components": self.n_components,
-            "max_features": self.max_features,
-            "ngram_range": f"{self.ngram_min}-{self.ngram_max}",
             "normalize_embeddings": self.normalize_embeddings,
             "include_doc_title": self.include_doc_title,
-            "random_state": self.random_state,
             "query_rewrite": False,
             "reranking": False,
         }
+        if self.backend == "sklearn_tfidf_svd":
+            summary.update(
+                {
+                    "n_components": self.n_components,
+                    "max_features": self.max_features,
+                    "ngram_range": f"{self.ngram_min}-{self.ngram_max}",
+                    "random_state": self.random_state,
+                }
+            )
+        else:
+            summary.update(
+                {
+                    "model_name": self.model_name or self.encoder_id,
+                    "device": self.device,
+                    "batch_size": self.batch_size,
+                    "query_prefix_enabled": bool(self.query_prefix),
+                    "document_prefix_enabled": bool(self.document_prefix),
+                }
+            )
+        return summary
 
 
 @dataclass
@@ -104,11 +143,41 @@ class SklearnTfidfSvdEncoder:
         )
 
 
+@dataclass
+class SentenceTransformerEncoder:
+    config: DenseRetrievalConfig
+    model: Any | None = None
+
+    def fit_transform(self, texts: list[str]) -> np.ndarray:
+        if not texts:
+            raise ValueError("dense encoder requires at least one text")
+        self.model = _load_sentence_transformer_model(self.config)
+        return self._encode(texts, prefix=self.config.document_prefix)
+
+    def transform(self, texts: list[str]) -> np.ndarray:
+        if self.model is None:
+            raise ValueError("dense encoder must be fitted before transform")
+        return self._encode(texts, prefix=self.config.query_prefix)
+
+    def _encode(self, texts: list[str], *, prefix: str) -> np.ndarray:
+        if self.model is None:
+            raise ValueError("dense encoder must be fitted before transform")
+        prefixed_texts = [f"{prefix}{text}" for text in texts]
+        embeddings = self.model.encode(
+            prefixed_texts,
+            batch_size=self.config.batch_size,
+            convert_to_numpy=True,
+            normalize_embeddings=self.config.normalize_embeddings,
+            show_progress_bar=self.config.show_progress_bar,
+        )
+        return np.asarray(embeddings, dtype=np.float32)
+
+
 @dataclass(frozen=True)
 class DenseRetriever:
     documents: tuple[RetrievalDocument, ...]
     document_embeddings: np.ndarray
-    encoder: SklearnTfidfSvdEncoder
+    encoder: DenseEncoder
     config: DenseRetrievalConfig
     embedding_cache_manifest: dict[str, str | int | float | bool] | None = None
 
@@ -123,7 +192,7 @@ class DenseRetriever:
         if not documents:
             raise ValueError("dense retriever requires at least one document")
         dense_config = config or DenseRetrievalConfig()
-        encoder = SklearnTfidfSvdEncoder(config=dense_config)
+        encoder = _build_dense_encoder(dense_config)
         texts = [_build_searchable_text(document, dense_config) for document in documents]
         document_embeddings = encoder.fit_transform(texts)
         manifest = None
@@ -301,3 +370,22 @@ def _stable_digest(payload: object) -> str:
     return hashlib.sha256(
         json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
     ).hexdigest()[:16]
+
+
+def _build_dense_encoder(config: DenseRetrievalConfig) -> DenseEncoder:
+    if config.backend == "sklearn_tfidf_svd":
+        return SklearnTfidfSvdEncoder(config=config)
+    if config.backend == "sentence_transformers":
+        return SentenceTransformerEncoder(config=config)
+    raise ValueError(f"unsupported dense encoder backend: {config.backend}")
+
+
+def _load_sentence_transformer_model(config: DenseRetrievalConfig) -> Any:
+    try:
+        from sentence_transformers import SentenceTransformer
+    except ImportError as error:
+        raise RuntimeError(
+            "sentence-transformers is required for neural dense retrieval. "
+            "Install the project with the neural optional dependencies."
+        ) from error
+    return SentenceTransformer(config.model_name or config.encoder_id, device=config.device)

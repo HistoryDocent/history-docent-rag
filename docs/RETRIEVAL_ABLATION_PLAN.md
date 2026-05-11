@@ -240,6 +240,22 @@ public artifact leakage 0
 
 `D0` dense baseline은 BM25보다 낮다. 이 결과는 neural embedding 모델 결과가 아니므로 BGE-M3 또는 multilingual-E5의 성능을 부정하는 근거로 사용하지 않는다. 현재 단계에서는 dense harness, cache, public-safe report를 고정한 것이 산출물이다.
 
+### Neural embedding 실행 결과
+
+private dev split 70개에서 sentence-transformers backend를 사용해 neural dense 후보를 비교했다.
+
+| ID | encoder | Recall@1 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | BM25 대비 Recall@5 delta | 판단 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `BM25` | regex-ko-en-num/v1 | 0.400000 | 0.566667 | 0.471389 | 0.344203 | 6.323600 | 0.000000 | 기준선 |
+| `D0` | sklearn-tfidf-svd-v1 | 0.200000 | 0.350000 | 0.261111 | 0.220955 | 18.228000 | -0.216667 | 개선 후보 아님 |
+| `E1` | BAAI/bge-m3 | 0.566667 | 0.800000 | 0.658611 | 0.567476 | 57.088400 | +0.233333 | 품질 상한 후보, latency 비용 큼 |
+| `E2` | intfloat/multilingual-e5-small | 0.633333 | 0.733333 | 0.675556 | 0.533797 | 15.717100 | +0.166666 | 1차 실서비스 후보 |
+| `E3` | paraphrase-multilingual-MiniLM-L12-v2 | 0.050000 | 0.100000 | 0.065000 | 0.039444 | 15.559500 | -0.466667 | 개선 후보 아님 |
+
+결론:
+
+`multilingual-e5-small`은 BM25 대비 Recall@1, Recall@5, MRR, nDCG@5가 모두 높고 BGE-M3보다 latency가 낮다. 다음 Hybrid/Reranker 비교의 1차 dense 후보는 `multilingual-e5-small`이다. BGE-M3는 Recall@5와 nDCG@5가 가장 높으므로 품질 상한 후보로 유지하되 CPU latency가 크다. 이 결과는 dev-only 후보 선별이며 locked test와 generation 평가 전에는 최종 개선 주장으로 사용하지 않는다.
+
 ## Stage 2.5. BM25-Dense Complementarity Analysis
 
 목적:
@@ -300,7 +316,7 @@ latency_p95 +20% 이내
 
 결론:
 
-`hybrid_weighted_alpha_0_3`은 `Recall@1`, `MRR`, `nDCG@5`를 소폭 개선했지만 `Recall@5`는 BM25와 동일하고 latency가 BM25 대비 크게 증가했다. 선택 기준의 `latency_p95 +20% 이내`를 통과하지 못했으므로 production 후보로 채택하지 않는다. 현재 검색 production 후보는 BM25이며, Hybrid는 neural embedding 모델 또는 shared dense index 최적화 이후 재실험한다.
+`hybrid_weighted_alpha_0_3`은 `Recall@1`, `MRR`, `nDCG@5`를 소폭 개선했지만 `Recall@5`는 BM25와 동일하고 latency가 BM25 대비 크게 증가했다. 선택 기준의 `latency_p95 +20% 이내`를 통과하지 못했으므로 production 후보로 채택하지 않는다. 이 Hybrid 실험은 D0 dense 기반이므로 neural dense 결과를 반영하지 않는다. 다음 Hybrid 실험은 `multilingual-e5-small`과 BGE-M3를 dense leg로 사용해 다시 실행한다.
 
 ## Stage 4. Reranker
 
@@ -544,7 +560,8 @@ latency/cost 악화 설명 없음
 4. chunking config ablation runner 완료
 5. Dense retrieval baseline v1 완료
 6. Hybrid RRF/Weighted retrieval 완료
-7. neural embedding model 비교 또는 shared dense index 최적화
+7. neural embedding model 비교 완료
+8. neural dense 기반 Hybrid/Reranker 비교
 8. reranker comparison
 9. place-aware deterministic query expansion
 10. Solar Pro 3 answer contract

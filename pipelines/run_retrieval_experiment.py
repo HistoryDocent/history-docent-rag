@@ -47,6 +47,11 @@ DEFAULT_TOP_K = 5
 SUPPORTED_METHOD_KEYS: tuple[str, ...] = (
     "bm25",
     "dense",
+    "dense_bge_m3",
+    "dense_multilingual_e5_small",
+    "dense_multilingual_e5_large",
+    "dense_multilingual_e5_large_instruct",
+    "dense_paraphrase_multilingual_minilm",
     "hybrid_rrf",
     "hybrid_weighted",
     "hybrid_weighted_alpha_0_3",
@@ -60,6 +65,7 @@ class _MethodPlan:
     method_key: str
     method: RetrievalMethod
     run_label: str
+    dense_config: DenseRetrievalConfig | None = None
     hybrid_config: HybridRetrievalConfig | None = None
 
 
@@ -226,7 +232,7 @@ def _execute_method(
             method_config_summary=_method_config_summary(method=method, top_k=top_k),
         )
     if method == "dense":
-        config = DenseRetrievalConfig()
+        config = plan.dense_config or DenseRetrievalConfig()
         retriever = DenseRetriever.from_documents(
             documents,
             config=config,
@@ -289,6 +295,44 @@ def _method_plan_from_key(method_key: str) -> _MethodPlan:
         return _MethodPlan(method_key=method_key, method="bm25", run_label="bm25")
     if method_key == "dense":
         return _MethodPlan(method_key=method_key, method="dense", run_label="dense")
+    if method_key == "dense_bge_m3":
+        return _neural_dense_plan(
+            method_key=method_key,
+            encoder_id="bge-m3",
+            model_name="BAAI/bge-m3",
+        )
+    if method_key == "dense_multilingual_e5_small":
+        return _neural_dense_plan(
+            method_key=method_key,
+            encoder_id="multilingual-e5-small",
+            model_name="intfloat/multilingual-e5-small",
+            query_prefix="query: ",
+            document_prefix="passage: ",
+        )
+    if method_key == "dense_multilingual_e5_large":
+        return _neural_dense_plan(
+            method_key=method_key,
+            encoder_id="multilingual-e5-large",
+            model_name="intfloat/multilingual-e5-large",
+            query_prefix="query: ",
+            document_prefix="passage: ",
+            batch_size=8,
+        )
+    if method_key == "dense_multilingual_e5_large_instruct":
+        return _neural_dense_plan(
+            method_key=method_key,
+            encoder_id="multilingual-e5-large-instruct",
+            model_name="intfloat/multilingual-e5-large-instruct",
+            query_prefix="Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: ",
+            document_prefix="",
+            batch_size=8,
+        )
+    if method_key == "dense_paraphrase_multilingual_minilm":
+        return _neural_dense_plan(
+            method_key=method_key,
+            encoder_id="paraphrase-multilingual-minilm-l12-v2",
+            model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        )
     if method_key == "hybrid_rrf":
         return _MethodPlan(
             method_key=method_key,
@@ -305,6 +349,30 @@ def _method_plan_from_key(method_key: str) -> _MethodPlan:
     if method_key == "hybrid_weighted_alpha_0_7":
         return _weighted_hybrid_plan(method_key=method_key, alpha=0.7)
     raise ValueError(f"unsupported retrieval methods: {[method_key]}")
+
+
+def _neural_dense_plan(
+    *,
+    method_key: str,
+    encoder_id: str,
+    model_name: str,
+    query_prefix: str = "",
+    document_prefix: str = "",
+    batch_size: int = 16,
+) -> _MethodPlan:
+    return _MethodPlan(
+        method_key=method_key,
+        method="dense",
+        run_label=method_key,
+        dense_config=DenseRetrievalConfig(
+            encoder_id=encoder_id,
+            backend="sentence_transformers",
+            model_name=model_name,
+            batch_size=batch_size,
+            query_prefix=query_prefix,
+            document_prefix=document_prefix,
+        ),
+    )
 
 
 def _weighted_hybrid_plan(*, method_key: str, alpha: float) -> _MethodPlan:

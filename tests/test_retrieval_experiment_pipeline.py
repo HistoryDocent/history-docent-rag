@@ -7,6 +7,7 @@ import pytest
 
 from app.core import project_paths
 from app.domain.retrieval_experiment import collect_public_retrieval_artifact_failures
+import app.infrastructure.index.dense as dense_module
 import pipelines.run_retrieval_experiment as retrieval_pipeline
 from pipelines.run_retrieval_experiment import run_retrieval_experiment
 
@@ -126,6 +127,30 @@ def _eval_item_payload(
             "review_status": review_status,
         },
     }
+
+
+class _FakeSentenceTransformerModel:
+    def encode(
+        self,
+        texts: list[str],
+        *,
+        batch_size: int,
+        convert_to_numpy: bool,
+        normalize_embeddings: bool,
+        show_progress_bar: bool,
+    ) -> object:
+        del batch_size, convert_to_numpy, normalize_embeddings, show_progress_bar
+        import numpy as np
+
+        vectors = []
+        for text in texts:
+            if "경복궁" in text or "정도전" in text:
+                vectors.append([1.0, 0.0, 0.0])
+            elif "시장" in text:
+                vectors.append([0.0, 1.0, 0.0])
+            else:
+                vectors.append([0.0, 0.0, 1.0])
+        return np.asarray(vectors, dtype=np.float32)
 
 
 def test_run_retrieval_experiment_writes_bm25_results_and_report(tmp_path: Path) -> None:
@@ -431,6 +456,102 @@ def test_run_retrieval_experiment_writes_hybrid_variant_results(
     assert "dense_weight_alpha=0.3" in report_text
     assert "private source text" not in report_text
     assert report.output_quality.public_raw_text_leakage_count == 0
+
+
+def test_run_retrieval_experiment_writes_neural_dense_results(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
+    monkeypatch.setattr(
+        dense_module,
+        "_load_sentence_transformer_model",
+        lambda config: _FakeSentenceTransformerModel(),
+    )
+    chunks_path = tmp_path / "parent_child_chunks.json"
+    dataset_path = tmp_path / "private_data" / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
+    results_dir = tmp_path / "private_data" / "evals" / "results"
+    embedding_cache_dir = tmp_path / "private_data" / "embeddings"
+    report_path = tmp_path / "neural_embedding_retrieval_comparison_report.md"
+    _write_json(
+        chunks_path,
+        {
+            "report_version": "chunking-quality/v1",
+            "chunking_run_id": "chunking-test",
+            "children": [
+                _child_payload(
+                    child_id="child-palace",
+                    parent_id="parent-palace",
+                    doc_id="doc-joseon",
+                    text="private source text 경복궁 한양 천도 정도전 궁궐 정치",
+                ),
+                _child_payload(
+                    child_id="child-market",
+                    parent_id="parent-market",
+                    doc_id="doc-market",
+                    text="private source text 시장 상업 도시 사람 물건",
+                ),
+            ],
+        },
+    )
+    _write_jsonl(
+        dataset_path,
+        [
+            _eval_item_payload(
+                query_id="q-one",
+                query_type="place_fact",
+                query_text="경복궁 한양 정도전",
+                expected_behavior="retrieve",
+                child_id="child-palace",
+                parent_id="parent-palace",
+                doc_id="doc-joseon",
+                review_status="reviewed",
+            ),
+            _eval_item_payload(
+                query_id="q-no-answer",
+                query_type="no_answer",
+                query_text="실시간 주차 예약",
+                expected_behavior="abstain",
+                review_status="reviewed",
+            ),
+        ],
+    )
+
+    report = run_retrieval_experiment(
+        chunks_path=chunks_path,
+        dataset_path=dataset_path,
+        results_dir=results_dir,
+        report_path=report_path,
+        methods=[
+            "bm25",
+            "dense_multilingual_e5_small",
+            "dense_paraphrase_multilingual_minilm",
+        ],
+        top_k=2,
+        embedding_cache_dir=embedding_cache_dir,
+    )
+    report_text = report_path.read_text(encoding="utf-8")
+
+    assert [run.run_label for run in report.method_runs] == [
+        "bm25",
+        "dense_multilingual_e5_small",
+        "dense_paraphrase_multilingual_minilm",
+    ]
+    assert report.method_runs[1].method_config_summary["encoder_backend"] == (
+        "sentence_transformers"
+    )
+    assert report.method_runs[1].method_config_summary["query_prefix_enabled"] is True
+    assert report.method_runs[2].method_config_summary["model_name"] == (
+        "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    )
+    assert (
+        results_dir / "retrieval_experiment_dense_multilingual_e5_small_results.jsonl"
+    ).exists()
+    assert list(embedding_cache_dir.glob("dense-*.manifest.json"))
+    assert "Dense neural encoder" in report_text
+    assert "private source text" not in report_text
+    assert str(dataset_path) not in report_text
+    assert collect_public_retrieval_artifact_failures(report.output_quality) == []
 
 
 def test_dense_retrieval_rejects_unreviewed_dev_rows(tmp_path: Path) -> None:

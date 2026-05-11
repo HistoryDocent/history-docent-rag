@@ -694,6 +694,16 @@ def _format_metric_delta_row(delta: RetrievalMetricDelta) -> str:
 
 def _build_next_step_text(method_runs: list[RetrievalExperimentRun]) -> str:
     methods = {run.method for run in method_runs}
+    neural_dense_runs = [
+        run
+        for run in method_runs
+        if run.method_config_summary.get("encoder_backend") == "sentence_transformers"
+    ]
+    if neural_dense_runs:
+        return (
+            "Neural dense 후보 중 BM25보다 Recall@5 또는 MRR이 높은 모델을 "
+            "Hybrid/Reranker 비교에 투입하고, latency/cost trade-off를 별도로 기록한다."
+        )
     if "dense" in methods and "hybrid_rrf" not in methods and "hybrid_weighted" not in methods:
         return "Dense baseline 결과를 기준으로 Hybrid RRF/Weighted retrieval을 같은 report에 추가한다."
     if "hybrid_rrf" in methods or "hybrid_weighted" in methods:
@@ -740,6 +750,16 @@ def _build_dense_encoder_boundary_text(method_runs: list[RetrievalExperimentRun]
         )
         for run in dense_runs
     })
+    neural_encoder_ids = sorted({
+        str(run.method_config_summary.get("encoder_id", "unknown"))
+        for run in dense_runs
+        if run.method_config_summary.get("encoder_backend") == "sentence_transformers"
+    })
+    if neural_encoder_ids:
+        return (
+            f"Dense neural encoder는 {', '.join(neural_encoder_ids)}다. "
+            "sentence-transformers backend로 실행했고, embedding vector/cache는 private artifact로만 저장한다."
+        )
     return (
         f"Dense v1 encoder는 {', '.join(encoder_ids)}다. "
         "이 결과는 neural embedding 모델인 BGE-M3 또는 multilingual-E5 결과가 아니다."
