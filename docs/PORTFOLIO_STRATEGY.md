@@ -24,8 +24,8 @@
 ```text
 HistoryDocent | 서울/한양 역사 관광 도슨트 RAG 백엔드 | 개인 프로젝트
 - Upstage Parser 기반 한국사 도서 데이터를 element 단위로 정규화하고 page/section/chunk provenance를 보존하는 전처리 pipeline 설계
-- 서울 주요 장소와 한양 역사 맥락을 연결하기 위해 place catalog, parent-child chunking, BM25 baseline, retrieval evaluation harness, chunking ablation runner, Dense retrieval baseline, Hybrid RRF/Weighted, neural embedding, neural dense Hybrid, BGE reranker 비교 실험 구현
-- Query Rewrite, RAPTOR-lite, GraphRAG-lite 비교를 위한 dev/test 평가셋과 ablation 계획 설계
+- 서울 주요 장소와 한양 역사 맥락을 연결하기 위해 place catalog, parent-child chunking, BM25 baseline, retrieval evaluation harness, chunking ablation runner, Dense retrieval baseline, Hybrid RRF/Weighted, neural embedding, neural dense Hybrid, BGE reranker, deterministic query rewrite 비교 실험 구현
+- RAPTOR-lite, GraphRAG-lite 비교를 위한 dev/test 평가셋과 ablation 계획 설계
 - Solar Pro 3 기반 citation RAG API는 answer contract와 evaluation gate를 먼저 고정한 뒤 구현 예정
 ```
 
@@ -50,7 +50,7 @@ GraphRAG는 relationship 질문에 유리하지만 entity extraction과 canonica
 
 ### 성능을 어떻게 검증했는가
 
-retrieval과 generation을 분리했다. 현재는 BM25 baseline, retrieval evaluation harness, private dev 70개 reviewed 평가셋, private test 35개 locked 평가셋, BM25 dev-only chunking ablation v2, Dense retrieval baseline v1, BM25-Dense 보완성 분석, Hybrid RRF/Weighted 비교, neural embedding 비교, neural dense Hybrid 비교, BGE reranker 비교까지 구축했다. 청킹 실험에서는 C0-C6을 비교했고 smaller/larger child, micro-parent merge, overlap 0/2, fixed-size block baseline 모두 C0를 넘지 못해 current parent-child chunking을 유지했다. Dense v1은 BM25보다 낮았지만 neural dense에서는 `multilingual-e5-small`이 `Recall@5=0.733333`, `MRR=0.675556`, `nDCG@5=0.533797`로 BM25 dev 기준선을 넘었고, BGE-M3는 `Recall@5=0.800000`으로 가장 높았지만 latency가 컸다. Neural dense Hybrid에서는 `hybrid_weighted_e5_small_alpha_0_5`가 `Recall@5=0.783333`으로 E5 dense 단독보다 높았지만 `MRR`, `nDCG@5`, latency가 나빠 기본 검색 후보로 채택하지 않았다. BGE reranker top20은 `Recall@5=0.833333`, `MRR=0.761667`, `nDCG@5=0.635787`로 가장 높았지만 `latency_p95_ms=13140.690300`이라 CPU 실시간 API 기본 후보에서 제외했다. Retrieval 비교는 Recall@k, MRR, nDCG, latency, no-answer candidate count로 진행하고, 최종 답변은 후속 generation 단계에서 Correct-with-Evidence와 citation precision/recall로 판단하도록 gate를 설계했다. 개선 여부는 locked test set에서 query 단위 paired comparison과 bootstrap confidence interval 조건을 만족한 뒤에만 주장한다.
+retrieval과 generation을 분리했다. 현재는 BM25 baseline, retrieval evaluation harness, private dev 70개 reviewed 평가셋, private test 35개 locked 평가셋, BM25 dev-only chunking ablation v2, Dense retrieval baseline v1, BM25-Dense 보완성 분석, Hybrid RRF/Weighted 비교, neural embedding 비교, neural dense Hybrid 비교, BGE reranker 비교, deterministic query rewrite 비교까지 구축했다. 청킹 실험에서는 C0-C6을 비교했고 smaller/larger child, micro-parent merge, overlap 0/2, fixed-size block baseline 모두 C0를 넘지 못해 current parent-child chunking을 유지했다. Dense v1은 BM25보다 낮았지만 neural dense에서는 `multilingual-e5-small`이 `Recall@5=0.733333`, `MRR=0.675556`, `nDCG@5=0.533797`로 BM25 dev 기준선을 넘었고, BGE-M3는 `Recall@5=0.800000`으로 가장 높았지만 latency가 컸다. Neural dense Hybrid에서는 `hybrid_weighted_e5_small_alpha_0_5`가 `Recall@5=0.783333`으로 E5 dense 단독보다 높았지만 `MRR`, `nDCG@5`, latency가 나빠 기본 검색 후보로 채택하지 않았다. BGE reranker top20은 `Recall@5=0.833333`, `MRR=0.761667`, `nDCG@5=0.635787`로 가장 높았지만 `latency_p95_ms=13140.690300`이라 CPU 실시간 API 기본 후보에서 제외했다. Query rewrite에서는 전체 place rewrite가 평균 Recall@5는 올렸지만 일부 place/story query의 top-rank를 악화시켜 기본값에서 제외했고, voice-only rewrite가 `Recall@5=0.850000`, `MRR=0.758056`, `nDCG@5=0.615293`, `latency_p95_ms=19.560200`으로 가장 균형이 좋았다. Retrieval 비교는 Recall@k, MRR, nDCG, latency, no-answer candidate count로 진행하고, 최종 답변은 후속 generation 단계에서 Correct-with-Evidence와 citation precision/recall로 판단하도록 gate를 설계했다. 개선 여부는 locked test set에서 query 단위 paired comparison과 bootstrap confidence interval 조건을 만족한 뒤에만 주장한다.
 
 ### 저작권 데이터는 어떻게 처리했는가
 
@@ -58,7 +58,7 @@ retrieval과 generation을 분리했다. 현재는 BM25 baseline, retrieval eval
 
 ### 음성 서비스와 RAG 백엔드는 어떻게 연결되는가
 
-음성 UI보다 먼저 짧은 질문 처리, 지시어 해소, `spoken_answer`, citation display를 백엔드 계약으로 분리했다. 현재 검증 완료 범위는 retrieval 평가셋, BM25 baseline, chunking ablation v2, Dense baseline, BM25-Dense 보완성 분석, Hybrid retrieval 비교, neural embedding 비교, neural dense Hybrid 비교, reranker 비교이며, `spoken_answer` 생성과 STT/TTS는 Solar Pro 3 generation 단계 이후로 분리했다.
+음성 UI보다 먼저 짧은 질문 처리, 지시어 해소, `spoken_answer`, citation display를 백엔드 계약으로 분리했다. 현재 검증 완료 범위는 retrieval 평가셋, BM25 baseline, chunking ablation v2, Dense baseline, BM25-Dense 보완성 분석, Hybrid retrieval 비교, neural embedding 비교, neural dense Hybrid 비교, reranker 비교, query rewrite 비교이며, `spoken_answer` 생성과 STT/TTS는 Solar Pro 3 generation 단계 이후로 분리했다.
 
 ## 금지 표현
 

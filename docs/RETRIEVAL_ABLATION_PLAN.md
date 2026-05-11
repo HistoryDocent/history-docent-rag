@@ -427,6 +427,32 @@ no_answer 악화 없음
 Solar Pro 3 비용 설명 가능
 ```
 
+실행 결과 v1:
+
+private dev split 70개에서 E5-small dense 단독, E5-small + 전체 place rewrite, E5-small + voice-only rewrite를 비교했다. Solar Pro 3는 사용하지 않았다.
+
+| ID | run_label | 적용 범위 | Recall@1 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | 판단 |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `E2` | `dense_multilingual_e5_small` | rewrite 없음 | 0.633333 | 0.733333 | 0.675556 | 0.533797 | 15.638500 | 기본 검색 후보 |
+| `Q1+Q2` | `dense_multilingual_e5_small_place_rewrite` | `place_fact`, `place_story`, `route_context`, `voice_followup` | 0.633333 | 0.833333 | 0.709444 | 0.583976 | 21.273600 | 전체 Recall은 개선됐지만 place/story top-rank 악화 |
+| `Q2` | `dense_multilingual_e5_small_voice_rewrite` | `voice_followup` | 0.700000 | 0.850000 | 0.758056 | 0.615293 | 19.560200 | 다음 단계 후보 |
+
+query type별 핵심 결과:
+
+| run_label | query_type | Recall@1 | Recall@5 | MRR | nDCG@5 | 판단 |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| `dense_multilingual_e5_small` | `voice_followup` | 0.300000 | 0.300000 | 0.300000 | 0.184779 | 지시어/짧은 후속 질문에 취약 |
+| `dense_multilingual_e5_small_place_rewrite` | `voice_followup` | 0.700000 | 1.000000 | 0.795000 | 0.673753 | voice는 개선 |
+| `dense_multilingual_e5_small_place_rewrite` | `place_fact` | 0.600000 | 0.900000 | 0.703333 | 0.654528 | dense 단독보다 악화 |
+| `dense_multilingual_e5_small_place_rewrite` | `place_story` | 0.500000 | 0.600000 | 0.550000 | 0.406144 | dense 단독보다 악화 |
+| `dense_multilingual_e5_small_voice_rewrite` | `voice_followup` | 0.700000 | 1.000000 | 0.795000 | 0.673753 | target query type 개선 |
+| `dense_multilingual_e5_small_voice_rewrite` | `place_fact` | 0.800000 | 1.000000 | 0.900000 | 0.783397 | dense 단독 유지 |
+| `dense_multilingual_e5_small_voice_rewrite` | `route_context` | 0.700000 | 0.900000 | 0.753333 | 0.533275 | dense 단독 유지 |
+
+결론:
+
+전체 place rewrite는 평균 Recall@5를 올렸지만 `place_fact`, `place_story`, `route_context`에서 top-rank 품질을 떨어뜨렸다. 따라서 기본 검색 후보로 채택하지 않는다. 현재 다음 단계 후보는 `dense_multilingual_e5_small_voice_rewrite`다. 이 후보는 `voice_followup`에만 deterministic context/place expansion을 적용해 `voice_followup Recall@5`를 0.300000에서 1.000000으로 올렸고, 다른 query type은 dense 단독 결과를 유지했다. 이 결과도 dev-only 후보 선별이며 locked test와 generation 평가 전에는 최종 개선 주장으로 사용하지 않는다.
+
 ## Stage 6. Evidence Packing
 
 목적:
@@ -598,7 +624,7 @@ latency/cost 악화 설명 없음
 7. neural embedding model 비교 완료
 8. neural dense 기반 Hybrid/Reranker 비교
 8. reranker comparison
-9. place-aware deterministic query expansion
+9. place-aware deterministic query expansion 완료
 10. Solar Pro 3 answer contract
 11. generation eval harness
 12. Qdrant production candidate

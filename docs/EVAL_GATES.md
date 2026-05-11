@@ -149,25 +149,28 @@ GraphRAG/RAPTOR 결과를 전체 query type 개선으로 포장
 
 비교군:
 
-- Hybrid
-- Hybrid + place catalog
-- Hybrid + query rewrite
-- Hybrid + place catalog + query rewrite
+- Dense 기본 후보
+- Dense + 전체 place rewrite
+- Dense + voice-only rewrite
+- 후속 단계에서 Hybrid + query rewrite
 
 정량 지표:
 
 - `voice_followup Recall@5`
 - `place_fact Recall@5`
 - `place_story Recall@5`
+- `route_context Recall@5`
 - `rewrite_success_rate`
 - `rewrite_invalid_json_rate`
+- `query_rewrite_solar_call_count`
+- `latency_p95_ms`
 
 통과 기준:
 
 ```text
 rewrite_invalid_json_rate = 0
 voice_followup 유형 개선
-place_relevance 개선
+비대상 query type 악화 없음
 근거 없는 확장 질의 생성 없음
 ```
 

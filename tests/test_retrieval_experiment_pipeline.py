@@ -92,6 +92,8 @@ def _eval_item_payload(
     doc_id: str | None = None,
     split: str = "dev",
     review_status: str = "reviewed",
+    user_context: str | None = None,
+    place_ids: list[str] | None = None,
 ) -> dict[str, object]:
     judgments: list[dict[str, object]] = []
     if expected_behavior == "retrieve":
@@ -115,14 +117,18 @@ def _eval_item_payload(
             "query_text": query_text,
             "language": "ko",
             "expected_behavior": expected_behavior,
-            "user_context": None,
+            "user_context": user_context,
             "public_allowed": True,
         },
         "judgments": judgments,
         "metadata": {
             "split": split,
             "difficulty": "hard" if query_type in {"relationship", "route_context"} else "medium",
-            "place_ids": ["gyeongbokgung"] if expected_behavior == "retrieve" else [],
+            "place_ids": place_ids
+            if place_ids is not None
+            else ["gyeongbokgung"]
+            if expected_behavior == "retrieve"
+            else [],
             "requires_context": query_type in {"route_context", "voice_followup"},
             "answerability": answerability,
             "review_status": review_status,
@@ -683,6 +689,151 @@ def test_run_retrieval_experiment_writes_neural_hybrid_results_with_shared_dense
     ).exists()
     assert "dense_encoder_backend=sentence_transformers" in report_text
     assert "dense_model_name=intfloat/multilingual-e5-small" in report_text
+    assert "private source text" not in report_text
+    assert str(dataset_path) not in report_text
+    assert collect_public_retrieval_artifact_failures(report.output_quality) == []
+
+
+def test_run_retrieval_experiment_writes_place_rewrite_results(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
+    monkeypatch.setattr(
+        dense_module,
+        "_load_sentence_transformer_model",
+        lambda config: _FakeSentenceTransformerModel(),
+    )
+    chunks_path = tmp_path / "parent_child_chunks.json"
+    dataset_path = tmp_path / "private_data" / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
+    results_dir = tmp_path / "private_data" / "evals" / "results"
+    embedding_cache_dir = tmp_path / "private_data" / "embeddings"
+    report_path = tmp_path / "query_rewrite_retrieval_comparison_report.md"
+    place_catalog_path = tmp_path / "data_samples" / "place_catalog_seed.json"
+    _write_json(
+        place_catalog_path,
+        {
+            "catalog_version": "place-catalog/v1",
+            "places": [
+                {
+                    "place_id": "gyeongbokgung",
+                    "canonical_name": "경복궁",
+                    "category": "palace",
+                    "aliases": [
+                        {
+                            "alias": "경복궁",
+                            "language": "ko",
+                            "alias_type": "primary",
+                        },
+                        {
+                            "alias": "Gyeongbokgung Palace",
+                            "language": "en",
+                            "alias_type": "tourism",
+                        },
+                    ],
+                    "related_place_ids": [],
+                    "relations": [],
+                    "tour_context_tags": ["palace"],
+                    "source_policy": "manual_public_seed",
+                    "public_allowed": True,
+                }
+            ],
+        },
+    )
+    _write_json(
+        chunks_path,
+        {
+            "report_version": "chunking-quality/v1",
+            "chunking_run_id": "chunking-test",
+            "children": [
+                _child_payload(
+                    child_id="child-palace",
+                    parent_id="parent-palace",
+                    doc_id="doc-joseon",
+                    text="private source text 경복궁 한양 천도 정도전 궁궐 정치",
+                ),
+                _child_payload(
+                    child_id="child-zmarket",
+                    parent_id="parent-market",
+                    doc_id="doc-market",
+                    text="private source text 시장 상업 도시 사람 물건",
+                ),
+            ],
+        },
+    )
+    _write_jsonl(
+        dataset_path,
+        [
+            _eval_item_payload(
+                query_id="q-voice",
+                query_type="voice_followup",
+                query_text="여기는 왜 중요해?",
+                expected_behavior="retrieve",
+                child_id="child-palace",
+                parent_id="parent-palace",
+                doc_id="doc-joseon",
+                user_context="현재 위치는 Gyeongbokgung Palace",
+                place_ids=[],
+                review_status="reviewed",
+            ),
+            _eval_item_payload(
+                query_id="q-no-answer",
+                query_type="no_answer",
+                query_text="실시간 주차 예약",
+                expected_behavior="abstain",
+                review_status="reviewed",
+            ),
+        ],
+    )
+
+    report = run_retrieval_experiment(
+        chunks_path=chunks_path,
+        dataset_path=dataset_path,
+        results_dir=results_dir,
+        report_path=report_path,
+        methods=[
+            "bm25",
+            "dense_multilingual_e5_small",
+            "dense_multilingual_e5_small_place_rewrite",
+            "dense_multilingual_e5_small_voice_rewrite",
+        ],
+        top_k=1,
+        embedding_cache_dir=embedding_cache_dir,
+        place_catalog_path=place_catalog_path,
+    )
+    report_text = report_path.read_text(encoding="utf-8")
+
+    assert [run.run_label for run in report.method_runs] == [
+        "bm25",
+        "dense_multilingual_e5_small",
+        "dense_multilingual_e5_small_place_rewrite",
+        "dense_multilingual_e5_small_voice_rewrite",
+    ]
+    assert report.method_runs[1].metric_summary.recall_at_1 == 0.0
+    assert report.method_runs[2].metric_summary.recall_at_1 == 1.0
+    assert report.method_runs[3].metric_summary.recall_at_1 == 1.0
+    rewrite_config = report.method_runs[2].method_config_summary
+    assert rewrite_config["query_rewrite"] is True
+    assert rewrite_config["query_rewrite_strategy"] == "place-aware-deterministic-v1"
+    assert rewrite_config["query_rewrite_changed_count"] == 1
+    assert rewrite_config["query_rewrite_invalid_json_count"] == 0
+    assert rewrite_config["query_rewrite_solar_call_count"] == 0
+    voice_rewrite_config = report.method_runs[3].method_config_summary
+    assert voice_rewrite_config["query_rewrite"] is True
+    assert voice_rewrite_config["query_rewrite_strategy"] == (
+        "voice-followup-deterministic-v1"
+    )
+    assert voice_rewrite_config["query_rewrite_target_types"] == "voice_followup"
+    assert (
+        results_dir
+        / "retrieval_experiment_dense_multilingual_e5_small_place_rewrite_results.jsonl"
+    ).exists()
+    assert (
+        results_dir
+        / "retrieval_experiment_dense_multilingual_e5_small_voice_rewrite_results.jsonl"
+    ).exists()
+    assert "query_rewrite_strategy=place-aware-deterministic-v1" in report_text
+    assert "Query rewrite 최고 후보" in report_text
     assert "private source text" not in report_text
     assert str(dataset_path) not in report_text
     assert collect_public_retrieval_artifact_failures(report.output_quality) == []

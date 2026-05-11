@@ -10,7 +10,14 @@ from app.core.project_paths import (
     is_repository_private_artifact_path,
     is_repository_private_write_path,
 )
+from app.application.query_rewrite import (
+    PlaceAwareQueryRewriter,
+    QueryRewriteConfig,
+    QueryRewriteResult,
+    summarize_query_rewrite_results,
+)
 from app.domain.chunking import ChildChunk
+from app.domain.place_catalog import PlaceCatalog, load_place_catalog
 from app.domain.retrieval import (
     RetrievalDocument,
     RetrievalEvalItem,
@@ -52,6 +59,7 @@ DEFAULT_RESULTS_DIR = Path("evals/results")
 DEFAULT_REPORT_PATH = Path("evals/reports/retrieval_harness_report.md")
 DEFAULT_NOTEBOOK_PATH = Path("notebooks/07_dense_hybrid_retrieval_comparison.ipynb")
 DEFAULT_EMBEDDING_CACHE_DIR = Path("private_data") / "embeddings"
+DEFAULT_PLACE_CATALOG_PATH = Path("data_samples/place_catalog_seed.json")
 DEFAULT_TOP_K = 5
 SUPPORTED_METHOD_KEYS: tuple[str, ...] = (
     "bm25",
@@ -74,6 +82,8 @@ SUPPORTED_METHOD_KEYS: tuple[str, ...] = (
     "dense_multilingual_e5_small_rerank_bge_m3_top20",
     "dense_multilingual_e5_small_rerank_bge_m3_top30",
     "dense_multilingual_e5_small_rerank_bge_m3_top50",
+    "dense_multilingual_e5_small_place_rewrite",
+    "dense_multilingual_e5_small_voice_rewrite",
     "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top20",
     "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top30",
     "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top50",
@@ -88,6 +98,7 @@ class _MethodPlan:
     dense_config: DenseRetrievalConfig | None = None
     hybrid_config: HybridRetrievalConfig | None = None
     reranker_config: RerankerConfig | None = None
+    query_rewrite_config: QueryRewriteConfig | None = None
 
 
 @dataclass(frozen=True)
@@ -107,6 +118,7 @@ class _ExecutionContext:
     bm25_retriever: Bm25Retriever | None = None
     dense_retrievers: dict[str, DenseRetriever] = field(default_factory=dict)
     rerankers: dict[str, CrossEncoderReranker] = field(default_factory=dict)
+    place_catalogs: dict[str, PlaceCatalog] = field(default_factory=dict)
 
 
 def run_retrieval_experiment(
@@ -119,6 +131,7 @@ def run_retrieval_experiment(
     methods: list[str] | None = None,
     top_k: int = DEFAULT_TOP_K,
     embedding_cache_dir: Path = DEFAULT_EMBEDDING_CACHE_DIR,
+    place_catalog_path: Path = DEFAULT_PLACE_CATALOG_PATH,
 ) -> RetrievalComparisonReport:
     method_plans = _build_method_plans(methods or ["bm25"])
     items = load_retrieval_eval_jsonl(dataset_path)
@@ -128,6 +141,7 @@ def run_retrieval_experiment(
         dataset_path=dataset_path,
         results_dir=results_dir,
         embedding_cache_dir=embedding_cache_dir,
+        place_catalog_path=place_catalog_path,
         method_plans=method_plans,
     )
     documents = load_retrieval_documents_from_chunks(chunks_path)
@@ -142,6 +156,7 @@ def run_retrieval_experiment(
                 results_dir=results_dir,
                 top_k=top_k,
                 embedding_cache_dir=embedding_cache_dir,
+                place_catalog_path=place_catalog_path,
                 execution_context=execution_context,
             )
         )
@@ -204,6 +219,7 @@ def _run_method(
     results_dir: Path,
     top_k: int,
     embedding_cache_dir: Path,
+    place_catalog_path: Path,
     execution_context: _ExecutionContext,
 ) -> _MethodRunArtifacts:
     execution = _execute_method(
@@ -212,6 +228,7 @@ def _run_method(
         documents=documents,
         top_k=top_k,
         embedding_cache_dir=embedding_cache_dir,
+        place_catalog_path=place_catalog_path,
         execution_context=execution_context,
     )
     result_path = results_dir / f"retrieval_experiment_{plan.run_label}_results.jsonl"
@@ -248,6 +265,7 @@ def _execute_method(
     documents: list[RetrievalDocument],
     top_k: int,
     embedding_cache_dir: Path,
+    place_catalog_path: Path,
     execution_context: _ExecutionContext,
 ) -> _MethodExecution:
     method = plan.method
@@ -258,6 +276,7 @@ def _execute_method(
             documents=documents,
             top_k=top_k,
             embedding_cache_dir=embedding_cache_dir,
+            place_catalog_path=place_catalog_path,
             execution_context=execution_context,
         )
     if method == "bm25":
@@ -285,19 +304,29 @@ def _execute_method(
             config=config,
             embedding_cache_dir=embedding_cache_dir,
         )
+        rewrites = _rewrite_items_if_needed(
+            plan=plan,
+            items=items,
+            place_catalog_path=place_catalog_path,
+            execution_context=execution_context,
+        )
         return _MethodExecution(
             results=[
-                retriever.search(
-                    query_id=item.query.query_id,
-                    query_type=item.query.query_type,
-                    query_text=item.query.query_text,
+                _search_with_optional_rewrite(
+                    retriever=retriever,
+                    item=item,
+                    rewrite=rewrite,
                     top_k=top_k,
                 )
-                for item in items
+                for item, rewrite in zip(items, rewrites, strict=True)
             ],
-            method_config_summary=config.to_method_config_summary(
-                top_k=top_k,
-                embedding_dim=retriever.embedding_dim,
+            method_config_summary=_with_query_rewrite_summary(
+                config.to_method_config_summary(
+                    top_k=top_k,
+                    embedding_dim=retriever.embedding_dim,
+                ),
+                plan=plan,
+                rewrites=rewrites,
             ),
         )
     if plan.hybrid_config is not None:
@@ -316,22 +345,91 @@ def _execute_method(
             dense_retriever=dense_retriever,
             config=plan.hybrid_config,
         )
+        rewrites = _rewrite_items_if_needed(
+            plan=plan,
+            items=items,
+            place_catalog_path=place_catalog_path,
+            execution_context=execution_context,
+        )
         return _MethodExecution(
             results=[
-                retriever.search(
-                    query_id=item.query.query_id,
-                    query_type=item.query.query_type,
-                    query_text=item.query.query_text,
+                _search_with_optional_rewrite(
+                    retriever=retriever,
+                    item=item,
+                    rewrite=rewrite,
                     top_k=top_k,
                 )
-                for item in items
+                for item, rewrite in zip(items, rewrites, strict=True)
             ],
-            method_config_summary=plan.hybrid_config.to_method_config_summary(
-                top_k=top_k,
-                embedding_dim=retriever.embedding_dim,
+            method_config_summary=_with_query_rewrite_summary(
+                plan.hybrid_config.to_method_config_summary(
+                    top_k=top_k,
+                    embedding_dim=retriever.embedding_dim,
+                ),
+                plan=plan,
+                rewrites=rewrites,
             ),
         )
     raise ValueError(f"method is not implemented in retrieval experiment runner: {method}")
+
+
+def _search_with_optional_rewrite(
+    *,
+    retriever: DenseRetriever | HybridRetriever,
+    item: RetrievalEvalItem,
+    rewrite: QueryRewriteResult | None,
+    top_k: int,
+) -> RetrievalRunResult:
+    query_text = rewrite.rewritten_query_text if rewrite is not None else item.query.query_text
+    result = retriever.search(
+        query_id=item.query.query_id,
+        query_type=item.query.query_type,
+        query_text=query_text,
+        top_k=top_k,
+    )
+    if rewrite is None:
+        return result
+    return result.model_copy(
+        update={"latency_ms": round(result.latency_ms + rewrite.latency_ms, 6)}
+    )
+
+
+def _rewrite_items_if_needed(
+    *,
+    plan: _MethodPlan,
+    items: list[RetrievalEvalItem],
+    place_catalog_path: Path,
+    execution_context: _ExecutionContext,
+) -> list[QueryRewriteResult | None]:
+    if plan.query_rewrite_config is None:
+        return [None for _item in items]
+    catalog = _get_place_catalog(
+        execution_context=execution_context,
+        place_catalog_path=place_catalog_path,
+    )
+    rewriter = PlaceAwareQueryRewriter(
+        catalog=catalog,
+        config=plan.query_rewrite_config,
+    )
+    return [rewriter.rewrite(item) for item in items]
+
+
+def _with_query_rewrite_summary(
+    method_config_summary: dict[str, str | int | float | bool],
+    *,
+    plan: _MethodPlan,
+    rewrites: list[QueryRewriteResult | None],
+) -> dict[str, str | int | float | bool]:
+    if plan.query_rewrite_config is None:
+        return method_config_summary
+    rewrite_results = [rewrite for rewrite in rewrites if rewrite is not None]
+    return {
+        **method_config_summary,
+        **summarize_query_rewrite_results(
+            config=plan.query_rewrite_config,
+            results=rewrite_results,
+        ),
+    }
 
 
 def _execute_reranked_method(
@@ -341,6 +439,7 @@ def _execute_reranked_method(
     documents: list[RetrievalDocument],
     top_k: int,
     embedding_cache_dir: Path,
+    place_catalog_path: Path,
     execution_context: _ExecutionContext,
 ) -> _MethodExecution:
     config = plan.reranker_config
@@ -390,21 +489,52 @@ def _execute_reranked_method(
         ),
         config=config,
     )
+    rewrites = _rewrite_items_if_needed(
+        plan=plan,
+        items=items,
+        place_catalog_path=place_catalog_path,
+        execution_context=execution_context,
+    )
     return _MethodExecution(
         results=[
-            reranked_retriever.search(
-                query_id=item.query.query_id,
-                query_type=item.query.query_type,
-                query_text=item.query.query_text,
+            _search_reranked_with_optional_rewrite(
+                reranked_retriever=reranked_retriever,
+                item=item,
+                rewrite=rewrite,
                 top_k=top_k,
             )
-            for item in items
+            for item, rewrite in zip(items, rewrites, strict=True)
         ],
-        method_config_summary=config.to_method_config_summary(
-            base_summary=base_summary,
-            top_k=top_k,
-            base_run_label=_base_run_label_for_reranked_plan(plan),
+        method_config_summary=_with_query_rewrite_summary(
+            config.to_method_config_summary(
+                base_summary=base_summary,
+                top_k=top_k,
+                base_run_label=_base_run_label_for_reranked_plan(plan),
+            ),
+            plan=plan,
+            rewrites=rewrites,
         ),
+    )
+
+
+def _search_reranked_with_optional_rewrite(
+    *,
+    reranked_retriever: RerankingRetriever,
+    item: RetrievalEvalItem,
+    rewrite: QueryRewriteResult | None,
+    top_k: int,
+) -> RetrievalRunResult:
+    query_text = rewrite.rewritten_query_text if rewrite is not None else item.query.query_text
+    result = reranked_retriever.search(
+        query_id=item.query.query_id,
+        query_type=item.query.query_type,
+        query_text=query_text,
+        top_k=top_k,
+    )
+    if rewrite is None:
+        return result
+    return result.model_copy(
+        update={"latency_ms": round(result.latency_ms + rewrite.latency_ms, 6)}
     )
 
 
@@ -518,6 +648,25 @@ def _method_plan_from_key(method_key: str) -> _MethodPlan:
         return _reranked_dense_plan(method_key=method_key, candidate_k=30)
     if method_key == "dense_multilingual_e5_small_rerank_bge_m3_top50":
         return _reranked_dense_plan(method_key=method_key, candidate_k=50)
+    if method_key == "dense_multilingual_e5_small_place_rewrite":
+        return _MethodPlan(
+            method_key=method_key,
+            method="dense",
+            run_label=method_key,
+            dense_config=_e5_small_dense_config(),
+            query_rewrite_config=QueryRewriteConfig(),
+        )
+    if method_key == "dense_multilingual_e5_small_voice_rewrite":
+        return _MethodPlan(
+            method_key=method_key,
+            method="dense",
+            run_label=method_key,
+            dense_config=_e5_small_dense_config(),
+            query_rewrite_config=QueryRewriteConfig(
+                strategy_id="voice-followup-deterministic-v1",
+                target_query_types=("voice_followup",),
+            ),
+        )
     if method_key == "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top20":
         return _reranked_hybrid_plan(method_key=method_key, candidate_k=20)
     if method_key == "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top30":
@@ -672,6 +821,19 @@ def _get_reranker(
     return reranker
 
 
+def _get_place_catalog(
+    *,
+    execution_context: _ExecutionContext,
+    place_catalog_path: Path,
+) -> PlaceCatalog:
+    cache_key = str(place_catalog_path.resolve())
+    catalog = execution_context.place_catalogs.get(cache_key)
+    if catalog is None:
+        catalog = load_place_catalog(place_catalog_path)
+        execution_context.place_catalogs[cache_key] = catalog
+    return catalog
+
+
 def _reranker_model_cache_key(config: RerankerConfig) -> str:
     payload = {
         "backend": config.backend,
@@ -740,9 +902,16 @@ def _validate_private_artifact_policy(
     dataset_path: Path,
     results_dir: Path,
     embedding_cache_dir: Path,
+    place_catalog_path: Path,
     method_plans: list[_MethodPlan],
 ) -> None:
-    for path in (chunks_path, dataset_path, results_dir, embedding_cache_dir):
+    for path in (
+        chunks_path,
+        dataset_path,
+        results_dir,
+        embedding_cache_dir,
+        place_catalog_path,
+    ):
         _validate_repository_private_data_boundary(path)
     private_dataset = is_repository_private_artifact_path(dataset_path)
     private_corpus = is_repository_private_artifact_path(chunks_path)
@@ -806,6 +975,7 @@ def main() -> int:
         methods=methods,
         top_k=args.top_k,
         embedding_cache_dir=args.embedding_cache_dir,
+        place_catalog_path=args.place_catalog,
     )
     failures = collect_public_retrieval_artifact_failures(report.output_quality)
     primary_run = report.method_runs[0]
@@ -838,6 +1008,11 @@ def _parse_args() -> argparse.Namespace:
         "--embedding-cache-dir",
         type=Path,
         default=DEFAULT_EMBEDDING_CACHE_DIR,
+    )
+    parser.add_argument(
+        "--place-catalog",
+        type=Path,
+        default=DEFAULT_PLACE_CATALOG_PATH,
     )
     return parser.parse_args()
 

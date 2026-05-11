@@ -71,7 +71,7 @@
 
 | ID | 작업 | 산출물 | 완료 기준 | Commit |
 | --- | --- | --- | --- | --- |
-| 6.1 | rewrite contract | application module | invalid JSON 0 | `feat: add place aware query rewrite` |
+| 6.1 | rewrite contract | application module/report | invalid JSON 0, voice-only 후보 기록 | `평가: 장소 인식 쿼리 재작성 검색 비교 실험 추가` |
 | 6.2 | answer contract | schema/service | answer/spoken_answer/citations 반환 | `feat: add citation rag answer contract` |
 | 6.3 | Solar provider | provider abstraction | fake provider와 real provider 분리 | `feat: add solar provider abstraction` |
 | 6.4 | evidence packing | application module | citation recoverability 유지 | `feat: add evidence packing policies` |

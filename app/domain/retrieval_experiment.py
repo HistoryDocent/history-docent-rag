@@ -72,6 +72,15 @@ METHOD_CONFIG_REPORT_KEYS = (
     "encoder_id",
     "encoder_backend",
     "model_name",
+    "query_rewrite",
+    "query_rewrite_strategy",
+    "query_rewrite_target_types",
+    "query_rewrite_changed_count",
+    "query_rewrite_invalid_json_count",
+    "query_rewrite_invalid_json_rate",
+    "query_rewrite_no_answer_guard_count",
+    "query_rewrite_latency_p95_ms",
+    "query_rewrite_solar_call_count",
     "dense_encoder_id",
     "dense_encoder_backend",
     "dense_model_name",
@@ -556,7 +565,7 @@ def build_retrieval_harness_report_markdown(
 
 ## 목적
 
-BM25, Dense, Hybrid retrieval을 같은 평가셋과 같은 metric으로 비교한다.
+BM25, Dense, Hybrid, Query Rewrite retrieval을 같은 평가셋과 같은 metric으로 비교한다.
 
 이 문서는 성능 개선 주장이 아니다. method별 기준선과 delta를 기록하고, locked test와 generation 평가 전까지는 개선 표현을 사용하지 않는다.
 
@@ -649,6 +658,7 @@ def build_qualitative_assessment(
             f"공통 schema로 평가한 method는 {methods}다."
         ),
         "dense_encoder_boundary": _build_dense_encoder_boundary_text(method_runs),
+        "query_rewrite_boundary": _build_query_rewrite_boundary_text(method_runs),
         "reranker_boundary": _build_reranker_boundary_text(method_runs),
         "baseline_reproduction": baseline_text,
         "comparison_status": (
@@ -724,6 +734,9 @@ def _format_metric_delta_row(delta: RetrievalMetricDelta) -> str:
 
 def _build_next_step_text(method_runs: list[RetrievalExperimentRun]) -> str:
     methods = {run.method for run in method_runs}
+    query_rewrite_runs = [
+        run for run in method_runs if run.method_config_summary.get("query_rewrite") is True
+    ]
     reranked_runs = [
         run for run in method_runs if run.method_config_summary.get("reranking") is True
     ]
@@ -739,6 +752,19 @@ def _build_next_step_text(method_runs: list[RetrievalExperimentRun]) -> str:
         for run in method_runs
         if run.method_config_summary.get("encoder_backend") == "sentence_transformers"
     ]
+    if query_rewrite_runs:
+        best = max(
+            query_rewrite_runs,
+            key=lambda run: (
+                run.metric_summary.mrr,
+                run.metric_summary.ndcg_at_5,
+                run.metric_summary.recall_at_5,
+            ),
+        )
+        return (
+            f"Query rewrite 후보 `{best.run_label}`를 Dense 기본 후보와 비교했다. "
+            "다음 판단은 evidence packing과 generation eval에서 citation 품질까지 확인한 뒤 한다."
+        )
     if reranked_runs:
         best_reranked = max(
             reranked_runs,
@@ -859,6 +885,34 @@ def _build_reranker_boundary_text(method_runs: list[RetrievalExperimentRun]) -> 
         f"Recall@5={metric.recall_at_5:.6f}, MRR={metric.mrr:.6f}, "
         f"nDCG@5={metric.ndcg_at_5:.6f}, "
         f"latency_p95_ms={metric.latency_p95_ms:.6f}. {latency_note}"
+    )
+
+
+def _build_query_rewrite_boundary_text(
+    method_runs: list[RetrievalExperimentRun],
+) -> str:
+    query_rewrite_runs = [
+        run for run in method_runs if run.method_config_summary.get("query_rewrite") is True
+    ]
+    if not query_rewrite_runs:
+        return "Query rewrite는 아직 실행하지 않았다."
+    best = max(
+        query_rewrite_runs,
+        key=lambda run: (
+            run.metric_summary.mrr,
+            run.metric_summary.ndcg_at_5,
+            run.metric_summary.recall_at_5,
+        ),
+    )
+    metric = best.metric_summary
+    changed_count = best.method_config_summary.get("query_rewrite_changed_count", 0)
+    invalid_count = best.method_config_summary.get("query_rewrite_invalid_json_count", 0)
+    return (
+        f"Query rewrite 최고 후보는 {best.run_label}: "
+        f"Recall@5={metric.recall_at_5:.6f}, MRR={metric.mrr:.6f}, "
+        f"nDCG@5={metric.ndcg_at_5:.6f}, "
+        f"changed_count={changed_count}, invalid_json_count={invalid_count}. "
+        "Solar Pro 3 호출 없이 deterministic place/context expansion만 사용했다."
     )
 
 
