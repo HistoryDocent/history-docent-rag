@@ -55,7 +55,8 @@
 - [x] BM25-Dense 보완성 분석
 - [x] Hybrid retrieval 구현
 - [x] neural embedding model 비교
-- [ ] neural dense 기반 Hybrid/Reranker 비교
+- [x] neural dense 기반 Hybrid 비교
+- [ ] neural dense 기반 Reranker 비교
 - [ ] reranker comparison 구현
 - [ ] evidence packing 비교 구현
 - [ ] place-aware query rewrite 구현

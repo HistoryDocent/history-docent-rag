@@ -105,11 +105,13 @@ chunking ablation
 
 ## RAG 전략
 
-기본 production 후보:
+현재 검증 중인 production 후보:
 
 ```text
-Place-aware Hybrid Retrieval + Query Rewrite + Parent-Child Chunking + Citation RAG
+Place-aware Retrieval + Query Rewrite + Parent-Child Chunking + Citation RAG
 ```
+
+검색 method는 실험 결과에 따라 고정한다. dev 기준 현재 1차 후보는 `multilingual-e5-small` dense 단독이고, Hybrid는 reranker 적용 전 recall-oriented 후보로 유지한다.
 
 RAPTOR-lite와 GraphRAG-lite는 초기 기본 구조가 아니라 비교 실험군으로 둔다.
 
@@ -205,6 +207,8 @@ Hybrid RRF/Weighted retrieval을 구현했고, private dev split 70개에서 BM2
 
 Neural embedding 비교 실험을 추가했고, private dev split 70개에서 BM25, Dense D0, BGE-M3, multilingual-E5-small, multilingual-MiniLM을 비교했다. `dense_multilingual_e5_small`은 `Recall@5=0.733333`, `MRR=0.675556`, `nDCG@5=0.533797`, `latency_p95_ms=15.717100`으로 BM25보다 높은 dev 지표를 보였다. `dense_bge_m3`는 `Recall@5=0.800000`, `nDCG@5=0.567476`으로 가장 높았지만 `latency_p95_ms=57.088400`으로 느렸다. 이 결과는 locked test와 generation 평가 전의 dev-only 후보 선별 결과이며, 최종 개선 주장으로 쓰지 않는다.
 
+Neural dense 기반 Hybrid 비교 실험을 추가했고, private dev split 70개에서 E5-small/BGE-M3 dense leg와 RRF/Weighted fusion을 비교했다. `hybrid_weighted_e5_small_alpha_0_5`는 `Recall@5=0.783333`으로 E5-small dense 단독보다 높았지만 `MRR=0.655278`, `nDCG@5=0.509310`, `latency_p95_ms=27.547000`으로 E5-small dense 단독보다 top-rank 품질과 latency가 불리했다. 따라서 현재 기본 검색 후보는 `dense_multilingual_e5_small`이고, `hybrid_weighted_e5_small_alpha_0_5`는 reranker 비교에 투입할 recall-oriented 후보로 둔다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -245,6 +249,7 @@ Neural embedding 비교 실험을 추가했고, private dev split 70개에서 BM
 | [Retrieval Overlap Analysis Report](evals/reports/retrieval_overlap_analysis_report.md) | BM25와 Dense D0의 query 단위 보완성 분석 결과 |
 | [Hybrid Retrieval Comparison Report](evals/reports/hybrid_retrieval_comparison_report.md) | BM25, Dense D0, Hybrid RRF/Weighted alpha 비교 결과 |
 | [Neural Embedding Retrieval Comparison Report](evals/reports/neural_embedding_retrieval_comparison_report.md) | BM25, D0, BGE-M3, multilingual-E5-small, multilingual-MiniLM 비교 결과 |
+| [Neural Dense Hybrid Retrieval Comparison Report](evals/reports/neural_dense_hybrid_retrieval_comparison_report.md) | E5-small/BGE-M3 dense leg 기반 Hybrid RRF/Weighted 비교 결과 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |

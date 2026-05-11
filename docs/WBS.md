@@ -62,9 +62,10 @@
 | 5.6 | Dense retrieval | retrieval module | 동일 평가셋 비교 가능 | `feat: add dense retrieval baseline` |
 | 5.7 | Hybrid retrieval | retrieval module | weighted/RRF 비교 가능 | `feat: add hybrid retrieval experiment` |
 | 5.8 | Neural embedding comparison | retrieval module | BGE-M3, multilingual-E5, multilingual-MiniLM 비교 | `평가: neural embedding 검색 비교 실험 추가` |
-| 5.9 | Reranker comparison | retrieval module | top30/top50 rerank 비교 | `feat: add reranker comparison` |
-| 5.9 | evaluation harness | evals module | query type별 metric과 latency 출력 | `test: add retrieval evaluation harness` |
-| 5.10 | notebooks | `06`, `07`, `09` notebooks | baseline/chunking/dense/hybrid 비교표 생성 | `docs: add retrieval evaluation notebooks` |
+| 5.9 | Neural dense Hybrid comparison | retrieval module/report | E5-small/BGE-M3 dense leg 기반 RRF/Weighted 비교 | `평가: neural dense Hybrid 검색 비교 실험 추가` |
+| 5.10 | Reranker comparison | retrieval module | top30/top50 rerank 비교 | `feat: add reranker comparison` |
+| 5.11 | evaluation harness | evals module | query type별 metric과 latency 출력 | `test: add retrieval evaluation harness` |
+| 5.12 | notebooks | `06`, `07`, `09` notebooks | baseline/chunking/dense/hybrid 비교표 생성 | `docs: add retrieval evaluation notebooks` |
 
 ## Phase 6. Query Rewrite와 Citation RAG
 

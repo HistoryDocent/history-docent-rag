@@ -48,6 +48,9 @@ class HybridRetrievalConfig:
             if self.method == "hybrid_rrf"
             else "minmax_weighted_sum",
             "dense_encoder_id": self.dense_config.encoder_id,
+            "dense_encoder_backend": self.dense_config.backend,
+            "dense_model_name": self.dense_config.model_name
+            or self.dense_config.encoder_id,
             "dense_embedding_dim": embedding_dim,
             "query_rewrite": False,
             "reranking": False,

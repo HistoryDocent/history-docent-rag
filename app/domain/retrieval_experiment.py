@@ -530,7 +530,9 @@ def build_retrieval_harness_report_markdown(
         f"- `{key}`: {value}" for key, value in report.qualitative_assessment.items()
     )
     methods = ", ".join(run.run_label for run in report.method_runs)
-    result_paths = ", ".join(run.result_path for run in report.method_runs)
+    result_path_rows = "\n".join(
+        f"| {run.run_label} | `{run.result_path}` |" for run in report.method_runs
+    )
     return f"""# Retrieval Harness Report
 
 ## 목적
@@ -553,7 +555,13 @@ BM25, Dense, Hybrid retrieval을 같은 평가셋과 같은 metric으로 비교�
 | corpus_fingerprint | `{report.corpus_fingerprint}` |
 | chunks_path_alias | `{report.chunks_path_alias}` |
 | dataset_path | `{report.dataset_path}` |
-| result_paths | `{result_paths}` |
+| result_artifact_count | {len(report.method_runs)} |
+
+## Result Artifacts
+
+| run_label | result_path |
+| --- | --- |
+{result_path_rows}
 
 ## Method Config
 
@@ -694,11 +702,32 @@ def _format_metric_delta_row(delta: RetrievalMetricDelta) -> str:
 
 def _build_next_step_text(method_runs: list[RetrievalExperimentRun]) -> str:
     methods = {run.method for run in method_runs}
+    neural_hybrid_runs = [
+        run
+        for run in method_runs
+        if run.method in {"hybrid_rrf", "hybrid_weighted"}
+        and run.method_config_summary.get("dense_encoder_backend")
+        == "sentence_transformers"
+    ]
     neural_dense_runs = [
         run
         for run in method_runs
         if run.method_config_summary.get("encoder_backend") == "sentence_transformers"
     ]
+    if neural_hybrid_runs:
+        best_hybrid = max(
+            neural_hybrid_runs,
+            key=lambda run: (
+                run.metric_summary.recall_at_5,
+                run.metric_summary.mrr,
+                run.metric_summary.ndcg_at_5,
+            ),
+        )
+        return (
+            f"Neural dense Hybrid 최고 Recall@5 후보는 `{best_hybrid.run_label}`다. "
+            "Dense 단독 후보와 top-rank, latency trade-off를 비교한 뒤 "
+            "상위 2개 method에만 reranker comparison을 적용한다."
+        )
     if neural_dense_runs:
         return (
             "Neural dense 후보 중 BM25보다 Recall@5 또는 MRR이 높은 모델을 "

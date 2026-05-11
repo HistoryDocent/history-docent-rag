@@ -316,7 +316,26 @@ latency_p95 +20% 이내
 
 결론:
 
-`hybrid_weighted_alpha_0_3`은 `Recall@1`, `MRR`, `nDCG@5`를 소폭 개선했지만 `Recall@5`는 BM25와 동일하고 latency가 BM25 대비 크게 증가했다. 선택 기준의 `latency_p95 +20% 이내`를 통과하지 못했으므로 production 후보로 채택하지 않는다. 이 Hybrid 실험은 D0 dense 기반이므로 neural dense 결과를 반영하지 않는다. 다음 Hybrid 실험은 `multilingual-e5-small`과 BGE-M3를 dense leg로 사용해 다시 실행한다.
+`hybrid_weighted_alpha_0_3`은 `Recall@1`, `MRR`, `nDCG@5`를 소폭 개선했지만 `Recall@5`는 BM25와 동일하고 latency가 BM25 대비 크게 증가했다. 선택 기준의 `latency_p95 +20% 이내`를 통과하지 못했으므로 production 후보로 채택하지 않는다. 이 Hybrid 실험은 D0 dense 기반이므로 neural dense 결과를 반영하지 않는다.
+
+### Neural dense Hybrid 실행 결과
+
+private dev split 70개에서 E5-small과 BGE-M3를 dense leg로 사용해 Hybrid RRF/Weighted를 비교했다.
+
+| ID | run_label | dense leg | fusion | Recall@1 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | 판단 |
+| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `BM25` | `bm25` | none | lexical | 0.400000 | 0.566667 | 0.471389 | 0.344203 | 6.769400 | 기준선 |
+| `E2` | `dense_multilingual_e5_small` | `intfloat/multilingual-e5-small` | dense only | 0.633333 | 0.733333 | 0.675556 | 0.533797 | 16.606300 | 1차 기본 검색 후보 |
+| `E1` | `dense_bge_m3` | `BAAI/bge-m3` | dense only | 0.566667 | 0.800000 | 0.658611 | 0.567476 | 61.248100 | 품질 상한 후보, latency 큼 |
+| `H6` | `hybrid_rrf_e5_small` | `intfloat/multilingual-e5-small` | RRF | 0.583333 | 0.700000 | 0.629167 | 0.475437 | 29.268200 | E5 dense 단독보다 낮음 |
+| `H7` | `hybrid_weighted_e5_small_alpha_0_3` | `intfloat/multilingual-e5-small` | weighted alpha 0.3 | 0.450000 | 0.666667 | 0.538611 | 0.414977 | 28.607700 | E5 dense 단독보다 낮음 |
+| `H8` | `hybrid_weighted_e5_small_alpha_0_5` | `intfloat/multilingual-e5-small` | weighted alpha 0.5 | 0.566667 | 0.783333 | 0.655278 | 0.509310 | 27.547000 | recall-oriented reranker 후보 |
+| `H9` | `hybrid_rrf_bge_m3` | `BAAI/bge-m3` | RRF | 0.533333 | 0.733333 | 0.613889 | 0.462699 | 72.581100 | BGE dense 단독보다 낮음 |
+| `H10` | `hybrid_weighted_bge_m3_alpha_0_3` | `BAAI/bge-m3` | weighted alpha 0.3 | 0.466667 | 0.666667 | 0.545833 | 0.415055 | 74.303700 | BGE dense 단독보다 낮음 |
+
+결론:
+
+Neural dense 기반 Hybrid는 BM25보다 높지만, 대부분의 핵심 지표에서 대응하는 dense 단독보다 낮다. `hybrid_weighted_e5_small_alpha_0_5`만 E5-small dense 단독보다 `Recall@5`가 높지만 `MRR`, `nDCG@5`, latency는 나쁘다. 따라서 기본 검색 후보는 `dense_multilingual_e5_small`로 유지하고, `hybrid_weighted_e5_small_alpha_0_5`는 reranker가 top-rank 품질을 회복할 수 있는지 확인하는 recall-oriented 후보로만 사용한다. `dense_bge_m3`는 품질 상한 후보지만 CPU latency가 커서 실서비스 기본 후보로 바로 채택하지 않는다.
 
 ## Stage 4. Reranker
 

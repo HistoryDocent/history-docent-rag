@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from app.core.project_paths import (
@@ -34,7 +34,11 @@ from app.domain.retrieval_experiment import (
 )
 from app.infrastructure.index.bm25 import Bm25Retriever
 from app.infrastructure.index.dense import DenseRetrievalConfig, DenseRetriever
-from app.infrastructure.index.hybrid import HybridRetrievalConfig, HybridRetriever
+from app.infrastructure.index.hybrid import (
+    HybridFusionMethod,
+    HybridRetrievalConfig,
+    HybridRetriever,
+)
 
 
 DEFAULT_CHUNKS_PATH = Path("private_data") / "reports" / "parent_child_chunks.json"
@@ -57,6 +61,11 @@ SUPPORTED_METHOD_KEYS: tuple[str, ...] = (
     "hybrid_weighted_alpha_0_3",
     "hybrid_weighted_alpha_0_5",
     "hybrid_weighted_alpha_0_7",
+    "hybrid_rrf_e5_small",
+    "hybrid_weighted_e5_small_alpha_0_3",
+    "hybrid_weighted_e5_small_alpha_0_5",
+    "hybrid_rrf_bge_m3",
+    "hybrid_weighted_bge_m3_alpha_0_3",
 )
 
 
@@ -81,6 +90,12 @@ class _MethodExecution:
     method_config_summary: dict[str, str | int | float | bool]
 
 
+@dataclass
+class _ExecutionContext:
+    bm25_retriever: Bm25Retriever | None = None
+    dense_retrievers: dict[str, DenseRetriever] = field(default_factory=dict)
+
+
 def run_retrieval_experiment(
     *,
     chunks_path: Path = DEFAULT_CHUNKS_PATH,
@@ -103,17 +118,20 @@ def run_retrieval_experiment(
         method_plans=method_plans,
     )
     documents = load_retrieval_documents_from_chunks(chunks_path)
-    artifacts = [
-        _run_method(
-            plan=plan,
-            items=items,
-            documents=documents,
-            results_dir=results_dir,
-            top_k=top_k,
-            embedding_cache_dir=embedding_cache_dir,
+    execution_context = _ExecutionContext()
+    artifacts: list[_MethodRunArtifacts] = []
+    for plan in method_plans:
+        artifacts.append(
+            _run_method(
+                plan=plan,
+                items=items,
+                documents=documents,
+                results_dir=results_dir,
+                top_k=top_k,
+                embedding_cache_dir=embedding_cache_dir,
+                execution_context=execution_context,
+            )
         )
-        for plan in method_plans
-    ]
     result_rows = [
         row for artifact in artifacts for row in artifact.result_rows
     ]
@@ -173,6 +191,7 @@ def _run_method(
     results_dir: Path,
     top_k: int,
     embedding_cache_dir: Path,
+    execution_context: _ExecutionContext,
 ) -> _MethodRunArtifacts:
     execution = _execute_method(
         plan=plan,
@@ -180,6 +199,7 @@ def _run_method(
         documents=documents,
         top_k=top_k,
         embedding_cache_dir=embedding_cache_dir,
+        execution_context=execution_context,
     )
     result_path = results_dir / f"retrieval_experiment_{plan.run_label}_results.jsonl"
     method_run = build_retrieval_experiment_run(
@@ -215,10 +235,14 @@ def _execute_method(
     documents: list[RetrievalDocument],
     top_k: int,
     embedding_cache_dir: Path,
+    execution_context: _ExecutionContext,
 ) -> _MethodExecution:
     method = plan.method
     if method == "bm25":
-        retriever = Bm25Retriever.from_documents(documents)
+        retriever = _get_bm25_retriever(
+            execution_context=execution_context,
+            documents=documents,
+        )
         return _MethodExecution(
             results=[
                 retriever.search(
@@ -233,10 +257,11 @@ def _execute_method(
         )
     if method == "dense":
         config = plan.dense_config or DenseRetrievalConfig()
-        retriever = DenseRetriever.from_documents(
-            documents,
+        retriever = _get_dense_retriever(
+            execution_context=execution_context,
+            documents=documents,
             config=config,
-            cache_dir=embedding_cache_dir,
+            embedding_cache_dir=embedding_cache_dir,
         )
         return _MethodExecution(
             results=[
@@ -254,10 +279,20 @@ def _execute_method(
             ),
         )
     if plan.hybrid_config is not None:
-        retriever = HybridRetriever.from_documents(
-            documents,
+        dense_retriever = _get_dense_retriever(
+            execution_context=execution_context,
+            documents=documents,
+            config=plan.hybrid_config.dense_config,
+            embedding_cache_dir=embedding_cache_dir,
+        )
+        retriever = HybridRetriever(
+            documents=tuple(documents),
+            bm25_retriever=_get_bm25_retriever(
+                execution_context=execution_context,
+                documents=documents,
+            ),
+            dense_retriever=dense_retriever,
             config=plan.hybrid_config,
-            dense_cache_dir=embedding_cache_dir,
         )
         return _MethodExecution(
             results=[
@@ -348,6 +383,39 @@ def _method_plan_from_key(method_key: str) -> _MethodPlan:
         return _weighted_hybrid_plan(method_key=method_key, alpha=0.5)
     if method_key == "hybrid_weighted_alpha_0_7":
         return _weighted_hybrid_plan(method_key=method_key, alpha=0.7)
+    if method_key == "hybrid_rrf_e5_small":
+        return _hybrid_plan_with_dense_config(
+            method_key=method_key,
+            method="hybrid_rrf",
+            dense_config=_e5_small_dense_config(),
+        )
+    if method_key == "hybrid_weighted_e5_small_alpha_0_3":
+        return _hybrid_plan_with_dense_config(
+            method_key=method_key,
+            method="hybrid_weighted",
+            dense_config=_e5_small_dense_config(),
+            alpha=0.3,
+        )
+    if method_key == "hybrid_weighted_e5_small_alpha_0_5":
+        return _hybrid_plan_with_dense_config(
+            method_key=method_key,
+            method="hybrid_weighted",
+            dense_config=_e5_small_dense_config(),
+            alpha=0.5,
+        )
+    if method_key == "hybrid_rrf_bge_m3":
+        return _hybrid_plan_with_dense_config(
+            method_key=method_key,
+            method="hybrid_rrf",
+            dense_config=_bge_m3_dense_config(),
+        )
+    if method_key == "hybrid_weighted_bge_m3_alpha_0_3":
+        return _hybrid_plan_with_dense_config(
+            method_key=method_key,
+            method="hybrid_weighted",
+            dense_config=_bge_m3_dense_config(),
+            alpha=0.3,
+        )
     raise ValueError(f"unsupported retrieval methods: {[method_key]}")
 
 
@@ -375,6 +443,24 @@ def _neural_dense_plan(
     )
 
 
+def _e5_small_dense_config() -> DenseRetrievalConfig:
+    return DenseRetrievalConfig(
+        encoder_id="multilingual-e5-small",
+        backend="sentence_transformers",
+        model_name="intfloat/multilingual-e5-small",
+        query_prefix="query: ",
+        document_prefix="passage: ",
+    )
+
+
+def _bge_m3_dense_config() -> DenseRetrievalConfig:
+    return DenseRetrievalConfig(
+        encoder_id="bge-m3",
+        backend="sentence_transformers",
+        model_name="BAAI/bge-m3",
+    )
+
+
 def _weighted_hybrid_plan(*, method_key: str, alpha: float) -> _MethodPlan:
     alpha_label = str(alpha).replace(".", "_")
     return _MethodPlan(
@@ -383,6 +469,58 @@ def _weighted_hybrid_plan(*, method_key: str, alpha: float) -> _MethodPlan:
         run_label=f"hybrid_weighted_alpha_{alpha_label}",
         hybrid_config=HybridRetrievalConfig(method="hybrid_weighted", alpha=alpha),
     )
+
+
+def _hybrid_plan_with_dense_config(
+    *,
+    method_key: str,
+    method: HybridFusionMethod,
+    dense_config: DenseRetrievalConfig,
+    alpha: float = 0.5,
+) -> _MethodPlan:
+    return _MethodPlan(
+        method_key=method_key,
+        method=method,
+        run_label=method_key,
+        hybrid_config=HybridRetrievalConfig(
+            method=method,
+            alpha=alpha,
+            dense_config=dense_config,
+        ),
+    )
+
+
+def _get_bm25_retriever(
+    *,
+    execution_context: _ExecutionContext,
+    documents: list[RetrievalDocument],
+) -> Bm25Retriever:
+    if execution_context.bm25_retriever is None:
+        execution_context.bm25_retriever = Bm25Retriever.from_documents(documents)
+    return execution_context.bm25_retriever
+
+
+def _get_dense_retriever(
+    *,
+    execution_context: _ExecutionContext,
+    documents: list[RetrievalDocument],
+    config: DenseRetrievalConfig,
+    embedding_cache_dir: Path,
+) -> DenseRetriever:
+    cache_key = _dense_config_cache_key(config)
+    retriever = execution_context.dense_retrievers.get(cache_key)
+    if retriever is None:
+        retriever = DenseRetriever.from_documents(
+            documents,
+            config=config,
+            cache_dir=embedding_cache_dir,
+        )
+        execution_context.dense_retrievers[cache_key] = retriever
+    return retriever
+
+
+def _dense_config_cache_key(config: DenseRetrievalConfig) -> str:
+    return json.dumps(asdict(config), ensure_ascii=False, sort_keys=True)
 
 
 def _validate_public_output_quality(
