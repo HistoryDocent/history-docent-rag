@@ -195,7 +195,9 @@ private dev 평가셋 70개를 작성하고 review rubric 기준으로 `reviewed
 
 private test 평가셋 35개를 작성하고 `locked` 상태로 고정했다. public-safe 집계 리포트 기준 `test_lock_gate_status=PASS`, `target_resolvability_status=PASS`, `benchmark_readiness_status=PASS`, `missing_child_target_count=0`, `public_raw_text_leakage_count=0`이다. private test 원본 JSONL은 public repository에 commit하지 않는다.
 
-다음 단계는 BM25 기준 chunking ablation runner를 구현하고, dev split에서만 chunking 후보를 비교한 뒤 locked test split으로 최종 확인하는 것이다.
+BM25 기준 chunking ablation runner를 구현했고, private dev split 70개에서 C0/C1/C2를 비교했다. 모든 variant가 chunking gate를 통과했지만 C1/C2가 개선 조건을 충족하지 못해 `selected_variant_id=C0`으로 유지했다. locked test split은 사용하지 않았다.
+
+다음 단계는 C0 chunking을 기준으로 Dense retrieval baseline과 Hybrid retrieval을 같은 dev/test contract에서 비교하는 것이다.
 
 ## 실행 전략
 
@@ -231,6 +233,7 @@ private test 평가셋 35개를 작성하고 `locked` 상태로 고정했다. pu
 | [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md) | 실서비스 기준 RAG 비교 실험 순서, 논문 매핑, 선택 기준 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |
+| [Chunking Ablation Report](evals/reports/chunking_ablation_report.md) | BM25 dev-only C0/C1/C2 chunking 비교 결과 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |

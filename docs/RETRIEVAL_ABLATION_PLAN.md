@@ -180,6 +180,18 @@ citation_recoverability >= 0.99
 child_length_p95 <= configured max
 ```
 
+실행 결과:
+
+| ID | gate | Recall@5 | MRR | nDCG@5 | latency_p95_ms | 판단 |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| `C0` | PASS | 0.566667 | 0.471389 | 0.344203 | 6.416900 | 유지 |
+| `C1` | PASS | 0.083333 | 0.044444 | 0.026033 | 10.345600 | 개선 조건 미충족 |
+| `C2` | PASS | 0.533333 | 0.446389 | 0.272112 | 4.586700 | 개선 조건 미충족 |
+
+결론:
+
+`selected_variant_id=C0`으로 유지한다. 이 결과는 private dev split에서 BM25만 사용한 청킹 단위 선택 근거이며, locked test split은 사용하지 않았다. 성능 개선 주장이 아니라 Dense/Hybrid 비교를 위한 검색 단위 고정이다.
+
 ## Stage 2. Dense Embedding Baseline
 
 목적:
@@ -472,7 +484,7 @@ latency/cost 악화 설명 없음
 1. 평가셋 확장 schema와 dev/test split 문서화
 2. private dev 평가셋 70개 작성, target resolvability 검증, reviewed 승격
 3. private test 평가셋 35개 locked 작성과 target resolvability 검증
-4. chunking config ablation runner
+4. chunking config ablation runner 완료
 5. Dense retrieval baseline
 6. Hybrid RRF/Weighted retrieval
 7. reranker comparison
@@ -489,7 +501,7 @@ latency/cost 악화 설명 없음
 현재 면접에서 주장할 수 있는 문장:
 
 ```text
-서울/한양 역사 도슨트 RAG를 재설계하면서 원본 데이터 공개 제한을 지키기 위해 public/private benchmark 경계를 먼저 고정했고, BM25 baseline과 retrieval evaluation harness, private dev 70개 reviewed 평가셋, private test 35개 locked 평가셋까지 구축했습니다. 이후 chunking, Dense, Hybrid, Reranker, Query Rewrite, Generation을 같은 평가셋과 같은 metric으로 단계별 비교할 계획입니다.
+서울/한양 역사 도슨트 RAG를 재설계하면서 원본 데이터 공개 제한을 지키기 위해 public/private benchmark 경계를 먼저 고정했고, BM25 baseline과 retrieval evaluation harness, private dev 70개 reviewed 평가셋, private test 35개 locked 평가셋까지 구축했습니다. BM25 dev-only chunking ablation에서는 C0/C1/C2를 비교했고, C1/C2가 개선 조건을 충족하지 못해 C0 parent-child chunking을 유지했습니다. 이후 Dense, Hybrid, Reranker, Query Rewrite, Generation을 같은 평가셋과 같은 metric으로 단계별 비교할 계획입니다.
 ```
 
 최종 ablation 완료 후에만 주장할 수 있는 문장:

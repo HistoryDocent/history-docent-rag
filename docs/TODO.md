@@ -49,7 +49,7 @@
 - [x] private retrieval 평가셋 test 후보 35개 locked 작성
 - [x] retrieval dev/test split contract 고정
 - [x] retrieval judgment target 검증 gate 추가
-- [ ] chunking ablation runner 구현
+- [x] chunking ablation runner 구현
 - [ ] Dense/Hybrid retrieval 구현
 - [ ] reranker comparison 구현
 - [ ] evidence packing 비교 구현
