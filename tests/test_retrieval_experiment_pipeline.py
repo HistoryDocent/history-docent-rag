@@ -8,6 +8,7 @@ import pytest
 from app.core import project_paths
 from app.domain.retrieval_experiment import collect_public_retrieval_artifact_failures
 import app.infrastructure.index.dense as dense_module
+import app.infrastructure.index.reranker as reranker_module
 import pipelines.run_retrieval_experiment as retrieval_pipeline
 from pipelines.run_retrieval_experiment import run_retrieval_experiment
 
@@ -151,6 +152,24 @@ class _FakeSentenceTransformerModel:
             else:
                 vectors.append([0.0, 0.0, 1.0])
         return np.asarray(vectors, dtype=np.float32)
+
+
+class _FakeCrossEncoderModel:
+    def predict(
+        self,
+        pairs: list[tuple[str, str]],
+        *,
+        batch_size: int,
+        show_progress_bar: bool,
+    ) -> object:
+        del batch_size, show_progress_bar
+        import numpy as np
+
+        scores = [
+            10.0 if "궁궐 정치" in passage or "시장 상업" in passage else 1.0
+            for _query, passage in pairs
+        ]
+        return np.asarray(scores, dtype=np.float32)
 
 
 def test_run_retrieval_experiment_writes_bm25_results_and_report(tmp_path: Path) -> None:
@@ -664,6 +683,136 @@ def test_run_retrieval_experiment_writes_neural_hybrid_results_with_shared_dense
     ).exists()
     assert "dense_encoder_backend=sentence_transformers" in report_text
     assert "dense_model_name=intfloat/multilingual-e5-small" in report_text
+    assert "private source text" not in report_text
+    assert str(dataset_path) not in report_text
+    assert collect_public_retrieval_artifact_failures(report.output_quality) == []
+
+
+def test_run_retrieval_experiment_writes_reranker_results_with_shared_models(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
+    dense_load_counts: dict[str, int] = {}
+    reranker_load_count = 0
+
+    def fake_dense_loader(config: object) -> _FakeSentenceTransformerModel:
+        encoder_id = getattr(config, "encoder_id")
+        dense_load_counts[encoder_id] = dense_load_counts.get(encoder_id, 0) + 1
+        return _FakeSentenceTransformerModel()
+
+    def fake_reranker_loader(config: object) -> _FakeCrossEncoderModel:
+        nonlocal reranker_load_count
+        assert getattr(config, "model_name") == "BAAI/bge-reranker-v2-m3"
+        reranker_load_count += 1
+        return _FakeCrossEncoderModel()
+
+    monkeypatch.setattr(dense_module, "_load_sentence_transformer_model", fake_dense_loader)
+    monkeypatch.setattr(reranker_module, "_load_cross_encoder_model", fake_reranker_loader)
+    chunks_path = tmp_path / "parent_child_chunks.json"
+    dataset_path = tmp_path / "private_data" / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
+    results_dir = tmp_path / "private_data" / "evals" / "results"
+    embedding_cache_dir = tmp_path / "private_data" / "embeddings"
+    report_path = tmp_path / "reranker_retrieval_comparison_report.md"
+    _write_json(
+        chunks_path,
+        {
+            "report_version": "chunking-quality/v1",
+            "chunking_run_id": "chunking-test",
+            "children": [
+                _child_payload(
+                    child_id="child-palace",
+                    parent_id="parent-palace",
+                    doc_id="doc-joseon",
+                    text="private source text 경복궁 한양 천도 정도전 궁궐 정치",
+                ),
+                _child_payload(
+                    child_id="child-market",
+                    parent_id="parent-market",
+                    doc_id="doc-market",
+                    text="private source text 시장 상업 도시 사람 물건",
+                ),
+            ],
+        },
+    )
+    _write_jsonl(
+        dataset_path,
+        [
+            _eval_item_payload(
+                query_id="q-one",
+                query_type="place_fact",
+                query_text="경복궁 한양 정도전",
+                expected_behavior="retrieve",
+                child_id="child-palace",
+                parent_id="parent-palace",
+                doc_id="doc-joseon",
+                review_status="reviewed",
+            ),
+            _eval_item_payload(
+                query_id="q-no-answer",
+                query_type="no_answer",
+                query_text="실시간 주차 예약",
+                expected_behavior="abstain",
+                review_status="reviewed",
+            ),
+        ],
+    )
+
+    report = run_retrieval_experiment(
+        chunks_path=chunks_path,
+        dataset_path=dataset_path,
+        results_dir=results_dir,
+        report_path=report_path,
+        methods=[
+            "bm25",
+            "dense_multilingual_e5_small",
+            "hybrid_weighted_e5_small_alpha_0_5",
+            "dense_multilingual_e5_small_rerank_bge_m3_top20",
+            "dense_multilingual_e5_small_rerank_bge_m3_top30",
+            "dense_multilingual_e5_small_rerank_bge_m3_top50",
+            "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top20",
+            "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top30",
+            "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top50",
+        ],
+        top_k=2,
+        embedding_cache_dir=embedding_cache_dir,
+    )
+    report_text = report_path.read_text(encoding="utf-8")
+
+    assert [run.run_label for run in report.method_runs] == [
+        "bm25",
+        "dense_multilingual_e5_small",
+        "hybrid_weighted_e5_small_alpha_0_5",
+        "dense_multilingual_e5_small_rerank_bge_m3_top20",
+        "dense_multilingual_e5_small_rerank_bge_m3_top30",
+        "dense_multilingual_e5_small_rerank_bge_m3_top50",
+        "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top20",
+        "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top30",
+        "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top50",
+    ]
+    assert [run.method for run in report.method_runs] == [
+        "bm25",
+        "dense",
+        "hybrid_weighted",
+        "dense",
+        "dense",
+        "dense",
+        "hybrid_weighted",
+        "hybrid_weighted",
+        "hybrid_weighted",
+    ]
+    assert dense_load_counts["multilingual-e5-small"] == 1
+    assert reranker_load_count == 1
+    reranked_config = report.method_runs[3].method_config_summary
+    assert reranked_config["reranking"] is True
+    assert reranked_config["retrieval_candidate_k"] == 20
+    assert reranked_config["base_run_label"] == "dense_multilingual_e5_small"
+    assert (
+        results_dir
+        / "retrieval_experiment_dense_multilingual_e5_small_rerank_bge_m3_top20_results.jsonl"
+    ).exists()
+    assert "reranker_model_name=BAAI/bge-reranker-v2-m3" in report_text
+    assert "Reranker 최고 top-rank 후보" in report_text
     assert "private source text" not in report_text
     assert str(dataset_path) not in report_text
     assert collect_public_retrieval_artifact_failures(report.output_quality) == []

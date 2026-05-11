@@ -66,6 +66,24 @@ _CODE_LIKE_LINE_MARKERS = (
     "from ",
     "import ",
 )
+METHOD_CONFIG_REPORT_KEYS = (
+    "method",
+    "top_k",
+    "encoder_id",
+    "encoder_backend",
+    "model_name",
+    "dense_encoder_id",
+    "dense_encoder_backend",
+    "dense_model_name",
+    "dense_weight_alpha",
+    "fusion",
+    "retrieval_candidate_k",
+    "reranking",
+    "base_run_label",
+    "reranker_id",
+    "reranker_backend",
+    "reranker_model_name",
+)
 
 
 class RetrievalExperimentModel(BaseModel):
@@ -316,6 +334,8 @@ def build_retrieval_comparison_id(method_runs: list[RetrievalExperimentRun]) -> 
         json.dumps(digest_source, ensure_ascii=False, sort_keys=True).encode("utf-8")
     ).hexdigest()[:8]
     methods = "-".join(run.run_label for run in method_runs)
+    if len(methods) > 160:
+        methods = f"m{len(method_runs)}"
     query_count = method_runs[0].dataset_query_count
     return f"{RETRIEVAL_HARNESS_RUN_PREFIX}-{methods}-q{query_count}-{digest}"
 
@@ -529,7 +549,6 @@ def build_retrieval_harness_report_markdown(
     qualitative_rows = "\n".join(
         f"- `{key}`: {value}" for key, value in report.qualitative_assessment.items()
     )
-    methods = ", ".join(run.run_label for run in report.method_runs)
     result_path_rows = "\n".join(
         f"| {run.run_label} | `{run.result_path}` |" for run in report.method_runs
     )
@@ -549,7 +568,7 @@ BM25, Dense, Hybrid retrieval을 같은 평가셋과 같은 metric으로 비교�
 | comparison_id | `{report.comparison_id}` |
 | generated_at_utc | `{report.generated_at_utc}` |
 | baseline_method | `{report.baseline_method}` |
-| methods | `{methods}` |
+| method_count | {len(report.method_runs)} |
 | top_k | {report.top_k} |
 | dataset_fingerprint | `{report.dataset_fingerprint}` |
 | corpus_fingerprint | `{report.corpus_fingerprint}` |
@@ -630,6 +649,7 @@ def build_qualitative_assessment(
             f"공통 schema로 평가한 method는 {methods}다."
         ),
         "dense_encoder_boundary": _build_dense_encoder_boundary_text(method_runs),
+        "reranker_boundary": _build_reranker_boundary_text(method_runs),
         "baseline_reproduction": baseline_text,
         "comparison_status": (
             "현재 delta는 dev 기준 비교 결과다. 성능 개선 주장이 아니라 비교 형식과 후보 성능 기록이다."
@@ -685,7 +705,9 @@ def _format_query_type_metric_row(item: QueryTypeMetricSummary) -> str:
 
 def _format_method_config_row(run: RetrievalExperimentRun) -> str:
     config = ", ".join(
-        f"{key}={value}" for key, value in sorted(run.method_config_summary.items())
+        f"{key}={run.method_config_summary[key]}"
+        for key in METHOD_CONFIG_REPORT_KEYS
+        if key in run.method_config_summary
     )
     return f"| {run.run_label} | {run.method} | `{config}` |"
 
@@ -702,6 +724,9 @@ def _format_metric_delta_row(delta: RetrievalMetricDelta) -> str:
 
 def _build_next_step_text(method_runs: list[RetrievalExperimentRun]) -> str:
     methods = {run.method for run in method_runs}
+    reranked_runs = [
+        run for run in method_runs if run.method_config_summary.get("reranking") is True
+    ]
     neural_hybrid_runs = [
         run
         for run in method_runs
@@ -714,6 +739,20 @@ def _build_next_step_text(method_runs: list[RetrievalExperimentRun]) -> str:
         for run in method_runs
         if run.method_config_summary.get("encoder_backend") == "sentence_transformers"
     ]
+    if reranked_runs:
+        best_reranked = max(
+            reranked_runs,
+            key=lambda run: (
+                run.metric_summary.mrr,
+                run.metric_summary.ndcg_at_5,
+                run.metric_summary.recall_at_5,
+            ),
+        )
+        return (
+            f"Reranker 최고 top-rank 후보는 `{best_reranked.run_label}`다. "
+            "Dense/Hybrid 원본과 latency trade-off를 비교한 뒤 "
+            "locked test와 generation 평가 전까지 최종 개선 주장은 보류한다."
+        )
     if neural_hybrid_runs:
         best_hybrid = max(
             neural_hybrid_runs,
@@ -792,6 +831,34 @@ def _build_dense_encoder_boundary_text(method_runs: list[RetrievalExperimentRun]
     return (
         f"Dense v1 encoder는 {', '.join(encoder_ids)}다. "
         "이 결과는 neural embedding 모델인 BGE-M3 또는 multilingual-E5 결과가 아니다."
+    )
+
+
+def _build_reranker_boundary_text(method_runs: list[RetrievalExperimentRun]) -> str:
+    reranked_runs = [
+        run for run in method_runs if run.method_config_summary.get("reranking") is True
+    ]
+    if not reranked_runs:
+        return "Reranker는 아직 실행하지 않았다."
+    best = max(
+        reranked_runs,
+        key=lambda run: (
+            run.metric_summary.mrr,
+            run.metric_summary.ndcg_at_5,
+            run.metric_summary.recall_at_5,
+        ),
+    )
+    metric = best.metric_summary
+    latency_note = (
+        "CPU latency가 커서 실서비스 기본 후보로 바로 채택하지 않는다."
+        if metric.latency_p95_ms >= 1000.0
+        else "제품 SLO 안에서 재검토할 수 있다."
+    )
+    return (
+        f"Reranker 최고 후보는 {best.run_label}: "
+        f"Recall@5={metric.recall_at_5:.6f}, MRR={metric.mrr:.6f}, "
+        f"nDCG@5={metric.ndcg_at_5:.6f}, "
+        f"latency_p95_ms={metric.latency_p95_ms:.6f}. {latency_note}"
     )
 
 

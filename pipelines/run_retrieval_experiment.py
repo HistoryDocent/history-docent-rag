@@ -39,6 +39,11 @@ from app.infrastructure.index.hybrid import (
     HybridRetrievalConfig,
     HybridRetriever,
 )
+from app.infrastructure.index.reranker import (
+    CrossEncoderReranker,
+    RerankerConfig,
+    RerankingRetriever,
+)
 
 
 DEFAULT_CHUNKS_PATH = Path("private_data") / "reports" / "parent_child_chunks.json"
@@ -66,6 +71,12 @@ SUPPORTED_METHOD_KEYS: tuple[str, ...] = (
     "hybrid_weighted_e5_small_alpha_0_5",
     "hybrid_rrf_bge_m3",
     "hybrid_weighted_bge_m3_alpha_0_3",
+    "dense_multilingual_e5_small_rerank_bge_m3_top20",
+    "dense_multilingual_e5_small_rerank_bge_m3_top30",
+    "dense_multilingual_e5_small_rerank_bge_m3_top50",
+    "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top20",
+    "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top30",
+    "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top50",
 )
 
 
@@ -76,6 +87,7 @@ class _MethodPlan:
     run_label: str
     dense_config: DenseRetrievalConfig | None = None
     hybrid_config: HybridRetrievalConfig | None = None
+    reranker_config: RerankerConfig | None = None
 
 
 @dataclass(frozen=True)
@@ -94,6 +106,7 @@ class _MethodExecution:
 class _ExecutionContext:
     bm25_retriever: Bm25Retriever | None = None
     dense_retrievers: dict[str, DenseRetriever] = field(default_factory=dict)
+    rerankers: dict[str, CrossEncoderReranker] = field(default_factory=dict)
 
 
 def run_retrieval_experiment(
@@ -238,6 +251,15 @@ def _execute_method(
     execution_context: _ExecutionContext,
 ) -> _MethodExecution:
     method = plan.method
+    if plan.reranker_config is not None:
+        return _execute_reranked_method(
+            plan=plan,
+            items=items,
+            documents=documents,
+            top_k=top_k,
+            embedding_cache_dir=embedding_cache_dir,
+            execution_context=execution_context,
+        )
     if method == "bm25":
         retriever = _get_bm25_retriever(
             execution_context=execution_context,
@@ -310,6 +332,80 @@ def _execute_method(
             ),
         )
     raise ValueError(f"method is not implemented in retrieval experiment runner: {method}")
+
+
+def _execute_reranked_method(
+    *,
+    plan: _MethodPlan,
+    items: list[RetrievalEvalItem],
+    documents: list[RetrievalDocument],
+    top_k: int,
+    embedding_cache_dir: Path,
+    execution_context: _ExecutionContext,
+) -> _MethodExecution:
+    config = plan.reranker_config
+    if config is None:
+        raise ValueError("reranked method requires reranker_config")
+    if plan.method == "dense":
+        dense_config = plan.dense_config or DenseRetrievalConfig()
+        base_retriever = _get_dense_retriever(
+            execution_context=execution_context,
+            documents=documents,
+            config=dense_config,
+            embedding_cache_dir=embedding_cache_dir,
+        )
+        base_summary = dense_config.to_method_config_summary(
+            top_k=config.candidate_k,
+            embedding_dim=base_retriever.embedding_dim,
+        )
+    elif plan.hybrid_config is not None:
+        dense_retriever = _get_dense_retriever(
+            execution_context=execution_context,
+            documents=documents,
+            config=plan.hybrid_config.dense_config,
+            embedding_cache_dir=embedding_cache_dir,
+        )
+        base_retriever = HybridRetriever(
+            documents=tuple(documents),
+            bm25_retriever=_get_bm25_retriever(
+                execution_context=execution_context,
+                documents=documents,
+            ),
+            dense_retriever=dense_retriever,
+            config=plan.hybrid_config,
+        )
+        base_summary = plan.hybrid_config.to_method_config_summary(
+            top_k=config.candidate_k,
+            embedding_dim=base_retriever.embedding_dim,
+        )
+    else:
+        raise ValueError("reranked method requires dense_config or hybrid_config")
+    reranked_retriever = RerankingRetriever(
+        documents=tuple(documents),
+        base_retriever=base_retriever,
+        base_method=plan.method,
+        reranker=_get_reranker(
+            execution_context=execution_context,
+            config=config,
+        ),
+        config=config,
+    )
+    return _MethodExecution(
+        results=[
+            reranked_retriever.search(
+                query_id=item.query.query_id,
+                query_type=item.query.query_type,
+                query_text=item.query.query_text,
+                top_k=top_k,
+            )
+            for item in items
+        ],
+        method_config_summary=config.to_method_config_summary(
+            base_summary=base_summary,
+            top_k=top_k,
+            base_run_label=_base_run_label_for_reranked_plan(plan),
+        ),
+    )
 
 
 def _build_method_plans(methods: list[str]) -> list[_MethodPlan]:
@@ -416,6 +512,18 @@ def _method_plan_from_key(method_key: str) -> _MethodPlan:
             dense_config=_bge_m3_dense_config(),
             alpha=0.3,
         )
+    if method_key == "dense_multilingual_e5_small_rerank_bge_m3_top20":
+        return _reranked_dense_plan(method_key=method_key, candidate_k=20)
+    if method_key == "dense_multilingual_e5_small_rerank_bge_m3_top30":
+        return _reranked_dense_plan(method_key=method_key, candidate_k=30)
+    if method_key == "dense_multilingual_e5_small_rerank_bge_m3_top50":
+        return _reranked_dense_plan(method_key=method_key, candidate_k=50)
+    if method_key == "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top20":
+        return _reranked_hybrid_plan(method_key=method_key, candidate_k=20)
+    if method_key == "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top30":
+        return _reranked_hybrid_plan(method_key=method_key, candidate_k=30)
+    if method_key == "hybrid_weighted_e5_small_alpha_0_5_rerank_bge_m3_top50":
+        return _reranked_hybrid_plan(method_key=method_key, candidate_k=50)
     raise ValueError(f"unsupported retrieval methods: {[method_key]}")
 
 
@@ -490,6 +598,34 @@ def _hybrid_plan_with_dense_config(
     )
 
 
+def _reranked_dense_plan(*, method_key: str, candidate_k: int) -> _MethodPlan:
+    return _MethodPlan(
+        method_key=method_key,
+        method="dense",
+        run_label=method_key,
+        dense_config=_e5_small_dense_config(),
+        reranker_config=_bge_reranker_config(candidate_k=candidate_k),
+    )
+
+
+def _reranked_hybrid_plan(*, method_key: str, candidate_k: int) -> _MethodPlan:
+    return _MethodPlan(
+        method_key=method_key,
+        method="hybrid_weighted",
+        run_label=method_key,
+        hybrid_config=HybridRetrievalConfig(
+            method="hybrid_weighted",
+            alpha=0.5,
+            dense_config=_e5_small_dense_config(),
+        ),
+        reranker_config=_bge_reranker_config(candidate_k=candidate_k),
+    )
+
+
+def _bge_reranker_config(*, candidate_k: int) -> RerankerConfig:
+    return RerankerConfig(candidate_k=candidate_k)
+
+
 def _get_bm25_retriever(
     *,
     execution_context: _ExecutionContext,
@@ -521,6 +657,44 @@ def _get_dense_retriever(
 
 def _dense_config_cache_key(config: DenseRetrievalConfig) -> str:
     return json.dumps(asdict(config), ensure_ascii=False, sort_keys=True)
+
+
+def _get_reranker(
+    *,
+    execution_context: _ExecutionContext,
+    config: RerankerConfig,
+) -> CrossEncoderReranker:
+    cache_key = _reranker_model_cache_key(config)
+    reranker = execution_context.rerankers.get(cache_key)
+    if reranker is None:
+        reranker = CrossEncoderReranker.from_config(config)
+        execution_context.rerankers[cache_key] = reranker
+    return reranker
+
+
+def _reranker_model_cache_key(config: RerankerConfig) -> str:
+    payload = {
+        "backend": config.backend,
+        "model_name": config.model_name,
+        "device": config.device,
+    }
+    return json.dumps(payload, ensure_ascii=False, sort_keys=True)
+
+
+def _base_run_label_for_reranked_plan(plan: _MethodPlan) -> str:
+    if plan.dense_config is not None:
+        if plan.dense_config.encoder_id == "multilingual-e5-small":
+            return "dense_multilingual_e5_small"
+        return f"dense_{plan.dense_config.encoder_id}"
+    if plan.hybrid_config is not None:
+        if (
+            plan.hybrid_config.method == "hybrid_weighted"
+            and plan.hybrid_config.alpha == 0.5
+            and plan.hybrid_config.dense_config.encoder_id == "multilingual-e5-small"
+        ):
+            return "hybrid_weighted_e5_small_alpha_0_5"
+        return plan.hybrid_config.method
+    return plan.method
 
 
 def _validate_public_output_quality(

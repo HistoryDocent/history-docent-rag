@@ -348,8 +348,9 @@ candidate recall은 좋은데 top rank가 약한 경우 reranker가 실제 gener
 | ID | 방식 | 설정 |
 | --- | --- | --- |
 | `K0` | reranker 없음 | retriever top 5 |
-| `K1` | `BAAI/bge-reranker-v2-m3` | retrieve top 30 -> rerank top 5 |
-| `K2` | `BAAI/bge-reranker-v2-m3` | retrieve top 50 -> rerank top 5 |
+| `K1` | `BAAI/bge-reranker-v2-m3` | retrieve top 20 -> rerank top 5 |
+| `K2` | `BAAI/bge-reranker-v2-m3` | retrieve top 30 -> rerank top 5 |
+| `K3` | `BAAI/bge-reranker-v2-m3` | retrieve top 50 -> rerank top 5 |
 
 metric:
 
@@ -367,6 +368,21 @@ Recall@5 유지
 latency_p95 증가가 제품 SLO 안에 있음
 generation unsupported_claim_rate 하락
 ```
+
+실행 결과 v1:
+
+private dev split 70개에서 E5-small dense 단독, E5-small weighted Hybrid, E5-small dense + BGE reranker top20을 비교했다. top30/top50과 Hybrid reranker는 코드 실험군으로 구현했지만 CPU CrossEncoder 비용이 커서 v1 public report에는 포함하지 않았다.
+
+| ID | run_label | 방식 | Recall@1 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | 판단 |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `BM25` | `bm25` | lexical baseline | 0.400000 | 0.566667 | 0.471389 | 0.344203 | 7.983400 | 기준선 |
+| `E2` | `dense_multilingual_e5_small` | dense only | 0.633333 | 0.733333 | 0.675556 | 0.533797 | 17.921900 | 기본 검색 후보 유지 |
+| `H8` | `hybrid_weighted_e5_small_alpha_0_5` | weighted Hybrid | 0.566667 | 0.783333 | 0.655278 | 0.509310 | 30.737600 | recall 후보, top-rank 약함 |
+| `K1` | `dense_multilingual_e5_small_rerank_bge_m3_top20` | dense top20 -> BGE rerank top5 | 0.716667 | 0.833333 | 0.761667 | 0.635787 | 13140.690300 | 품질 최고, CPU latency로 기본 후보 탈락 |
+
+결론:
+
+`BAAI/bge-reranker-v2-m3`는 top-rank 품질을 확실히 올렸다. 그러나 CPU 기준 `latency_p95_ms`가 약 13.1초로 실시간 관광 도슨트 API의 기본 검색 경로로는 부적합하다. 현재 실서비스 기본 후보는 `dense_multilingual_e5_small`로 유지한다. reranker는 GPU 배포, 더 작은 reranker, hard query 전용 라우팅, 오프라인 평가용 품질 상한 후보로만 남긴다.
 
 ## Stage 5. Query Rewrite와 Place Expansion
 

@@ -56,8 +56,10 @@
 - [x] Hybrid retrieval 구현
 - [x] neural embedding model 비교
 - [x] neural dense 기반 Hybrid 비교
-- [ ] neural dense 기반 Reranker 비교
-- [ ] reranker comparison 구현
+- [x] neural dense 기반 Reranker 비교 v1
+- [x] reranker comparison 구현
+- [ ] reranker top30/top50 장시간 실험
+- [ ] smaller reranker 후보 비교
 - [ ] evidence packing 비교 구현
 - [ ] place-aware query rewrite 구현
 - [ ] citation RAG answer contract 구현
