@@ -10,6 +10,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core import project_paths
 from app.domain.chunking import (
     ChildChunk,
     ChunkingPolicy,
@@ -55,15 +56,15 @@ DEFAULT_DEV_DATASET_PATH = (
     Path("private_data") / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
 )
 DEFAULT_CONFIG_PATH = Path("configs/chunking.default.yaml")
-DEFAULT_EXPERIMENT_DIR = Path("private_data") / "experiments" / "chunking_ablation"
-DEFAULT_REPORT_PATH = Path("evals/reports/chunking_ablation_report.md")
-CHUNKING_ABLATION_REPORT_VERSION = "chunking-ablation-report/v1"
+DEFAULT_EXPERIMENT_DIR = Path("private_data") / "experiments" / "chunking_ablation_v2"
+DEFAULT_REPORT_PATH = Path("evals/reports/chunking_ablation_v2_report.md")
+CHUNKING_ABLATION_REPORT_VERSION = "chunking-ablation-report/v2"
 CHUNKING_ABLATION_RUN_PREFIX = "chunking-ablation"
-SUPPORTED_VARIANTS: tuple[str, ...] = ("C0", "C1", "C2")
+SUPPORTED_VARIANTS: tuple[str, ...] = ("C0", "C1", "C2", "C3", "C4", "C5", "C6")
 DEFAULT_TOP_K = 5
 
 
-VariantId = Literal["C0", "C1", "C2"]
+VariantId = Literal["C0", "C1", "C2", "C3", "C4", "C5", "C6"]
 GoldTargetKind = Literal["child", "parent", "doc"]
 
 
@@ -75,6 +76,11 @@ class ChunkingVariantConfig(ChunkingAblationModel):
     variant_id: VariantId
     label: str
     description: str
+    boundary_element_types: tuple[str, ...] | None = None
+    context_metadata_element_types: tuple[str, ...] | None = None
+    parent_soft_max_chars: int | None = Field(default=None, ge=1)
+    merge_micro_parent_candidates: bool = False
+    micro_parent_merge_max_chars: int | None = Field(default=None, ge=1)
     child_min_chars: int = Field(ge=1)
     child_target_chars: int = Field(ge=1)
     child_max_chars: int = Field(ge=1)
@@ -98,6 +104,9 @@ class ChunkingAblationVariantResult(ChunkingAblationModel):
     variant_id: VariantId
     label: str
     description: str
+    boundary_policy: str
+    child_overlap_blocks: int = Field(ge=0)
+    micro_parent_merge_enabled: bool
     private_chunks_path_alias: str
     private_results_path_alias: str
     chunking_run_id: str
@@ -162,6 +171,12 @@ def run_chunking_ablation(
     variants: list[str] | None = None,
     top_k: int = DEFAULT_TOP_K,
 ) -> ChunkingAblationReport:
+    _validate_private_artifact_policy(
+        normalized_blocks_path=normalized_blocks_path,
+        baseline_chunks_path=baseline_chunks_path,
+        dataset_path=dataset_path,
+        experiment_dir=experiment_dir,
+    )
     items = load_retrieval_eval_jsonl(dataset_path)
     _validate_dev_only_dataset(items)
     selected_variant_ids = _validate_variants(variants or list(SUPPORTED_VARIANTS))
@@ -241,13 +256,15 @@ def build_chunking_ablation_report_markdown(report: ChunkingAblationReport) -> s
     qualitative_rows = "\n".join(
         f"- `{key}`: {value}" for key, value in report.qualitative_assessment.items()
     )
-    return f"""# Chunking Ablation Report
+    return f"""# Chunking Ablation v2 Report
 
 ## 목적
 
 BM25 retriever를 고정한 상태에서 parent-child chunking 단위가 retrieval metric에 미치는 영향을 비교한다.
 
 이 리포트는 성능 개선 확정 결과가 아니다. Dense, Hybrid, Reranker 실험 전에 검색 단위를 먼저 검증하기 위한 dev-only ablation 기록이다.
+
+v2에서는 기존 C0/C1/C2에 micro-parent merge, overlap 0/2, fixed-size block baseline을 추가했다.
 
 locked test split은 사용하지 않는다. test split은 최종 확인 전까지 튜닝 의사결정에 사용하지 않는다.
 
@@ -274,8 +291,8 @@ full chunk text와 raw run result는 public repository에 저장하지 않는다
 
 ## 정량 리포트
 
-| variant | label | gate | parents | children | indexed_docs | child_p50 | child_p95 | max_chars | citation_recoverability | retrievable_coverage | duplicate_text_hash | replacement_char_rate | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | no_answer_candidates | candidate_winner |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| variant | label | boundary_policy | overlap_blocks | micro_merge | gate | parents | children | indexed_docs | child_p50 | child_p95 | max_chars | citation_recoverability | retrievable_coverage | duplicate_text_hash | replacement_char_rate | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | no_answer_candidates | candidate_winner |
+| --- | --- | --- | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 {variant_rows}
 
 ## Query Type Breakdown
@@ -409,6 +426,9 @@ def _build_variant_result(
         variant_id=variant_config.variant_id,
         label=variant_config.label,
         description=variant_config.description,
+        boundary_policy=_boundary_policy_label(variant_config),
+        child_overlap_blocks=variant_config.child_overlap_blocks,
+        micro_parent_merge_enabled=variant_config.merge_micro_parent_candidates,
         private_chunks_path_alias=f"<private chunking ablation chunks: {variant_config.variant_id}>",
         private_results_path_alias=f"<private chunking ablation results: {variant_config.variant_id}>",
         chunking_run_id=artifacts.result.report.chunking_run_id,
@@ -864,7 +884,15 @@ def _select_variant(
         )
     ]
     if not eligible:
-        return "C0", "C1/C2가 selection gate와 개선 조건을 동시에 충족하지 못해 C0를 유지한다."
+        tested = "/".join(
+            variant.variant_id for variant in variants if variant.variant_id != "C0"
+        )
+        if not tested:
+            return ("C0", "C0만 실행해 baseline을 유지한다.")
+        return (
+            "C0",
+            f"{tested}가 selection gate와 개선 조건을 동시에 충족하지 못해 C0를 유지한다.",
+        )
     selected = sorted(
         eligible,
         key=lambda variant: (
@@ -979,6 +1007,51 @@ def _variant_config(
             child_max_chars=1400,
             child_overlap_blocks=1,
         )
+    if variant_id == "C3":
+        return ChunkingVariantConfig(
+            variant_id="C3",
+            label="micro-parent merge",
+            description="짧은 heading parent를 인접 parent와 병합해 context fragmentation 완화",
+            merge_micro_parent_candidates=True,
+            micro_parent_merge_max_chars=base_policy.child_min_chars,
+            child_min_chars=base_policy.child_min_chars,
+            child_target_chars=base_policy.child_target_chars,
+            child_max_chars=base_policy.child_max_chars,
+            child_overlap_blocks=base_policy.child_overlap_blocks,
+        )
+    if variant_id == "C4":
+        return ChunkingVariantConfig(
+            variant_id="C4",
+            label="overlap 0",
+            description="block overlap을 제거해 중복과 latency를 줄이는 가설",
+            child_min_chars=base_policy.child_min_chars,
+            child_target_chars=base_policy.child_target_chars,
+            child_max_chars=base_policy.child_max_chars,
+            child_overlap_blocks=0,
+        )
+    if variant_id == "C5":
+        return ChunkingVariantConfig(
+            variant_id="C5",
+            label="overlap 2",
+            description="block overlap을 늘려 boundary context 손실을 줄이는 가설",
+            child_min_chars=base_policy.child_min_chars,
+            child_target_chars=base_policy.child_target_chars,
+            child_max_chars=base_policy.child_max_chars,
+            child_overlap_blocks=2,
+        )
+    if variant_id == "C6":
+        return ChunkingVariantConfig(
+            variant_id="C6",
+            label="fixed-size block baseline",
+            description="heading parent/context를 쓰지 않는 block-size baseline",
+            boundary_element_types=(),
+            context_metadata_element_types=(),
+            parent_soft_max_chars=base_policy.parent_soft_max_chars,
+            child_min_chars=base_policy.child_min_chars,
+            child_target_chars=base_policy.child_target_chars,
+            child_max_chars=base_policy.child_max_chars,
+            child_overlap_blocks=0,
+        )
     raise ValueError(f"unsupported chunking ablation variant: {variant_id}")
 
 
@@ -987,14 +1060,32 @@ def _policy_for_variant(
     base_policy: ChunkingPolicy,
     config: ChunkingVariantConfig,
 ) -> ChunkingPolicy:
-    return base_policy.model_copy(
-        update={
-            "child_min_chars": config.child_min_chars,
-            "child_target_chars": config.child_target_chars,
-            "child_max_chars": config.child_max_chars,
-            "child_overlap_blocks": config.child_overlap_blocks,
-        }
-    )
+    update: dict[str, object] = {
+        "child_min_chars": config.child_min_chars,
+        "child_target_chars": config.child_target_chars,
+        "child_max_chars": config.child_max_chars,
+        "child_overlap_blocks": config.child_overlap_blocks,
+        "merge_micro_parent_candidates": config.merge_micro_parent_candidates,
+    }
+    if config.boundary_element_types is not None:
+        update["boundary_element_types"] = set(config.boundary_element_types)
+    if config.context_metadata_element_types is not None:
+        update["context_metadata_element_types"] = set(
+            config.context_metadata_element_types
+        )
+    if config.parent_soft_max_chars is not None:
+        update["parent_soft_max_chars"] = config.parent_soft_max_chars
+    if config.micro_parent_merge_max_chars is not None:
+        update["micro_parent_merge_max_chars"] = config.micro_parent_merge_max_chars
+    return base_policy.model_copy(update=update)
+
+
+def _boundary_policy_label(config: ChunkingVariantConfig) -> str:
+    if config.boundary_element_types == () and config.context_metadata_element_types == ():
+        return "fixed_size_block"
+    if config.merge_micro_parent_candidates:
+        return "heading1_micro_merge"
+    return "heading1_parent_child"
 
 
 def _load_normalized_blocks(path: Path) -> list[NormalizedBlock]:
@@ -1036,6 +1127,35 @@ def _validate_dev_only_dataset(items: list[RetrievalEvalItem]) -> None:
     review_statuses = {item.metadata.review_status for item in items}
     if review_statuses != {"reviewed"}:
         raise ValueError("chunking ablation runner must use reviewed dev rows only")
+
+
+def _validate_private_artifact_policy(
+    *,
+    normalized_blocks_path: Path,
+    baseline_chunks_path: Path,
+    dataset_path: Path,
+    experiment_dir: Path,
+) -> None:
+    for path in (
+        normalized_blocks_path,
+        baseline_chunks_path,
+        dataset_path,
+        experiment_dir,
+    ):
+        _validate_repository_private_data_boundary(path)
+    if not project_paths.is_repository_private_write_path(experiment_dir):
+        raise ValueError(
+            "private chunking ablation artifacts must be written under private_data"
+        )
+
+
+def _validate_repository_private_data_boundary(path: Path) -> None:
+    if project_paths.has_private_data_segment(
+        path,
+    ) and not project_paths.is_repository_private_artifact_path(path):
+        raise ValueError(
+            "private_data artifact paths must stay under repository private_data"
+        )
 
 
 def _validate_variants(variants: list[str]) -> list[VariantId]:
@@ -1142,7 +1262,10 @@ def _variant_by_id(
 def _format_variant_row(variant: ChunkingAblationVariantResult) -> str:
     metric = variant.metric_summary
     return (
-        f"| {variant.variant_id} | {variant.label} | {variant.gate_status} | "
+        f"| {variant.variant_id} | {variant.label} | {variant.boundary_policy} | "
+        f"{variant.child_overlap_blocks} | "
+        f"{'yes' if variant.micro_parent_merge_enabled else 'no'} | "
+        f"{variant.gate_status} | "
         f"{variant.parent_chunk_count} | {variant.child_chunk_count} | "
         f"{variant.indexed_document_count} | {variant.child_length_p50} | "
         f"{variant.child_length_p95} | {variant.child_max_chars} | "
@@ -1223,7 +1346,7 @@ def main() -> int:
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run BM25 dev-only chunking ablation for C0/C1/C2 variants."
+        description="Run BM25 dev-only chunking ablation variants."
     )
     parser.add_argument("--normalized-blocks", type=Path, default=DEFAULT_NORMALIZED_BLOCKS_PATH)
     parser.add_argument("--baseline-chunks", type=Path, default=DEFAULT_BASELINE_CHUNKS_PATH)
@@ -1232,7 +1355,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--experiment-dir", type=Path, default=DEFAULT_EXPERIMENT_DIR)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT_PATH)
-    parser.add_argument("--variants", type=str, default="C0,C1,C2")
+    parser.add_argument("--variants", type=str, default="C0,C1,C2,C3,C4,C5,C6")
     parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K)
     return parser.parse_args()
 

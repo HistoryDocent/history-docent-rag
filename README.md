@@ -195,7 +195,7 @@ private dev 평가셋 70개를 작성하고 review rubric 기준으로 `reviewed
 
 private test 평가셋 35개를 작성하고 `locked` 상태로 고정했다. public-safe 집계 리포트 기준 `test_lock_gate_status=PASS`, `target_resolvability_status=PASS`, `benchmark_readiness_status=PASS`, `missing_child_target_count=0`, `public_raw_text_leakage_count=0`이다. private test 원본 JSONL은 public repository에 commit하지 않는다.
 
-BM25 기준 chunking ablation runner를 구현했고, private dev split 70개에서 C0/C1/C2를 비교했다. 모든 variant가 chunking gate를 통과했지만 C1/C2가 개선 조건을 충족하지 못해 `selected_variant_id=C0`으로 유지했다. locked test split은 사용하지 않았다.
+BM25 기준 chunking ablation runner를 v2로 확장했고, private dev split 70개에서 C0-C6을 비교했다. smaller/larger child, micro-parent merge, overlap 0/2, fixed-size block baseline 모두 C0를 넘지 못해 `selected_variant_id=C0`으로 유지했다. C4/C6은 `short_standalone_child` gate를 통과하지 못했다. locked test split은 사용하지 않았다.
 
 Dense retrieval baseline v1을 구현했고, private dev split 70개에서 BM25와 `sklearn-tfidf-svd-v1` dense를 비교했다. Dense v1은 `Recall@5=0.350000`, `MRR=0.261111`, `nDCG@5=0.220955`로 BM25보다 낮아 개선 후보로 채택하지 않는다. 이 결과는 BGE-M3 또는 multilingual-E5 같은 neural embedding 결과가 아니다.
 
@@ -238,6 +238,7 @@ Hybrid RRF/Weighted retrieval을 구현했고, private dev split 70개에서 BM2
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |
 | [Chunking Ablation Report](evals/reports/chunking_ablation_report.md) | BM25 dev-only C0/C1/C2 chunking 비교 결과 |
+| [Chunking Ablation v2 Report](evals/reports/chunking_ablation_v2_report.md) | BM25 dev-only C0-C6 chunking 비교 결과 |
 | [Dense Retrieval Baseline Report](evals/reports/dense_retrieval_baseline_report.md) | BM25 대비 Dense v1 baseline 비교 결과 |
 | [Retrieval Overlap Analysis Report](evals/reports/retrieval_overlap_analysis_report.md) | BM25와 Dense D0의 query 단위 보완성 분석 결과 |
 | [Hybrid Retrieval Comparison Report](evals/reports/hybrid_retrieval_comparison_report.md) | BM25, Dense D0, Hybrid RRF/Weighted alpha 비교 결과 |

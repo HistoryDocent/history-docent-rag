@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from app.core import project_paths
 from app.domain.chunking import ChildChunk, chunking_report_to_dict
 from app.domain.retrieval import RetrievedCandidate, RetrievalEvalItem, RetrievalRunResult
 from app.domain.retrieval_experiment import (
@@ -220,7 +221,11 @@ def _load_children(path: Path) -> list[ChildChunk]:
     return [ChildChunk.model_validate(child) for child in payload["children"]]
 
 
-def test_run_chunking_ablation_writes_public_safe_report(tmp_path: Path) -> None:
+def test_run_chunking_ablation_writes_public_safe_report(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
     source_root = _fixture_source_root(tmp_path)
     normalized_blocks_path = _normalized_blocks_path(tmp_path)
     baseline_chunks_path = _baseline_chunks_path(
@@ -230,7 +235,7 @@ def test_run_chunking_ablation_writes_public_safe_report(tmp_path: Path) -> None
     )
     dataset_path = tmp_path / "retrieval_eval_dev.jsonl"
     report_path = tmp_path / "chunking_ablation_report.md"
-    experiment_dir = tmp_path / "private_experiment"
+    experiment_dir = tmp_path / "private_data" / "experiments" / "chunking_ablation"
     _write_jsonl(
         dataset_path,
         [
@@ -280,7 +285,80 @@ def test_run_chunking_ablation_writes_public_safe_report(tmp_path: Path) -> None
     assert "source_block_ids 전체를 포함해야 relevant hit" in report_text
 
 
-def test_chunking_ablation_rejects_test_split(tmp_path: Path) -> None:
+def test_run_chunking_ablation_supports_v2_chunking_variants(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
+    source_root = _fixture_source_root(tmp_path)
+    normalized_blocks_path = _normalized_blocks_path(tmp_path)
+    baseline_chunks_path = _baseline_chunks_path(
+        tmp_path,
+        normalized_blocks_path,
+        source_root,
+    )
+    dataset_path = tmp_path / "retrieval_eval_dev.jsonl"
+    report_path = tmp_path / "chunking_ablation_v2_report.md"
+    experiment_dir = tmp_path / "private_data" / "experiments" / "chunking_ablation_v2"
+    _write_jsonl(
+        dataset_path,
+        [
+            _eval_item_payload(
+                query_id="q-dev-place_fact-001",
+                query_type="place_fact",
+                query_text="경복궁 한양 정도전",
+                expected_behavior="retrieve",
+            ),
+            _eval_item_payload(
+                query_id="q-dev-no_answer-001",
+                query_type="no_answer",
+                query_text="오늘 실시간 예약 가능 좌석",
+                expected_behavior="abstain",
+            ),
+        ],
+    )
+
+    report = run_chunking_ablation(
+        normalized_blocks_path=normalized_blocks_path,
+        baseline_chunks_path=baseline_chunks_path,
+        dataset_path=dataset_path,
+        source_root=source_root,
+        experiment_dir=experiment_dir,
+        report_path=report_path,
+        variants=["C0", "C3", "C4", "C5", "C6"],
+        top_k=2,
+    )
+    report_text = report_path.read_text(encoding="utf-8")
+
+    assert report.report_version == "chunking-ablation-report/v2"
+    assert [variant.variant_id for variant in report.variants] == [
+        "C0",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+    ]
+    assert {variant.boundary_policy for variant in report.variants} == {
+        "heading1_parent_child",
+        "heading1_micro_merge",
+        "fixed_size_block",
+    }
+    assert report.variants[3].child_overlap_blocks == 2
+    assert report.variants[4].boundary_policy == "fixed_size_block"
+    assert report.variants[1].micro_parent_merge_enabled is True
+    assert "micro-parent merge" in report_text
+    assert "overlap 0" in report_text
+    assert "overlap 2" in report_text
+    assert "fixed-size block baseline" in report_text
+    assert "boundary_policy" in report_text
+    assert (experiment_dir / "C6_parent_child_chunks.json").exists()
+
+
+def test_chunking_ablation_rejects_test_split(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
     source_root = _fixture_source_root(tmp_path)
     normalized_blocks_path = _normalized_blocks_path(tmp_path)
     baseline_chunks_path = _baseline_chunks_path(
@@ -308,7 +386,7 @@ def test_chunking_ablation_rejects_test_split(tmp_path: Path) -> None:
             baseline_chunks_path=baseline_chunks_path,
             dataset_path=dataset_path,
             source_root=source_root,
-            experiment_dir=tmp_path / "private_experiment",
+            experiment_dir=tmp_path / "private_data" / "experiments" / "chunking_ablation",
             report_path=tmp_path / "report.md",
             variants=["C0"],
         )
@@ -316,7 +394,9 @@ def test_chunking_ablation_rejects_test_split(tmp_path: Path) -> None:
 
 def test_chunking_ablation_rejects_locked_review_status_in_dev_split(
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
     source_root = _fixture_source_root(tmp_path)
     normalized_blocks_path = _normalized_blocks_path(tmp_path)
     baseline_chunks_path = _baseline_chunks_path(
@@ -345,13 +425,17 @@ def test_chunking_ablation_rejects_locked_review_status_in_dev_split(
             baseline_chunks_path=baseline_chunks_path,
             dataset_path=dataset_path,
             source_root=source_root,
-            experiment_dir=tmp_path / "private_experiment",
+            experiment_dir=tmp_path / "private_data" / "experiments" / "chunking_ablation",
             report_path=tmp_path / "report.md",
             variants=["C0"],
         )
 
 
-def test_chunking_ablation_rejects_variant_without_c0(tmp_path: Path) -> None:
+def test_chunking_ablation_rejects_variant_without_c0(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
     source_root = _fixture_source_root(tmp_path)
     normalized_blocks_path = _normalized_blocks_path(tmp_path)
     baseline_chunks_path = _baseline_chunks_path(
@@ -378,9 +462,46 @@ def test_chunking_ablation_rejects_variant_without_c0(tmp_path: Path) -> None:
             baseline_chunks_path=baseline_chunks_path,
             dataset_path=dataset_path,
             source_root=source_root,
-            experiment_dir=tmp_path / "private_experiment",
+            experiment_dir=tmp_path / "private_data" / "experiments" / "chunking_ablation",
             report_path=tmp_path / "report.md",
             variants=["C1"],
+        )
+
+
+def test_chunking_ablation_rejects_public_experiment_dir(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
+    source_root = _fixture_source_root(tmp_path)
+    normalized_blocks_path = _normalized_blocks_path(tmp_path)
+    baseline_chunks_path = _baseline_chunks_path(
+        tmp_path,
+        normalized_blocks_path,
+        source_root,
+    )
+    dataset_path = tmp_path / "private_data" / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
+    _write_jsonl(
+        dataset_path,
+        [
+            _eval_item_payload(
+                query_id="q-dev-place_fact-001",
+                query_type="place_fact",
+                query_text="경복궁 한양 정도전",
+                expected_behavior="retrieve",
+            )
+        ],
+    )
+
+    with pytest.raises(ValueError, match="artifacts must be written under private_data"):
+        run_chunking_ablation(
+            normalized_blocks_path=normalized_blocks_path,
+            baseline_chunks_path=baseline_chunks_path,
+            dataset_path=dataset_path,
+            source_root=source_root,
+            experiment_dir=tmp_path / "evals" / "results",
+            report_path=tmp_path / "report.md",
+            variants=["C0"],
         )
 
 
@@ -664,7 +785,7 @@ def test_source_block_metrics_use_stable_doc_identifier(tmp_path: Path) -> None:
 def test_chunking_ablation_public_output_gate_fails_closed(field_name: str) -> None:
     payload = {
         "result_row_count": 0,
-        "report_version": "chunking-ablation-report/v1",
+        "report_version": "chunking-ablation-report/v2",
         "run_id": "test-run",
         "public_raw_text_leakage_count": 0,
         "private_path_leakage_count": 0,

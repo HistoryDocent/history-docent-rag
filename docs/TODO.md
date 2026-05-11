@@ -50,6 +50,7 @@
 - [x] retrieval dev/test split contract 고정
 - [x] retrieval judgment target 검증 gate 추가
 - [x] chunking ablation runner 구현
+- [x] chunking ablation v2 C0-C6 비교 리포트 작성
 - [x] Dense retrieval baseline v1 구현
 - [x] BM25-Dense 보완성 분석
 - [x] Hybrid retrieval 구현

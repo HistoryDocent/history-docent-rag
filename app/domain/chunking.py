@@ -95,6 +95,8 @@ class ChunkingPolicy(ChunkingModel):
     )
     front_matter_parent_title: str = "front_matter"
     parent_soft_max_chars: int = Field(default=6000, ge=1)
+    merge_micro_parent_candidates: bool = False
+    micro_parent_merge_max_chars: int = Field(default=250, ge=1)
     child_min_chars: int = Field(default=250, ge=1)
     child_target_chars: int = Field(default=700, ge=1)
     child_max_chars: int = Field(default=1100, ge=1)
@@ -213,6 +215,11 @@ def build_parent_child_chunks(
         chunking_policy,
         block_texts,
     )
+    if chunking_policy.merge_micro_parent_candidates:
+        parent_candidates = _merge_micro_parent_candidates(
+            parent_candidates,
+            chunking_policy,
+        )
     parents: list[ParentChunk] = []
     children: list[ChildChunk] = []
     filtered_parent_count = 0
@@ -521,6 +528,72 @@ def _candidate_from_blocks(
         title=title,
         heading_block_id=heading_block_id,
         blocks=blocks,
+    )
+
+
+def _merge_micro_parent_candidates(
+    candidates: list[_ParentCandidate],
+    policy: ChunkingPolicy,
+) -> list[_ParentCandidate]:
+    if not candidates:
+        return []
+    merged: list[_ParentCandidate] = []
+    index = 0
+    while index < len(candidates):
+        candidate = candidates[index]
+        if (
+            _is_micro_parent_candidate(candidate, policy)
+            and index + 1 < len(candidates)
+            and _can_merge_parent_candidates(candidate, candidates[index + 1], policy)
+        ):
+            merged.append(
+                _merge_parent_candidate_pair(candidate, candidates[index + 1])
+            )
+            index += 2
+            continue
+        if (
+            _is_micro_parent_candidate(candidate, policy)
+            and merged
+            and _can_merge_parent_candidates(merged[-1], candidate, policy)
+        ):
+            previous = merged.pop()
+            merged.append(_merge_parent_candidate_pair(previous, candidate))
+            index += 1
+            continue
+        merged.append(candidate)
+        index += 1
+    return merged
+
+
+def _is_micro_parent_candidate(
+    candidate: _ParentCandidate,
+    policy: ChunkingPolicy,
+) -> bool:
+    retrievable_length = _total_length(
+        [block for block in candidate.blocks if _is_retrievable(block, policy)]
+    )
+    return 0 < retrievable_length < policy.micro_parent_merge_max_chars
+
+
+def _can_merge_parent_candidates(
+    left: _ParentCandidate,
+    right: _ParentCandidate,
+    policy: ChunkingPolicy,
+) -> bool:
+    return (
+        left.doc_id == right.doc_id
+        and _total_length([*left.blocks, *right.blocks]) <= policy.parent_soft_max_chars
+    )
+
+
+def _merge_parent_candidate_pair(
+    left: _ParentCandidate,
+    right: _ParentCandidate,
+) -> _ParentCandidate:
+    return _candidate_from_blocks(
+        blocks=[*left.blocks, *right.blocks],
+        title=left.title,
+        heading_block_id=left.heading_block_id,
     )
 
 

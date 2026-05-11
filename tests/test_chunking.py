@@ -201,3 +201,53 @@ def test_chunking_run_id_changes_when_chunking_relevant_block_contract_changes()
     changed = build_parent_child_chunks(blocks=[changed_heading, body])
 
     assert original.report.chunking_run_id != changed.report.chunking_run_id
+
+
+def test_micro_parent_merge_combines_short_heading_sections() -> None:
+    blocks = [
+        _block(
+            block_id="heading-one",
+            element_type="heading1",
+            page=0,
+            text_length=30,
+            text_hash="a" * 64,
+        ),
+        _block(
+            block_id="body-short",
+            element_type="paragraph",
+            page=1,
+            text_length=120,
+            text_hash="b" * 64,
+        ),
+        _block(
+            block_id="heading-two",
+            element_type="heading1",
+            page=2,
+            text_length=30,
+            text_hash="c" * 64,
+        ),
+        _block(
+            block_id="body-normal",
+            element_type="paragraph",
+            page=3,
+            text_length=360,
+            text_hash="d" * 64,
+        ),
+    ]
+
+    baseline = build_parent_child_chunks(blocks=blocks)
+    merged = build_parent_child_chunks(
+        blocks=blocks,
+        policy=ChunkingPolicy(merge_micro_parent_candidates=True),
+    )
+
+    assert baseline.report.quality_summary.parent_chunk_count == 2
+    assert baseline.report.quality_summary.micro_parent_count == 1
+    assert merged.report.quality_summary.parent_chunk_count == 1
+    assert merged.report.quality_summary.micro_parent_count == 0
+    assert merged.parents[0].source_block_ids == [
+        "heading-one",
+        "body-short",
+        "heading-two",
+        "body-normal",
+    ]

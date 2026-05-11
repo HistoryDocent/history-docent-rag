@@ -158,7 +158,9 @@ retriever를 바꾸기 전에 검색 단위가 적절한지 검증한다.
 | `C1` | smaller child | target 450, max 800, overlap block 1 | 세밀한 사실 질문의 precision 개선 |
 | `C2` | larger child | target 900, max 1400, overlap block 1 | story/overview 질문의 recall 개선 |
 | `C3` | micro-parent merge | 짧은 parent 병합 후 C0 child | micro parent로 인한 context fragmentation 완화 |
-| `C4` | semantic split | 후순위 | C0-C3 실패 분석 이후만 검토 |
+| `C4` | overlap 0 | target 700, max 1100, overlap block 0 | 중복 감소와 latency 개선 |
+| `C5` | overlap 2 | target 700, max 1100, overlap block 2 | boundary context 손실 완화 |
+| `C6` | fixed-size block baseline | heading parent/context 비활성화 | 구조 보존 청킹 대비 naive block baseline 검증 |
 
 측정:
 
@@ -184,13 +186,17 @@ child_length_p95 <= configured max
 
 | ID | gate | Recall@5 | MRR | nDCG@5 | latency_p95_ms | 판단 |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
-| `C0` | PASS | 0.566667 | 0.471389 | 0.344203 | 6.416900 | 유지 |
-| `C1` | PASS | 0.083333 | 0.044444 | 0.026033 | 10.345600 | 개선 조건 미충족 |
-| `C2` | PASS | 0.533333 | 0.446389 | 0.272112 | 4.586700 | 개선 조건 미충족 |
+| `C0` | PASS | 0.566667 | 0.471389 | 0.344203 | 7.504000 | 유지 |
+| `C1` | PASS | 0.083333 | 0.044444 | 0.026033 | 10.086600 | 개선 조건 미충족 |
+| `C2` | PASS | 0.533333 | 0.446389 | 0.272112 | 6.141000 | 개선 조건 미충족 |
+| `C3` | PASS | 0.533333 | 0.453333 | 0.330712 | 6.343100 | 개선 조건 미충족 |
+| `C4` | FAIL | 0.483333 | 0.384722 | 0.241390 | 6.154800 | `short_standalone_child` gate 실패 |
+| `C5` | PASS | 0.533333 | 0.368611 | 0.247787 | 8.998300 | 개선 조건 미충족 |
+| `C6` | FAIL | 0.316667 | 0.254167 | 0.145937 | 5.483900 | `short_standalone_child` gate 실패 |
 
 결론:
 
-`selected_variant_id=C0`으로 유지한다. 이 결과는 private dev split에서 BM25만 사용한 청킹 단위 선택 근거이며, locked test split은 사용하지 않았다. 성능 개선 주장이 아니라 Dense/Hybrid 비교를 위한 검색 단위 고정이다.
+`selected_variant_id=C0`으로 유지한다. C3 micro-parent merge는 parent 수와 duplicate hash는 줄였지만 Recall@5/MRR 개선 조건을 충족하지 못했다. C4/C6은 짧은 독립 child가 발생해 gate를 통과하지 못했다. 이 결과는 private dev split에서 BM25만 사용한 청킹 단위 선택 근거이며, locked test split은 사용하지 않았다. 성능 개선 주장이 아니라 Dense/Hybrid 비교를 위한 검색 단위 고정이다.
 
 ## Stage 2. Dense Embedding Baseline
 
@@ -553,7 +559,7 @@ latency/cost 악화 설명 없음
 현재 면접에서 주장할 수 있는 문장:
 
 ```text
-서울/한양 역사 도슨트 RAG를 재설계하면서 원본 데이터 공개 제한을 지키기 위해 public/private benchmark 경계를 먼저 고정했고, BM25 baseline과 retrieval evaluation harness, private dev 70개 reviewed 평가셋, private test 35개 locked 평가셋까지 구축했습니다. BM25 dev-only chunking ablation에서는 C0/C1/C2를 비교했고, C1/C2가 개선 조건을 충족하지 못해 C0 parent-child chunking을 유지했습니다. 이후 Dense, Hybrid, Reranker, Query Rewrite, Generation을 같은 평가셋과 같은 metric으로 단계별 비교할 계획입니다.
+서울/한양 역사 도슨트 RAG를 재설계하면서 원본 데이터 공개 제한을 지키기 위해 public/private benchmark 경계를 먼저 고정했고, BM25 baseline과 retrieval evaluation harness, private dev 70개 reviewed 평가셋, private test 35개 locked 평가셋까지 구축했습니다. BM25 dev-only chunking ablation v2에서는 C0-C6을 비교했고, smaller/larger child, micro-parent merge, overlap 0/2, fixed-size block baseline 모두 C0를 넘지 못해 현재 parent-child chunking을 유지했습니다. 이후 Dense, Hybrid, Reranker, Query Rewrite, Generation을 같은 평가셋과 같은 metric으로 단계별 비교할 계획입니다.
 ```
 
 최종 ablation 완료 후에만 주장할 수 있는 문장:
