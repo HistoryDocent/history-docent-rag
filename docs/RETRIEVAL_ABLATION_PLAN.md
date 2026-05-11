@@ -227,12 +227,36 @@ public artifact leakage 0
 
 | ID | encoder | Recall@5 | MRR | nDCG@5 | latency_p95_ms | BM25 대비 Recall@5 delta | 판단 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| `BM25` | regex-ko-en-num/v1 | 0.566667 | 0.471389 | 0.344203 | 5.351400 | 0.000000 | 기준선 |
-| `D0` | sklearn-tfidf-svd-v1 | 0.350000 | 0.261111 | 0.220955 | 18.084200 | -0.216667 | 개선 후보 아님 |
+| `BM25` | regex-ko-en-num/v1 | 0.566667 | 0.471389 | 0.344203 | 5.967000 | 0.000000 | 기준선 |
+| `D0` | sklearn-tfidf-svd-v1 | 0.350000 | 0.261111 | 0.220955 | 15.437200 | -0.216667 | 개선 후보 아님 |
 
 결론:
 
 `D0` dense baseline은 BM25보다 낮다. 이 결과는 neural embedding 모델 결과가 아니므로 BGE-M3 또는 multilingual-E5의 성능을 부정하는 근거로 사용하지 않는다. 현재 단계에서는 dense harness, cache, public-safe report를 고정한 것이 산출물이다.
+
+## Stage 2.5. BM25-Dense Complementarity Analysis
+
+목적:
+
+Dense D0가 BM25를 대체할 수 있는지가 아니라 BM25 실패 query를 보완할 수 있는지 확인한다.
+
+실행 결과:
+
+| metric | value |
+| --- | ---: |
+| retrieve_query_count | 60 |
+| bm25_only_hit_count | 15 |
+| dense_only_hit_count | 2 |
+| both_hit_count | 19 |
+| both_fail_count | 24 |
+| bm25_recall_at_5 | 0.566667 |
+| dense_recall_at_5 | 0.350000 |
+| oracle_union_recall_at_5 | 0.600000 |
+| oracle_union_delta_vs_bm25 | 0.033333 |
+
+결론:
+
+Dense D0 단독은 BM25보다 낮지만 BM25가 놓친 query 2개를 보완했다. oracle union은 실제 retriever가 아니라 상한이므로 성능 개선 주장은 금지한다. 다만 Hybrid RRF/Weighted 실험을 진행할 근거는 있다.
 
 ## Stage 3. Hybrid Retrieval
 

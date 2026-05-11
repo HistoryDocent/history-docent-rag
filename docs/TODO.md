@@ -51,8 +51,9 @@
 - [x] retrieval judgment target 검증 gate 추가
 - [x] chunking ablation runner 구현
 - [x] Dense retrieval baseline v1 구현
-- [ ] neural embedding model 비교
+- [x] BM25-Dense 보완성 분석
 - [ ] Hybrid retrieval 구현
+- [ ] neural embedding model 비교
 - [ ] reranker comparison 구현
 - [ ] evidence packing 비교 구현
 - [ ] place-aware query rewrite 구현
