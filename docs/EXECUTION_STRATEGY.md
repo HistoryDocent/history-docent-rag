@@ -348,6 +348,26 @@ Hybrid가 query type별로 어디서 이기는지 확인
 latency_p95 기록
 ```
 
+현재 실험 결과:
+
+```text
+BM25 Recall@5=0.566667, MRR=0.471389, latency_p95_ms=5.697700
+Dense D0 Recall@5=0.350000, MRR=0.261111, latency_p95_ms=19.703900
+Hybrid RRF Recall@5=0.516667, MRR=0.359722, latency_p95_ms=22.643800
+Hybrid Weighted alpha 0.3 Recall@5=0.566667, MRR=0.479722, latency_p95_ms=23.038700
+Hybrid Weighted alpha 0.5 Recall@5=0.533333, MRR=0.427778, latency_p95_ms=25.907100
+Hybrid Weighted alpha 0.7 Recall@5=0.450000, MRR=0.354722, latency_p95_ms=22.609100
+```
+
+판정:
+
+```text
+현재 Hybrid D0 조합은 선택하지 않는다.
+alpha 0.3은 MRR만 소폭 개선됐고 Recall@5는 동일하다.
+latency_p95가 BM25 대비 크게 증가해 latency gate를 통과하지 못했다.
+다음은 BM25 유지 상태에서 neural embedding model 비교 또는 shared dense index 최적화다.
+```
+
 포트폴리오 산출물:
 
 - retrieval ablation table

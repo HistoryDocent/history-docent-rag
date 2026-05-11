@@ -281,6 +281,21 @@ no_answer false positive 증가 없음
 latency_p95 +20% 이내
 ```
 
+실행 결과:
+
+| ID | run_label | Recall@1 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | BM25 대비 Recall@5 delta | BM25 대비 MRR delta | 판단 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `BM25` | `bm25` | 0.400000 | 0.566667 | 0.471389 | 0.344203 | 5.697700 | 0.000000 | 0.000000 | 기준선 유지 |
+| `D0` | `dense` | 0.200000 | 0.350000 | 0.261111 | 0.220955 | 19.703900 | -0.216667 | -0.210278 | 개선 후보 아님 |
+| `H1` | `hybrid_rrf` | 0.266667 | 0.516667 | 0.359722 | 0.282463 | 22.643800 | -0.050000 | -0.111667 | 개선 후보 아님 |
+| `H2` | `hybrid_weighted_alpha_0_3` | 0.416667 | 0.566667 | 0.479722 | 0.347259 | 23.038700 | 0.000000 | +0.008333 | latency gate 실패 |
+| `H3` | `hybrid_weighted_alpha_0_5` | 0.350000 | 0.533333 | 0.427778 | 0.323149 | 25.907100 | -0.033334 | -0.043611 | 개선 후보 아님 |
+| `H4` | `hybrid_weighted_alpha_0_7` | 0.300000 | 0.450000 | 0.354722 | 0.285376 | 22.609100 | -0.116667 | -0.116667 | 개선 후보 아님 |
+
+결론:
+
+`hybrid_weighted_alpha_0_3`은 `Recall@1`, `MRR`, `nDCG@5`를 소폭 개선했지만 `Recall@5`는 BM25와 동일하고 latency가 BM25 대비 크게 증가했다. 선택 기준의 `latency_p95 +20% 이내`를 통과하지 못했으므로 production 후보로 채택하지 않는다. 현재 검색 production 후보는 BM25이며, Hybrid는 neural embedding 모델 또는 shared dense index 최적화 이후 재실험한다.
+
 ## Stage 4. Reranker
 
 목적:
@@ -522,15 +537,16 @@ latency/cost 악화 설명 없음
 3. private test 평가셋 35개 locked 작성과 target resolvability 검증
 4. chunking config ablation runner 완료
 5. Dense retrieval baseline v1 완료
-6. Hybrid RRF/Weighted retrieval
-7. reranker comparison
-8. place-aware deterministic query expansion
-9. Solar Pro 3 answer contract
-10. generation eval harness
-11. Qdrant production candidate
-12. RAPTOR-lite
-13. GraphRAG-lite
-14. final ablation report
+6. Hybrid RRF/Weighted retrieval 완료
+7. neural embedding model 비교 또는 shared dense index 최적화
+8. reranker comparison
+9. place-aware deterministic query expansion
+10. Solar Pro 3 answer contract
+11. generation eval harness
+12. Qdrant production candidate
+13. RAPTOR-lite
+14. GraphRAG-lite
+15. final ablation report
 
 ## 포트폴리오 메시지
 

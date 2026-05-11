@@ -34,6 +34,7 @@ from app.domain.retrieval_experiment import (
 )
 from app.infrastructure.index.bm25 import Bm25Retriever
 from app.infrastructure.index.dense import DenseRetrievalConfig, DenseRetriever
+from app.infrastructure.index.hybrid import HybridRetrievalConfig, HybridRetriever
 
 
 DEFAULT_CHUNKS_PATH = Path("private_data") / "reports" / "parent_child_chunks.json"
@@ -43,7 +44,23 @@ DEFAULT_REPORT_PATH = Path("evals/reports/retrieval_harness_report.md")
 DEFAULT_NOTEBOOK_PATH = Path("notebooks/07_dense_hybrid_retrieval_comparison.ipynb")
 DEFAULT_EMBEDDING_CACHE_DIR = Path("private_data") / "embeddings"
 DEFAULT_TOP_K = 5
-SUPPORTED_METHODS: tuple[RetrievalMethod, ...] = ("bm25", "dense")
+SUPPORTED_METHOD_KEYS: tuple[str, ...] = (
+    "bm25",
+    "dense",
+    "hybrid_rrf",
+    "hybrid_weighted",
+    "hybrid_weighted_alpha_0_3",
+    "hybrid_weighted_alpha_0_5",
+    "hybrid_weighted_alpha_0_7",
+)
+
+
+@dataclass(frozen=True)
+class _MethodPlan:
+    method_key: str
+    method: RetrievalMethod
+    run_label: str
+    hybrid_config: HybridRetrievalConfig | None = None
 
 
 @dataclass(frozen=True)
@@ -65,32 +82,31 @@ def run_retrieval_experiment(
     results_dir: Path = DEFAULT_RESULTS_DIR,
     report_path: Path = DEFAULT_REPORT_PATH,
     notebook_path: Path | None = DEFAULT_NOTEBOOK_PATH,
-    methods: list[RetrievalMethod] | None = None,
+    methods: list[str] | None = None,
     top_k: int = DEFAULT_TOP_K,
     embedding_cache_dir: Path = DEFAULT_EMBEDDING_CACHE_DIR,
 ) -> RetrievalComparisonReport:
-    selected_methods = methods or ["bm25"]
-    _validate_methods(selected_methods)
+    method_plans = _build_method_plans(methods or ["bm25"])
     items = load_retrieval_eval_jsonl(dataset_path)
-    _validate_dataset_policy(items=items, methods=selected_methods)
+    _validate_dataset_policy(items=items)
     _validate_private_artifact_policy(
         chunks_path=chunks_path,
         dataset_path=dataset_path,
         results_dir=results_dir,
         embedding_cache_dir=embedding_cache_dir,
-        methods=selected_methods,
+        method_plans=method_plans,
     )
     documents = load_retrieval_documents_from_chunks(chunks_path)
     artifacts = [
         _run_method(
-            method=method,
+            plan=plan,
             items=items,
             documents=documents,
             results_dir=results_dir,
             top_k=top_k,
             embedding_cache_dir=embedding_cache_dir,
         )
-        for method in selected_methods
+        for plan in method_plans
     ]
     result_rows = [
         row for artifact in artifacts for row in artifact.result_rows
@@ -145,7 +161,7 @@ def load_retrieval_documents_from_chunks(chunks_path: Path) -> list[RetrievalDoc
 
 def _run_method(
     *,
-    method: RetrievalMethod,
+    plan: _MethodPlan,
     items: list[RetrievalEvalItem],
     documents: list[RetrievalDocument],
     results_dir: Path,
@@ -153,15 +169,16 @@ def _run_method(
     embedding_cache_dir: Path,
 ) -> _MethodRunArtifacts:
     execution = _execute_method(
-        method=method,
+        plan=plan,
         items=items,
         documents=documents,
         top_k=top_k,
         embedding_cache_dir=embedding_cache_dir,
     )
-    result_path = results_dir / f"retrieval_experiment_{method}_results.jsonl"
+    result_path = results_dir / f"retrieval_experiment_{plan.run_label}_results.jsonl"
     method_run = build_retrieval_experiment_run(
-        method=method,
+        method=plan.method,
+        run_label=plan.run_label,
         top_k=top_k,
         items=items,
         documents=documents,
@@ -187,12 +204,13 @@ def _run_method(
 
 def _execute_method(
     *,
-    method: RetrievalMethod,
+    plan: _MethodPlan,
     items: list[RetrievalEvalItem],
     documents: list[RetrievalDocument],
     top_k: int,
     embedding_cache_dir: Path,
 ) -> _MethodExecution:
+    method = plan.method
     if method == "bm25":
         retriever = Bm25Retriever.from_documents(documents)
         return _MethodExecution(
@@ -229,17 +247,74 @@ def _execute_method(
                 embedding_dim=retriever.embedding_dim,
             ),
         )
+    if plan.hybrid_config is not None:
+        retriever = HybridRetriever.from_documents(
+            documents,
+            config=plan.hybrid_config,
+            dense_cache_dir=embedding_cache_dir,
+        )
+        return _MethodExecution(
+            results=[
+                retriever.search(
+                    query_id=item.query.query_id,
+                    query_type=item.query.query_type,
+                    query_text=item.query.query_text,
+                    top_k=top_k,
+                )
+                for item in items
+            ],
+            method_config_summary=plan.hybrid_config.to_method_config_summary(
+                top_k=top_k,
+                embedding_dim=retriever.embedding_dim,
+            ),
+        )
     raise ValueError(f"method is not implemented in retrieval experiment runner: {method}")
 
 
-def _validate_methods(methods: list[RetrievalMethod]) -> None:
+def _build_method_plans(methods: list[str]) -> list[_MethodPlan]:
     if not methods:
         raise ValueError("at least one retrieval method is required")
-    unsupported = [method for method in methods if method not in SUPPORTED_METHODS]
+    unsupported = [method for method in methods if method not in SUPPORTED_METHOD_KEYS]
     if unsupported:
         raise ValueError(f"unsupported retrieval methods: {unsupported}")
-    if len(methods) != len(set(methods)):
-        raise ValueError("retrieval methods must be unique")
+    plans = [_method_plan_from_key(method) for method in methods]
+    run_labels = [plan.run_label for plan in plans]
+    if len(run_labels) != len(set(run_labels)):
+        raise ValueError("retrieval method run labels must be unique")
+    return plans
+
+
+def _method_plan_from_key(method_key: str) -> _MethodPlan:
+    if method_key == "bm25":
+        return _MethodPlan(method_key=method_key, method="bm25", run_label="bm25")
+    if method_key == "dense":
+        return _MethodPlan(method_key=method_key, method="dense", run_label="dense")
+    if method_key == "hybrid_rrf":
+        return _MethodPlan(
+            method_key=method_key,
+            method="hybrid_rrf",
+            run_label="hybrid_rrf",
+            hybrid_config=HybridRetrievalConfig(method="hybrid_rrf"),
+        )
+    if method_key == "hybrid_weighted":
+        return _weighted_hybrid_plan(method_key=method_key, alpha=0.5)
+    if method_key == "hybrid_weighted_alpha_0_3":
+        return _weighted_hybrid_plan(method_key=method_key, alpha=0.3)
+    if method_key == "hybrid_weighted_alpha_0_5":
+        return _weighted_hybrid_plan(method_key=method_key, alpha=0.5)
+    if method_key == "hybrid_weighted_alpha_0_7":
+        return _weighted_hybrid_plan(method_key=method_key, alpha=0.7)
+    raise ValueError(f"unsupported retrieval methods: {[method_key]}")
+
+
+def _weighted_hybrid_plan(*, method_key: str, alpha: float) -> _MethodPlan:
+    alpha_label = str(alpha).replace(".", "_")
+    return _MethodPlan(
+        method_key=method_key,
+        method="hybrid_weighted",
+        run_label=f"hybrid_weighted_alpha_{alpha_label}",
+        hybrid_config=HybridRetrievalConfig(method="hybrid_weighted", alpha=alpha),
+    )
 
 
 def _validate_public_output_quality(
@@ -253,7 +328,6 @@ def _validate_public_output_quality(
 def _validate_dataset_policy(
     *,
     items: list[RetrievalEvalItem],
-    methods: list[RetrievalMethod],
 ) -> None:
     if not items:
         raise ValueError("retrieval experiment requires a non-empty dataset")
@@ -286,7 +360,7 @@ def _validate_private_artifact_policy(
     dataset_path: Path,
     results_dir: Path,
     embedding_cache_dir: Path,
-    methods: list[RetrievalMethod],
+    method_plans: list[_MethodPlan],
 ) -> None:
     for path in (chunks_path, dataset_path, results_dir, embedding_cache_dir):
         _validate_repository_private_data_boundary(path)
@@ -294,11 +368,15 @@ def _validate_private_artifact_policy(
     private_corpus = is_repository_private_artifact_path(chunks_path)
     if private_dataset and not is_repository_private_write_path(results_dir):
         raise ValueError("private retrieval dataset results must be written under private_data")
-    if "dense" in methods and (private_dataset or private_corpus):
+    if _uses_dense_index(method_plans) and (private_dataset or private_corpus):
         if not is_repository_private_write_path(embedding_cache_dir):
             raise ValueError(
                 "private retrieval corpus embedding cache must be under private_data"
             )
+
+
+def _uses_dense_index(method_plans: list[_MethodPlan]) -> bool:
+    return any(plan.method in {"dense", "hybrid_rrf", "hybrid_weighted"} for plan in method_plans)
 
 
 def _validate_repository_private_data_boundary(path: Path) -> None:
@@ -355,7 +433,7 @@ def main() -> int:
     print(
         "retrieval_harness "
         f"status={'PASS' if not failures else 'FAIL'} "
-        f"methods={','.join(run.method for run in report.method_runs)} "
+        f"methods={','.join(run.run_label for run in report.method_runs)} "
         f"query_count={metric.query_count} "
         f"recall_at_5={metric.recall_at_5:.6f} "
         f"mrr={metric.mrr:.6f} "

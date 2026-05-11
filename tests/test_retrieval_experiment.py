@@ -281,6 +281,7 @@ def test_retrieval_comparison_rejects_mismatched_experiment_invariants() -> None
     mismatched_top_k = run.model_copy(
         update={
             "method": "dense",
+            "run_label": "dense-mismatch",
             "run_id": "dense-mismatch",
             "top_k": 2,
             "method_config_fingerprint": "dense-config",
@@ -290,6 +291,7 @@ def test_retrieval_comparison_rejects_mismatched_experiment_invariants() -> None
     mismatched_dataset = run.model_copy(
         update={
             "method": "dense",
+            "run_label": "dense-mismatch",
             "run_id": "dense-mismatch",
             "dataset_fingerprint": "different-dataset",
             "method_config_fingerprint": "dense-config",
@@ -299,13 +301,14 @@ def test_retrieval_comparison_rejects_mismatched_experiment_invariants() -> None
     mismatched_corpus = run.model_copy(
         update={
             "method": "dense",
+            "run_label": "dense-mismatch",
             "run_id": "dense-mismatch",
             "corpus_fingerprint": "different-corpus",
             "method_config_fingerprint": "dense-config",
             "method_config_summary": {"method": "dense", "top_k": 1},
         }
     )
-    duplicate_method = run.model_copy(
+    duplicate_run_label = run.model_copy(
         update={
             "run_id": "bm25-duplicate",
             "method_config_fingerprint": "bm25-alt-config",
@@ -315,6 +318,7 @@ def test_retrieval_comparison_rejects_mismatched_experiment_invariants() -> None
     missing_baseline = run.model_copy(
         update={
             "method": "dense",
+            "run_label": "dense-only",
             "run_id": "dense-only",
             "method_config_fingerprint": "dense-config",
             "method_config_summary": {"method": "dense", "top_k": 1},
@@ -348,10 +352,10 @@ def test_retrieval_comparison_rejects_mismatched_experiment_invariants() -> None
             output_quality=quality,
             baseline_method="bm25",
         )
-    with pytest.raises(ValueError, match="methods must be unique"):
+    with pytest.raises(ValueError, match="run labels must be unique"):
         build_retrieval_comparison_report(
             dataset_path=Path("evals/datasets/retrieval_eval_seed.jsonl"),
-            method_runs=[run, duplicate_method],
+            method_runs=[run, duplicate_run_label],
             output_quality=quality,
             baseline_method="bm25",
         )

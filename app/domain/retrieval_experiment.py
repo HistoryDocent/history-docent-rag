@@ -73,6 +73,7 @@ class RetrievalExperimentModel(BaseModel):
 
 
 class QueryTypeMetricSummary(RetrievalExperimentModel):
+    run_label: str = Field(min_length=1)
     method: RetrievalMethod
     query_type: QueryType
     query_count: int = Field(ge=0)
@@ -86,7 +87,9 @@ class QueryTypeMetricSummary(RetrievalExperimentModel):
 
 
 class RetrievalMetricDelta(RetrievalExperimentModel):
+    baseline_run_label: str = Field(min_length=1)
     baseline_method: RetrievalMethod
+    compared_run_label: str = Field(min_length=1)
     compared_method: RetrievalMethod
     recall_at_1_delta: float
     recall_at_3_delta: float
@@ -108,6 +111,7 @@ class PublicRetrievalArtifactQuality(RetrievalExperimentModel):
 
 class RetrievalExperimentRun(RetrievalExperimentModel):
     run_id: str
+    run_label: str = Field(min_length=1)
     method: RetrievalMethod
     top_k: int = Field(ge=1)
     dataset_fingerprint: str = Field(min_length=8)
@@ -140,6 +144,7 @@ class RetrievalComparisonReport(RetrievalExperimentModel):
 def build_retrieval_experiment_run(
     *,
     method: RetrievalMethod,
+    run_label: str | None = None,
     top_k: int,
     items: list[RetrievalEvalItem],
     documents: list[RetrievalDocument],
@@ -147,10 +152,17 @@ def build_retrieval_experiment_run(
     result_path: Path,
     method_config_summary: dict[str, str | int | float | bool] | None = None,
 ) -> RetrievalExperimentRun:
-    run_id = build_retrieval_run_id(method=method, items=items, documents=documents)
+    label = run_label or method
+    run_id = build_retrieval_run_id(
+        method=method,
+        run_label=label,
+        items=items,
+        documents=documents,
+    )
     config_summary = method_config_summary or {"method": method, "top_k": top_k}
     return RetrievalExperimentRun(
         run_id=run_id,
+        run_label=label,
         method=method,
         top_k=top_k,
         dataset_fingerprint=build_dataset_fingerprint(items),
@@ -169,6 +181,7 @@ def build_retrieval_experiment_run(
             items=items,
             results=results,
             method=method,
+            run_label=label,
         ),
     )
 
@@ -217,8 +230,9 @@ def validate_comparison_invariants(
     baseline_method: RetrievalMethod,
 ) -> None:
     methods = [run.method for run in method_runs]
-    if len(methods) != len(set(methods)):
-        raise ValueError("retrieval comparison methods must be unique")
+    run_labels = [run.run_label for run in method_runs]
+    if len(run_labels) != len(set(run_labels)):
+        raise ValueError("retrieval comparison run labels must be unique")
     if baseline_method not in set(methods):
         raise ValueError("baseline method must be included in method_runs")
     if len({run.dataset_fingerprint for run in method_runs}) != 1:
@@ -232,11 +246,14 @@ def validate_comparison_invariants(
 def build_retrieval_run_id(
     *,
     method: RetrievalMethod,
+    run_label: str | None = None,
     items: list[RetrievalEvalItem],
     documents: list[RetrievalDocument],
 ) -> str:
+    label = run_label or method
     digest_source = {
         "method": method,
+        "run_label": label,
         "query_ids": [item.query.query_id for item in items],
         "query_texts": [item.query.query_text for item in items],
         "document_ids": [document.retrieval_doc_id for document in documents],
@@ -244,7 +261,7 @@ def build_retrieval_run_id(
     digest = hashlib.sha256(
         json.dumps(digest_source, ensure_ascii=False, sort_keys=True).encode("utf-8")
     ).hexdigest()[:8]
-    return f"{RETRIEVAL_HARNESS_RUN_PREFIX}-{method}-q{len(items)}-d{len(documents)}-{digest}"
+    return f"{RETRIEVAL_HARNESS_RUN_PREFIX}-{label}-q{len(items)}-d{len(documents)}-{digest}"
 
 
 def build_dataset_fingerprint(items: list[RetrievalEvalItem]) -> str:
@@ -284,6 +301,7 @@ def build_retrieval_comparison_id(method_runs: list[RetrievalExperimentRun]) -> 
     digest_source = [
         {
             "method": run.method,
+            "run_label": run.run_label,
             "run_id": run.run_id,
             "top_k": run.top_k,
             "dataset_fingerprint": run.dataset_fingerprint,
@@ -297,7 +315,7 @@ def build_retrieval_comparison_id(method_runs: list[RetrievalExperimentRun]) -> 
     digest = hashlib.sha256(
         json.dumps(digest_source, ensure_ascii=False, sort_keys=True).encode("utf-8")
     ).hexdigest()[:8]
-    methods = "-".join(run.method for run in method_runs)
+    methods = "-".join(run.run_label for run in method_runs)
     query_count = method_runs[0].dataset_query_count
     return f"{RETRIEVAL_HARNESS_RUN_PREFIX}-{methods}-q{query_count}-{digest}"
 
@@ -307,6 +325,7 @@ def compute_query_type_metric_breakdown(
     items: list[RetrievalEvalItem],
     results: list[RetrievalRunResult],
     method: RetrievalMethod,
+    run_label: str | None = None,
 ) -> list[QueryTypeMetricSummary]:
     query_types = sorted({item.query.query_type for item in items})
     summaries: list[QueryTypeMetricSummary] = []
@@ -324,6 +343,7 @@ def compute_query_type_metric_breakdown(
         )
         summaries.append(
             QueryTypeMetricSummary(
+                run_label=run_label or method,
                 method=method,
                 query_type=query_type,
                 query_count=metric.query_count,
@@ -344,8 +364,7 @@ def build_metric_deltas(
     method_runs: list[RetrievalExperimentRun],
     baseline_method: RetrievalMethod,
 ) -> list[RetrievalMetricDelta]:
-    run_by_method = {run.method: run for run in method_runs}
-    baseline = run_by_method.get(baseline_method)
+    baseline = next((run for run in method_runs if run.method == baseline_method), None)
     if baseline is None:
         return []
     baseline_metric = baseline.metric_summary
@@ -354,7 +373,9 @@ def build_metric_deltas(
         metric = run.metric_summary
         deltas.append(
             RetrievalMetricDelta(
+                baseline_run_label=baseline.run_label,
                 baseline_method=baseline_method,
+                compared_run_label=run.run_label,
                 compared_method=run.method,
                 recall_at_1_delta=round(metric.recall_at_1 - baseline_metric.recall_at_1, 6),
                 recall_at_3_delta=round(metric.recall_at_3 - baseline_metric.recall_at_3, 6),
@@ -508,7 +529,7 @@ def build_retrieval_harness_report_markdown(
     qualitative_rows = "\n".join(
         f"- `{key}`: {value}" for key, value in report.qualitative_assessment.items()
     )
-    methods = ", ".join(run.method for run in report.method_runs)
+    methods = ", ".join(run.run_label for run in report.method_runs)
     result_paths = ", ".join(run.result_path for run in report.method_runs)
     return f"""# Retrieval Harness Report
 
@@ -536,26 +557,26 @@ BM25, Dense, Hybrid retrieval을 같은 평가셋과 같은 metric으로 비교�
 
 ## Method Config
 
-| method | config |
-| --- | --- |
+| run_label | method | config |
+| --- | --- | --- |
 {method_config_rows}
 
 ## 정량 리포트
 
-| method | query_count | retrieve_query_count | abstain_query_count | result_count | missing_result_count | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | latency_p50_ms | latency_p95_ms | abstain_with_candidate_count |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| run_label | method | query_count | retrieve_query_count | abstain_query_count | result_count | missing_result_count | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | latency_p50_ms | latency_p95_ms | abstain_with_candidate_count |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 {method_rows}
 
 ## Query Type Breakdown
 
-| method | query_type | query_count | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | abstain_with_candidate_count |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| run_label | method | query_type | query_count | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | latency_p95_ms | abstain_with_candidate_count |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 {breakdown_rows}
 
 ## Baseline Delta
 
-| baseline_method | compared_method | Recall@1 delta | Recall@3 delta | Recall@5 delta | MRR delta | nDCG@5 delta | latency_p95_ms delta |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| baseline_run_label | baseline_method | compared_run_label | compared_method | Recall@1 delta | Recall@3 delta | Recall@5 delta | MRR delta | nDCG@5 delta | latency_p95_ms delta |
+| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 {delta_rows}
 
 ## Public Output Gate
@@ -587,7 +608,7 @@ def build_qualitative_assessment(
     baseline_method: RetrievalMethod,
 ) -> dict[str, str]:
     baseline = next((run for run in method_runs if run.method == baseline_method), None)
-    methods = ", ".join(run.method for run in method_runs)
+    methods = ", ".join(run.run_label for run in method_runs)
     if baseline is None:
         baseline_text = f"{baseline_method} 기준선이 없어 delta를 계산하지 않았다."
     else:
@@ -633,7 +654,8 @@ def public_path_alias(path: Path) -> str:
 def _format_method_metric_row(run: RetrievalExperimentRun) -> str:
     metric = run.metric_summary
     return (
-        f"| {run.method} | {metric.query_count} | {metric.retrieve_query_count} | "
+        f"| {run.run_label} | {run.method} | {metric.query_count} | "
+        f"{metric.retrieve_query_count} | "
         f"{metric.abstain_query_count} | {metric.result_count} | "
         f"{metric.missing_result_count} | {metric.recall_at_1:.6f} | "
         f"{metric.recall_at_3:.6f} | {metric.recall_at_5:.6f} | "
@@ -645,7 +667,8 @@ def _format_method_metric_row(run: RetrievalExperimentRun) -> str:
 
 def _format_query_type_metric_row(item: QueryTypeMetricSummary) -> str:
     return (
-        f"| {item.method} | {item.query_type} | {item.query_count} | "
+        f"| {item.run_label} | {item.method} | {item.query_type} | "
+        f"{item.query_count} | "
         f"{item.recall_at_1:.6f} | {item.recall_at_3:.6f} | "
         f"{item.recall_at_5:.6f} | {item.mrr:.6f} | {item.ndcg_at_5:.6f} | "
         f"{item.latency_p95_ms:.6f} | {item.abstain_with_candidate_count} |"
@@ -656,12 +679,13 @@ def _format_method_config_row(run: RetrievalExperimentRun) -> str:
     config = ", ".join(
         f"{key}={value}" for key, value in sorted(run.method_config_summary.items())
     )
-    return f"| {run.method} | `{config}` |"
+    return f"| {run.run_label} | {run.method} | `{config}` |"
 
 
 def _format_metric_delta_row(delta: RetrievalMetricDelta) -> str:
     return (
-        f"| {delta.baseline_method} | {delta.compared_method} | "
+        f"| {delta.baseline_run_label} | {delta.baseline_method} | "
+        f"{delta.compared_run_label} | {delta.compared_method} | "
         f"{delta.recall_at_1_delta:.6f} | {delta.recall_at_3_delta:.6f} | "
         f"{delta.recall_at_5_delta:.6f} | {delta.mrr_delta:.6f} | "
         f"{delta.ndcg_at_5_delta:.6f} | {delta.latency_p95_ms_delta:.6f} |"
@@ -673,18 +697,49 @@ def _build_next_step_text(method_runs: list[RetrievalExperimentRun]) -> str:
     if "dense" in methods and "hybrid_rrf" not in methods and "hybrid_weighted" not in methods:
         return "Dense baseline 결과를 기준으로 Hybrid RRF/Weighted retrieval을 같은 report에 추가한다."
     if "hybrid_rrf" in methods or "hybrid_weighted" in methods:
-        return "상위 retrieval 후보를 고정한 뒤 reranker comparison으로 top-rank 품질을 비교한다."
+        baseline = next((run for run in method_runs if run.method == "bm25"), None)
+        hybrid_runs = [
+            run for run in method_runs if run.method in {"hybrid_rrf", "hybrid_weighted"}
+        ]
+        if baseline is None:
+            return "Hybrid 후보가 있으나 BM25 기준선이 없어 선택 판단을 보류한다."
+        passing_hybrid = [
+            run
+            for run in hybrid_runs
+            if (
+                run.metric_summary.recall_at_5 > baseline.metric_summary.recall_at_5
+                or run.metric_summary.mrr > baseline.metric_summary.mrr
+            )
+            and run.metric_summary.latency_p95_ms
+            <= round(baseline.metric_summary.latency_p95_ms * 1.2, 6)
+        ]
+        if passing_hybrid:
+            labels = ", ".join(run.run_label for run in passing_hybrid)
+            return f"선택 gate를 통과한 Hybrid 후보({labels})에만 reranker comparison을 적용한다."
+        return (
+            "현재 Hybrid 후보는 선택 gate를 통과하지 못했다. BM25를 유지하고 "
+            "neural embedding 또는 shared dense index 최적화 후 재실험한다."
+        )
     return "Dense retriever와 Hybrid retriever를 같은 report에 추가한 뒤 query type별 delta를 비교한다."
 
 
 def _build_dense_encoder_boundary_text(method_runs: list[RetrievalExperimentRun]) -> str:
-    dense_runs = [run for run in method_runs if run.method == "dense"]
+    dense_runs = [
+        run
+        for run in method_runs
+        if run.method == "dense" or "dense_encoder_id" in run.method_config_summary
+    ]
     if not dense_runs:
         return "Dense encoder는 아직 실행하지 않았다."
-    encoder_ids = sorted(
-        str(run.method_config_summary.get("encoder_id", "unknown"))
+    encoder_ids = sorted({
+        str(
+            run.method_config_summary.get(
+                "encoder_id",
+                run.method_config_summary.get("dense_encoder_id", "unknown"),
+            )
+        )
         for run in dense_runs
-    )
+    })
     return (
         f"Dense v1 encoder는 {', '.join(encoder_ids)}다. "
         "이 결과는 neural embedding 모델인 BGE-M3 또는 multilingual-E5 결과가 아니다."

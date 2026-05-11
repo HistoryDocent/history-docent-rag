@@ -1,0 +1,68 @@
+config_version: hybrid-retrieval-config/v1
+description: >
+  Hybrid retrieval comparison plan for combining the BM25 lexical baseline
+  and the dense D0 baseline without changing the chunk corpus or evaluation
+  dataset.
+baseline_methods:
+  - bm25
+  - dense
+experiments:
+  - id: H1
+    method_key: hybrid_rrf
+    method: hybrid_rrf
+    fusion: reciprocal_rank_fusion
+    candidate_k: 50
+    rrf_k: 60
+    top_k: 5
+  - id: H2
+    method_key: hybrid_weighted_alpha_0_3
+    method: hybrid_weighted
+    fusion: minmax_weighted_sum
+    candidate_k: 50
+    dense_weight_alpha: 0.3
+    top_k: 5
+  - id: H3
+    method_key: hybrid_weighted_alpha_0_5
+    method: hybrid_weighted
+    fusion: minmax_weighted_sum
+    candidate_k: 50
+    dense_weight_alpha: 0.5
+    top_k: 5
+  - id: H4
+    method_key: hybrid_weighted_alpha_0_7
+    method: hybrid_weighted
+    fusion: minmax_weighted_sum
+    candidate_k: 50
+    dense_weight_alpha: 0.7
+    top_k: 5
+dense_component:
+  encoder_id: sklearn-tfidf-svd-v1
+  n_components: 128
+  max_features: 50000
+  ngram_range:
+    min: 1
+    max: 2
+  normalize_embeddings: true
+  include_doc_title: true
+  random_state: 42
+evaluation:
+  split: dev
+  locked_test_usage: false
+  metrics:
+    - Recall@1
+    - Recall@3
+    - Recall@5
+    - MRR
+    - nDCG@5
+    - latency_p50_ms
+    - latency_p95_ms
+    - abstain_with_candidate_count
+selection_policy:
+  minimum_recall_at_5_delta_vs_bm25: 0.05
+  maximum_latency_p95_delta_ratio_vs_bm25: 0.2
+  require_no_answer_candidate_regression: true
+public_policy:
+  commit_full_result_rows: false
+  commit_vectors: false
+  commit_private_corpus: false
+  report_private_paths_as_alias: true
