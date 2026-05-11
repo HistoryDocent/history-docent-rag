@@ -11,7 +11,7 @@
 private input:
 
 ```text
-private_data/reports/normalized_blocks.json
+<private normalized_blocks report>
 configs/chunking.default.yaml
 ```
 
@@ -28,8 +28,8 @@ source root가 주어지면 private chunk artifact에 child text를 복구한다
 private output:
 
 ```text
-private_data/reports/parent_child_chunks.json
-private_data/reports/chunking_quality_report.json
+<private parent_child_chunks report>
+<private chunking_quality report>
 ```
 
 public output:

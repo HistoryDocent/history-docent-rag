@@ -33,22 +33,22 @@ target resolvability의 검증 grain은 judgment target 1개다.
 
 | metric | value |
 | --- | ---: |
-| query_count | 35 |
-| judgment_count | 30 |
-| answerable_query_count | 30 |
-| no_answer_query_count | 5 |
+| query_count | 70 |
+| judgment_count | 60 |
+| answerable_query_count | 60 |
+| no_answer_query_count | 10 |
 | searchable_child_count | 3141 |
 | searchable_parent_count | 1882 |
 | searchable_doc_count | 12 |
-| judgment_target_count | 197 |
-| child_target_count | 86 |
-| resolved_child_target_count | 86 |
+| judgment_target_count | 393 |
+| child_target_count | 171 |
+| resolved_child_target_count | 171 |
 | missing_child_target_count | 0 |
-| parent_target_count | 70 |
-| resolved_parent_target_count | 70 |
+| parent_target_count | 140 |
+| resolved_parent_target_count | 140 |
 | missing_parent_target_count | 0 |
-| doc_target_count | 41 |
-| resolved_doc_target_count | 41 |
+| doc_target_count | 82 |
+| resolved_doc_target_count | 82 |
 | missing_doc_target_count | 0 |
 | answerable_without_child_or_parent_target_count | 0 |
 | no_answer_with_positive_target_count | 0 |
@@ -72,6 +72,6 @@ target_resolvability_failures=[]
 
 ## 다음 단계
 
-1. private dev/test 평가 문항을 query type별로 확장한다.
-2. target resolvability gate를 통과한 평가셋만 retrieval 비교에 사용한다.
+1. private test 평가 문항 35개를 locked 상태로 작성한다.
+2. private test target resolvability와 public-safety gate를 통과시킨다.
 3. chunking ablation은 동일 target contract를 유지한 상태에서 실행한다.

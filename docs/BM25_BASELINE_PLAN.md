@@ -68,7 +68,7 @@ relevant_child_ids가 있으면 child 기준
 
 ## 실험 순서
 
-1. `private_data/reports/parent_child_chunks.json`에서 `ChildChunk`를 읽는다.
+1. `<private parent_child_chunks report>`에서 `ChildChunk`를 읽는다.
 2. `RetrievalDocument`로 변환한다.
 3. private runtime에서만 `search_text`를 포함한다.
 4. `evals/datasets/retrieval_eval_seed.jsonl`을 로드한다.

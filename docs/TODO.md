@@ -44,8 +44,8 @@
 - [x] benchmark public/private 경계 고정
 - [x] private retrieval 평가셋 dev 후보 35개 1차 draft 작성
 - [x] private retrieval 평가셋 dev 1차 35개 review rubric 고정 및 reviewed 승격
-- [ ] private retrieval 평가셋 dev 후보 35개 2차 draft 작성
-- [ ] private retrieval 평가셋 dev 후보 70개 reviewed 완성
+- [x] private retrieval 평가셋 dev 2차 35개 작성 및 reviewed 승격
+- [x] private retrieval 평가셋 dev 70개 reviewed 완성
 - [ ] private retrieval 평가셋 test 후보 35개 locked 작성
 - [x] retrieval dev/test split contract 고정
 - [x] retrieval judgment target 검증 gate 추가

@@ -33,7 +33,7 @@ SOURCE_ROOT/01_Data_Preprocessing/{doc_title}/document_analysis_results.json
 private report:
 
 ```text
-private_data/reports/normalized_blocks.json
+<private normalized_blocks report>
 ```
 
 public sample:

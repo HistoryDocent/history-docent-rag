@@ -111,7 +111,7 @@ public artifact 금지:
 - 짧은 원문 직접 인용과 near-verbatim paraphrase는 자동 탐지만으로 충분하지 않다.
 - `reviewed` 승격 시 public-safe rationale이 원문 요약이 아니라 직접 작성한 판단 요약인지 수동 확인한다.
 
-## 이번 1차 Private Dev 검수 기준
+## Private Dev 검수 기준
 
 대상:
 
@@ -119,16 +119,34 @@ public artifact 금지:
 <private retrieval eval dataset: retrieval_eval_dev.jsonl>
 ```
 
-승격 조건:
+공통 승격 조건:
 
-- query_count = 35
-- dev_query_count = 35
-- query type별 dev 5개
-- draft_query_count = 0
-- reviewed_query_count = 35
+- split = `dev`
+- review_status = `reviewed`
 - target missing count = 0
 - public leakage count = 0
 - no_answer positive target count = 0
 - voice_followup context missing count = 0
 
-이번 1차 검수는 dev 70개 완성을 의미하지 않는다. 남은 dev 35개와 locked test 35개 작성 전까지 성능 개선 주장은 금지한다.
+1차 검수 결과:
+
+- query_count = 35
+- dev_query_count = 35
+- query type별 dev 5개
+- reviewed_query_count = 35
+- target missing count = 0
+- public leakage count = 0
+
+최종 dev 검수 조건:
+
+- query_count = 70
+- dev_query_count = 70
+- query type별 dev 10개
+- draft_query_count = 0
+- reviewed_query_count = 70
+- target missing count = 0
+- public leakage count = 0
+- no_answer positive target count = 0
+- voice_followup context missing count = 0
+
+현재 private dev 70개는 `reviewed` 상태지만 locked test 35개 작성 전까지 최종 성능 개선 주장은 금지한다.

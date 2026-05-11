@@ -130,6 +130,87 @@ def _write_jsonl(path: Path, rows: list[dict[str, object]]) -> None:
     )
 
 
+def _private_eval_dataset_path() -> Path:
+    return Path("private_data") / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
+
+
+def _dev_review_items() -> list[RetrievalEvalItem]:
+    items: list[RetrievalEvalItem] = []
+    for query_type in REQUIRED_QUERY_TYPES:
+        for index in range(1, 11):
+            query_id = f"q-dev-{query_type}-{index:03d}"
+            if query_type == "no_answer":
+                items.append(
+                    RetrievalEvalItem(
+                        query=RetrievalQuery(
+                            query_id=query_id,
+                            query_type=query_type,
+                            query_text="실시간 예약 가능 여부를 알려줘",
+                            language="ko",
+                            expected_behavior="abstain",
+                        ),
+                        judgments=[],
+                        metadata=RetrievalEvalMetadata(
+                            split="dev",
+                            difficulty="medium",
+                            place_ids=["gyeongbokgung"],
+                            requires_context=False,
+                            answerability="unanswerable",
+                            review_status="reviewed",
+                        ),
+                    )
+                )
+                continue
+            requires_context = query_type == "voice_followup"
+            items.append(
+                RetrievalEvalItem(
+                    query=RetrievalQuery(
+                        query_id=query_id,
+                        query_type=query_type,
+                        query_text="그 장소 근거를 찾아줘"
+                        if requires_context
+                        else "경복궁 근거를 찾아줘",
+                        language="ko",
+                        expected_behavior="retrieve",
+                        user_context="이전 발화는 경복궁이었다."
+                        if requires_context
+                        else None,
+                    ),
+                    judgments=[
+                        RetrievalJudgment(
+                            query_id=query_id,
+                            relevant_child_ids=["child-a"],
+                            relevant_parent_ids=["parent-a"],
+                            relevant_doc_ids=["doc-a"],
+                            relevance_grade=3,
+                            rationale_summary="target ids only",
+                        )
+                    ],
+                    metadata=RetrievalEvalMetadata(
+                        split="dev",
+                        difficulty="medium",
+                        place_ids=["gyeongbokgung"],
+                        requires_context=requires_context,
+                        answerability="answerable",
+                        review_status="reviewed",
+                    ),
+                )
+            )
+    return items
+
+
+def _dev_review_items_with_count_per_type(count_per_type: int) -> list[RetrievalEvalItem]:
+    return [
+        item
+        for item in _dev_review_items()
+        if int(item.query.query_id.rsplit("-", maxsplit=1)[-1]) <= count_per_type
+    ]
+
+
+def _dev_split_count_sentence(count: int) -> str:
+    return f"현재 입력 평가셋은 dev {count}개로 구성되어 있으며 총 {count}개다."
+
+
 def test_retrieval_eval_expansion_summary_matches_seed_targets() -> None:
     items = load_retrieval_eval_jsonl(Path("evals/datasets/retrieval_eval_seed.jsonl"))
 
@@ -193,17 +274,8 @@ def test_retrieval_eval_expansion_report_markdown_matches_seed_counts() -> None:
     assert "overall_query_target_shortfall" in markdown
 
 
-def test_retrieval_eval_expansion_report_describes_dev_only_progress() -> None:
-    items = [
-        _eval_item(query_id=f"q-dev-place-fact-{index:03d}").model_copy(
-            update={
-                "metadata": _eval_item().metadata.model_copy(
-                    update={"split": "dev", "review_status": "draft"}
-                )
-            }
-        )
-        for index in range(1, 6)
-    ]
+def test_retrieval_eval_expansion_report_describes_dev_shortfall_after_review() -> None:
+    items = _dev_review_items_with_count_per_type(5)
     dataset_summary = summarize_retrieval_eval_dataset(items)
     expansion_summary = summarize_retrieval_eval_expansion(items)
     target_summary = summarize_retrieval_eval_target_resolvability(
@@ -215,19 +287,82 @@ def test_retrieval_eval_expansion_report_describes_dev_only_progress() -> None:
         dataset_summary=dataset_summary,
         expansion_summary=expansion_summary,
         target_summary=target_summary,
-        dataset_path=Path("private_data/evals/datasets/retrieval_eval_dev.jsonl"),
+        dataset_path=_private_eval_dataset_path(),
         chunks_path_alias=PRIVATE_CHUNKS_PATH_ALIAS,
     )
 
     assert "<private retrieval eval dataset: retrieval_eval_dev.jsonl>" in markdown
-    assert "현재 입력 평가셋은 dev 5개로 구성되어 있으며 총 5개다." in markdown
-    assert "| review_readiness_status | `INCOMPLETE` |" in markdown
-    assert "| dev_query_count | 5 |" in markdown
-    assert "| draft_query_count | 5 |" in markdown
-    assert "draft_queries_remaining" in markdown
+    assert _dev_split_count_sentence(35) in markdown
+    assert "| review_readiness_status | `PASS` |" in markdown
+    assert "| dev_query_count | 35 |" in markdown
+    assert "| draft_query_count | 0 |" in markdown
     assert "다음 작성 우선순위는 dev 부족분이 남은" in markdown
     assert "query type별 private dev 부족분을 채워 dev 10개씩 맞춘다." in markdown
-    assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" not in markdown
+    assert _private_eval_dataset_path().as_posix() not in markdown
+
+
+def test_retrieval_eval_expansion_report_describes_test_only_shortfall() -> None:
+    items = _dev_review_items()
+    dataset_summary = summarize_retrieval_eval_dataset(items)
+    expansion_summary = summarize_retrieval_eval_expansion(items)
+    target_summary = summarize_retrieval_eval_target_resolvability(
+        items=items,
+        inventory=build_retrieval_target_inventory([_child()]),
+    )
+
+    markdown = build_retrieval_eval_expansion_report_markdown(
+        dataset_summary=dataset_summary,
+        expansion_summary=expansion_summary,
+        target_summary=target_summary,
+        dataset_path=_private_eval_dataset_path(),
+        chunks_path_alias=PRIVATE_CHUNKS_PATH_ALIAS,
+    )
+
+    assert "| dev_query_count | 70 |" in markdown
+    assert "| reviewed_query_count | 70 |" in markdown
+    assert "| dev_test_shortfall_count | 35 |" in markdown
+    assert "dev 부족분이 남은" not in markdown
+    assert "private test 후보를 query type별 5개씩 locked 상태로 작성한다." in markdown
+
+
+def test_retrieval_eval_expansion_report_blocks_next_steps_on_safety_failure() -> None:
+    child = _child()
+    item = _eval_item().model_copy(
+        update={
+            "query": _eval_item().query.model_copy(
+                update={"query_id": "q-dev-place-fact-001"}
+            ),
+            "judgments": [
+                _eval_item().judgments[0].model_copy(
+                    update={
+                        "query_id": "q-dev-place-fact-001",
+                        "rationale_summary": "C:" + "\\private\\source.pdf",
+                    }
+                )
+            ],
+            "metadata": _eval_item().metadata.model_copy(
+                update={"split": "dev", "review_status": "reviewed"}
+            ),
+        }
+    )
+    dataset_summary = summarize_retrieval_eval_dataset([item])
+    expansion_summary = summarize_retrieval_eval_expansion([item])
+    target_summary = summarize_retrieval_eval_target_resolvability(
+        items=[item],
+        inventory=build_retrieval_target_inventory([child]),
+    )
+
+    markdown = build_retrieval_eval_expansion_report_markdown(
+        dataset_summary=dataset_summary,
+        expansion_summary=expansion_summary,
+        target_summary=target_summary,
+        dataset_path=_private_eval_dataset_path(),
+        chunks_path_alias=PRIVATE_CHUNKS_PATH_ALIAS,
+    )
+
+    assert "| public_safety_status | `FAIL` |" in markdown
+    assert "blocking failure를 먼저 해소한다." in markdown
+    assert "private test 후보를 query type별 5개씩 locked 상태로 작성한다." not in markdown
 
 
 def test_retrieval_eval_expansion_report_deduplicates_public_safety_failures() -> None:

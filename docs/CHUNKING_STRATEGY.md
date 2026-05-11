@@ -11,8 +11,8 @@
 입력 artifact:
 
 ```text
-private_data/reports/normalized_blocks.json
-private_data/reports/parser_quality_report.json
+<private normalized_blocks report>
+<private parser_quality report>
 ```
 
 사용 근거:

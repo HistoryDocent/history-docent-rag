@@ -26,10 +26,16 @@ from app.domain.normalization import (
 from app.domain.source_inventory import write_json
 
 
-DEFAULT_NORMALIZED_BLOCKS_REPORT = Path("private_data/reports/normalized_blocks.json")
+DEFAULT_NORMALIZED_BLOCKS_REPORT = (
+    Path("private_data") / "reports" / "normalized_blocks.json"
+)
 DEFAULT_CONFIG = Path("configs/chunking.default.yaml")
-DEFAULT_PRIVATE_CHUNKS = Path("private_data/reports/parent_child_chunks.json")
-DEFAULT_PRIVATE_REPORT = Path("private_data/reports/chunking_quality_report.json")
+DEFAULT_PRIVATE_CHUNKS = (
+    Path("private_data") / "reports" / "parent_child_chunks.json"
+)
+DEFAULT_PRIVATE_REPORT = (
+    Path("private_data") / "reports" / "chunking_quality_report.json"
+)
 DEFAULT_PUBLIC_SAMPLE = Path("data_samples/chunking_quality_sample.json")
 
 

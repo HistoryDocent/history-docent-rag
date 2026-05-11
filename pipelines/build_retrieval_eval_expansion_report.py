@@ -24,7 +24,7 @@ from pipelines.build_retrieval_eval_target_report import (
 )
 
 
-DEFAULT_CHUNKS_PATH = Path("private_data/reports/parent_child_chunks.json")
+DEFAULT_CHUNKS_PATH = Path("private_data") / "reports" / "parent_child_chunks.json"
 DEFAULT_DATASET_PATH = Path("evals/datasets/retrieval_eval_seed.jsonl")
 DEFAULT_REPORT_PATH = Path("evals/reports/retrieval_eval_expansion_report.md")
 RETRIEVAL_EVAL_EXPANSION_REPORT_VERSION = "retrieval-eval-expansion/v1"
@@ -89,7 +89,11 @@ def build_retrieval_eval_expansion_report_markdown(
     public_safety_status = "PASS" if not safety_failures else "FAIL"
     split_summary_text = _split_summary_text(expansion_summary)
     priority_text = _next_authoring_priority_text(expansion_summary)
-    next_steps_text = _next_steps_markdown(expansion_summary)
+    next_steps_text = _next_steps_markdown(
+        expansion_summary=expansion_summary,
+        blocking_failures=blocking_failures,
+        review_failures=review_failures,
+    )
     return f"""# Retrieval Eval Expansion Report
 
 ## 목적
@@ -306,12 +310,33 @@ def _next_authoring_priority_text(summary: RetrievalEvalExpansionSummary) -> str
     return "review status 승격과 locked split 검수"
 
 
-def _next_steps_markdown(summary: RetrievalEvalExpansionSummary) -> str:
+def _next_steps_markdown(
+    *,
+    expansion_summary: RetrievalEvalExpansionSummary,
+    blocking_failures: list[str],
+    review_failures: list[str],
+) -> str:
+    if blocking_failures:
+        return "\n".join(
+            [
+                "1. blocking failure를 먼저 해소한다.",
+                "2. target resolvability와 public-safety gate를 다시 실행한다.",
+                "3. 모든 blocking failure가 0이 된 뒤 dev/test 확장 또는 ablation으로 이동한다.",
+            ]
+        )
+    if review_failures:
+        return "\n".join(
+            [
+                "1. draft 또는 unreviewed 항목을 review rubric 기준으로 재검수한다.",
+                "2. 통과한 dev 항목만 reviewed 상태로 승격한다.",
+                "3. review readiness가 PASS가 된 뒤 다음 split 작업으로 이동한다.",
+            ]
+        )
     has_dev_shortfall = any(
-        row.dev_shortfall_count for row in summary.query_type_rows.values()
+        row.dev_shortfall_count for row in expansion_summary.query_type_rows.values()
     )
     has_test_shortfall = any(
-        row.test_shortfall_count for row in summary.query_type_rows.values()
+        row.test_shortfall_count for row in expansion_summary.query_type_rows.values()
     )
     if has_dev_shortfall:
         return "\n".join(
@@ -325,8 +350,8 @@ def _next_steps_markdown(summary: RetrievalEvalExpansionSummary) -> str:
     if has_test_shortfall:
         return "\n".join(
             [
-                "1. private dev 항목을 human review 후 reviewed로 승격한다.",
-                "2. private test 후보를 query type별 5개씩 locked 상태로 작성한다.",
+                "1. private test 후보를 query type별 5개씩 locked 상태로 작성한다.",
+                "2. private test target resolvability와 public-safety gate를 통과시킨다.",
                 "3. test split은 최종 ablation 확인 전까지 튜닝에 사용하지 않는다.",
                 "4. 이후 chunking ablation runner를 BM25 기준으로 실행한다.",
             ]

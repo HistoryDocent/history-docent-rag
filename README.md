@@ -189,11 +189,11 @@ retrieval judgment target resolvability gate를 추가해 seed 평가셋의 chil
 
 retrieval 평가셋 확장 리포트를 추가했다. public seed 기준 현재 `contract_status=PASS`, `review_readiness_status=PASS`, `expansion_readiness_status=INCOMPLETE`, `target_query_count=105`, `current_query_count=14`, `overall_shortfall_count=91`, `dev_test_shortfall_count=105`다.
 
-105개 full benchmark는 public repository에 직접 올리지 않고 `private_data/evals/datasets/`에서 관리한다. public에는 seed/sample과 집계 report만 남긴다.
+105개 full benchmark는 public repository에 직접 올리지 않고 local private storage에서 관리한다. public에는 seed/sample과 집계 report만 남긴다.
 
-private dev 평가셋 1차 35개를 작성하고 review rubric 기준으로 `reviewed` 승격했다. public-safe 집계 리포트 기준 `review_gate_status=PASS`, `target_resolvability_status=PASS`, `missing_child_target_count=0`, `public_raw_text_leakage_count=0`이다. private dev 원본 JSONL은 public repository에 commit하지 않는다.
+private dev 평가셋 70개를 작성하고 review rubric 기준으로 `reviewed` 승격했다. public-safe 집계 리포트 기준 `review_gate_status=PASS`, `target_resolvability_status=PASS`, `missing_child_target_count=0`, `public_raw_text_leakage_count=0`이다. private dev 원본 JSONL은 public repository에 commit하지 않는다.
 
-다음 단계는 query type별 private dev 평가 문항 35개를 추가 작성해 dev 70개를 채우고, 같은 review rubric과 target resolvability gate를 통과한 항목만 `reviewed`로 승격하는 것이다.
+다음 단계는 private test 평가 문항 35개를 `locked` 상태로 작성하고, target resolvability gate와 public-safety gate를 통과시킨 뒤 BM25 기준 chunking ablation runner를 구현하는 것이다.
 
 ## 실행 전략
 
@@ -220,9 +220,9 @@ private dev 평가셋 1차 35개를 작성하고 review rubric 기준으로 `rev
 | [Retrieval Eval Dataset Report](evals/reports/retrieval_eval_dataset_report.md) | retrieval 평가셋 v2 contract와 split gate 결과 |
 | [Retrieval Eval Target Resolvability Report](evals/reports/retrieval_eval_target_resolvability_report.md) | retrieval judgment target의 corpus 매핑 검증 결과 |
 | [Retrieval Eval Expansion Report](evals/reports/retrieval_eval_expansion_report.md) | retrieval dev/test 평가셋 확장 현황과 부족분 |
-| [Private Dev Eval Expansion Report](evals/reports/retrieval_eval_private_dev_expansion_report.md) | private dev 1차 reviewed 집계 현황과 부족분 |
-| [Private Dev Eval Target Report](evals/reports/retrieval_eval_private_dev_target_report.md) | private dev 1차 reviewed target resolvability 검증 결과 |
-| [Private Dev Eval Review Report](evals/reports/retrieval_eval_private_dev_review_report.md) | private dev 1차 35개 review gate 결과 |
+| [Private Dev Eval Expansion Report](evals/reports/retrieval_eval_private_dev_expansion_report.md) | private dev reviewed 70개 집계 현황과 test 부족분 |
+| [Private Dev Eval Target Report](evals/reports/retrieval_eval_private_dev_target_report.md) | private dev reviewed 70개 target resolvability 검증 결과 |
+| [Private Dev Eval Review Report](evals/reports/retrieval_eval_private_dev_review_report.md) | private dev 70개 review gate 결과 |
 | [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md) | 실서비스 기준 RAG 비교 실험 순서, 논문 매핑, 선택 기준 |
 | [BM25 Baseline Report](evals/reports/bm25_baseline_report.md) | BM25 baseline 실행 결과와 query type별 실패 분석 |
 | [Retrieval Harness Report](evals/reports/retrieval_harness_report.md) | BM25/Dense/Hybrid 공통 평가 harness와 BM25 재현 결과 |

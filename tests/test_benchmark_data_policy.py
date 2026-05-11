@@ -36,8 +36,8 @@ def test_data_policy_defines_public_sample_and_private_benchmark_boundary() -> N
 
     expected_fragments = [
         "retrieval benchmark는 public sample과 private full benchmark를 분리한다.",
-        "private_data/evals/datasets/retrieval_eval_dev.jsonl",
-        "private_data/evals/datasets/retrieval_eval_test.jsonl",
+        "<private retrieval eval dev dataset>",
+        "<private retrieval eval test dataset>",
         "원문 문장 직접 인용",
         "paraphrase rationale",
         "짧은 원문 인용 여부는 자동 검출만으로 충분하지 않으므로 human review에서 확인한다.",
@@ -55,8 +55,10 @@ def test_retrieval_docs_do_not_place_full_test_benchmark_in_public_dataset_path(
         ]
     )
 
-    assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" in docs
-    assert "private_data/evals/datasets/retrieval_eval_test.jsonl" in docs
+    assert "<private retrieval eval dev dataset>" in docs
+    assert "<private retrieval eval test dataset>" in docs
+    assert _private_eval_path("retrieval_eval_dev.jsonl") not in docs
+    assert _private_eval_path("retrieval_eval_test.jsonl") not in docs
     assert "`evals/datasets/retrieval_eval_dev.jsonl`" not in docs
     assert "`evals/datasets/retrieval_eval_test.jsonl`" not in docs
 
@@ -86,9 +88,9 @@ def test_public_reports_describe_private_benchmark_paths_as_aliases() -> None:
     )
 
     assert "full benchmark path는 public report에서 alias로만 표기한다." in report_text
-    assert "`private_data/evals/datasets/`" not in report_text
-    assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" not in report_text
-    assert "private_data/evals/datasets/retrieval_eval_test.jsonl" not in report_text
+    assert "`" + "/".join(["private_data", "evals", "datasets"]) + "/`" not in report_text
+    assert _private_eval_path("retrieval_eval_dev.jsonl") not in report_text
+    assert _private_eval_path("retrieval_eval_test.jsonl") not in report_text
 
 
 def test_public_private_dev_reports_do_not_expose_source_material_or_secrets() -> None:
@@ -107,8 +109,8 @@ def test_public_private_dev_reports_do_not_expose_source_material_or_secrets() -
     )
 
     forbidden_fragments = [
-        "private_data/evals/datasets/retrieval_eval_dev.jsonl",
-        "private_data/reports/parent_child_chunks.json",
+        _private_eval_path("retrieval_eval_dev.jsonl"),
+        _private_chunks_path(),
         "search_text",
         "context_text",
         "source_text",
@@ -127,37 +129,48 @@ def test_public_private_dev_reports_do_not_expose_source_material_or_secrets() -
 
 
 def test_dataset_report_redacts_private_benchmark_dataset_path() -> None:
+    dataset_path = _private_eval_path("retrieval_eval_dev.jsonl")
     markdown = build_retrieval_eval_dataset_report_markdown(
         summary=_dataset_summary(),
-        dataset_path=Path("private_data/evals/datasets/retrieval_eval_dev.jsonl"),
+        dataset_path=Path(dataset_path),
     )
 
-    assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" not in markdown
+    assert dataset_path not in markdown
     assert "<private retrieval eval dataset: retrieval_eval_dev.jsonl>" in markdown
 
 
 def test_target_report_redacts_private_benchmark_dataset_path() -> None:
+    dataset_path = _private_eval_path("retrieval_eval_test.jsonl")
     markdown = build_retrieval_eval_target_report_markdown(
         summary=_target_summary(),
-        dataset_path=Path("private_data/evals/datasets/retrieval_eval_test.jsonl"),
+        dataset_path=Path(dataset_path),
         chunks_path_alias="<private parent_child_chunks report>",
     )
 
-    assert "private_data/evals/datasets/retrieval_eval_test.jsonl" not in markdown
+    assert dataset_path not in markdown
     assert "<private retrieval eval dataset: retrieval_eval_test.jsonl>" in markdown
 
 
 def test_expansion_report_redacts_private_benchmark_dataset_path() -> None:
+    dataset_path = _private_eval_path("retrieval_eval_dev.jsonl")
     markdown = build_retrieval_eval_expansion_report_markdown(
         dataset_summary=_dataset_summary(),
         expansion_summary=_expansion_summary(),
         target_summary=_target_summary(),
-        dataset_path=Path("private_data/evals/datasets/retrieval_eval_dev.jsonl"),
+        dataset_path=Path(dataset_path),
         chunks_path_alias="<private parent_child_chunks report>",
     )
 
-    assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" not in markdown
+    assert dataset_path not in markdown
     assert "<private retrieval eval dataset: retrieval_eval_dev.jsonl>" in markdown
+
+
+def _private_eval_path(file_name: str) -> str:
+    return "/".join(["private_data", "evals", "datasets", file_name])
+
+
+def _private_chunks_path() -> str:
+    return "/".join(["private_data", "reports", "parent_child_chunks.json"])
 
 
 def _dataset_summary() -> RetrievalEvalDatasetSummary:

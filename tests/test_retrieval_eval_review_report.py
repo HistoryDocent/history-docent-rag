@@ -143,7 +143,7 @@ def _review_items(*, review_status: str = "reviewed") -> list[RetrievalEvalItem]
     return [
         _eval_item(query_type=query_type, index=index, review_status=review_status)
         for query_type in REQUIRED_QUERY_TYPES
-        for index in range(1, 6)
+        for index in range(1, 11)
     ]
 
 
@@ -158,6 +158,14 @@ def _write_jsonl(path: Path, rows: list[dict[str, object]]) -> None:
         "\n".join(json.dumps(row, ensure_ascii=False) for row in rows) + "\n",
         encoding="utf-8",
     )
+
+
+def _private_eval_dataset_path() -> Path:
+    return Path("private_data") / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
+
+
+def _private_chunks_path() -> Path:
+    return Path("private_data") / "reports" / "parent_child_chunks.json"
 
 
 def test_review_report_markdown_passes_for_reviewed_dev_items() -> None:
@@ -175,23 +183,23 @@ def test_review_report_markdown_passes_for_reviewed_dev_items() -> None:
         dataset_summary=dataset_summary,
         expansion_summary=expansion_summary,
         target_summary=target_summary,
-        dataset_path=Path("private_data/evals/datasets/retrieval_eval_dev.jsonl"),
+        dataset_path=_private_eval_dataset_path(),
         chunks_path_alias=PRIVATE_CHUNKS_PATH_ALIAS,
     )
 
     assert "| review_gate_status | `PASS` |" in markdown
-    assert "| query_count | 35 |" in markdown
-    assert "| reviewed_query_count | 35 |" in markdown
+    assert "| query_count | 70 |" in markdown
+    assert "| reviewed_query_count | 70 |" in markdown
     assert "| draft_query_count | 0 |" in markdown
     assert "| voice_followup_context_missing_count | 0 |" in markdown
     assert "| answerable_without_child_target_count | 0 |" in markdown
     assert "| missing_child_target_count | 0 |" in markdown
-    assert "| place_fact | 5 | 0 | 5 | 0 | 10 | 5 |" in markdown
+    assert "| place_fact | 10 | 0 | 10 | 0 | 10 | 0 |" in markdown
     assert "expected_behavior=abstain" in markdown
     assert "모두 짧은 지시어형 질문" not in markdown
     assert "판단 요약인지 확인했다" not in markdown
     assert "<private retrieval eval dataset: retrieval_eval_dev.jsonl>" in markdown
-    assert "private_data/evals/datasets/retrieval_eval_dev.jsonl" not in markdown
+    assert _private_eval_dataset_path().as_posix() not in markdown
 
 
 def test_review_report_markdown_fails_when_draft_items_remain() -> None:
@@ -209,18 +217,18 @@ def test_review_report_markdown_fails_when_draft_items_remain() -> None:
         dataset_summary=dataset_summary,
         expansion_summary=expansion_summary,
         target_summary=target_summary,
-        dataset_path=Path("private_data/evals/datasets/retrieval_eval_dev.jsonl"),
+        dataset_path=_private_eval_dataset_path(),
         chunks_path_alias=PRIVATE_CHUNKS_PATH_ALIAS,
     )
 
     assert "| review_gate_status | `FAIL` |" in markdown
-    assert "| draft_query_count | 35 |" in markdown
+    assert "| draft_query_count | 70 |" in markdown
     assert "draft_queries_remaining" in markdown
     assert "unreviewed_queries_remaining" in markdown
     assert "dev_review_status_not_reviewed" in markdown
 
 
-def test_review_report_markdown_fails_when_first_batch_count_is_short() -> None:
+def test_review_report_markdown_fails_when_dev_count_is_short() -> None:
     child = _child()
     items = [
         _eval_item(query_type=query_type, index=index)
@@ -239,14 +247,14 @@ def test_review_report_markdown_fails_when_first_batch_count_is_short() -> None:
         dataset_summary=dataset_summary,
         expansion_summary=expansion_summary,
         target_summary=target_summary,
-        dataset_path=Path("private_data/evals/datasets/retrieval_eval_dev.jsonl"),
+        dataset_path=_private_eval_dataset_path(),
         chunks_path_alias=PRIVATE_CHUNKS_PATH_ALIAS,
     )
 
     assert "| review_gate_status | `FAIL` |" in markdown
     assert "| query_count | 14 |" in markdown
-    assert "private_dev_first_review_query_count_mismatch" in markdown
-    assert "private_dev_first_review_query_type_count_mismatch" in markdown
+    assert "private_dev_review_query_count_mismatch" in markdown
+    assert "private_dev_review_query_type_count_mismatch" in markdown
 
 
 def test_review_report_pipeline_writes_public_safe_report(tmp_path: Path) -> None:
@@ -272,7 +280,7 @@ def test_review_report_pipeline_writes_public_safe_report(tmp_path: Path) -> Non
     )
     report = report_path.read_text(encoding="utf-8")
 
-    assert summary.reviewed_query_count == 35
+    assert summary.reviewed_query_count == 70
     assert "| review_gate_status | `PASS` |" in report
     assert "private searchable text" not in report
     assert str(chunks_path) not in report
@@ -281,8 +289,8 @@ def test_review_report_pipeline_writes_public_safe_report(tmp_path: Path) -> Non
 
 
 def test_checked_in_private_dev_review_report_matches_private_dataset_when_available() -> None:
-    dataset_path = Path("private_data/evals/datasets/retrieval_eval_dev.jsonl")
-    chunks_path = Path("private_data/reports/parent_child_chunks.json")
+    dataset_path = _private_eval_dataset_path()
+    chunks_path = _private_chunks_path()
     report_path = Path("evals/reports/retrieval_eval_private_dev_review_report.md")
     if not dataset_path.exists() or not chunks_path.exists():
         pytest.skip("private retrieval eval dataset is not available")
@@ -311,4 +319,4 @@ def test_checked_in_private_dev_review_report_matches_private_dataset_when_avail
     assert f"| draft_query_count | {expansion_summary.draft_query_count} |" in report
     assert f"| judgment_target_count | {target_summary.judgment_target_count} |" in report
     assert "| review_gate_status | `PASS` |" in report
-    assert "| place_fact | 5 | 0 | 5 | 0 | 10 | 5 |" in report
+    assert "| place_fact | 10 | 0 | 10 | 0 | 10 | 0 |" in report

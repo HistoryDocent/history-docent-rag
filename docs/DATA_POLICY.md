@@ -45,11 +45,11 @@ public repository에 금지:
 - raw judgment 작성 메모
 - source text가 포함될 수 있는 evaluation artifact
 
-full benchmark 기본 경로:
+full benchmark는 로컬 private storage alias로만 다룬다.
 
 ```text
-private_data/evals/datasets/retrieval_eval_dev.jsonl
-private_data/evals/datasets/retrieval_eval_test.jsonl
+<private retrieval eval dev dataset>
+<private retrieval eval test dataset>
 ```
 
 public report는 private benchmark의 집계값만 기록한다.

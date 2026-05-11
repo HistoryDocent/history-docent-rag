@@ -27,16 +27,16 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 | metric | value |
 | --- | ---: |
 | target_query_count | 105 |
-| current_query_count | 35 |
-| overall_shortfall_count | 70 |
+| current_query_count | 70 |
+| overall_shortfall_count | 35 |
 | seed_query_count | 0 |
-| dev_query_count | 35 |
+| dev_query_count | 70 |
 | test_query_count | 0 |
 | dev_test_target_query_count | 105 |
-| dev_test_current_query_count | 35 |
-| dev_test_shortfall_count | 70 |
+| dev_test_current_query_count | 70 |
+| dev_test_shortfall_count | 35 |
 | draft_query_count | 0 |
-| reviewed_query_count | 35 |
+| reviewed_query_count | 70 |
 | locked_query_count | 0 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
@@ -46,13 +46,13 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 
 | query_type | seed | dev | test | target_dev | target_test | dev_shortfall | test_shortfall | total_current | target_total | total_shortfall |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| place_fact | 0 | 5 | 0 | 10 | 5 | 5 | 5 | 5 | 15 | 10 |
-| place_story | 0 | 5 | 0 | 10 | 5 | 5 | 5 | 5 | 15 | 10 |
-| relationship | 0 | 5 | 0 | 10 | 5 | 5 | 5 | 5 | 15 | 10 |
-| overview | 0 | 5 | 0 | 10 | 5 | 5 | 5 | 5 | 15 | 10 |
-| route_context | 0 | 5 | 0 | 10 | 5 | 5 | 5 | 5 | 15 | 10 |
-| voice_followup | 0 | 5 | 0 | 10 | 5 | 5 | 5 | 5 | 15 | 10 |
-| no_answer | 0 | 5 | 0 | 10 | 5 | 5 | 5 | 5 | 15 | 10 |
+| place_fact | 0 | 10 | 0 | 10 | 5 | 0 | 5 | 10 | 15 | 5 |
+| place_story | 0 | 10 | 0 | 10 | 5 | 0 | 5 | 10 | 15 | 5 |
+| relationship | 0 | 10 | 0 | 10 | 5 | 0 | 5 | 10 | 15 | 5 |
+| overview | 0 | 10 | 0 | 10 | 5 | 0 | 5 | 10 | 15 | 5 |
+| route_context | 0 | 10 | 0 | 10 | 5 | 0 | 5 | 10 | 15 | 5 |
+| voice_followup | 0 | 10 | 0 | 10 | 5 | 0 | 5 | 10 | 15 | 5 |
+| no_answer | 0 | 10 | 0 | 10 | 5 | 0 | 5 | 10 | 15 | 5 |
 
 ## Target Resolvability Snapshot
 
@@ -61,7 +61,7 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 | searchable_child_count | 3141 |
 | searchable_parent_count | 1882 |
 | searchable_doc_count | 12 |
-| judgment_target_count | 197 |
+| judgment_target_count | 393 |
 | missing_child_target_count | 0 |
 | missing_parent_target_count | 0 |
 | missing_doc_target_count | 0 |
@@ -73,18 +73,18 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 ```text
 contract_failures=[]
 review_readiness_failures=[]
-expansion_readiness_failures=['overall_query_target_shortfall', 'missing_test_split', 'dev_query_type_target_shortfall', 'test_query_type_target_shortfall']
+expansion_readiness_failures=['overall_query_target_shortfall', 'missing_test_split', 'test_query_type_target_shortfall']
 target_resolvability_failures=[]
 blocking_failures=[]
 ```
 
 ## 정성 리포트
 
-- 현재 입력 평가셋은 dev 35개로 구성되어 있으며 총 35개다.
+- 현재 입력 평가셋은 dev 70개로 구성되어 있으며 총 70개다.
 - 목표는 query type별 dev 10개, test 5개로 총 105개다.
 - `contract_status`는 schema와 hard gate 상태만 의미한다. review 완료, dev/test 확장 완료, 성능 개선을 의미하지 않는다.
-- 현재 전체 부족분은 70개이고, dev/test split 기준 부족분은 70개다. seed는 smoke test로 유지하고 최종 비교 튜닝에는 사용하지 않는다.
-- 다음 작성 우선순위는 dev 부족분이 남은 `place_fact`, `place_story`, `relationship`, `overview`, `route_context`, `voice_followup`, `no_answer`다.
+- 현재 전체 부족분은 35개이고, dev/test split 기준 부족분은 35개다. seed는 smoke test로 유지하고 최종 비교 튜닝에는 사용하지 않는다.
+- 다음 작성 우선순위는 test 부족분이 남은 `place_fact`, `place_story`, `relationship`, `overview`, `route_context`, `voice_followup`, `no_answer`다.
 - test split은 최종 ablation 확인 전까지 튜닝에 사용하지 않는다.
 - public dataset에는 원문 answer, chunk text, OCR text, parser text, private path, secret-like 값을 넣지 않는다.
 - public evaluation example은 원문 인용 없이 직접 작성한 paraphrase만 허용한다.
@@ -92,7 +92,7 @@ blocking_failures=[]
 
 ## 다음 단계
 
-1. query type별 private dev 부족분을 채워 dev 10개씩 맞춘다.
-2. target resolvability gate와 review rubric을 통과한 항목만 reviewed로 승격한다.
-3. private test 후보 5개는 dev 튜닝 후 별도 locked 상태로 고정한다.
+1. private test 후보를 query type별 5개씩 locked 상태로 작성한다.
+2. private test target resolvability와 public-safety gate를 통과시킨다.
+3. test split은 최종 ablation 확인 전까지 튜닝에 사용하지 않는다.
 4. 이후 chunking ablation runner를 BM25 기준으로 실행한다.

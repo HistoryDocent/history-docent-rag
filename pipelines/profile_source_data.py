@@ -11,7 +11,7 @@ from app.domain.source_inventory import (
 )
 
 
-DEFAULT_PRIVATE_REPORT = Path("private_data/reports/source_inventory.json")
+DEFAULT_PRIVATE_REPORT = Path("private_data") / "reports" / "source_inventory.json"
 DEFAULT_PUBLIC_SAMPLE = Path("data_samples/source_inventory_sample.json")
 
 

@@ -42,9 +42,13 @@ def test_bm25_notebook_uses_private_artifact_alias() -> None:
         encoding="utf-8"
     )
 
-    assert "../private_data/reports/parent_child_chunks.json" not in notebook
+    assert "../" + _private_chunks_path() not in notebook
     assert "private_data/" not in notebook
     assert "F:" not in notebook
     assert "C:" not in notebook
     assert "\\\\" not in notebook
     assert "<private parent_child_chunks report>" in notebook
+
+
+def _private_chunks_path() -> str:
+    return "/".join(["private_data", "reports", "parent_child_chunks.json"])

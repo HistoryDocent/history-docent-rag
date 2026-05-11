@@ -11,8 +11,8 @@
 private input:
 
 ```text
-private_data/reports/normalized_blocks.json
-private_data/reports/data_manifest.json
+<private normalized_blocks report>
+<private data_manifest report>
 ```
 
 public output:
@@ -24,7 +24,7 @@ data_samples/parser_quality_sample.json
 private output:
 
 ```text
-private_data/reports/parser_quality_report.json
+<private parser_quality report>
 ```
 
 ## 지표

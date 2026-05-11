@@ -14,7 +14,7 @@ from app.domain.retrieval import (
 )
 
 
-DEFAULT_CHUNKS_PATH = Path("private_data/reports/parent_child_chunks.json")
+DEFAULT_CHUNKS_PATH = Path("private_data") / "reports" / "parent_child_chunks.json"
 DEFAULT_DATASET_PATH = Path("evals/datasets/retrieval_eval_seed.jsonl")
 DEFAULT_REPORT_PATH = Path("evals/reports/retrieval_eval_target_resolvability_report.md")
 RETRIEVAL_EVAL_TARGET_REPORT_VERSION = "retrieval-eval-target-resolvability/v1"
@@ -61,6 +61,7 @@ def build_retrieval_eval_target_report_markdown(
     chunks_path_alias: str,
 ) -> str:
     failures = collect_retrieval_eval_target_resolvability_failures(summary)
+    next_steps = _target_report_next_steps(summary=summary, dataset_path=dataset_path)
     return f"""# Retrieval Eval Target Resolvability Report
 
 ## 목적
@@ -135,10 +136,42 @@ target_resolvability_failures={failures}
 
 ## 다음 단계
 
-1. private dev/test 평가 문항을 query type별로 확장한다.
-2. target resolvability gate를 통과한 평가셋만 retrieval 비교에 사용한다.
-3. chunking ablation은 동일 target contract를 유지한 상태에서 실행한다.
+{next_steps}
 """
+
+
+def _target_report_next_steps(
+    *,
+    summary: RetrievalEvalTargetResolvabilitySummary,
+    dataset_path: Path,
+) -> str:
+    failures = collect_retrieval_eval_target_resolvability_failures(summary)
+    if failures:
+        return "\n".join(
+            [
+                "1. target resolvability failure를 먼저 해소한다.",
+                "2. missing target, no-answer positive target, public-safety 값을 다시 검수한다.",
+                "3. target_resolvability_status가 PASS가 된 뒤 dev/test 확장 또는 ablation으로 이동한다.",
+            ]
+        )
+    is_private_dev = _is_private_benchmark_dataset_path(dataset_path) and (
+        dataset_path.name.startswith("retrieval_eval_dev")
+    )
+    if is_private_dev and summary.query_count >= 70:
+        return "\n".join(
+            [
+                "1. private test 평가 문항 35개를 locked 상태로 작성한다.",
+                "2. private test target resolvability와 public-safety gate를 통과시킨다.",
+                "3. chunking ablation은 동일 target contract를 유지한 상태에서 실행한다.",
+            ]
+        )
+    return "\n".join(
+        [
+            "1. private dev/test 평가 문항을 query type별로 확장한다.",
+            "2. target resolvability gate를 통과한 평가셋만 retrieval 비교에 사용한다.",
+            "3. chunking ablation은 동일 target contract를 유지한 상태에서 실행한다.",
+        ]
+    )
 
 
 def main() -> int:

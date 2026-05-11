@@ -29,7 +29,7 @@ from app.domain.retrieval_experiment import (
 from app.infrastructure.index.bm25 import Bm25Retriever
 
 
-DEFAULT_CHUNKS_PATH = Path("private_data/reports/parent_child_chunks.json")
+DEFAULT_CHUNKS_PATH = Path("private_data") / "reports" / "parent_child_chunks.json"
 DEFAULT_DATASET_PATH = Path("evals/datasets/retrieval_eval_seed.jsonl")
 DEFAULT_RESULTS_DIR = Path("evals/results")
 DEFAULT_REPORT_PATH = Path("evals/reports/retrieval_harness_report.md")

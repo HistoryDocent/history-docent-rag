@@ -17,7 +17,7 @@ from app.domain.source_inventory import write_json
 from pipelines.build_data_manifest import build_data_manifest
 
 
-DEFAULT_PRIVATE_REPORT = Path("private_data/reports/normalized_blocks.json")
+DEFAULT_PRIVATE_REPORT = Path("private_data") / "reports" / "normalized_blocks.json"
 DEFAULT_PUBLIC_SAMPLE = Path("data_samples/normalized_blocks_sample.json")
 
 

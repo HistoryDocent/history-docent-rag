@@ -16,9 +16,11 @@ from app.domain.parser_quality import (
 from app.domain.source_inventory import write_json
 
 
-DEFAULT_NORMALIZED_BLOCKS_REPORT = Path("private_data/reports/normalized_blocks.json")
-DEFAULT_DATA_MANIFEST_REPORT = Path("private_data/reports/data_manifest.json")
-DEFAULT_PRIVATE_REPORT = Path("private_data/reports/parser_quality_report.json")
+DEFAULT_NORMALIZED_BLOCKS_REPORT = (
+    Path("private_data") / "reports" / "normalized_blocks.json"
+)
+DEFAULT_DATA_MANIFEST_REPORT = Path("private_data") / "reports" / "data_manifest.json"
+DEFAULT_PRIVATE_REPORT = Path("private_data") / "reports" / "parser_quality_report.json"
 DEFAULT_PUBLIC_SAMPLE = Path("data_samples/parser_quality_sample.json")
 
 

@@ -24,13 +24,15 @@ from pipelines.build_retrieval_eval_target_report import (
 )
 
 
-DEFAULT_CHUNKS_PATH = Path("private_data/reports/parent_child_chunks.json")
-DEFAULT_DATASET_PATH = Path("private_data/evals/datasets/retrieval_eval_dev.jsonl")
+DEFAULT_CHUNKS_PATH = Path("private_data") / "reports" / "parent_child_chunks.json"
+DEFAULT_DATASET_PATH = (
+    Path("private_data") / "evals" / "datasets" / "retrieval_eval_dev.jsonl"
+)
 DEFAULT_REPORT_PATH = Path("evals/reports/retrieval_eval_private_dev_review_report.md")
 RETRIEVAL_EVAL_REVIEW_REPORT_VERSION = "retrieval-eval-review/v1"
-PRIVATE_DEV_FIRST_REVIEW_TARGET_PER_QUERY_TYPE = 5
-PRIVATE_DEV_FIRST_REVIEW_TARGET_QUERY_COUNT = (
-    len(REQUIRED_QUERY_TYPES) * PRIVATE_DEV_FIRST_REVIEW_TARGET_PER_QUERY_TYPE
+PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE = 10
+PRIVATE_DEV_REVIEW_TARGET_QUERY_COUNT = (
+    len(REQUIRED_QUERY_TYPES) * PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE
 )
 
 
@@ -107,7 +109,7 @@ def build_retrieval_eval_review_report_markdown(
 
 ## 목적
 
-private dev 1차 평가셋 35개를 retrieval ablation에 사용할 수 있는 `reviewed` 상태로 승격했는지 검수한다.
+private dev 평가셋 70개를 retrieval ablation에 사용할 수 있는 `reviewed` 상태로 승격했는지 검수한다.
 
 이 리포트는 성능 개선 결과가 아니다. 질문 의도, query type, answerability, context 필요성, target ID 매핑, 공개 안전성을 확인한 정량/정성 review gate다.
 
@@ -133,7 +135,7 @@ full dev/test benchmark는 public repository에 직접 저장하지 않는다. p
 
 1. `dataset_version`은 `retrieval-eval-dataset/v2`다.
 2. `split=dev`이고 `review_status=reviewed`다.
-3. query type은 7개 모두 포함하고, 이번 1차분은 query type별 dev {PRIVATE_DEV_FIRST_REVIEW_TARGET_PER_QUERY_TYPE}개다.
+3. query type은 7개 모두 포함하고, query type별 dev {PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE}개다.
 4. `voice_followup`은 `requires_context=true`와 `user_context`를 모두 가진다.
 5. `no_answer`는 `expected_behavior=abstain`, `answerability=unanswerable`, positive judgment 없음이다.
 6. answerable query는 positive judgment와 child target을 가진다.
@@ -188,7 +190,7 @@ gate_failures={gate_failures}
 
 ## 정성 리포트
 
-- 1차 private dev {dataset_summary.query_count}개는 {query_type_balance_text}.
+- private dev {dataset_summary.query_count}개는 {query_type_balance_text}.
 - {target_summary.answerable_query_count}개 answerable query는 child target을 포함한다. 이후 metric 계산은 child target을 우선한다.
 - {target_summary.no_answer_query_count}개 `no_answer` query는 `expected_behavior=abstain`이며 positive judgment가 없다.
 - {voice_followup_query_count}개 `voice_followup` query는 `requires_context=true`와 `user_context`를 가진다.
@@ -197,8 +199,8 @@ gate_failures={gate_failures}
 
 ## 한계
 
-- 이번 리포트는 dev 1차 35개에 대한 review다. dev 목표 70개와 test 목표 35개는 아직 남아 있다.
-- 단일 review pass이므로 최종 locked test 작성 전에는 추가 cross-check가 필요하다.
+- 이번 리포트는 dev 70개에 대한 review다. test 목표 35개는 아직 남아 있다.
+- dev review는 튜닝용 데이터 검수다. 최종 locked test 작성 전에는 추가 cross-check가 필요하다.
 - 이 리포트는 retrieval/generation 성능 개선을 주장하지 않는다.
 """
 
@@ -279,14 +281,14 @@ def _query_type_review_row(
 
 def _rubric_failures(items: list[RetrievalEvalItem]) -> list[str]:
     failures: list[str] = []
-    if len(items) != PRIVATE_DEV_FIRST_REVIEW_TARGET_QUERY_COUNT:
-        failures.append("private_dev_first_review_query_count_mismatch")
+    if len(items) != PRIVATE_DEV_REVIEW_TARGET_QUERY_COUNT:
+        failures.append("private_dev_review_query_count_mismatch")
     if any(
         _query_type_item_count(items, query_type)
-        != PRIVATE_DEV_FIRST_REVIEW_TARGET_PER_QUERY_TYPE
+        != PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE
         for query_type in REQUIRED_QUERY_TYPES
     ):
-        failures.append("private_dev_first_review_query_type_count_mismatch")
+        failures.append("private_dev_review_query_type_count_mismatch")
     if any(item.metadata.split != "dev" for item in items):
         failures.append("non_dev_split")
     if any(item.metadata.review_status != "reviewed" for item in items):
@@ -308,14 +310,14 @@ def _query_type_balance_text(items: list[RetrievalEvalItem]) -> str:
         for query_type in REQUIRED_QUERY_TYPES
     }
     if all(
-        count == PRIVATE_DEV_FIRST_REVIEW_TARGET_PER_QUERY_TYPE
+        count == PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE
         for count in counts.values()
     ):
         return (
             "query type별 dev "
-            f"{PRIVATE_DEV_FIRST_REVIEW_TARGET_PER_QUERY_TYPE}개로 균형이 맞는다"
+            f"{PRIVATE_DEV_REVIEW_TARGET_PER_QUERY_TYPE}개로 균형이 맞는다"
         )
-    return f"query type별 dev 분포가 {counts}로 남아 있어 1차 review 기준을 충족하지 못한다"
+    return f"query type별 dev 분포가 {counts}로 남아 있어 dev review 기준을 충족하지 못한다"
 
 
 def _requires_context_without_user_context_count(

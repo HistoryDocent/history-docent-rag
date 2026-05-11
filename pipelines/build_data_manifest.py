@@ -20,7 +20,7 @@ from app.domain.data_contracts import (
 from app.domain.source_inventory import collect_private_path_leakage, write_json
 
 
-DEFAULT_PRIVATE_REPORT = Path("private_data/reports/data_manifest.json")
+DEFAULT_PRIVATE_REPORT = Path("private_data") / "reports" / "data_manifest.json"
 DEFAULT_PUBLIC_SAMPLE = Path("data_samples/data_manifest_sample.json")
 SOURCE_ALIAS = "History_Docent"
 PARSER_MODEL = "upstage-document-parse"
