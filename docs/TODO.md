@@ -50,7 +50,9 @@
 - [x] retrieval dev/test split contract 고정
 - [x] retrieval judgment target 검증 gate 추가
 - [x] chunking ablation runner 구현
-- [ ] Dense/Hybrid retrieval 구현
+- [x] Dense retrieval baseline v1 구현
+- [ ] neural embedding model 비교
+- [ ] Hybrid retrieval 구현
 - [ ] reranker comparison 구현
 - [ ] evidence packing 비교 구현
 - [ ] place-aware query rewrite 구현

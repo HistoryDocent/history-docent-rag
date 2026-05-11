@@ -202,6 +202,7 @@ Upstage API는 사용하지 않는다.
 
 | ID | embedding | 검색 방식 | 비고 |
 | --- | --- | --- | --- |
+| `D0` | `sklearn-tfidf-svd-v1` | cosine exact search | dependency-free dense baseline, CI와 dev 실험용 |
 | `E1` | `BAAI/bge-m3` dense | cosine exact search | multilingual, dense/sparse/multi-vector 확장 가능 |
 | `E2` | `intfloat/multilingual-e5-large` | cosine exact search | multilingual dense 비교군 |
 | `E3` | `intfloat/multilingual-e5-large-instruct` | cosine exact search | query instruction 효과 비교 |
@@ -221,6 +222,17 @@ latency_p95 허용 범위
 embedding cache 재현 가능
 public artifact leakage 0
 ```
+
+실행 결과:
+
+| ID | encoder | Recall@5 | MRR | nDCG@5 | latency_p95_ms | BM25 대비 Recall@5 delta | 판단 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `BM25` | regex-ko-en-num/v1 | 0.566667 | 0.471389 | 0.344203 | 5.351400 | 0.000000 | 기준선 |
+| `D0` | sklearn-tfidf-svd-v1 | 0.350000 | 0.261111 | 0.220955 | 18.084200 | -0.216667 | 개선 후보 아님 |
+
+결론:
+
+`D0` dense baseline은 BM25보다 낮다. 이 결과는 neural embedding 모델 결과가 아니므로 BGE-M3 또는 multilingual-E5의 성능을 부정하는 근거로 사용하지 않는다. 현재 단계에서는 dense harness, cache, public-safe report를 고정한 것이 산출물이다.
 
 ## Stage 3. Hybrid Retrieval
 
@@ -485,7 +497,7 @@ latency/cost 악화 설명 없음
 2. private dev 평가셋 70개 작성, target resolvability 검증, reviewed 승격
 3. private test 평가셋 35개 locked 작성과 target resolvability 검증
 4. chunking config ablation runner 완료
-5. Dense retrieval baseline
+5. Dense retrieval baseline v1 완료
 6. Hybrid RRF/Weighted retrieval
 7. reranker comparison
 8. place-aware deterministic query expansion

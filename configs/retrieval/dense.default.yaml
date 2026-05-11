@@ -1,0 +1,31 @@
+config_version: dense-retrieval-config/v1
+method: dense
+encoder_id: sklearn-tfidf-svd-v1
+description: >
+  Dependency-free dense baseline for the first Dense retrieval harness.
+  It uses TF-IDF features projected with TruncatedSVD and exact cosine search.
+  Neural embedding models such as BGE-M3 and multilingual-E5 are later
+  experiment candidates behind the same retrieval harness.
+n_components: 128
+max_features: 50000
+ngram_range:
+  min: 1
+  max: 2
+normalize_embeddings: true
+include_doc_title: true
+random_state: 42
+cache_policy:
+  cache_dir_alias: <private dense embedding cache>
+  commit_vectors: false
+  commit_manifest: false
+evaluation:
+  split: dev
+  locked_test_usage: false
+  top_k: 5
+  metrics:
+    - Recall@1
+    - Recall@3
+    - Recall@5
+    - MRR
+    - nDCG@5
+    - latency_p95_ms

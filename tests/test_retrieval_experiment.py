@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from app.core import project_paths
 from app.domain.data_contracts import PageSpan
 from app.domain.retrieval import (
     QueryType,
@@ -22,6 +23,7 @@ from app.domain.retrieval_experiment import (
     collect_public_retrieval_artifact_failures,
     compute_query_type_metric_breakdown,
     measure_public_retrieval_artifact_quality,
+    public_path_alias,
 )
 
 
@@ -234,6 +236,34 @@ def test_retrieval_comparison_report_records_no_improvement_claim() -> None:
     assert report.metric_deltas[0].compared_method == "bm25"
     assert report.metric_deltas[0].recall_at_5_delta == 0.0
     assert "성능 개선 주장이 아니라" in report.qualitative_assessment["comparison_status"]
+
+
+def test_public_path_alias_redacts_resolved_private_data(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(project_paths, "_REPOSITORY_ROOT", tmp_path)
+    alias_path = tmp_path / "public_alias" / "retrieval_eval_dev.jsonl"
+    private_resolved = (
+        tmp_path
+        / "private_data"
+        / "evals"
+        / "datasets"
+        / "retrieval_eval_dev.jsonl"
+    )
+    original_resolve = Path.resolve
+
+    def fake_resolve(self: Path, *args: object, **kwargs: object) -> Path:
+        if self == alias_path:
+            return private_resolved
+        return original_resolve(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "resolve", fake_resolve)
+
+    assert (
+        public_path_alias(alias_path)
+        == "<private retrieval eval dataset: retrieval_eval_dev.jsonl>"
+    )
 
 
 def test_retrieval_comparison_rejects_mismatched_experiment_invariants() -> None:
