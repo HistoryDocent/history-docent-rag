@@ -235,6 +235,8 @@ Solar Pro 3 generation contract v2 paired comparison runner를 추가했다. 현
 
 Solar Pro 3 generation contract v2 live paired comparison을 private dev stratified subset 7건으로 실행했다. 같은 query set, 같은 retrieval label `dense_multilingual_e5_small_voice_rewrite`, 같은 packing policy `P0_rank_order`에서 v1/v2를 비교했고 live call은 v1 6회, v2 6회, no-answer 0회다. v2는 `citation_precision=0.750000`으로 v1 `0.566667`보다 높았지만 `Correct-with-Evidence`는 `1.000000`에서 `0.833333`으로 낮아졌고 `unsupported_claim_rate`는 `0.000000`에서 `0.142857`로 악화됐다. 따라서 v2는 현재 기본 contract로 채택하지 않고, `place_story`와 selected evidence prompt 실패 원인을 다음 분석 대상으로 둔다. public-safe gate는 raw text/private path/secret leakage 모두 0이다.
 
+Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live paired comparison의 private metric rows를 분석했고 추가 Solar Pro 3 호출은 수행하지 않았다. query 단위 진단 결과 `precision_gain_count=3`, `precision_regression_count=2`, `recall_regression_count=2`, `correctness_regression_count=1`, `unsupported_regression_count=1`, `adoption_decision=reject_default_contract`로 기록했다. 결론은 청킹 재실험보다 `place_story` retrieval hard-case와 v2 selected evidence prompt repair를 먼저 분리하는 것이다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -290,6 +292,8 @@ Solar Pro 3 generation contract v2 live paired comparison을 private dev stratif
 | [Solar Pro 3 Generation Contract v2 Assembler Report](evals/reports/solar_generation_contract_v2_assembler_report.md) | `used_evidence_pack_ranks` 기반 selected citation filtering 검증 결과 |
 | [Solar Pro 3 Generation Contract v2 Comparison Report](evals/reports/solar_generation_contract_v2_comparison_report.md) | fake provider 기반 v1/v2 paired comparison runner와 public-safe gate 결과 |
 | [Solar Pro 3 Generation Contract v2 Live Comparison Report](evals/reports/solar_generation_contract_v2_live_comparison_report.md) | Solar Pro 3 실제 호출 기반 v1/v2 paired comparison과 trade-off 결과 |
+| [Solar Pro 3 Generation v2 Trade-off Analysis](docs/SOLAR_GENERATION_V2_TRADEOFF_ANALYSIS.md) | v2 selected evidence contract의 채택 보류 판단과 다음 실험 방향 |
+| [Solar Pro 3 Generation v2 Trade-off Analysis Report](evals/reports/solar_generation_v2_tradeoff_analysis_report.md) | 기존 live comparison metric rows 기반 query-level failure tag와 public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
