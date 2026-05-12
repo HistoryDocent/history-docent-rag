@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any, cast
 
 import httpx
 import pytest
@@ -94,7 +95,88 @@ def test_solar_provider_builds_structured_request_and_parses_draft() -> None:
     assert isinstance(payload, dict)
     assert payload["model"] == "solar-pro3"
     assert payload["response_format"]["type"] == "json_schema"
+    assert payload["response_format"]["json_schema"]["name"] == "citation_rag_draft"
     assert payload["response_format"]["json_schema"]["strict"] is True
+    assert (
+        provider.config.public_config_summary["draft_schema_version"]
+        == provider.config.draft_schema_version
+    )
+
+
+def test_solar_provider_v2_builds_structured_request_and_parses_selected_ranks() -> None:
+    captured: dict[str, object] = {}
+    config = SolarPro3ProviderConfig(
+        credential="mock-provider-key",
+        base_url=DEFAULT_UPSTAGE_BASE_URL,
+        model_id="solar-pro3",
+        timeout_seconds=3.0,
+        max_retries=1,
+        max_tokens=700,
+        draft_schema_version="v2",
+    )
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["payload"] = json.loads(request.content.decode("utf-8"))
+        draft = CitationRagDraftV2(
+            answer="경복궁은 한양의 중심축을 설명할 때 사용할 수 있는 근거가 있습니다.",
+            spoken_answer="경복궁은 한양의 중심축을 이해하기 좋은 장소입니다.",
+            used_evidence_pack_ranks=(1,),
+            coverage_intent="focused",
+            unsupported_claim_risk="low",
+        )
+        return httpx.Response(
+            status_code=200,
+            json={
+                "id": "mock-response-v2",
+                "model": "solar-pro3",
+                "choices": [
+                    {
+                        "message": {"content": draft.model_dump_json()},
+                        "finish_reason": "stop",
+                    },
+                ],
+                "usage": {
+                    "prompt_tokens": 12,
+                    "completion_tokens": 6,
+                    "total_tokens": 18,
+                },
+            },
+        )
+
+    provider = SolarPro3CitationDraftProvider(
+        config=config,
+        client=_client(handler),
+    )
+    result = provider.generate_draft(
+        _request().model_copy(
+            update={
+                "evidence_context": "[evidence:1] 테스트 근거\n\n[evidence:2] 보조 근거",
+            },
+        ),
+    )
+    payload = captured["payload"]
+
+    assert isinstance(result.draft, CitationRagDraftV2)
+    assert result.draft.used_evidence_pack_ranks == (1,)
+    assert result.provider_config_id == config.provider_config_id
+    assert isinstance(payload, dict)
+    assert payload["response_format"]["json_schema"]["name"] == "citation_rag_draft_v2"
+    assert payload["response_format"]["json_schema"]["schema"]["required"] == [
+        "answer",
+        "spoken_answer",
+        "used_evidence_pack_ranks",
+        "coverage_intent",
+        "unsupported_claim_risk",
+    ]
+    assert (
+        "uniqueItems"
+        not in payload["response_format"]["json_schema"]["schema"]["properties"][
+            "used_evidence_pack_ranks"
+        ]
+    )
+    user_prompt = payload["messages"][1]["content"]
+    assert "used_evidence_pack_ranks" in user_prompt
+    assert "사용 가능한 evidence rank: 1, 2" in user_prompt
 
 
 def test_solar_provider_v2_mock_response_schema_contract() -> None:
@@ -123,10 +205,14 @@ def test_solar_provider_v2_mock_response_schema_contract() -> None:
             "total_tokens": 28,
         },
     }
-    content = response_payload["choices"][0]["message"]["content"]
+    choices = cast(list[dict[str, Any]], response_payload["choices"])
+    message = cast(dict[str, str], choices[0]["message"])
+    content = message["content"]
     draft = CitationRagDraftV2.model_validate(json.loads(content))
+    schema_properties = cast(dict[str, Any], schema["properties"])
+    rank_schema = cast(dict[str, Any], schema_properties["used_evidence_pack_ranks"])
 
-    assert schema["properties"]["used_evidence_pack_ranks"]["uniqueItems"] is True
+    assert rank_schema["uniqueItems"] is True
     assert schema["required"] == [
         "answer",
         "spoken_answer",

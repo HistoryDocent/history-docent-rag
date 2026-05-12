@@ -140,7 +140,7 @@ v2 후보 통과 기준:
 
 ## 보고서 형식
 
-`solar_generation_contract_v2_comparison_report.md`에는 다음만 기록한다.
+`solar_generation_contract_v2_comparison_report.md`와 `solar_generation_contract_v2_live_comparison_report.md`에는 다음만 기록한다.
 
 - run metadata alias
 - query_type별 v1/v2 metric
@@ -182,4 +182,33 @@ v2 후보 통과 기준:
 - `HD-GEN-V2-002`: 완료. `CitationRagDraftV2` schema와 provider mock response 계약을 검증했다.
 - `HD-GEN-V2-003`: 완료. assembler가 v2 selected evidence rank만 citation으로 변환한다.
 - `HD-GEN-V2-004`: 완료. fake provider 기반 v1/v2 paired comparison runner와 public-safe report를 추가했다.
-- `HD-GEN-V2-005`: 미진행. live Solar Pro 3 paired comparison은 별도 승인 후 실행한다.
+- `HD-GEN-V2-005`: 완료. Solar Pro 3 live paired comparison을 실행했고 public-safe gate는 통과했다.
+
+## Live 비교 결과
+
+실행 조건:
+
+- query set: private dev stratified subset 7건
+- retrieval label: `dense_multilingual_e5_small_voice_rewrite`
+- packing policy: `P0_rank_order`
+- model: `solar-pro3`
+- live call: v1 6회, v2 6회, no-answer 0회
+
+정량 결과:
+
+| metric | v1 baseline | v2 candidate | delta |
+| --- | ---: | ---: | ---: |
+| Correct-with-Evidence | 1.000000 | 0.833333 | -0.166667 |
+| citation_precision | 0.566667 | 0.750000 | +0.183333 |
+| citation_recall | 0.509722 | 0.461111 | -0.048611 |
+| docent_usefulness | 1.000000 | 0.857143 | -0.142857 |
+| unsupported_claim_rate | 0.000000 | 0.142857 | +0.142857 |
+| abstention_accuracy | 1.000000 | 1.000000 | 0.000000 |
+| latency_p95_ms | 13743.580900 | 4372.871200 | -9370.709700 |
+| solar_call_count | 6 | 6 | 0 |
+
+판단:
+
+v2는 citation precision과 latency는 개선했지만, `Correct-with-Evidence`, `citation_recall`, `docent_usefulness`, `unsupported_claim_rate`가 악화됐다. 따라서 현재 v2는 production 기본 contract로 채택하지 않는다.
+
+다음 작업은 v2 채택이 아니라 `place_story`와 selected evidence prompt의 실패 원인을 분리하는 것이다. 특히 v2가 근거를 적게 선택하면서 답변 유용성과 근거 충족률을 떨어뜨렸는지 확인해야 한다.

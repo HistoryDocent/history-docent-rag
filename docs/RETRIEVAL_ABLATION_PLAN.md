@@ -772,6 +772,22 @@ citation_precision 하락 없음
 latency/cost 악화 설명 포함
 ```
 
+Solar Pro 3 generation contract v2 live 결과:
+
+private dev stratified subset 7건에서 같은 query set, 같은 retrieval label `dense_multilingual_e5_small_voice_rewrite`, 같은 packing policy `P0_rank_order`로 v1/v2를 비교했다. no-answer는 provider를 호출하지 않았고, live call은 v1 6회, v2 6회다.
+
+| metric | v1 baseline | v2 candidate | delta |
+| --- | ---: | ---: | ---: |
+| Correct-with-Evidence | 1.000000 | 0.833333 | -0.166667 |
+| citation_precision | 0.566667 | 0.750000 | +0.183333 |
+| citation_recall | 0.509722 | 0.461111 | -0.048611 |
+| unsupported_claim_rate | 0.000000 | 0.142857 | +0.142857 |
+| latency_p95_ms | 13743.580900 | 4372.871200 | -9370.709700 |
+
+결론:
+
+v2 selected evidence contract는 citation precision을 올렸지만 Correct-with-Evidence와 unsupported claim gate를 통과하지 못했다. 현재 기본 generation contract는 v1을 유지하고, v2는 `place_story` hard-case와 selected evidence prompt 실패 원인을 분석한 뒤 재실험한다.
+
 ## Stage 8. Advanced RAG Experiments
 
 Advanced RAG는 기본 pipeline 후보가 아니다.

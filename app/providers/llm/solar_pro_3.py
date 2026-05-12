@@ -3,13 +3,14 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import time
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 import httpx
 
-from app.domain.generation import CitationRagDraft
+from app.domain.generation import CitationRagDraft, CitationRagDraftV2
 from app.providers.llm.base import (
     CitationDraftRequest,
     CitationDraftResult,
@@ -18,6 +19,7 @@ from app.providers.llm.base import (
     LlmProviderResponseError,
     LlmProviderUsage,
     build_citation_rag_draft_schema,
+    build_citation_rag_draft_v2_schema,
 )
 
 
@@ -27,6 +29,7 @@ DEFAULT_SOLAR_PRO_3_TIMEOUT_SECONDS = 30.0
 DEFAULT_SOLAR_PRO_3_MAX_RETRIES = 2
 DEFAULT_SOLAR_PRO_3_MAX_TOKENS = 700
 RETRYABLE_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
+CitationDraftSchemaVersion = Literal["v1", "v2"]
 
 
 @dataclass(frozen=True)
@@ -42,6 +45,7 @@ class SolarPro3ProviderConfig:
     reasoning_effort: str = "minimal"
     cost_per_1k_input_tokens: float = 0.0
     cost_per_1k_output_tokens: float = 0.0
+    draft_schema_version: CitationDraftSchemaVersion = "v1"
 
     def __post_init__(self) -> None:
         if not self.credential.strip():
@@ -56,9 +60,15 @@ class SolarPro3ProviderConfig:
             raise LlmProviderConfigError("PROVIDER_MAX_RETRIES must be >= 0")
         if self.max_tokens <= 0:
             raise LlmProviderConfigError("RAG_MAX_OUTPUT_TOKENS must be positive")
+        if self.draft_schema_version not in ("v1", "v2"):
+            raise LlmProviderConfigError("draft_schema_version must be v1 or v2")
 
     @classmethod
-    def from_env(cls) -> "SolarPro3ProviderConfig":
+    def from_env(
+        cls,
+        *,
+        draft_schema_version: CitationDraftSchemaVersion = "v1",
+    ) -> "SolarPro3ProviderConfig":
         return cls(
             credential=os.environ.get("UPSTAGE_API_KEY", ""),
             base_url=os.environ.get("UPSTAGE_BASE_URL", DEFAULT_UPSTAGE_BASE_URL),
@@ -75,6 +85,7 @@ class SolarPro3ProviderConfig:
                 "RAG_MAX_OUTPUT_TOKENS",
                 DEFAULT_SOLAR_PRO_3_MAX_TOKENS,
             ),
+            draft_schema_version=draft_schema_version,
         )
 
     @property
@@ -92,7 +103,7 @@ class SolarPro3ProviderConfig:
             "temperature": self.temperature,
             "top_p": self.top_p,
             "reasoning_effort": self.reasoning_effort,
-            "structured_output": "citation_rag_draft_schema_v1",
+            "structured_output": f"citation_rag_draft_schema_{self.draft_schema_version}",
         }
         digest = hashlib.sha256(
             json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8"),
@@ -112,6 +123,7 @@ class SolarPro3ProviderConfig:
             "top_p": self.top_p,
             "reasoning_effort": self.reasoning_effort,
             "response_format": "json_schema",
+            "draft_schema_version": self.draft_schema_version,
             "api_key_source": "environment",
         }
 
@@ -149,7 +161,10 @@ class SolarPro3CitationDraftProvider:
             raise LlmProviderRequestError("Solar Pro 3 request failed") from last_error
         latency_ms = round((time.perf_counter() - start) * 1000, 6)
         content = _extract_message_content(response_payload)
-        draft = _parse_citation_draft(content)
+        draft = _parse_citation_draft(
+            content,
+            schema_version=self.config.draft_schema_version,
+        )
         usage_payload = response_payload.get("usage", {})
         usage = LlmProviderUsage(
             latency_ms=latency_ms,
@@ -213,11 +228,14 @@ class SolarPro3CitationDraftProvider:
             "messages": [
                 {
                     "role": "system",
-                    "content": _system_prompt(),
+                    "content": _system_prompt(self.config.draft_schema_version),
                 },
                 {
                     "role": "user",
-                    "content": _user_prompt(request),
+                    "content": _user_prompt(
+                        request,
+                        schema_version=self.config.draft_schema_version,
+                    ),
                 },
             ],
             "max_tokens": self.config.max_tokens,
@@ -228,9 +246,9 @@ class SolarPro3CitationDraftProvider:
             "response_format": {
                 "type": "json_schema",
                 "json_schema": {
-                    "name": "citation_rag_draft",
+                    "name": _structured_output_name(self.config.draft_schema_version),
                     "strict": True,
-                    "schema": build_citation_rag_draft_schema(),
+                    "schema": _structured_output_schema(self.config.draft_schema_version),
                 },
             },
         }
@@ -262,17 +280,28 @@ def build_solar_provider_public_rows(
     ]
 
 
-def _system_prompt() -> str:
-    return (
+def _system_prompt(schema_version: CitationDraftSchemaVersion) -> str:
+    base_prompt = (
         "당신은 서울/한양 역사 관광 도슨트 RAG 시스템의 답변 초안 작성자입니다. "
         "반드시 제공된 evidence 안에서만 답하고, 모르면 과장하지 않습니다. "
         "화면용 answer와 음성용 spoken_answer를 분리합니다."
     )
-
-
-def _user_prompt(request: CitationDraftRequest) -> str:
-    place_text = ", ".join(request.place_ids) if request.place_ids else "unknown"
+    if schema_version == "v1":
+        return base_prompt
     return (
+        base_prompt
+        + " CitationRagDraftV2에서는 실제로 사용한 evidence rank만 "
+        "used_evidence_pack_ranks에 기록합니다."
+    )
+
+
+def _user_prompt(
+    request: CitationDraftRequest,
+    *,
+    schema_version: CitationDraftSchemaVersion,
+) -> str:
+    place_text = ", ".join(request.place_ids) if request.place_ids else "unknown"
+    prompt = (
         f"query_id: {request.query_id}\n"
         f"query_type: {request.query_type}\n"
         f"language: {request.language}\n"
@@ -285,6 +314,18 @@ def _user_prompt(request: CitationDraftRequest) -> str:
         "- spoken_answer는 현장에서 듣기 쉬운 짧은 문장으로 작성합니다.\n"
         "- evidence 밖 추론이 섞이면 unsupported_claim_risk를 medium 이상으로 둡니다.\n"
         "- JSON schema만 반환합니다."
+    )
+    if schema_version == "v1":
+        return prompt
+    evidence_rank_text = _available_evidence_rank_text(request.evidence_context)
+    return (
+        prompt
+        + "\n"
+        + "- used_evidence_pack_ranks는 답변 작성에 실제 사용한 evidence rank만 오름차순으로 넣습니다.\n"
+        + "- used_evidence_pack_ranks에는 evidence_context의 [evidence:N]에 존재하는 N만 넣습니다.\n"
+        + "- 화면용 answer는 선택한 evidence만 근거로 삼고, 음성용 spoken_answer에는 citation 표기, 대괄호, URL을 넣지 않습니다.\n"
+        + "- coverage_intent는 focused, multi_evidence, abstain 중 하나입니다.\n"
+        + f"- 사용 가능한 evidence rank: {evidence_rank_text}\n"
     )
 
 
@@ -314,15 +355,57 @@ def _extract_finish_reason(payload: dict[str, Any]) -> str | None:
     return _safe_str_or_none(first.get("finish_reason"))
 
 
-def _parse_citation_draft(content: str) -> CitationRagDraft:
+def _parse_citation_draft(
+    content: str,
+    *,
+    schema_version: CitationDraftSchemaVersion,
+) -> CitationRagDraft:
     try:
         parsed = json.loads(content)
     except ValueError as exc:
         raise LlmProviderResponseError("Solar Pro 3 content is not valid JSON") from exc
     try:
+        if schema_version == "v2":
+            return CitationRagDraftV2.model_validate(parsed)
         return CitationRagDraft.model_validate(parsed)
     except ValueError as exc:
         raise LlmProviderResponseError("Solar Pro 3 draft schema validation failed") from exc
+
+
+def _structured_output_name(schema_version: CitationDraftSchemaVersion) -> str:
+    if schema_version == "v2":
+        return "citation_rag_draft_v2"
+    return "citation_rag_draft"
+
+
+def _structured_output_schema(schema_version: CitationDraftSchemaVersion) -> dict[str, object]:
+    if schema_version == "v2":
+        return _provider_compatible_v2_schema()
+    return build_citation_rag_draft_schema()
+
+
+def _provider_compatible_v2_schema() -> dict[str, object]:
+    schema = build_citation_rag_draft_v2_schema()
+    properties = schema.get("properties")
+    if isinstance(properties, dict):
+        ranks_schema = properties.get("used_evidence_pack_ranks")
+        if isinstance(ranks_schema, dict):
+            # Solar Pro 3 validates the response again locally; keep the provider
+            # schema conservative to avoid provider-side JSON Schema subset issues.
+            ranks_schema.pop("uniqueItems", None)
+    return schema
+
+
+def _available_evidence_rank_text(evidence_context: str) -> str:
+    ranks = sorted(
+        {
+            int(match.group(1))
+            for match in re.finditer(r"\[evidence:(\d+)\]", evidence_context)
+        },
+    )
+    if not ranks:
+        return "unknown"
+    return ", ".join(str(rank) for rank in ranks)
 
 
 def _should_retry_error(exc: LlmProviderRequestError) -> bool:
