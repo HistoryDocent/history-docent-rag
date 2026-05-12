@@ -81,7 +81,8 @@
 - [x] Solar Pro 3 generation 개선 전후 paired comparison
 - [x] Solar Pro 3 generation v2 trade-off 원인 분석
 - [ ] Solar Pro 3 generation v2 prompt repair 계획 작성
-- [ ] `place_story` retrieval hard-case 원인 분석
+- [x] `place_story` retrieval hard-case 원인 분석
+- [ ] `place_story` target grain 및 top-rank coverage 개선 계획 작성
 
 ## Experiments
 
