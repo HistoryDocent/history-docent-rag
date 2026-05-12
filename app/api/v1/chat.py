@@ -15,6 +15,10 @@ from app.application.chat_service import (
     ChatServiceResult,
     ChatUsage,
 )
+from app.application.chat_retrieval import (
+    ChatRetrievalMode,
+    ChatRetrievalUnavailableError,
+)
 from app.domain.generation import AnswerProviderKind, UnsupportedClaimRisk
 from app.domain.retrieval import LanguageCode, QueryType
 
@@ -43,6 +47,8 @@ class ChatRequest(ChatApiModel):
     query_type: QueryType = "place_story"
     place_context: tuple[str, ...] = Field(default_factory=tuple, max_length=10)
     voice_mode: bool = False
+    user_context: str | None = Field(default=None, max_length=600)
+    retrieval_mode: ChatRetrievalMode = "contract_only"
     provider_mode: ChatProviderMode = "contract_only"
 
     @field_validator("request_id")
@@ -83,6 +89,8 @@ class ChatRequest(ChatApiModel):
             query_type=self.query_type,
             place_context=self.place_context,
             voice_mode=self.voice_mode,
+            user_context=self.user_context.strip() if self.user_context else None,
+            retrieval_mode=self.retrieval_mode,
             provider_mode=self.provider_mode,
         )
 
@@ -173,6 +181,14 @@ def chat(
                 "message": str(exc),
             },
         ) from exc
+    except ChatRetrievalUnavailableError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={
+                "code": "retrieval_unavailable",
+                "message": str(exc),
+            },
+        ) from exc
     return ChatResponse.from_service_result(result)
 
 
@@ -189,6 +205,12 @@ def public_chat_response_row(response: dict[str, Any]) -> dict[str, Any]:
         "answer_policy_id": response.get("answer_policy_id"),
         "abstained": response.get("abstained"),
         "unsupported_claim_risk": response.get("unsupported_claim_risk"),
+        "retrieval_mode": usage.get("retrieval_mode"),
+        "retrieval_method": usage.get("retrieval_method"),
+        "retrieval_candidate_count": usage.get("retrieval_candidate_count"),
+        "retrieval_latency_ms": usage.get("retrieval_latency_ms"),
+        "query_rewrite_changed": usage.get("query_rewrite_changed"),
+        "query_rewrite_latency_ms": usage.get("query_rewrite_latency_ms"),
         "citation_count": len(citations),
         "evidence_id_count": len(response.get("evidence_ids", [])),
         "place_id_count": len(response.get("place_ids", [])),

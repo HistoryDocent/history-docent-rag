@@ -13,6 +13,12 @@ from app.application.citation_rag import (
     build_contract_only_draft,
 )
 from app.application.evidence_packing import EvidencePack, PackedEvidence
+from app.application.chat_retrieval import (
+    ChatRetrievalBackend,
+    ChatRetrievalMode,
+    ChatRetrievalOutcome,
+    PrivateArtifactRetrievalBackend,
+)
 from app.domain.generation import AnswerProviderKind, CitationRagAnswer
 from app.domain.retrieval import (
     LanguageCode,
@@ -39,6 +45,8 @@ class ChatCommand(ChatServiceModel):
     query_type: QueryType = "place_story"
     place_context: tuple[str, ...] = Field(default_factory=tuple)
     voice_mode: bool = False
+    user_context: str | None = Field(default=None, max_length=600)
+    retrieval_mode: ChatRetrievalMode = "contract_only"
     provider_mode: ChatProviderMode = "contract_only"
 
 
@@ -46,6 +54,12 @@ class ChatUsage(ChatServiceModel):
     input_chars: int = Field(ge=0)
     evidence_count: int = Field(ge=0)
     estimated_context_chars: int = Field(ge=0)
+    retrieval_mode: ChatRetrievalMode = "contract_only"
+    retrieval_method: str | None = None
+    retrieval_candidate_count: int = Field(default=0, ge=0)
+    retrieval_latency_ms: float = Field(default=0.0, ge=0.0)
+    query_rewrite_changed: bool = False
+    query_rewrite_latency_ms: float = Field(default=0.0, ge=0.0)
     provider_call_count: int = Field(ge=0)
     solar_call_count: int = Field(ge=0)
     prompt_tokens: int | None = Field(default=None, ge=0)
@@ -66,8 +80,14 @@ class ChatProviderUnavailableError(RuntimeError):
 
 
 class ChatContractService:
-    def __init__(self, *, provider: AnswerProviderKind = "contract_only") -> None:
+    def __init__(
+        self,
+        *,
+        provider: AnswerProviderKind = "contract_only",
+        retrieval_backend: ChatRetrievalBackend | None = None,
+    ) -> None:
         self.provider = provider
+        self.retrieval_backend = retrieval_backend or PrivateArtifactRetrievalBackend()
         self.assembler = CitationRagAnswerAssembler(
             config=CitationRagAssemblerConfig(
                 answer_policy_id=CHAT_SERVICE_POLICY_ID,
@@ -83,25 +103,31 @@ class ChatContractService:
                 "Solar Pro 3 live generation is disabled for the public API contract."
             )
         item = _build_eval_item(command)
-        evidence_pack = _build_evidence_pack(command)
-        draft = None if command.query_type == "no_answer" else _build_draft(command)
+        if command.retrieval_mode == "retrieval_backed":
+            retrieval = self.retrieval_backend.retrieve(command=command, item=item)
+            evidence_pack = retrieval.evidence_pack
+            draft = (
+                None
+                if not evidence_pack.evidence
+                else _build_retrieval_backed_draft(command, retrieval)
+            )
+            place_ids = retrieval.place_ids or tuple(item.metadata.place_ids)
+        else:
+            retrieval = None
+            evidence_pack = _build_contract_evidence_pack(command)
+            draft = None if command.query_type == "no_answer" else _build_contract_draft(command)
+            place_ids = tuple(command.place_context) or tuple(item.metadata.place_ids)
         answer = self.assembler.assemble(
             item=item,
             evidence_pack=evidence_pack,
             draft=draft,
-            place_ids=tuple(command.place_context) or tuple(item.metadata.place_ids),
+            place_ids=place_ids,
         )
         latency_ms = round((time.perf_counter() - started) * 1000, 6)
         return ChatServiceResult(
             request_id=command.request_id,
             answer=answer,
-            usage=ChatUsage(
-                input_chars=len(command.query),
-                evidence_count=len(evidence_pack.evidence),
-                estimated_context_chars=evidence_pack.total_estimated_chars,
-                provider_call_count=0,
-                solar_call_count=0,
-            ),
+            usage=_build_usage(command=command, evidence_pack=evidence_pack, retrieval=retrieval),
             latency_ms=latency_ms,
         )
 
@@ -133,6 +159,7 @@ def _build_eval_item(command: ChatCommand) -> RetrievalEvalItem:
                 "query_text": command.query,
                 "language": command.language,
                 "expected_behavior": expected_behavior,
+                "user_context": command.user_context,
                 "public_allowed": True,
             },
             "judgments": judgments,
@@ -150,7 +177,7 @@ def _build_eval_item(command: ChatCommand) -> RetrievalEvalItem:
     )
 
 
-def _build_evidence_pack(command: ChatCommand) -> EvidencePack:
+def _build_contract_evidence_pack(command: ChatCommand) -> EvidencePack:
     if command.query_type == "no_answer":
         return EvidencePack(
             query_id=command.request_id,
@@ -192,7 +219,7 @@ def _build_evidence_pack(command: ChatCommand) -> EvidencePack:
     )
 
 
-def _build_draft(command: ChatCommand):
+def _build_contract_draft(command: ChatCommand):
     if command.language == "en":
         return build_contract_only_draft(
             answer=(
@@ -217,6 +244,65 @@ def _build_draft(command: ChatCommand):
             "Solar Pro 3 검증 뒤 연결합니다."
         ),
         unsupported_claim_risk="low",
+    )
+
+
+def _build_retrieval_backed_draft(
+    command: ChatCommand,
+    retrieval: ChatRetrievalOutcome,
+):
+    evidence_count = len(retrieval.evidence_pack.evidence)
+    if command.language == "en":
+        return build_contract_only_draft(
+            answer=(
+                f"The API retrieved {evidence_count} citation-ready evidence item. "
+                "This response validates retrieval, evidence packing, and citation "
+                "assembly before live Solar Pro 3 generation is enabled."
+            ),
+            spoken_answer=(
+                "I found citation-ready evidence. Live historical narration will be "
+                "enabled after Solar Pro 3 validation."
+            ),
+            unsupported_claim_risk="low",
+        )
+    return build_contract_only_draft(
+        answer=(
+            f"검색 결과에서 citation으로 복구 가능한 근거 {evidence_count}개를 찾았고, "
+            "evidence packing과 citation answer 조립까지 연결했습니다. 현재 문장은 "
+            "Solar Pro 3 live 생성 전 검증용입니다."
+        ),
+        spoken_answer=(
+            "근거 검색과 citation 연결까지 확인했습니다. 실제 역사 해설 문장은 "
+            "Solar Pro 3 검증 뒤 연결합니다."
+        ),
+        unsupported_claim_risk="low",
+    )
+
+
+def _build_usage(
+    *,
+    command: ChatCommand,
+    evidence_pack: EvidencePack,
+    retrieval: ChatRetrievalOutcome | None,
+) -> ChatUsage:
+    return ChatUsage(
+        input_chars=len(command.query),
+        evidence_count=len(evidence_pack.evidence),
+        estimated_context_chars=evidence_pack.total_estimated_chars,
+        retrieval_mode=command.retrieval_mode,
+        retrieval_method=retrieval.retrieval_method if retrieval is not None else "contract_fixture",
+        retrieval_candidate_count=(
+            retrieval.retrieval_candidate_count if retrieval is not None else 0
+        ),
+        retrieval_latency_ms=retrieval.retrieval_latency_ms if retrieval is not None else 0.0,
+        query_rewrite_changed=(
+            retrieval.query_rewrite_changed if retrieval is not None else False
+        ),
+        query_rewrite_latency_ms=(
+            retrieval.query_rewrite_latency_ms if retrieval is not None else 0.0
+        ),
+        provider_call_count=0,
+        solar_call_count=0,
     )
 
 

@@ -627,6 +627,51 @@ FastAPI `/chat` contract 실행 결과 v1:
 
 현재 `/api/v1/chat`는 citation RAG answer contract를 외부 API로 노출하는 smoke 계약이다. answerable path는 recoverable citation과 evidence_id를 반환하고, no-answer path는 `abstained=true`와 빈 citation을 반환한다. blank query는 422 error envelope, `provider_mode=solar_pro_3` 요청은 503 `provider_unavailable`로 처리한다. 이 결과는 API 계약 검증이며 live generation 품질 주장이 아니다.
 
+FastAPI `/chat` retrieval-backed integration 실행 결과 v1:
+
+`POST /api/v1/chat`에 `retrieval_mode=retrieval_backed`를 추가했다. 기존 `contract_only` mode는 유지하고, retrieval-backed mode에서는 retrieval outcome, P0 evidence packing, citation answer assembler를 같은 응답 계약으로 연결한다.
+
+public integration report는 raw chunk text 공개를 피하기 위해 fixture retrieval backend로 API grain과 leakage gate를 검증했다.
+
+| metric | value |
+| --- | ---: |
+| request_count | 3 |
+| success_count | 3 |
+| retrieval_backed_request_count | 2 |
+| retrieval_success_count | 1 |
+| answered_count | 2 |
+| abstained_count | 1 |
+| citation_count | 2 |
+| evidence_id_count | 2 |
+| retrieval_candidate_count | 1 |
+| live_solar_call_count | 0 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+private local smoke 결과:
+
+private `parent_child_chunks` artifact와 `dense_multilingual_e5_small_voice_rewrite` backend를 사용해 answerable smoke request 1건을 실행했다.
+
+| metric | value |
+| --- | ---: |
+| request_count | 1 |
+| success_count | 1 |
+| answered_count | 1 |
+| citation_count | 5 |
+| evidence_id_count | 5 |
+| retrieval_candidate_count | 5 |
+| evidence_count | 5 |
+| live_solar_call_count | 0 |
+| retrieval_latency_ms | 68.224300 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+결론:
+
+API와 실제 private retrieval backend 사이의 연결은 smoke 기준 통과했다. 단, 답변 본문은 아직 Solar Pro 3 live generation이 아니라 contract draft이므로 역사 해설 품질 또는 최종 RAG 성능으로 주장하지 않는다. 다음 단계는 Solar Pro 3 live generation을 private dev subset에 제한적으로 연결하고 generation gate를 측정하는 것이다.
+
 metric:
 
 - `Correct-with-Evidence`
@@ -759,10 +804,11 @@ latency/cost 악화 설명 없음
 12. generation eval harness 완료
 13. Solar Pro 3 provider 완료
 14. FastAPI `/chat` contract 완료
-15. Qdrant production candidate
-16. RAPTOR-lite
-17. GraphRAG-lite
-18. final ablation report
+15. FastAPI `/chat` retrieval-backed integration 완료
+16. Qdrant production candidate
+17. RAPTOR-lite
+18. GraphRAG-lite
+19. final ablation report
 
 ## 포트폴리오 메시지
 

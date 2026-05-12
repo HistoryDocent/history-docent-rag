@@ -19,7 +19,7 @@ FastAPI `/api/v1/chat` 계약을 live Solar Pro 3 호출 없이 검증한다.
 | citation_count | 1 |
 | evidence_id_count | 1 |
 | live_solar_call_count | 0 |
-| latency_p95_ms | 0.195100 |
+| latency_p95_ms | 0.199600 |
 
 ## Public Output Gate
 

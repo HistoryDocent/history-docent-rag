@@ -66,6 +66,8 @@
 - [x] generation evaluation harness 구현
 - [x] Solar Pro 3 provider 구현
 - [x] FastAPI `/chat` contract 구현
+- [x] FastAPI `/chat` retrieval-backed integration 구현
+- [x] private dense retrieval smoke report 생성
 
 ## Experiments
 
