@@ -73,7 +73,10 @@
 - [x] Solar Pro 3 generation baseline runner 구현
 - [x] query type별 Solar Pro 3 generation baseline report 생성
 - [x] Solar Pro 3 generation 실패 원인 진단 문서 작성
-- [ ] generation prompt/answer contract 개선안 설계
+- [x] generation prompt/answer contract v2 비교 계획 작성
+- [ ] `CitationRagDraftV2` schema와 provider mock test 구현
+- [ ] assembler v2 selected evidence citation filtering 구현
+- [ ] Solar Pro 3 generation v1/v2 paired comparison runner 구현
 - [ ] Solar Pro 3 generation 개선 전후 paired comparison
 - [ ] `place_story` retrieval hard-case 원인 분석
 

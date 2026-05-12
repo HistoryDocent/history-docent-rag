@@ -740,6 +740,14 @@ query type별 failure tag:
 
 generation baseline은 live path와 public-safe report gate를 통과했다. 다만 `place_fact`, `place_story`, `overview`에서 citation 지표가 약하고, `place_fact` latency가 `/chat with Solar Pro 3` SLO 후보 8000ms를 초과했다. 따라서 다음 작업은 청킹 재실험이 아니라 prompt/answer contract 개선안을 설계한 뒤 같은 query set으로 paired comparison을 수행하는 것이다.
 
+Solar Pro 3 generation contract v2 계획:
+
+별도 문서 [Solar Pro 3 Generation Contract v2 Plan](SOLAR_GENERATION_CONTRACT_V2_PLAN.md)에 v2 설계를 고정했다.
+
+핵심 판단은 prompt-only 개선이 아니라 selected evidence 기반 contract 변경이다. v1은 Solar Pro 3 draft가 실제 사용한 evidence를 지정하지 않고 assembler가 packed evidence 전체를 citation으로 붙이기 때문에, citation_precision 개선에는 `used_evidence_pack_ranks` 같은 구조화 필드와 assembler v2 filtering이 필요하다.
+
+v2 비교는 같은 7개 query_id, 같은 retrieval label `dense_multilingual_e5_small_voice_rewrite`, 같은 packing policy `P0_rank_order`에서 수행한다. `place_story`는 retrieval hard-case로 분리하고, `place_fact`와 `overview`를 generation contract 개선의 핵심 판단 query로 둔다.
+
 metric:
 
 - `Correct-with-Evidence`
