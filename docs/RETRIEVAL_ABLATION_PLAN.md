@@ -700,6 +700,46 @@ private dev subset 2건을 사용해 retrieval-backed evidence를 Solar Pro 3 st
 
 live provider 연결과 public-safe generation report 생성은 통과했다. 다만 smoke 크기가 작고 `/chat with Solar Pro 3` SLO 후보 8000ms를 초과했으며 `spoken_answer_naturalness=0.500000`이라, 품질 개선이나 운영 가능성 주장으로 사용하지 않는다. 다음 단계는 generation 평가셋 확장, prompt/answer contract 개선, latency 원인 분리다.
 
+Solar Pro 3 generation baseline 결과:
+
+private dev stratified subset에서 query type별 1건씩 총 7건을 실행했다. `no_answer`는 abstain path라 Solar Pro 3를 호출하지 않고, 나머지 6건만 live generation을 호출한다.
+
+| metric | value |
+| --- | ---: |
+| eval_count | 7 |
+| answerable_count | 6 |
+| no_answer_count | 1 |
+| Correct-with-Evidence | 1.000000 |
+| citation_precision | 0.566667 |
+| citation_recall | 0.509722 |
+| place_relevance | 0.857143 |
+| docent_usefulness | 1.000000 |
+| spoken_answer_naturalness | 1.000000 |
+| unsupported_claim_rate | 0.000000 |
+| abstention_accuracy | 1.000000 |
+| latency_p95_ms | 13144.776600 |
+| solar_call_count | 6 |
+| total_tokens | 15581 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+query type별 failure tag:
+
+| query_type | failure_tags |
+| --- | --- |
+| no_answer | `none` |
+| overview | `low_citation_recall` |
+| place_fact | `low_citation_precision, latency_slo_exceeded` |
+| place_story | `low_citation_precision, low_citation_recall` |
+| relationship | `none` |
+| route_context | `none` |
+| voice_followup | `none` |
+
+결론:
+
+generation baseline은 live path와 public-safe report gate를 통과했다. 다만 `place_fact`, `place_story`, `overview`에서 citation 지표가 약하고, `place_fact` latency가 `/chat with Solar Pro 3` SLO 후보 8000ms를 초과했다. 따라서 다음 작업은 청킹 재실험이 아니라 prompt/answer contract 개선안을 설계한 뒤 같은 query set으로 paired comparison을 수행하는 것이다.
+
 metric:
 
 - `Correct-with-Evidence`

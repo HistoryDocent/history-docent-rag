@@ -329,6 +329,7 @@ def _answer_smoke_item(
     draft_provider: CitationDraftProvider,
     child_chunks_by_id: dict[str, ChildChunk],
     provider_context: _ProviderRunContext,
+    answer_policy_id: str = SOLAR_LIVE_ANSWER_POLICY_ID,
 ) -> tuple[CitationRagAnswer, GenerationEvalUsage, Any]:
     started = time.perf_counter()
     command = _command_from_item(item)
@@ -336,6 +337,7 @@ def _answer_smoke_item(
     assembler = _assembler(
         provider=provider_context.provider_kind,
         model_id=provider_context.model_id,
+        answer_policy_id=answer_policy_id,
     )
     provider_usage = SolarLiveProviderUsageTotals()
 
@@ -364,6 +366,7 @@ def _answer_smoke_item(
     answer = _assembler(
         provider=_answer_provider_kind(result.provider),
         model_id=result.model_id,
+        answer_policy_id=answer_policy_id,
     ).assemble(
         item=item,
         evidence_pack=retrieval.evidence_pack,
@@ -481,10 +484,11 @@ def _assembler(
     *,
     provider: AnswerProviderKind,
     model_id: str,
+    answer_policy_id: str = SOLAR_LIVE_ANSWER_POLICY_ID,
 ) -> CitationRagAnswerAssembler:
     return CitationRagAnswerAssembler(
         config=CitationRagAssemblerConfig(
-            answer_policy_id=SOLAR_LIVE_ANSWER_POLICY_ID,
+            answer_policy_id=answer_policy_id,
             provider=provider,
             model_id=model_id,
         ),
