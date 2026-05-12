@@ -245,6 +245,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `place_story` hard subset 4개에서 top-rank coverage repair 후보를 비교했다. `parent_doc_context_boost`는 baseline 대비 `child_or_parent_recall_at_5`를 `0.000000`에서 `0.250000`으로 올렸고 `doc_only_covered_count`를 3에서 1로 줄였다. 다만 `target_doc_recall_at_5`, `MRR`, `nDCG@5`는 악화되어 최종 기본 검색 전략으로 즉시 채택하지 않는다. 이 결과는 retrieval repair 후보 선별이며 locked test 또는 Solar Pro 3 generation 품질 개선 주장이 아니다.
 
+`parent_doc_context_boost`를 full `place_story` dev query 10개에서 재검증했다. CUDA 실행 기준 `child_or_parent_recall_at_5`와 `generation_input_ready_rate`가 각각 `0.600000`에서 `0.700000`으로 개선됐고 direct evidence regression은 0건이었다. 다만 `MRR=0.770000 -> 0.616667`, `nDCG@5=0.616818 -> 0.544546`, `target_doc_recall_at_5=0.900000 -> 0.800000`으로 악화되어 최종 검색 기본값으로 확정하지 않는다. 이 결과는 Solar Pro 3 호출 전 generation 입력 후보 선별이다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
