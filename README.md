@@ -225,6 +225,8 @@ FastAPI `/api/v1/chat` contract v1을 추가했다. 현재 API는 contract-only 
 
 FastAPI `/api/v1/chat` retrieval-backed integration v1을 추가했다. `retrieval_mode=retrieval_backed` 요청은 retrieval outcome, `P0_rank_order` evidence packing, citation answer assembler를 거쳐 동일한 ChatResponse로 반환된다. public fixture integration report 기준 `retrieval_backed_request_count=2`, `retrieval_success_count=1`, `citation_count=2`, leakage gate는 0이다. local private smoke에서는 `dense_multilingual_e5_small_voice_rewrite` backend가 실제 private corpus에서 `retrieval_candidate_count=5`, `citation_count=5`, `live_solar_call_count=0`을 기록했다. 이 결과는 API 연결 smoke이며, Solar Pro 3 답변 품질 주장이 아니다.
 
+Solar Pro 3 live generation smoke runner를 추가했다. runner는 private dev subset의 retrieval-backed evidence를 Solar Pro 3 structured output provider에 전달하고, 결과를 citation RAG answer contract와 generation eval harness로 평가한다. 현재 세션에는 `UPSTAGE_API_KEY`가 없어 live API 호출과 live report 생성은 실행하지 않았다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -275,6 +277,7 @@ FastAPI `/api/v1/chat` retrieval-backed integration v1을 추가했다. `retriev
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
+| [Solar Pro 3 Live Generation Smoke Runbook](docs/SOLAR_LIVE_GENERATION_SMOKE.md) | live provider smoke 실행 조건, 산출물, 통과 기준 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |

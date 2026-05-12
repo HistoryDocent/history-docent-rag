@@ -805,10 +805,11 @@ latency/cost 악화 설명 없음
 13. Solar Pro 3 provider 완료
 14. FastAPI `/chat` contract 완료
 15. FastAPI `/chat` retrieval-backed integration 완료
-16. Qdrant production candidate
-17. RAPTOR-lite
-18. GraphRAG-lite
-19. final ablation report
+16. Solar Pro 3 live generation smoke runner 완료
+17. Qdrant production candidate
+18. RAPTOR-lite
+19. GraphRAG-lite
+20. final ablation report
 
 ## 포트폴리오 메시지
 

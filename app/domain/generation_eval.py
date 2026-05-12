@@ -428,6 +428,16 @@ def build_generation_eval_qualitative_assessment(
         failures.append("private_path_leakage")
     if output_quality.secret_like_leakage_count:
         failures.append("secret_like_leakage")
+    if summary.solar_call_count:
+        cost_boundary = (
+            f"Solar Pro 3 호출 {summary.solar_call_count}회를 기록했다. "
+            "estimated_cost는 provider 설정의 단가가 0이면 0으로 남을 수 있다."
+        )
+    else:
+        cost_boundary = (
+            "현재 smoke run은 Solar Pro 3를 호출하지 않아 "
+            "solar_call_count와 estimated_cost가 0이다."
+        )
     return {
         "harness_scope": (
             "CitationRagAnswer를 query grain의 정량 metric으로 변환하는 평가 계층을 구현했다."
@@ -438,9 +448,7 @@ def build_generation_eval_qualitative_assessment(
         "abstain_boundary": (
             "no_answer query는 abstention_accuracy로 분리해 corpus 밖 질문 환각을 감시한다."
         ),
-        "cost_boundary": (
-            "현재 smoke run은 Solar Pro 3를 호출하지 않아 solar_call_count와 estimated_cost가 0이다."
-        ),
+        "cost_boundary": cost_boundary,
         "public_policy": (
             "public row와 report에는 원문 evidence, chunk text, raw answer text를 저장하지 않는다."
         ),
