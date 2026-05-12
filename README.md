@@ -241,6 +241,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `place_story` target grain 및 top-rank coverage 개선 계획을 추가했다. 현재 결정은 청킹 재실험 보류다. 먼저 `place_story` 전체 dev query에서 child, parent, doc grain별 coverage와 min rank를 진단하고, hard subset을 정의한 뒤 deterministic rewrite 또는 parent/doc context boost를 비교한다. Solar Pro 3 v2 prompt repair는 retrieval 입력 품질을 개선한 뒤 재검토한다.
 
+`place_story` 전체 dev query 10개에 대한 target grain coverage 진단을 실행했다. `target_child_recall_at_5=0.600000`, `target_parent_recall_at_5=0.600000`, `target_doc_recall_at_5=0.900000`, `hard_case_count=4`, `doc_only_covered_count=3`, `full_grain_miss_count=1`, `recommended_decision=repair_top_rank_retrieval_coverage`다. 따라서 다음 작업은 청킹 재실험이 아니라 hard subset을 기준으로 deterministic rewrite v2 또는 parent/doc context boost를 비교하는 것이다. Solar Pro 3 추가 호출은 없었다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -301,6 +303,7 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 | [Place Story Hard-case Analysis](docs/PLACE_STORY_HARD_CASE_ANALYSIS.md) | `place_story` 실패 query의 retrieval, evidence pack, generation regression 경계 진단 |
 | [Place Story Hard-case Analysis Report](evals/reports/place_story_hard_case_analysis_report.md) | `q-dev-place-story-001` target coverage, rank, failure tag, public-safe gate 결과 |
 | [Place Story Target Grain and Coverage Plan](docs/PLACE_STORY_TARGET_GRAIN_AND_COVERAGE_PLAN.md) | `place_story` target grain 정책, top-rank coverage 개선 후보, 청킹 재실험 재개 조건 |
+| [Place Story Target Grain Coverage Report](evals/reports/place_story_target_grain_coverage_report.md) | `place_story` dev 10개 target grain별 coverage, hard-case tag, public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |

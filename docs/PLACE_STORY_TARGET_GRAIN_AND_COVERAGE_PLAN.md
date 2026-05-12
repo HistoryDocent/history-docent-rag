@@ -79,12 +79,38 @@
 
 | 순서 | 작업 | 통과 기준 |
 | --- | --- | --- |
-| 1 | `place_story` 전체 dev query의 target grain coverage 진단 | child/parent/doc coverage와 min rank가 query별로 기록됨 |
+| 1 | `place_story` 전체 dev query의 target grain coverage 진단 | 완료. child/parent/doc coverage와 min rank가 query별로 기록됨 |
 | 2 | hard-case subset 정의 | child+parent miss 또는 target rank 4 이상 query를 분리 |
 | 3 | deterministic rewrite v2 비교 | hard subset에서 child 또는 parent `Recall@5` 개선 |
 | 4 | parent/doc context boost 비교 | top-rank 지표가 좋아지고 latency 악화가 제한적임 |
 | 5 | story-aware packing 비교 | citation recoverability 유지, duplicate parent rate 악화 없음 |
 | 6 | Solar Pro 3 v2 prompt repair 재검토 | retrieval 입력 품질 개선 후에만 live paired comparison 수행 |
+
+## HD-PLACE-STORY-006 실행 결과
+
+`place_story` 전체 dev query 10개를 대상으로 target grain coverage diagnostic runner를 실행했다.
+
+| metric | value |
+| --- | ---: |
+| analyzed_query_count | 10 |
+| target_child_recall_at_5 | 0.600000 |
+| target_parent_recall_at_5 | 0.600000 |
+| target_doc_recall_at_5 | 0.900000 |
+| child_or_parent_recall_at_5 | 0.600000 |
+| hard_case_count | 4 |
+| doc_only_covered_count | 3 |
+| full_grain_miss_count | 1 |
+| MRR | 0.770000 |
+| nDCG@5 | 0.616818 |
+| latency_p95_ms | 54.415800 |
+| citation_recoverability_avg | 1.000000 |
+| recommended_decision | `repair_top_rank_retrieval_coverage` |
+
+정성 판단:
+
+- 청킹 재실험을 즉시 재개하지 않는다.
+- doc-level coverage는 높지만 child/parent coverage가 낮아 generation에 직접 쓰기 좋은 근거가 부족하다.
+- 다음 작업은 hard subset을 고정하고 deterministic rewrite v2 또는 parent/doc context boost를 비교하는 것이다.
 
 ## 정량 Gate
 
