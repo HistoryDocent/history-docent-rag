@@ -82,7 +82,9 @@
 - [x] Solar Pro 3 generation v2 trade-off 원인 분석
 - [ ] Solar Pro 3 generation v2 prompt repair 계획 작성
 - [x] `place_story` retrieval hard-case 원인 분석
-- [ ] `place_story` target grain 및 top-rank coverage 개선 계획 작성
+- [x] `place_story` target grain 및 top-rank coverage 개선 계획 작성
+- [ ] `place_story` 전체 dev query target grain coverage diagnostic runner 구현
+- [ ] `place_story` top-rank retrieval coverage 개선 후보 비교 실험
 
 ## Experiments
 

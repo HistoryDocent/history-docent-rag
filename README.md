@@ -239,6 +239,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `place_story` hard-case 원인 진단을 추가했다. `q-dev-place-story-001`은 target doc은 retrieval/evidence pack에 들어왔지만 target child와 target parent는 빠졌고, target doc도 retrieval rank 5, pack rank 5에 위치했다. 동시에 v2 generation correctness와 unsupported claim regression이 발생했다. 따라서 현재 root cause는 `target_grain_mismatch`로 기록하며, 전체 청킹 재실험보다 `place_story` judgment target grain과 top-rank retrieval coverage를 먼저 점검한다.
 
+`place_story` target grain 및 top-rank coverage 개선 계획을 추가했다. 현재 결정은 청킹 재실험 보류다. 먼저 `place_story` 전체 dev query에서 child, parent, doc grain별 coverage와 min rank를 진단하고, hard subset을 정의한 뒤 deterministic rewrite 또는 parent/doc context boost를 비교한다. Solar Pro 3 v2 prompt repair는 retrieval 입력 품질을 개선한 뒤 재검토한다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -298,6 +300,7 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 | [Solar Pro 3 Generation v2 Trade-off Analysis Report](evals/reports/solar_generation_v2_tradeoff_analysis_report.md) | 기존 live comparison metric rows 기반 query-level failure tag와 public-safe gate 결과 |
 | [Place Story Hard-case Analysis](docs/PLACE_STORY_HARD_CASE_ANALYSIS.md) | `place_story` 실패 query의 retrieval, evidence pack, generation regression 경계 진단 |
 | [Place Story Hard-case Analysis Report](evals/reports/place_story_hard_case_analysis_report.md) | `q-dev-place-story-001` target coverage, rank, failure tag, public-safe gate 결과 |
+| [Place Story Target Grain and Coverage Plan](docs/PLACE_STORY_TARGET_GRAIN_AND_COVERAGE_PLAN.md) | `place_story` target grain 정책, top-rank coverage 개선 후보, 청킹 재실험 재개 조건 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
