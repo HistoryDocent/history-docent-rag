@@ -84,7 +84,8 @@
 - [x] `place_story` retrieval hard-case 원인 분석
 - [x] `place_story` target grain 및 top-rank coverage 개선 계획 작성
 - [x] `place_story` 전체 dev query target grain coverage diagnostic runner 구현
-- [ ] `place_story` top-rank retrieval coverage 개선 후보 비교 실험
+- [x] `place_story` top-rank retrieval coverage 개선 후보 비교 실험
+- [ ] `parent_doc_context_boost` full place_story/dev 재검증 및 generation 입력 영향 분석
 
 ## Experiments
 

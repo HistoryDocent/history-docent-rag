@@ -243,6 +243,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `place_story` 전체 dev query 10개에 대한 target grain coverage 진단을 실행했다. `target_child_recall_at_5=0.600000`, `target_parent_recall_at_5=0.600000`, `target_doc_recall_at_5=0.900000`, `hard_case_count=4`, `doc_only_covered_count=3`, `full_grain_miss_count=1`, `recommended_decision=repair_top_rank_retrieval_coverage`다. 따라서 다음 작업은 청킹 재실험이 아니라 hard subset을 기준으로 deterministic rewrite v2 또는 parent/doc context boost를 비교하는 것이다. Solar Pro 3 추가 호출은 없었다.
 
+`place_story` hard subset 4개에서 top-rank coverage repair 후보를 비교했다. `parent_doc_context_boost`는 baseline 대비 `child_or_parent_recall_at_5`를 `0.000000`에서 `0.250000`으로 올렸고 `doc_only_covered_count`를 3에서 1로 줄였다. 다만 `target_doc_recall_at_5`, `MRR`, `nDCG@5`는 악화되어 최종 기본 검색 전략으로 즉시 채택하지 않는다. 이 결과는 retrieval repair 후보 선별이며 locked test 또는 Solar Pro 3 generation 품질 개선 주장이 아니다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.

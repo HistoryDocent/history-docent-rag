@@ -112,6 +112,23 @@
 - doc-level coverage는 높지만 child/parent coverage가 낮아 generation에 직접 쓰기 좋은 근거가 부족하다.
 - 다음 작업은 hard subset을 고정하고 deterministic rewrite v2 또는 parent/doc context boost를 비교하는 것이다.
 
+## HD-PLACE-STORY-007 실행 결과
+
+`place_story` hard subset 4개를 고정하고 baseline, deterministic rewrite v2, parent/doc context boost를 비교했다.
+
+| strategy_id | child_or_parent@5 | child@5 | parent@5 | doc@5 | doc_only | full_miss | hard_case | MRR | nDCG@5 | latency_p95_ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `baseline_dense_e5_voice_rewrite` | 0.000000 | 0.000000 | 0.000000 | 0.750000 | 3 | 1 | 4 | 0.425000 | 0.288679 | 16.814800 |
+| `place_story_rewrite_v2` | 0.000000 | 0.000000 | 0.000000 | 0.750000 | 3 | 1 | 4 | 0.550000 | 0.202381 | 18.885900 |
+| `parent_doc_context_boost` | 0.250000 | 0.250000 | 0.250000 | 0.500000 | 1 | 2 | 3 | 0.208333 | 0.207605 | 15.864400 |
+
+판단:
+
+- `parent_doc_context_boost`는 hard subset에서 child/parent 직접 근거 coverage를 개선해 채택 후보로 둔다.
+- `place_story_rewrite_v2`는 MRR은 올렸지만 child/parent coverage를 개선하지 못해 단독 후보로 채택하지 않는다.
+- `parent_doc_context_boost`는 doc coverage, MRR, nDCG@5를 악화시켰으므로 production 기본값으로 즉시 고정하지 않는다.
+- 다음 단계는 full `place_story` dev query에서 같은 후보를 재검증하고, generation 입력 품질에 미치는 영향을 확인하는 것이다.
+
 ## 정량 Gate
 
 최소 기록 metric:
@@ -187,13 +204,13 @@ dimension 후보:
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
-| HD-PLACE-STORY-006 | `PLACE_STORY_HARD_CASE_ANALYSIS` | `place_story` 전체 dev query의 child/parent/doc coverage diagnostic runner 구현 | pytest 통과, public-safe report 생성, leakage count 0 | Medium | runner와 report만 revert |
-| HD-PLACE-STORY-007 | HD-PLACE-STORY-006 | hard subset 정의 및 rewrite/boost 후보 비교 계획 확정 | hard-case count와 baseline metric 기록 | Medium | 문서와 config만 revert |
-| HD-PLACE-STORY-008 | HD-PLACE-STORY-007 | deterministic rewrite v2 또는 parent/doc context boost 중 1개 후보 구현 | paired comparison report 생성, latency 기록 | Medium | strategy flag 비활성화 |
+| HD-PLACE-STORY-006 | `PLACE_STORY_HARD_CASE_ANALYSIS` | `place_story` 전체 dev query의 child/parent/doc coverage diagnostic runner 구현 | 완료. pytest 통과, public-safe report 생성, leakage count 0 | Medium | runner와 report만 revert |
+| HD-PLACE-STORY-007 | HD-PLACE-STORY-006 | hard subset 기준 rewrite/boost 후보 비교 | 완료. paired comparison report 생성, latency 기록, leakage count 0 | Medium | strategy flag 비활성화 |
+| HD-PLACE-STORY-008 | HD-PLACE-STORY-007 | `parent_doc_context_boost` full `place_story` dev 재검증 및 generation 입력 영향 분석 | full place_story report 생성, target grain metric 기록, generation 입력 citation 품질 기록 | Medium | 후보 strategy 비활성화 |
 | HD-SOLAR-009 | HD-PLACE-STORY-008 | Solar Pro 3 v2 prompt repair 재검토 | retrieval 개선 후 live paired comparison 계획 승인 | High | live call 실행 전 중단 |
 
 ## 결정
 
-다음 구현 우선순위는 `HD-PLACE-STORY-006`이다.
+다음 구현 우선순위는 `HD-PLACE-STORY-008`이다.
 
-청킹 비교 테스트는 보류한다. 다만 `HD-PLACE-STORY-006` 결과에서 child/parent miss가 반복되고 parent/doc 안에 evidence가 묻히는 패턴이 확인되면, 그때 `place_story` hard subset 전용 chunking 비교를 재개한다.
+청킹 비교 테스트는 계속 보류한다. `parent_doc_context_boost`가 full `place_story` dev에서도 child/parent coverage를 개선하는지 확인한 뒤, generation 입력 품질이 좋아지지 않으면 그때 `place_story` hard subset 전용 chunking 비교를 재개한다.
