@@ -549,6 +549,34 @@ contract gate 결과:
 
 `CitationRagAnswerAssembler`는 LLM provider가 만든 draft를 evidence pack과 결합해 public-safe answer contract로 변환한다. 현재 단계는 generation 품질 평가가 아니라 API/평가 계약 고정이다. Solar Pro 3 provider와 generation eval harness는 이 계약을 만족해야 한다.
 
+generation eval harness 실행 결과 v1:
+
+Solar Pro 3 provider를 붙이기 전에 `citation-rag-answer/v1` 결과를 평가 metric으로 변환하는 harness를 고정했다.
+
+| metric | value |
+| --- | ---: |
+| eval_count | 2 |
+| answerable_count | 1 |
+| no_answer_count | 1 |
+| Correct-with-Evidence | 1.000000 |
+| citation_precision | 1.000000 |
+| citation_recall | 1.000000 |
+| place_relevance | 1.000000 |
+| docent_usefulness | 1.000000 |
+| spoken_answer_naturalness | 1.000000 |
+| unsupported_claim_rate | 0.000000 |
+| abstention_accuracy | 1.000000 |
+| latency_p95_ms | 0.000000 |
+| solar_call_count | 0 |
+| estimated_cost | 0.000000 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+결론:
+
+이 수치는 실제 Solar Pro 3 답변 품질 주장이 아니다. 현재 결과는 contract-only smoke run이며, 평가 grain과 public-safe output gate를 검증한 것이다. 다음 단계에서 Solar Pro 3 provider를 연결할 때도 동일한 metric과 report 형식을 사용한다.
+
 metric:
 
 - `Correct-with-Evidence`
@@ -678,8 +706,8 @@ latency/cost 악화 설명 없음
 9. place-aware deterministic query expansion 완료
 10. evidence packing 비교 완료
 11. citation RAG answer contract 완료
-12. Solar Pro 3 provider
-13. generation eval harness
+12. generation eval harness 완료
+13. Solar Pro 3 provider
 14. Qdrant production candidate
 15. RAPTOR-lite
 16. GraphRAG-lite
