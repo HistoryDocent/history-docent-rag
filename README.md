@@ -213,6 +213,8 @@ Reranker comparison v1을 추가했고, private dev split 70개에서 `dense_mul
 
 Query rewrite comparison v1을 추가했고, private dev split 70개에서 `dense_multilingual_e5_small`, 전체 place rewrite, voice-only rewrite를 비교했다. 전체 place rewrite는 `Recall@5=0.833333`으로 올랐지만 `place_fact`, `place_story`, `route_context`의 top-rank 품질이 일부 악화됐다. `dense_multilingual_e5_small_voice_rewrite`는 `Recall@5=0.850000`, `MRR=0.758056`, `nDCG@5=0.615293`, `latency_p95_ms=19.560200`을 기록했고 `voice_followup Recall@5`를 0.300000에서 1.000000으로 올렸다. 이 결과는 dev-only 후보 선별이며 locked test와 generation 평가 전의 최종 개선 주장이 아니다.
 
+Evidence packing comparison v1을 추가했고, private dev split 70개에서 `dense_multilingual_e5_small_voice_rewrite` 검색 결과를 고정한 뒤 P0-P4 packing 정책을 비교했다. `P0_rank_order`와 `P3_mmr_diversity`가 `target_child_covered=0.850000`, `target_parent_covered=0.866667`, `target_doc_covered=0.950000`, `citation_recoverability=1.000000`으로 가장 높았다. `P3`의 개선은 duplicate parent rate를 0.127857에서 0.124286으로 낮춘 수준이라 generation 전 기본 교체 근거가 부족하다. 따라서 citation RAG generation v1 기본값은 `P0_rank_order`로 유지하고, `P3`는 diversity 후보로 둔다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -256,6 +258,7 @@ Query rewrite comparison v1을 추가했고, private dev split 70개에서 `dens
 | [Neural Dense Hybrid Retrieval Comparison Report](evals/reports/neural_dense_hybrid_retrieval_comparison_report.md) | E5-small/BGE-M3 dense leg 기반 Hybrid RRF/Weighted 비교 결과 |
 | [Reranker Retrieval Comparison Report](evals/reports/reranker_retrieval_comparison_report.md) | E5-small dense 후보와 BGE reranker top20 비교 결과 |
 | [Query Rewrite Retrieval Comparison Report](evals/reports/query_rewrite_retrieval_comparison_report.md) | E5-small dense와 deterministic place/voice rewrite 비교 결과 |
+| [Evidence Packing Comparison Report](evals/reports/evidence_packing_comparison_report.md) | 고정된 retrieval 결과 위에서 P0-P4 evidence packing 정책 비교 결과 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |

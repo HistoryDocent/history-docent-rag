@@ -478,6 +478,24 @@ unsupported_claim_rate 감소
 Correct-with-Evidence 개선
 ```
 
+실행 결과 v1:
+
+private dev split 70개에서 `dense_multilingual_e5_small_voice_rewrite` retrieval 결과를 고정하고, LLM 호출 없이 evidence packing 정책만 비교했다.
+
+| ID | policy | target_child_covered | target_parent_covered | target_doc_covered | citation_recoverability | context_chars_p95 | duplicate_parent_rate | order_relevance_proxy | 판단 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `P0` | rank order | 0.850000 | 0.866667 | 0.950000 | 1.000000 | 4154 | 0.127857 | 0.898333 | v1 기본값 유지 |
+| `P1` | parent expansion | 0.800000 | 0.816667 | 0.916667 | 1.000000 | 4105 | 0.352381 | 0.886111 | 중복 증가와 coverage 악화 |
+| `P2` | best evidence first with parent | 0.800000 | 0.800000 | 0.916667 | 1.000000 | 4089 | 0.342857 | 0.886111 | 중복 증가와 coverage 악화 |
+| `P3` | MMR diversity | 0.850000 | 0.866667 | 0.950000 | 1.000000 | 4154 | 0.124286 | 0.899167 | P0와 거의 동률, diversity 후보 |
+| `P4` | voice compact | 0.833333 | 0.850000 | 0.950000 | 1.000000 | 4154 | 0.097857 | 0.898333 | voice context 절약 후보, coverage 소폭 손실 |
+
+결론:
+
+`P0_rank_order`를 citation RAG generation v1의 기본 evidence packing으로 유지한다. `P3_mmr_diversity`는 duplicate parent를 아주 조금 낮췄지만 coverage와 context budget이 P0와 사실상 동률이라, generation 전 기본 교체 근거가 부족하다. `P1_parent_expansion`과 `P2_best_first_with_parent`는 parent context를 넓히는 대신 중복을 키우고 target coverage가 하락했다. `P4_voice_compact`는 `voice_followup`에서 context를 줄이는 후보지만 target coverage 손실이 있어 기본값이 아니라 후속 voice-only 실험군으로 둔다.
+
+이 결과는 generation 품질 개선 주장이 아니다. `Correct-with-Evidence`, `citation_precision`, `unsupported_claim_rate`는 Solar Pro 3 generation 단계에서 별도로 측정한다.
+
 ## Stage 7. Solar Pro 3 Generation
 
 목적:
@@ -625,12 +643,13 @@ latency/cost 악화 설명 없음
 8. neural dense 기반 Hybrid/Reranker 비교
 8. reranker comparison
 9. place-aware deterministic query expansion 완료
-10. Solar Pro 3 answer contract
-11. generation eval harness
-12. Qdrant production candidate
-13. RAPTOR-lite
-14. GraphRAG-lite
-15. final ablation report
+10. evidence packing 비교 완료
+11. Solar Pro 3 answer contract
+12. generation eval harness
+13. Qdrant production candidate
+14. RAPTOR-lite
+15. GraphRAG-lite
+16. final ablation report
 
 ## 포트폴리오 메시지
 

@@ -61,7 +61,7 @@
 - [x] place-aware query rewrite 구현
 - [ ] reranker top30/top50 장시간 실험
 - [ ] smaller reranker 후보 비교
-- [ ] evidence packing 비교 구현
+- [x] evidence packing 비교 구현
 - [ ] citation RAG answer contract 구현
 - [ ] generation evaluation harness 구현
 - [ ] Solar Pro 3 provider 구현
