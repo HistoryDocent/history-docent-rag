@@ -670,7 +670,35 @@ private `parent_child_chunks` artifact와 `dense_multilingual_e5_small_voice_rew
 
 결론:
 
-API와 실제 private retrieval backend 사이의 연결은 smoke 기준 통과했다. 단, 답변 본문은 아직 Solar Pro 3 live generation이 아니라 contract draft이므로 역사 해설 품질 또는 최종 RAG 성능으로 주장하지 않는다. 다음 단계는 Solar Pro 3 live generation을 private dev subset에 제한적으로 연결하고 generation gate를 측정하는 것이다.
+API와 실제 private retrieval backend 사이의 연결은 smoke 기준 통과했다. 단, 답변 본문은 아직 Solar Pro 3 live generation이 아니라 contract draft이므로 역사 해설 품질 또는 최종 RAG 성능으로 주장하지 않는다.
+
+Solar Pro 3 live generation smoke 결과:
+
+private dev subset 2건을 사용해 retrieval-backed evidence를 Solar Pro 3 structured output provider에 전달하고, citation RAG answer contract와 generation eval harness를 통과하는지 확인했다.
+
+| metric | value |
+| --- | ---: |
+| eval_count | 2 |
+| answerable_count | 1 |
+| no_answer_count | 1 |
+| Correct-with-Evidence | 1.000000 |
+| citation_precision | 0.200000 |
+| citation_recall | 0.500000 |
+| place_relevance | 0.500000 |
+| docent_usefulness | 0.500000 |
+| spoken_answer_naturalness | 0.500000 |
+| unsupported_claim_rate | 0.000000 |
+| abstention_accuracy | 1.000000 |
+| latency_p95_ms | 13524.912600 |
+| solar_call_count | 1 |
+| total_tokens | 2476 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+결론:
+
+live provider 연결과 public-safe generation report 생성은 통과했다. 다만 smoke 크기가 작고 `/chat with Solar Pro 3` SLO 후보 8000ms를 초과했으며 `spoken_answer_naturalness=0.500000`이라, 품질 개선이나 운영 가능성 주장으로 사용하지 않는다. 다음 단계는 generation 평가셋 확장, prompt/answer contract 개선, latency 원인 분리다.
 
 metric:
 

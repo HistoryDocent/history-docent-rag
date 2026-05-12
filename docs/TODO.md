@@ -69,7 +69,7 @@
 - [x] FastAPI `/chat` retrieval-backed integration 구현
 - [x] private dense retrieval smoke report 생성
 - [x] Solar Pro 3 live generation smoke runner 구현
-- [ ] `UPSTAGE_API_KEY` 주입 후 Solar Pro 3 live generation smoke report 생성
+- [x] `UPSTAGE_API_KEY` 주입 후 Solar Pro 3 live generation smoke report 생성
 
 ## Experiments
 

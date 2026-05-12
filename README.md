@@ -225,7 +225,7 @@ FastAPI `/api/v1/chat` contract v1을 추가했다. 현재 API는 contract-only 
 
 FastAPI `/api/v1/chat` retrieval-backed integration v1을 추가했다. `retrieval_mode=retrieval_backed` 요청은 retrieval outcome, `P0_rank_order` evidence packing, citation answer assembler를 거쳐 동일한 ChatResponse로 반환된다. public fixture integration report 기준 `retrieval_backed_request_count=2`, `retrieval_success_count=1`, `citation_count=2`, leakage gate는 0이다. local private smoke에서는 `dense_multilingual_e5_small_voice_rewrite` backend가 실제 private corpus에서 `retrieval_candidate_count=5`, `citation_count=5`, `live_solar_call_count=0`을 기록했다. 이 결과는 API 연결 smoke이며, Solar Pro 3 답변 품질 주장이 아니다.
 
-Solar Pro 3 live generation smoke runner를 추가했다. runner는 private dev subset의 retrieval-backed evidence를 Solar Pro 3 structured output provider에 전달하고, 결과를 citation RAG answer contract와 generation eval harness로 평가한다. 현재 세션에는 `UPSTAGE_API_KEY`가 없어 live API 호출과 live report 생성은 실행하지 않았다.
+Solar Pro 3 live generation smoke를 private dev subset 2건으로 실행했다. `solar_call_count=1`, `Correct-with-Evidence=1.000000`, `citation_precision=0.200000`, `citation_recall=0.500000`, `abstention_accuracy=1.000000`, `unsupported_claim_rate=0.000000`, `latency_p95_ms=13524.912600`을 기록했고 public-safe gate는 모두 0으로 통과했다. 이 결과는 live provider 연결 smoke이며, 작은 subset 결과라 답변 품질 개선 주장으로 사용하지 않는다.
 
 ## 실행 전략
 
@@ -274,6 +274,7 @@ Solar Pro 3 live generation smoke runner를 추가했다. runner는 private dev 
 | [Citation RAG Answer Contract Report](evals/reports/citation_rag_answer_contract_report.md) | Solar Pro 3 연결 전 citation RAG 응답 계약과 public-safe gate 결과 |
 | [Generation Evaluation Harness Report](evals/reports/generation_eval_harness_report.md) | Solar Pro 3 연결 전 citation RAG 답변 평가 metric과 public-safe gate 결과 |
 | [Solar Pro 3 Provider Contract Report](evals/reports/solar_pro_3_provider_contract_report.md) | Solar Pro 3 provider의 structured output, secret boundary, public-safe gate 결과 |
+| [Solar Pro 3 Live Generation Smoke Report](evals/reports/solar_live_generation_smoke_report.md) | private dev subset 기반 Solar Pro 3 live 연결 smoke와 public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
