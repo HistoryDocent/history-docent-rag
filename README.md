@@ -278,6 +278,7 @@ Solar Pro 3 generation baseline을 private dev stratified subset 7건으로 실�
 | [Solar Pro 3 Provider Contract Report](evals/reports/solar_pro_3_provider_contract_report.md) | Solar Pro 3 provider의 structured output, secret boundary, public-safe gate 결과 |
 | [Solar Pro 3 Live Generation Smoke Report](evals/reports/solar_live_generation_smoke_report.md) | private dev subset 기반 Solar Pro 3 live 연결 smoke와 public-safe gate 결과 |
 | [Solar Pro 3 Generation Baseline Report](evals/reports/solar_generation_baseline_report.md) | query type별 Solar Pro 3 generation baseline과 failure tag 결과 |
+| [Solar Pro 3 Generation Failure Analysis](docs/GENERATION_FAILURE_ANALYSIS.md) | generation baseline 실패 원인 분해와 다음 실험 우선순위 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
