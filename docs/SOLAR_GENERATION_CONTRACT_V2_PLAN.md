@@ -176,3 +176,10 @@ v2 후보 통과 기준:
 3. assembler v2에서 selected evidence만 citation으로 변환한다.
 4. fake provider 기반 paired comparison report test를 먼저 만든다.
 5. 별도 승인 후 live Solar Pro 3 paired comparison을 실행한다.
+
+## 진행 상태
+
+- `HD-GEN-V2-002`: 완료. `CitationRagDraftV2` schema와 provider mock response 계약을 검증했다.
+- `HD-GEN-V2-003`: 완료. assembler가 v2 selected evidence rank만 citation으로 변환한다.
+- `HD-GEN-V2-004`: 완료. fake provider 기반 v1/v2 paired comparison runner와 public-safe report를 추가했다.
+- `HD-GEN-V2-005`: 미진행. live Solar Pro 3 paired comparison은 별도 승인 후 실행한다.
