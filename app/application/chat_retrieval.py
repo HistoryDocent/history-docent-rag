@@ -29,6 +29,7 @@ from app.domain.retrieval import (
 )
 from app.infrastructure.index.dense import DenseRetrievalConfig, DenseRetriever
 from app.infrastructure.index.dense import SentenceTransformerEncoder
+from app.infrastructure.index.device import resolve_torch_device
 
 
 ChatRetrievalMode = Literal["contract_only", "retrieval_backed"]
@@ -367,7 +368,10 @@ def _load_sentence_transformer_encoder(
             "sentence-transformers is required for cached neural retrieval"
         ) from error
     encoder = SentenceTransformerEncoder(config=config)
-    encoder.model = SentenceTransformer(config.model_name or config.encoder_id, device=config.device)
+    encoder.model = SentenceTransformer(
+        config.model_name or config.encoder_id,
+        device=resolve_torch_device(config.device),
+    )
     return encoder
 
 

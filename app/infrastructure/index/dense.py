@@ -20,6 +20,7 @@ from app.domain.retrieval import (
     RetrievalRunResult,
 )
 from app.infrastructure.index.bm25 import bm25_tokenize
+from app.infrastructure.index.device import resolve_torch_device
 
 
 DENSE_ENCODER_ID = "sklearn-tfidf-svd-v1"
@@ -39,7 +40,7 @@ class DenseRetrievalConfig:
     encoder_id: str = DENSE_ENCODER_ID
     backend: DenseEncoderBackend = "sklearn_tfidf_svd"
     model_name: str | None = None
-    device: str = "cpu"
+    device: str = "auto"
     batch_size: int = 16
     query_prefix: str = ""
     document_prefix: str = ""
@@ -83,6 +84,7 @@ class DenseRetrievalConfig:
                 {
                     "model_name": self.model_name or self.encoder_id,
                     "device": self.device,
+                    "resolved_device": resolve_torch_device(self.device),
                     "batch_size": self.batch_size,
                     "query_prefix_enabled": bool(self.query_prefix),
                     "document_prefix_enabled": bool(self.document_prefix),
@@ -388,4 +390,7 @@ def _load_sentence_transformer_model(config: DenseRetrievalConfig) -> Any:
             "sentence-transformers is required for neural dense retrieval. "
             "Install the project with the neural optional dependencies."
         ) from error
-    return SentenceTransformer(config.model_name or config.encoder_id, device=config.device)
+    return SentenceTransformer(
+        config.model_name or config.encoder_id,
+        device=resolve_torch_device(config.device),
+    )

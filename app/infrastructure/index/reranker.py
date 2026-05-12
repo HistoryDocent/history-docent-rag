@@ -13,6 +13,7 @@ from app.domain.retrieval import (
     RetrievalMethod,
     RetrievalRunResult,
 )
+from app.infrastructure.index.device import resolve_torch_device
 
 
 RerankerBackend = Literal["sentence_transformers_cross_encoder"]
@@ -40,7 +41,7 @@ class RerankerConfig:
     reranker_id: str = "bge-reranker-v2-m3"
     backend: RerankerBackend = "sentence_transformers_cross_encoder"
     model_name: str = "BAAI/bge-reranker-v2-m3"
-    device: str = "cpu"
+    device: str = "auto"
     batch_size: int = 16
     candidate_k: int = 30
     include_doc_title: bool = True
@@ -74,6 +75,7 @@ class RerankerConfig:
                 "reranker_backend": self.backend,
                 "reranker_model_name": self.model_name,
                 "reranker_device": self.device,
+                "reranker_resolved_device": resolve_torch_device(self.device),
                 "reranker_batch_size": self.batch_size,
                 "reranker_include_doc_title": self.include_doc_title,
                 "reranker_include_context_text": self.include_context_text,
@@ -230,4 +232,4 @@ def _load_cross_encoder_model(config: RerankerConfig) -> Any:
             "sentence-transformers is required for CrossEncoder reranker. "
             "Install the neural optional dependency."
         ) from exc
-    return CrossEncoder(config.model_name, device=config.device)
+    return CrossEncoder(config.model_name, device=resolve_torch_device(config.device))
