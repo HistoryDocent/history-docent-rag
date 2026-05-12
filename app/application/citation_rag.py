@@ -8,6 +8,7 @@ from app.domain.generation import (
     Citation,
     CitationRagAnswer,
     CitationRagDraft,
+    CitationRagDraftV2,
     UnsupportedClaimRisk,
     build_citation_id,
     build_evidence_id,
@@ -60,12 +61,16 @@ class CitationRagAnswerAssembler:
             return self._abstained_answer(item=item, place_ids=place_ids or ())
         if draft is None:
             raise ValueError("answer draft is required for non-abstained answer")
+        citation_evidence = _select_citation_evidence(
+            evidence_pack=evidence_pack,
+            draft=draft,
+        )
         citations = tuple(
             _citation_from_evidence(
                 query_id=item.query.query_id,
                 evidence=evidence,
             )
-            for evidence in evidence_pack.evidence
+            for evidence in citation_evidence
         )
         evidence_ids = tuple(citation.evidence_id for citation in citations)
         return CitationRagAnswer(
@@ -145,3 +150,20 @@ def _citation_from_evidence(
         citation_recoverable=evidence.citation_recoverable,
     )
 
+
+def _select_citation_evidence(
+    *,
+    evidence_pack: EvidencePack,
+    draft: CitationRagDraft,
+) -> tuple[PackedEvidence, ...]:
+    if not isinstance(draft, CitationRagDraftV2):
+        return evidence_pack.evidence
+
+    evidence_by_rank = {evidence.pack_rank: evidence for evidence in evidence_pack.evidence}
+    missing_ranks = sorted(
+        rank for rank in draft.used_evidence_pack_ranks if rank not in evidence_by_rank
+    )
+    if missing_ranks:
+        joined_ranks = ", ".join(str(rank) for rank in missing_ranks)
+        raise ValueError(f"used_evidence_pack_ranks must exist in evidence_pack: {joined_ranks}")
+    return tuple(evidence_by_rank[rank] for rank in draft.used_evidence_pack_ranks)

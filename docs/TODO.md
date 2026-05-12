@@ -76,7 +76,7 @@
 - [x] generation prompt/answer contract v2 비교 계획 작성
 - [x] `CitationRagDraftV2` schema와 provider mock test 구현
 - [x] `CitationRagDraftV2` schema 검증 리포트 작성
-- [ ] assembler v2 selected evidence citation filtering 구현
+- [x] assembler v2 selected evidence citation filtering 구현
 - [ ] Solar Pro 3 generation v1/v2 paired comparison runner 구현
 - [ ] Solar Pro 3 generation 개선 전후 paired comparison
 - [ ] `place_story` retrieval hard-case 원인 분석

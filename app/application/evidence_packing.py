@@ -349,10 +349,8 @@ class EvidencePacker:
                 remaining,
                 key=lambda item: (
                     ((item.score - min_score) / score_range)
-                    - self.config.duplicate_parent_penalty
-                    * int(item.parent_id in seen_parents)
-                    - self.config.duplicate_doc_penalty
-                    * int(item.doc_id in seen_docs),
+                    - self.config.duplicate_parent_penalty * int(item.parent_id in seen_parents)
+                    - self.config.duplicate_doc_penalty * int(item.doc_id in seen_docs),
                     -item.source_rank,
                 ),
             )
@@ -415,11 +413,15 @@ def build_evidence_corpus_from_chunks_payload(payload: dict[str, Any]) -> Eviden
         child_id = _required_str(child, "child_id")
         source_block_ids = tuple(_string_list(child.get("source_block_ids", [])))
         citation_refs = child.get("citation_refs", [])
-        citation_block_ids = tuple(
-            ref.get("block_id")
-            for ref in citation_refs
-            if isinstance(ref, dict) and isinstance(ref.get("block_id"), str)
-        )
+        citation_block_id_values: list[str] = []
+        if isinstance(citation_refs, list):
+            for ref in citation_refs:
+                if not isinstance(ref, dict):
+                    continue
+                block_id = ref.get("block_id")
+                if isinstance(block_id, str):
+                    citation_block_id_values.append(block_id)
+        citation_block_ids = tuple(citation_block_id_values)
         children_by_id[child_id] = EvidenceCandidate(
             source_rank=1,
             retrieval_doc_id=child_id,
@@ -455,8 +457,7 @@ def build_evidence_corpus_from_chunks_payload(payload: dict[str, Any]) -> Eviden
             for child in sorted(children_by_id.values(), key=lambda item: item.child_id)
         ],
         "parents": {
-            parent_id: child_ids
-            for parent_id, child_ids in sorted(child_ids_by_parent.items())
+            parent_id: child_ids for parent_id, child_ids in sorted(child_ids_by_parent.items())
         },
     }
     return EvidenceCorpus(
@@ -611,7 +612,10 @@ def summarize_packs_by_policy(
                     [float(len(pack.evidence)) for pack in policy_packs],
                 ),
                 avg_unique_parent_count=_mean(
-                    [float(len({item.parent_id for item in pack.evidence})) for pack in policy_packs],
+                    [
+                        float(len({item.parent_id for item in pack.evidence}))
+                        for pack in policy_packs
+                    ],
                 ),
                 avg_unique_doc_count=_mean(
                     [float(len({item.doc_id for item in pack.evidence})) for pack in policy_packs],
@@ -694,9 +698,7 @@ def build_policy_deltas(
     summaries: tuple[EvidencePackingPolicySummary, ...],
     baseline_policy_id: EvidencePackingPolicyId,
 ) -> list[EvidencePackingComparisonDelta]:
-    baseline = next(
-        summary for summary in summaries if summary.policy_id == baseline_policy_id
-    )
+    baseline = next(summary for summary in summaries if summary.policy_id == baseline_policy_id)
     deltas: list[EvidencePackingComparisonDelta] = []
     for summary in summaries:
         deltas.append(
@@ -708,8 +710,7 @@ def build_policy_deltas(
                     6,
                 ),
                 target_parent_covered_rate_delta=round(
-                    summary.target_parent_covered_rate
-                    - baseline.target_parent_covered_rate,
+                    summary.target_parent_covered_rate - baseline.target_parent_covered_rate,
                     6,
                 ),
                 target_doc_covered_rate_delta=round(
@@ -717,8 +718,7 @@ def build_policy_deltas(
                     6,
                 ),
                 citation_recoverability_rate_delta=round(
-                    summary.citation_recoverability_rate
-                    - baseline.citation_recoverability_rate,
+                    summary.citation_recoverability_rate - baseline.citation_recoverability_rate,
                     6,
                 ),
                 duplicate_parent_rate_delta=round(
@@ -731,8 +731,7 @@ def build_policy_deltas(
                     6,
                 ),
                 estimated_context_chars_p95_delta=(
-                    summary.estimated_context_chars_p95
-                    - baseline.estimated_context_chars_p95
+                    summary.estimated_context_chars_p95 - baseline.estimated_context_chars_p95
                 ),
             ),
         )
@@ -928,8 +927,7 @@ def _build_default_policy_candidate_text(
         and best_coverage.target_doc_covered_rate == baseline.target_doc_covered_rate
     )
     small_order_gain = (
-        best_coverage.evidence_order_relevance_proxy
-        - baseline.evidence_order_relevance_proxy
+        best_coverage.evidence_order_relevance_proxy - baseline.evidence_order_relevance_proxy
         < 0.01
     )
     if same_coverage and small_order_gain:
@@ -1181,8 +1179,7 @@ def _string_list(value: Any) -> list[str]:
 
 def _dataset_fingerprint(items: list[RetrievalEvalItem]) -> str:
     payload = [
-        item.model_dump(mode="json")
-        for item in sorted(items, key=lambda item: item.query.query_id)
+        item.model_dump(mode="json") for item in sorted(items, key=lambda item: item.query.query_id)
     ]
     return _stable_digest(payload)
 

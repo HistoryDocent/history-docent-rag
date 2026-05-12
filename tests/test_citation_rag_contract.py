@@ -101,6 +101,62 @@ def _evidence_pack(
     )
 
 
+def _multi_evidence_pack() -> EvidencePack:
+    return _evidence_pack(
+        evidence=(
+            _packed_evidence(
+                pack_rank=1,
+                source_rank=1,
+                child_id="child-palace",
+                parent_id="parent-palace",
+                doc_id="doc-palace",
+                block_id="block-palace",
+            ),
+            _packed_evidence(
+                pack_rank=2,
+                source_rank=2,
+                child_id="child-unused",
+                parent_id="parent-unused",
+                doc_id="doc-unused",
+                block_id="block-unused",
+            ),
+            _packed_evidence(
+                pack_rank=3,
+                source_rank=3,
+                child_id="child-route",
+                parent_id="parent-route",
+                doc_id="doc-route",
+                block_id="block-route",
+            ),
+        ),
+    )
+
+
+def _packed_evidence(
+    *,
+    pack_rank: int,
+    source_rank: int,
+    child_id: str,
+    parent_id: str,
+    doc_id: str,
+    block_id: str,
+) -> PackedEvidence:
+    return PackedEvidence(
+        pack_rank=pack_rank,
+        source_rank=source_rank,
+        retrieval_doc_id=child_id,
+        child_id=child_id,
+        parent_id=parent_id,
+        doc_id=doc_id,
+        score=1.0 - (pack_rank * 0.01),
+        estimated_chars=300,
+        source_block_ids=(block_id,),
+        citation_block_ids=(block_id,),
+        citation_recoverable=True,
+        packing_reason="retrieval_rank_order",
+    )
+
+
 def test_citation_rag_assembler_builds_answer_contract_from_packed_evidence() -> None:
     assembler = CitationRagAnswerAssembler()
     answer = assembler.assemble(
@@ -120,6 +176,65 @@ def test_citation_rag_assembler_builds_answer_contract_from_packed_evidence() ->
     assert answer.citations[0].source_block_ids == ("block-palace",)
     assert answer.place_ids == ("gyeongbokgung",)
     assert answer.unsupported_claim_risk == "low"
+
+
+def test_citation_rag_assembler_v1_keeps_all_packed_evidence_as_citations() -> None:
+    assembler = CitationRagAnswerAssembler()
+    answer = assembler.assemble(
+        item=_eval_item(),
+        evidence_pack=_multi_evidence_pack(),
+        draft=build_contract_only_draft(
+            answer="경복궁은 한양 중심 궁궐이고 주변 동선과 함께 설명할 수 있습니다.",
+            spoken_answer="경복궁은 한양 중심 궁궐이고 주변 동선과 이어집니다.",
+            unsupported_claim_risk="low",
+        ),
+    )
+
+    assert tuple(citation.pack_rank for citation in answer.citations) == (1, 2, 3)
+    assert tuple(citation.child_id for citation in answer.citations) == (
+        "child-palace",
+        "child-unused",
+        "child-route",
+    )
+
+
+def test_citation_rag_assembler_v2_filters_citations_to_selected_pack_ranks() -> None:
+    assembler = CitationRagAnswerAssembler()
+    answer = assembler.assemble(
+        item=_eval_item(),
+        evidence_pack=_multi_evidence_pack(),
+        draft=CitationRagDraftV2(
+            answer="경복궁의 중심성은 궁궐 근거와 주변 동선 근거를 함께 보면 설명할 수 있습니다.",
+            spoken_answer="경복궁은 한양 중심 궁궐이고 주변 동선과 함께 이해하면 좋습니다.",
+            used_evidence_pack_ranks=(1, 3),
+            coverage_intent="multi_evidence",
+            unsupported_claim_risk="low",
+        ),
+    )
+
+    assert tuple(citation.pack_rank for citation in answer.citations) == (1, 3)
+    assert tuple(citation.child_id for citation in answer.citations) == (
+        "child-palace",
+        "child-route",
+    )
+    assert answer.evidence_ids == tuple(citation.evidence_id for citation in answer.citations)
+
+
+def test_citation_rag_assembler_v2_rejects_unknown_selected_pack_rank() -> None:
+    assembler = CitationRagAnswerAssembler()
+
+    with pytest.raises(ValueError, match="used_evidence_pack_ranks must exist"):
+        assembler.assemble(
+            item=_eval_item(),
+            evidence_pack=_multi_evidence_pack(),
+            draft=CitationRagDraftV2(
+                answer="경복궁의 중심성은 선택된 근거로 설명합니다.",
+                spoken_answer="경복궁은 선택된 근거로 설명합니다.",
+                used_evidence_pack_ranks=(1, 4),
+                coverage_intent="multi_evidence",
+                unsupported_claim_risk="low",
+            ),
+        )
 
 
 def test_citation_rag_assembler_abstains_without_evidence_for_no_answer_query() -> None:
