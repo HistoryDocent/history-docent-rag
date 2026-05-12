@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Protocol, get_args
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.domain.generation import CitationRagDraft, UnsupportedClaimRisk
+from app.domain.generation import CitationRagDraft, CoverageIntent, UnsupportedClaimRisk
 from app.domain.retrieval import QueryType
 
 
@@ -104,9 +104,53 @@ def build_citation_rag_draft_schema() -> dict[str, object]:
             },
             "unsupported_claim_risk": {
                 "type": "string",
-                "enum": list(UnsupportedClaimRisk.__args__),
+                "enum": list(get_args(UnsupportedClaimRisk)),
             },
         },
         "required": ["answer", "spoken_answer", "unsupported_claim_risk"],
+        "additionalProperties": False,
+    }
+
+
+def build_citation_rag_draft_v2_schema() -> dict[str, object]:
+    return {
+        "type": "object",
+        "properties": {
+            "answer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000,
+            },
+            "spoken_answer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1200,
+            },
+            "used_evidence_pack_ranks": {
+                "type": "array",
+                "items": {
+                    "type": "integer",
+                    "minimum": 1,
+                },
+                "minItems": 1,
+                "maxItems": 10,
+                "uniqueItems": True,
+            },
+            "coverage_intent": {
+                "type": "string",
+                "enum": list(get_args(CoverageIntent)),
+            },
+            "unsupported_claim_risk": {
+                "type": "string",
+                "enum": list(get_args(UnsupportedClaimRisk)),
+            },
+        },
+        "required": [
+            "answer",
+            "spoken_answer",
+            "used_evidence_pack_ranks",
+            "coverage_intent",
+            "unsupported_claim_risk",
+        ],
         "additionalProperties": False,
     }

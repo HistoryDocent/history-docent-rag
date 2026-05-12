@@ -4,9 +4,9 @@ import hashlib
 import json
 import re
 from collections import Counter
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, model_validator
 
 from app.domain.retrieval import QueryType
 from app.domain.retrieval_experiment import (
@@ -20,6 +20,8 @@ CITATION_RAG_CONTRACT_REPORT_VERSION = "citation-rag-contract-report/v1"
 
 UnsupportedClaimRisk = Literal["low", "medium", "high"]
 AnswerProviderKind = Literal["contract_only", "fake", "solar_pro_3"]
+CoverageIntent = Literal["focused", "multi_evidence", "abstain"]
+EvidencePackRank = Annotated[StrictInt, Field(ge=1)]
 
 _PRIVATE_PATH_PATTERN = re.compile(r"([A-Za-z]:[\\/]|\\\\[^\\/]+[\\/][^\\/]+)")
 _POSIX_PRIVATE_PATH_PATTERN = re.compile(
@@ -54,6 +56,20 @@ class CitationRagDraft(GenerationModel):
     def validate_public_text_safety(self) -> "CitationRagDraft":
         _validate_public_text_value(self.answer, field_name="answer")
         _validate_public_text_value(self.spoken_answer, field_name="spoken_answer")
+        return self
+
+
+class CitationRagDraftV2(CitationRagDraft):
+    used_evidence_pack_ranks: tuple[EvidencePackRank, ...] = Field(
+        min_length=1,
+        max_length=10,
+    )
+    coverage_intent: CoverageIntent
+
+    @model_validator(mode="after")
+    def validate_selected_evidence_contract(self) -> "CitationRagDraftV2":
+        if len(self.used_evidence_pack_ranks) != len(set(self.used_evidence_pack_ranks)):
+            raise ValueError("used_evidence_pack_ranks must be unique")
         return self
 
 
@@ -97,10 +113,7 @@ class CitationRagAnswer(GenerationModel):
     @model_validator(mode="after")
     def validate_answer_contract(self) -> "CitationRagAnswer":
         if self.contract_version != CITATION_RAG_ANSWER_CONTRACT_VERSION:
-            raise ValueError(
-                "contract_version must be "
-                f"{CITATION_RAG_ANSWER_CONTRACT_VERSION}"
-            )
+            raise ValueError(f"contract_version must be {CITATION_RAG_ANSWER_CONTRACT_VERSION}")
         _validate_public_text_value(self.answer, field_name="answer")
         _validate_public_text_value(self.spoken_answer, field_name="spoken_answer")
         if len(self.evidence_ids) != len(set(self.evidence_ids)):
@@ -177,10 +190,7 @@ def summarize_citation_rag_answers(
 ) -> CitationRagContractSummary:
     citation_count = sum(len(answer.citations) for answer in answers)
     recoverable_count = sum(
-        1
-        for answer in answers
-        for citation in answer.citations
-        if citation.citation_recoverable
+        1 for answer in answers for citation in answer.citations if citation.citation_recoverable
     )
     payload = [answer.model_dump(mode="json") for answer in answers]
     return CitationRagContractSummary(
@@ -348,9 +358,7 @@ def build_citation_rag_contract_qualitative_assessment(
 ) -> dict[str, str]:
     failures = collect_citation_rag_contract_failures(summary, output_quality)
     return {
-        "contract_scope": (
-            "citation RAG 응답 필드와 citation backtracking id 계약을 검증했다."
-        ),
+        "contract_scope": ("citation RAG 응답 필드와 citation backtracking id 계약을 검증했다."),
         "citation_boundary": (
             "citation은 answer text가 아니라 child_id, parent_id, doc_id, source_block_ids, citation_block_ids로 추적한다."
         ),
@@ -375,15 +383,11 @@ def _validate_public_text_value(value: str, *, field_name: str) -> None:
 
 
 def _count_private_path_leakage(payload: Any) -> int:
-    return sum(
-        1 for value in _iter_string_values(payload) if _contains_private_path(value)
-    )
+    return sum(1 for value in _iter_string_values(payload) if _contains_private_path(value))
 
 
 def _count_secret_like_leakage(payload: Any) -> int:
-    return sum(
-        1 for value in _iter_string_values(payload) if _contains_secret_like_value(value)
-    )
+    return sum(1 for value in _iter_string_values(payload) if _contains_secret_like_value(value))
 
 
 def _contains_private_path(value: str) -> bool:
@@ -425,4 +429,3 @@ def _stable_digest(payload: Any) -> str:
     return hashlib.sha256(
         json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
     ).hexdigest()[:16]
-

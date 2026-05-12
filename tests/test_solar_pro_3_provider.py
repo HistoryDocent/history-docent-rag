@@ -5,8 +5,8 @@ import json
 import httpx
 import pytest
 
-from app.domain.generation import CitationRagDraft
-from app.providers.llm.base import CitationDraftRequest
+from app.domain.generation import CitationRagDraft, CitationRagDraftV2
+from app.providers.llm.base import CitationDraftRequest, build_citation_rag_draft_v2_schema
 from app.providers.llm.solar_pro_3 import (
     DEFAULT_UPSTAGE_BASE_URL,
     SolarPro3CitationDraftProvider,
@@ -95,6 +95,48 @@ def test_solar_provider_builds_structured_request_and_parses_draft() -> None:
     assert payload["model"] == "solar-pro3"
     assert payload["response_format"]["type"] == "json_schema"
     assert payload["response_format"]["json_schema"]["strict"] is True
+
+
+def test_solar_provider_v2_mock_response_schema_contract() -> None:
+    schema = build_citation_rag_draft_v2_schema()
+    draft_payload = {
+        "answer": "경복궁은 한양 도성의 중심축을 설명할 때 사용할 수 있는 근거가 있습니다.",
+        "spoken_answer": "경복궁은 한양의 중심축을 이해하기 좋은 장소입니다.",
+        "used_evidence_pack_ranks": [1, 3],
+        "coverage_intent": "multi_evidence",
+        "unsupported_claim_risk": "low",
+    }
+    response_payload = {
+        "id": "mock-response-v2",
+        "model": "solar-pro3",
+        "choices": [
+            {
+                "message": {
+                    "content": json.dumps(draft_payload, ensure_ascii=False),
+                },
+                "finish_reason": "stop",
+            },
+        ],
+        "usage": {
+            "prompt_tokens": 20,
+            "completion_tokens": 8,
+            "total_tokens": 28,
+        },
+    }
+    content = response_payload["choices"][0]["message"]["content"]
+    draft = CitationRagDraftV2.model_validate(json.loads(content))
+
+    assert schema["properties"]["used_evidence_pack_ranks"]["uniqueItems"] is True
+    assert schema["required"] == [
+        "answer",
+        "spoken_answer",
+        "used_evidence_pack_ranks",
+        "coverage_intent",
+        "unsupported_claim_risk",
+    ]
+    assert draft.used_evidence_pack_ranks == (1, 3)
+    assert draft.coverage_intent == "multi_evidence"
+    assert draft.unsupported_claim_risk == "low"
 
 
 def test_solar_provider_rejects_missing_api_key() -> None:

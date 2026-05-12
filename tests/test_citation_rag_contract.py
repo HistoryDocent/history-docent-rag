@@ -11,6 +11,7 @@ from app.domain.generation import (
     Citation,
     CitationRagAnswer,
     CitationRagDraft,
+    CitationRagDraftV2,
     build_citation_rag_contract_report,
     collect_citation_rag_contract_failures,
     summarize_citation_rag_answers,
@@ -206,6 +207,63 @@ def test_answer_contract_rejects_private_path_and_secret_like_text() -> None:
         CitationRagDraft(
             answer="안전한 답변",
             spoken_answer="s" + "k-proj-secret",
+        )
+
+
+def test_citation_rag_draft_v2_accepts_selected_evidence_contract() -> None:
+    draft = CitationRagDraftV2(
+        answer="경복궁은 한양의 중심 궁궐이라는 근거를 바탕으로 설명할 수 있습니다.",
+        spoken_answer="경복궁은 한양의 중심을 보여주는 대표 궁궐입니다.",
+        used_evidence_pack_ranks=(1, 3),
+        coverage_intent="multi_evidence",
+        unsupported_claim_risk="low",
+    )
+
+    assert draft.used_evidence_pack_ranks == (1, 3)
+    assert draft.coverage_intent == "multi_evidence"
+    assert draft.unsupported_claim_risk == "low"
+
+
+@pytest.mark.parametrize(
+    "used_evidence_pack_ranks",
+    [
+        (),
+        (1, 1),
+        (0,),
+        (-1,),
+        ("1",),
+    ],
+)
+def test_citation_rag_draft_v2_rejects_invalid_selected_evidence_ranks(
+    used_evidence_pack_ranks,
+) -> None:
+    with pytest.raises(ValueError):
+        CitationRagDraftV2(
+            answer="경복궁은 한양의 중심 궁궐이라는 근거를 바탕으로 설명할 수 있습니다.",
+            spoken_answer="경복궁은 한양의 중심을 보여주는 대표 궁궐입니다.",
+            used_evidence_pack_ranks=used_evidence_pack_ranks,
+            coverage_intent="focused",
+            unsupported_claim_risk="low",
+        )
+
+
+def test_citation_rag_draft_v2_inherits_public_text_safety() -> None:
+    with pytest.raises(ValueError, match="private path"):
+        CitationRagDraftV2(
+            answer="F" + ":\\raw\\source.pdf",
+            spoken_answer="안전한 음성 답변",
+            used_evidence_pack_ranks=(1,),
+            coverage_intent="focused",
+            unsupported_claim_risk="low",
+        )
+
+    with pytest.raises(ValueError, match="secret-like"):
+        CitationRagDraftV2(
+            answer="안전한 답변",
+            spoken_answer="s" + "k-proj-secret",
+            used_evidence_pack_ranks=(1,),
+            coverage_intent="focused",
+            unsupported_claim_risk="low",
         )
 
 
