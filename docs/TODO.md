@@ -65,7 +65,7 @@
 - [x] citation RAG answer contract 구현
 - [x] generation evaluation harness 구현
 - [x] Solar Pro 3 provider 구현
-- [ ] FastAPI `/chat` contract 구현
+- [x] FastAPI `/chat` contract 구현
 
 ## Experiments
 

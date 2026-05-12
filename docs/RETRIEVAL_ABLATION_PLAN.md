@@ -603,6 +603,30 @@ Solar Pro 3 provider contract 실행 결과 v1:
 
 현재 provider contract는 mock transport로만 검증했다. API key는 환경변수에서만 읽고 report/result row에는 저장하지 않는다. 이 결과는 live Solar Pro 3 답변 품질 또는 비용 주장이 아니다. 다음 단계는 provider를 `/chat` API contract에 연결하고, 별도 승인 후 private dev subset에서 live smoke를 수행하는 것이다.
 
+FastAPI `/chat` contract 실행 결과 v1:
+
+`POST /api/v1/chat` endpoint를 contract-only service로 구현했다. live Solar Pro 3 호출은 기본 차단하고, provider 연결 전 API 입력/출력 계약만 검증했다.
+
+| metric | value |
+| --- | ---: |
+| request_count | 4 |
+| success_count | 2 |
+| validation_error_count | 1 |
+| provider_unavailable_count | 1 |
+| answered_count | 1 |
+| abstained_count | 1 |
+| citation_count | 1 |
+| evidence_id_count | 1 |
+| live_solar_call_count | 0 |
+| latency_p95_ms | 0.195100 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+결론:
+
+현재 `/api/v1/chat`는 citation RAG answer contract를 외부 API로 노출하는 smoke 계약이다. answerable path는 recoverable citation과 evidence_id를 반환하고, no-answer path는 `abstained=true`와 빈 citation을 반환한다. blank query는 422 error envelope, `provider_mode=solar_pro_3` 요청은 503 `provider_unavailable`로 처리한다. 이 결과는 API 계약 검증이며 live generation 품질 주장이 아니다.
+
 metric:
 
 - `Correct-with-Evidence`
@@ -734,10 +758,11 @@ latency/cost 악화 설명 없음
 11. citation RAG answer contract 완료
 12. generation eval harness 완료
 13. Solar Pro 3 provider 완료
-14. Qdrant production candidate
-15. RAPTOR-lite
-16. GraphRAG-lite
-17. final ablation report
+14. FastAPI `/chat` contract 완료
+15. Qdrant production candidate
+16. RAPTOR-lite
+17. GraphRAG-lite
+18. final ablation report
 
 ## 포트폴리오 메시지
 
