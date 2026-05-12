@@ -219,6 +219,8 @@ Citation RAG answer contract v1을 추가했다. `answer`, `spoken_answer`, `cit
 
 Generation evaluation harness v1을 추가했다. `CitationRagAnswer`를 `Correct-with-Evidence`, `citation_precision`, `citation_recall`, `place_relevance`, `docent_usefulness`, `spoken_answer_naturalness`, `unsupported_claim_rate`, `abstention_accuracy`, `latency_p95_ms`, `solar_call_count`, `estimated_cost`로 평가하는 구조를 고정했다. 현재 리포트는 contract-only smoke run이며 Solar Pro 3 품질 주장이 아니다. public-safe gate 기준 원문 answer/chunk text, private path, secret 누출은 0이다.
 
+Solar Pro 3 provider contract v1을 추가했다. Upstage Chat Completions API의 `solar-pro3` 모델과 `response_format=json_schema`를 사용해 `CitationRagDraft`를 생성하는 provider를 구현했다. 현재 contract report는 mock transport 검증이며 live API 호출은 수행하지 않았다. API key는 환경변수에서만 읽고 public report/result row에는 저장하지 않는다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -265,6 +267,7 @@ Generation evaluation harness v1을 추가했다. `CitationRagAnswer`를 `Correc
 | [Evidence Packing Comparison Report](evals/reports/evidence_packing_comparison_report.md) | 고정된 retrieval 결과 위에서 P0-P4 evidence packing 정책 비교 결과 |
 | [Citation RAG Answer Contract Report](evals/reports/citation_rag_answer_contract_report.md) | Solar Pro 3 연결 전 citation RAG 응답 계약과 public-safe gate 결과 |
 | [Generation Evaluation Harness Report](evals/reports/generation_eval_harness_report.md) | Solar Pro 3 연결 전 citation RAG 답변 평가 metric과 public-safe gate 결과 |
+| [Solar Pro 3 Provider Contract Report](evals/reports/solar_pro_3_provider_contract_report.md) | Solar Pro 3 provider의 structured output, secret boundary, public-safe gate 결과 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |
