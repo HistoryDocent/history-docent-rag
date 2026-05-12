@@ -73,7 +73,7 @@
 | --- | --- | --- | --- | --- |
 | 6.1 | rewrite contract | application module/report | invalid JSON 0, voice-only 후보 기록 | `평가: 장소 인식 쿼리 재작성 검색 비교 실험 추가` |
 | 6.2 | evidence packing | application module/report | policy별 coverage, duplicate, citation gate 기록 | `평가: evidence packing 비교 실험 추가` |
-| 6.3 | answer contract | schema/service | answer/spoken_answer/citations 반환 | `feat: add citation rag answer contract` |
+| 6.3 | answer contract | schema/service/report | answer/spoken_answer/citations 반환, abstain 계약 검증 | `기능: citation RAG 답변 계약 추가` |
 | 6.4 | Solar provider | provider abstraction | fake provider와 real provider 분리 | `feat: add solar provider abstraction` |
 | 6.5 | generation eval | eval harness | Correct-with-Evidence와 unsupported claim 측정 | `test: add generation evaluation harness` |
 | 6.6 | notebook | `08`, `10` notebooks | rewrite/evidence/generation ablation | `docs: add citation rag notebooks` |

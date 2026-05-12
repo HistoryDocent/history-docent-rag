@@ -215,6 +215,8 @@ Query rewrite comparison v1을 추가했고, private dev split 70개에서 `dens
 
 Evidence packing comparison v1을 추가했고, private dev split 70개에서 `dense_multilingual_e5_small_voice_rewrite` 검색 결과를 고정한 뒤 P0-P4 packing 정책을 비교했다. `P0_rank_order`와 `P3_mmr_diversity`가 `target_child_covered=0.850000`, `target_parent_covered=0.866667`, `target_doc_covered=0.950000`, `citation_recoverability=1.000000`으로 가장 높았다. `P3`의 개선은 duplicate parent rate를 0.127857에서 0.124286으로 낮춘 수준이라 generation 전 기본 교체 근거가 부족하다. 따라서 citation RAG generation v1 기본값은 `P0_rank_order`로 유지하고, `P3`는 diversity 후보로 둔다.
 
+Citation RAG answer contract v1을 추가했다. `answer`, `spoken_answer`, `citations`, `evidence_ids`, `place_ids`, `abstained`, `unsupported_claim_risk`를 `citation-rag-answer/v1` 계약으로 고정했고, citation은 `child_id`, `parent_id`, `doc_id`, `source_block_ids`, `citation_block_ids`로 역추적한다. Solar Pro 3 호출은 아직 포함하지 않았고, public-safe 계약 리포트 기준 `citation_recoverability_rate=1.000000`, `missing_citation_count=0`, `private_path_leakage_count=0`, `secret_like_leakage_count=0`이다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -259,6 +261,7 @@ Evidence packing comparison v1을 추가했고, private dev split 70개에서 `d
 | [Reranker Retrieval Comparison Report](evals/reports/reranker_retrieval_comparison_report.md) | E5-small dense 후보와 BGE reranker top20 비교 결과 |
 | [Query Rewrite Retrieval Comparison Report](evals/reports/query_rewrite_retrieval_comparison_report.md) | E5-small dense와 deterministic place/voice rewrite 비교 결과 |
 | [Evidence Packing Comparison Report](evals/reports/evidence_packing_comparison_report.md) | 고정된 retrieval 결과 위에서 P0-P4 evidence packing 정책 비교 결과 |
+| [Citation RAG Answer Contract Report](evals/reports/citation_rag_answer_contract_report.md) | Solar Pro 3 연결 전 citation RAG 응답 계약과 public-safe gate 결과 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |
 | [Checklist](docs/CHECKLIST.md) | 단계별 통과 기준과 공개 전 검수 |
 | [TODO](docs/TODO.md) | 즉시 실행할 작업 목록 |

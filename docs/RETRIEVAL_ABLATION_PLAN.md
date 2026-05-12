@@ -516,6 +516,39 @@ abstained
 unsupported_claim_risk
 ```
 
+answer contract 실행 결과 v1:
+
+Solar Pro 3 provider를 붙이기 전에 `citation-rag-answer/v1` 응답 계약을 고정했다.
+
+| field | 정책 |
+| --- | --- |
+| `answer` | 화면 표시용 답변. private path, secret-like 값 금지 |
+| `spoken_answer` | 음성 출력용 짧은 답변. private path, secret-like 값 금지 |
+| `citations` | `child_id`, `parent_id`, `doc_id`, `source_block_ids`, `citation_block_ids` 기반 추적 |
+| `evidence_ids` | citation의 `evidence_id`와 동일 순서로 매칭 |
+| `place_ids` | 장소 catalog id만 저장 |
+| `abstained` | corpus 밖 질문 또는 evidence 없음이면 true |
+| `unsupported_claim_risk` | `high`인 non-abstained 답변은 계약에서 거부 |
+
+contract gate 결과:
+
+| metric | value |
+| --- | ---: |
+| answer_count | 2 |
+| answered_count | 1 |
+| abstained_count | 1 |
+| citation_count | 1 |
+| citation_recoverability_rate | 1.000000 |
+| missing_citation_count | 0 |
+| unsupported_high_count | 0 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+결론:
+
+`CitationRagAnswerAssembler`는 LLM provider가 만든 draft를 evidence pack과 결합해 public-safe answer contract로 변환한다. 현재 단계는 generation 품질 평가가 아니라 API/평가 계약 고정이다. Solar Pro 3 provider와 generation eval harness는 이 계약을 만족해야 한다.
+
 metric:
 
 - `Correct-with-Evidence`
@@ -644,12 +677,13 @@ latency/cost 악화 설명 없음
 8. reranker comparison
 9. place-aware deterministic query expansion 완료
 10. evidence packing 비교 완료
-11. Solar Pro 3 answer contract
-12. generation eval harness
-13. Qdrant production candidate
-14. RAPTOR-lite
-15. GraphRAG-lite
-16. final ablation report
+11. citation RAG answer contract 완료
+12. Solar Pro 3 provider
+13. generation eval harness
+14. Qdrant production candidate
+15. RAPTOR-lite
+16. GraphRAG-lite
+17. final ablation report
 
 ## 포트폴리오 메시지
 
