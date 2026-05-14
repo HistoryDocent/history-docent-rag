@@ -94,7 +94,8 @@
 - [x] Solar Pro 3 guarded boost live comparison dry-run runner 구현
 - [x] Solar Pro 3 guarded boost live paired comparison runner 구현
 - [x] Solar Pro 3 live paired comparison 실행 승인 여부 결정
-- [ ] Solar Pro 3 guarded boost next gate 판단 문서 작성
+- [x] Solar Pro 3 guarded boost next gate 판단 문서 작성
+- [ ] Solar Pro 3 guarded boost 추가 dev hard-case 검증 계획 작성
 
 ## Experiments
 

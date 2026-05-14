@@ -218,6 +218,7 @@ public report에 기록하지 않는 것:
 | HD-SOLAR-014 | HD-SOLAR-013 승인 | Solar Pro 3 guarded boost live comparison dry-run runner 구현 | 완료. unit test, dry-run, public-safe report, Solar call 0 | High | runner/report revert |
 | HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner 구현 | 완료. readiness mode, dry-run 재검증, call cap 확인, Solar call 0 | High | runner/report revert |
 | HD-SOLAR-016 | HD-SOLAR-015 승인 | 승인 후 live paired comparison 실행 | 완료. live report, public leakage 0, call count/cost 기록 | High | candidate 미채택, public report revert |
+| HD-SOLAR-017 | HD-SOLAR-016 | guarded boost next gate 판단 문서화 | 완료. dev-only 승격 판단, claim boundary, 청킹 재개 조건 정리 | Low | 문서 revert |
 
 ## HD-SOLAR-014 실행 결과
 
@@ -360,6 +361,18 @@ Public output gate:
 - 결정은 `promote_guarded_candidate_for_next_gate`다.
 - 다음 단계는 locked test가 아니라 dev-only 결과 해석과 next gate 판단 문서화다.
 
+## HD-SOLAR-017 판단 결과
+
+[Solar Pro 3 Guarded Boost Next Gate Decision](SOLAR_GUARDED_BOOST_NEXT_GATE_DECISION.md)에 HD-SOLAR-016 결과 해석과 다음 gate 조건을 고정했다.
+
+결정:
+
+- `parent_doc_context_boost_guarded`는 next gate로 승격한다.
+- production 기본값 채택은 보류한다.
+- 청킹 비교 재개는 보류한다.
+- 추가 Solar Pro 3 반복 호출은 별도 승인 전까지 보류한다.
+- 다음 작업은 추가 live call이 아니라 추가 dev hard-case 검증 계획 작성이다.
+
 ## 외부 감사 체크
 
 | 감사 항목 | 기대 결과 |
@@ -373,7 +386,7 @@ Public output gate:
 
 ## 다음 액션
 
-1. HD-SOLAR-016 live paired comparison 결과를 commit한다.
-2. HD-SOLAR-017에서 `guarded_boost`를 next gate로 승격할지 문서화한다.
-3. 승격 시 locked test가 아니라 추가 dev hard-case 또는 router 정책 보강을 먼저 검토한다.
+1. HD-SOLAR-017 next gate 판단 문서를 commit한다.
+2. HD-SOLAR-018에서 추가 dev hard-case 검증 계획을 작성한다.
+3. 추가 Solar Pro 3 호출이 필요하면 별도 승인과 call budget을 먼저 고정한다.
 4. 최종 성능 개선 주장은 locked test와 bootstrap confidence interval 이후에만 작성한다.

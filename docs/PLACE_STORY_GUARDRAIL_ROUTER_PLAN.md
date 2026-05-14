@@ -319,6 +319,7 @@ Solar Pro 3 guarded boost live paired comparison을 private `place_story` dev 10
 | HD-SOLAR-014 | HD-SOLAR-013 | Solar Pro 3 guarded boost live comparison dry-run runner | 완료. input fingerprint, 예상 call count, public-safe dry-run report | High | runner/report revert |
 | HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner | 완료. readiness mode, dry-run 재검증, call cap 확인, Solar call 0 | High | runner/report revert |
 | HD-SOLAR-016 | HD-SOLAR-015 승인 | Solar Pro 3 guarded boost live paired comparison 실행 | 완료. actual Solar call 11, public leakage 0, paired metric report | High | candidate 미채택, public report revert |
+| HD-SOLAR-017 | HD-SOLAR-016 | guarded boost next gate 판단 문서화 | 완료. next gate 승격, production 채택 보류, 청킹 재개 보류 | Low | 문서 revert |
 
 ## Non-goal
 
@@ -329,6 +330,6 @@ Solar Pro 3 guarded boost live paired comparison을 private `place_story` dev 10
 
 ## 결정
 
-다음 작업은 `HD-SOLAR-017` guarded boost next gate 판단 문서화다.
+다음 작업은 `HD-SOLAR-018` guarded boost 추가 dev hard-case 검증 계획 작성이다.
 
 `guarded_boost`는 dev-only live comparison에서 next gate 승격 후보가 됐지만, locked test 또는 production 기본값으로는 아직 확정하지 않는다.
