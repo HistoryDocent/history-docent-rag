@@ -452,9 +452,10 @@ dimension 후보:
 | HD-SOLAR-017 | HD-SOLAR-016 | guarded boost next gate 판단 문서화 | 완료. next gate 승격, production 채택 보류, 청킹 재개 보류 | Low | 문서 revert |
 | HD-SOLAR-018 | HD-SOLAR-017 | guarded boost 추가 dev hard-case 검증 계획 | 완료. route decision bucket, gate, data mart grain 문서화 | Low | 문서 revert |
 | HD-SOLAR-019 | HD-SOLAR-018 | guarded boost hard-case validation runner 구현 | 완료. bucket coverage 10/10, route mismatch 0, Solar call 0 | Medium | runner/report revert |
+| HD-SOLAR-020 | HD-SOLAR-019 | guarded boost router threshold 유지/수정 판단 | 완료. threshold 유지, 완화/강화 기각, locked test 전 claim boundary 유지 | Low | 문서 revert |
 
 ## 결정
 
-다음 결정 우선순위는 `HD-SOLAR-020` guarded boost router threshold 유지/수정 판단 문서화다.
+다음 결정 우선순위는 `HD-SOLAR-021` guarded boost locked test 실행 전 승인 계획 작성이다.
 
 청킹 비교 테스트는 계속 보류한다. `guarded_boost`는 input-only 기준, dry-run call budget gate, readiness gate, dev-only live comparison을 통과했다. 다만 locked test와 bootstrap confidence interval 전에는 최종 성능 개선 주장으로 쓰지 않는다.

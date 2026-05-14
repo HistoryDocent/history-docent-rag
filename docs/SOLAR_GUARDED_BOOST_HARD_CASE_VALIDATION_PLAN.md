@@ -254,3 +254,16 @@ Public output gate:
 - 이 결과는 router safety 검증이며 production 기본값 채택이나 최종 성능 개선 주장이 아니다.
 
 다음 작업은 HD-SOLAR-020 router threshold 유지/수정 판단 문서화다.
+
+## HD-SOLAR-020 판단 결과
+
+[Solar Pro 3 Guarded Boost Router Threshold Decision](SOLAR_GUARDED_BOOST_ROUTER_THRESHOLD_DECISION.md)에 threshold 유지 판단을 고정했다.
+
+결정:
+
+- `place_story_guarded_boost_v1` threshold를 유지한다.
+- threshold 완화는 manual review 2건의 evidence order regression 때문에 기각한다.
+- threshold 강화는 유일한 safe direct gain 1건을 잃을 수 있어 기각한다.
+- 추가 Solar Pro 3 호출은 수행하지 않는다.
+- production 기본값 채택은 계속 보류한다.
+- 다음 작업은 HD-SOLAR-021 locked test 또는 expanded dev 검증 승인 계획 작성이다.

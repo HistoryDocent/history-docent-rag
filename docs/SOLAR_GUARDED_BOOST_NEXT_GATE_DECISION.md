@@ -220,3 +220,20 @@ free-text는 warehouse fact에 저장하지 않는다. raw answer와 raw evidenc
 - 청킹 비교 재개 조건은 여전히 충족하지 않는다.
 - 추가 Solar Pro 3 호출 없이 router safety를 확인했다.
 - 다음 작업은 router threshold를 유지할지 수정할지 문서화하는 것이다.
+
+## HD-SOLAR-020 판단 결과
+
+[Solar Pro 3 Guarded Boost Router Threshold Decision](SOLAR_GUARDED_BOOST_ROUTER_THRESHOLD_DECISION.md)에 threshold 판단을 고정했다.
+
+| option | decision | reason |
+| --- | --- | --- |
+| threshold 완화 | 기각 | manual review 2건의 evidence order regression이 커서 자동 선택 위험이 있다. |
+| threshold 강화 | 기각 | 유일한 safe direct gain 1건의 live citation recall gain을 잃을 수 있다. |
+| threshold 유지 | 채택 | route mismatch 0, selected candidate safety pass, manual review block pass를 만족한다. |
+
+결론:
+
+- `place_story_guarded_boost_v1` threshold는 유지한다.
+- production 기본값 채택은 보류한다.
+- 청킹 비교 재개 조건은 충족하지 않는다.
+- 다음 작업은 locked test 또는 expanded dev 검증 실행 전 승인 계획 작성이다.
