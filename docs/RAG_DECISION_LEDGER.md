@@ -55,6 +55,7 @@
 | `evidence_packing` | `P3_mmr_diversity` | dev 70, fixed retrieval | duplicate_parent_delta=-0.003571 | reject_default_keep_candidate | dev-input-only | same report |
 | `generation` | `solar-generation-v2-repaired` | live dev subset 7 | citation_precision delta=+0.216666, citation_recall delta=-0.027778 | reject_default | live-dev-subset | `evals/reports/solar_generation_v2_repaired_live_comparison_report.md` |
 | `place_story_router` | `parent_doc_context_boost_guarded` | live dev subset 10 | citation_recall delta=+0.028571, Correct delta=0.000000 | keep_router_candidate | live-dev-subset | `evals/reports/solar_guarded_boost_live_comparison_report.md` |
+| `query_type_router` | `query_type_router_v1` | dev 70, relationship dev 10, place_story locked readiness 5 | relationship route Recall@5=1.000000, place_story locked selected_candidate_count=0 | adopt_relationship_route_candidate | mixed-boundary | `evals/reports/query_type_router_decision_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
 
@@ -79,7 +80,7 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-ROUTER-001` | query-type router decision report | dense voice rewrite, relationship hybrid, place_story guarded route 후보가 이미 존재한다. 다음은 route policy 정리다. | 예 |
+| 1 | `HD-ROUTER-002` | deterministic query-type router skeleton 구현 | HD-ROUTER-001에서 route table을 고정했다. 다음은 runtime policy branch를 코드로 검증한다. | 예 |
 | 2 | `HD-PORTFOLIO-001` | README 결과 표와 포트폴리오 메시지 정리 | 취업 제출물에는 실험 흐름과 기각 판단이 한눈에 보여야 한다. | 예 |
 | 3 | `HD-RAPTOR-001` | RAPTOR-lite overview/place_story input-only 비교 | overview/place_story 장문 맥락 질문에 한정해 실험 가치가 있다. | 예 |
 | 4 | `HD-HYDE-001` | HyDE overview/relationship subset 비교 | LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard가 필요하다. | 예 |
@@ -127,4 +128,4 @@
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-다만 다음 단계에서 새 기법을 더 붙이기 전에 `query-type router`를 정리해야 한다. 현재 결과는 단일 retrieval method 하나가 모든 query type에서 최선이라는 결론이 아니기 때문이다.
+다만 다음 단계에서 새 기법을 더 붙이기 전에 `query-type router` skeleton을 구현해야 한다. `HD-ROUTER-001`에서 단일 retrieval method 하나가 모든 query type에서 최선이라는 결론이 아님을 route policy로 정리했기 때문이다.

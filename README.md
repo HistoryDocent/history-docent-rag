@@ -221,7 +221,9 @@ Generation evaluation harness v1을 추가했다. `CitationRagAnswer`를 `Correc
 
 GraphRAG-lite relationship input-only 비교를 실행했다. `relationship` dev 10개에서 기존 `hybrid_weighted_e5_small_alpha_0_5_reference`가 `Recall@5=1.000000`, `MRR=0.833333`, `nDCG@5=0.709355`로 가장 적합했다. `entity_path`와 `community_hint` 후보는 citation recoverability는 1.000000이었지만 nDCG@5 개선이 없어 기본 RAG pipeline으로 승격하지 않는다. 이 결과는 dev input-only 비교이며 locked test 또는 production 개선 주장이 아니다.
 
-RAG 실험 decision ledger와 final ablation status report를 추가했다. 현재 기준선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다. 청킹 재비교는 지금 열지 않고, 다음 우선순위는 query type별 router decision report다. 이 판단 역시 locked test 전의 public-safe 상태 요약이며 production 성능 주장이 아니다.
+RAG 실험 decision ledger와 final ablation status report를 추가했다. 현재 기준선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다. 청킹 재비교는 지금 열지 않는다. 이 판단 역시 locked test 전의 public-safe 상태 요약이며 production 성능 주장이 아니다.
+
+Query type router decision을 추가했다. 기본 answerable query는 `dense_multilingual_e5_small_voice_rewrite`를 유지하고, `relationship`은 `hybrid_weighted_e5_small_alpha_0_5`를 제한적 route 후보로 둔다. `place_story_guarded_boost_v1`은 locked readiness에서 candidate 선택 0건이므로 production route로 채택하지 않는다. 이번 산출물은 decision report이며 runtime router 구현 또는 locked 성능 개선 주장이 아니다.
 
 Solar Pro 3 provider contract v1을 추가했다. Upstage Chat Completions API의 `solar-pro3` 모델과 `response_format=json_schema`를 사용해 `CitationRagDraft`를 생성하는 provider를 구현했다. 현재 contract report는 mock transport 검증이며 live API 호출은 수행하지 않았다. API key는 환경변수에서만 읽고 public report/result row에는 저장하지 않는다.
 
@@ -378,6 +380,8 @@ GraphRAG-lite relationship 실험 계획과 runner skeleton을 추가했다. 범
 | [Solar Pro 3 Generation v2 Repaired Live Comparison Report](evals/reports/solar_generation_v2_repaired_live_comparison_report.md) | HD-SOLAR-027 Solar Pro 3 실제 호출 기반 repaired v2 routed policy 비교와 기본값 승격 보류 판단 |
 | [GraphRAG-lite Relationship Plan](docs/GRAPHRAG_LITE_RELATIONSHIP_PLAN.md) | HD-ADV-RAG-001 relationship 전용 GraphRAG-lite input-only 실험 계획과 gate |
 | [GraphRAG-lite Relationship Plan Report](evals/reports/graphrag_lite_relationship_plan_report.md) | HD-ADV-RAG-001 계획 runner skeleton, 정량/정성 report, public-safe gate 결과 |
+| [Query Type Router Decision](docs/QUERY_TYPE_ROUTER_DECISION.md) | HD-ROUTER-001 query type별 route policy, 채택/보류/기각 판단, claim boundary |
+| [Query Type Router Decision Report](evals/reports/query_type_router_decision_report.md) | HD-ROUTER-001 route policy 정량/정성 리포트와 public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
