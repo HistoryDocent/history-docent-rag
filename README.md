@@ -221,6 +221,8 @@ Generation evaluation harness v1을 추가했다. `CitationRagAnswer`를 `Correc
 
 GraphRAG-lite relationship input-only 비교를 실행했다. `relationship` dev 10개에서 기존 `hybrid_weighted_e5_small_alpha_0_5_reference`가 `Recall@5=1.000000`, `MRR=0.833333`, `nDCG@5=0.709355`로 가장 적합했다. `entity_path`와 `community_hint` 후보는 citation recoverability는 1.000000이었지만 nDCG@5 개선이 없어 기본 RAG pipeline으로 승격하지 않는다. 이 결과는 dev input-only 비교이며 locked test 또는 production 개선 주장이 아니다.
 
+RAG 실험 decision ledger와 final ablation status report를 추가했다. 현재 기준선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다. 청킹 재비교는 지금 열지 않고, 다음 우선순위는 query type별 router decision report다. 이 판단 역시 locked test 전의 public-safe 상태 요약이며 production 성능 주장이 아니다.
+
 Solar Pro 3 provider contract v1을 추가했다. Upstage Chat Completions API의 `solar-pro3` 모델과 `response_format=json_schema`를 사용해 `CitationRagDraft`를 생성하는 provider를 구현했다. 현재 contract report는 mock transport 검증이며 live API 호출은 수행하지 않았다. API key는 환경변수에서만 읽고 public report/result row에는 저장하지 않는다.
 
 FastAPI `/api/v1/chat` contract v1을 추가했다. 현재 API는 contract-only service로 `answer`, `spoken_answer`, `citations`, `evidence_ids`, `abstained`, `usage`를 반환한다. blank query는 422 error envelope로 검증하고, `provider_mode=solar_pro_3` 요청은 live 호출 없이 503 `provider_unavailable`로 차단한다. public-safe contract report 기준 `request_count=4`, `success_count=2`, `validation_error_count=1`, `provider_unavailable_count=1`, `live_solar_call_count=0`, leakage gate는 0이다.
