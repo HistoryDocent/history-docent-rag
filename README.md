@@ -257,6 +257,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `parent_doc_context_boost_guarded` 기반 Solar Pro 3 live paired comparison 계획을 추가했다. 비교 범위는 private `place_story` dev 10개로 제한하고, baseline과 guarded 입력 fingerprint가 동일한 query는 baseline generation 결과를 재사용하도록 계획했다. 예상 live call은 11회, hard cap은 20회다. 이 문서는 실행 계획이며 Solar Pro 3 추가 호출 또는 품질 개선 주장이 아니다.
 
+Solar Pro 3 guarded boost live comparison dry-run runner를 추가했다. CUDA 실행 기준 private `place_story` dev 10개에서 baseline live call 10회, candidate live call 1회, baseline 결과 재사용 9건으로 계산됐고 expected total live call은 11회로 hard cap 20회 안에 있다. Solar Pro 3 실제 호출 수는 0이고 public-safe gate는 모두 0이다. 이 결과는 live 품질 개선 주장이 아니라 live 실행 전 input fingerprint와 call budget 검증이다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -323,6 +325,7 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 | [Place Story Guardrail/Router Plan](docs/PLACE_STORY_GUARDRAIL_ROUTER_PLAN.md) | `parent_doc_context_boost` 적용 조건, 차단 조건, 3-way guarded comparison 설계 |
 | [Place Story Guarded Boost Comparison Report](evals/reports/place_story_guarded_boost_comparison_report.md) | baseline, always boost, guarded boost 3-way input-only 비교와 route decision 결과 |
 | [Solar Pro 3 Guarded Boost Live Comparison Plan](docs/SOLAR_GUARDED_BOOST_LIVE_COMPARISON_PLAN.md) | `parent_doc_context_boost_guarded`의 Solar Pro 3 live paired comparison 실행 전 계획, 비용, 중단 조건, 공개 경계 |
+| [Solar Pro 3 Guarded Boost Live Dry-run Report](evals/reports/solar_guarded_boost_live_dry_run_report.md) | live 실행 전 input fingerprint, reuse 대상, 예상 live call count, public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |

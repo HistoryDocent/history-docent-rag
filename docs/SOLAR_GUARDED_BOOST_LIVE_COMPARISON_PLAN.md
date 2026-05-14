@@ -215,8 +215,50 @@ public report에 기록하지 않는 것:
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
 | HD-SOLAR-013 | HD-PLACE-STORY-012 | guarded boost live comparison 계획 문서화 | README/TODO 링크, leakage scan, live call 0 | Medium | 문서 revert |
-| HD-SOLAR-014 | HD-SOLAR-013 승인 | Solar Pro 3 guarded boost live comparison runner 구현 | unit test, dry-run, public-safe report schema | High | runner/report revert |
-| HD-SOLAR-015 | HD-SOLAR-014 | 승인 후 live paired comparison 실행 | live report, public leakage 0, call count/cost 기록 | High | candidate 미채택, public report revert |
+| HD-SOLAR-014 | HD-SOLAR-013 승인 | Solar Pro 3 guarded boost live comparison dry-run runner 구현 | 완료. unit test, dry-run, public-safe report, Solar call 0 | High | runner/report revert |
+| HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner 구현 | live 실행 전 dry-run 재검증, call cap 확인 | High | runner/report revert |
+| HD-SOLAR-016 | HD-SOLAR-015 승인 | 승인 후 live paired comparison 실행 | live report, public leakage 0, call count/cost 기록 | High | candidate 미채택, public report revert |
+
+## HD-SOLAR-014 실행 결과
+
+Solar Pro 3를 호출하지 않고 dry-run runner를 실행했다. 실행 device는 `cuda`다.
+
+| metric | value |
+| --- | ---: |
+| query_count | 10 |
+| baseline_live_call_count | 10 |
+| candidate_live_call_count | 1 |
+| expected_total_live_call_count | 11 |
+| live_call_hard_cap | 20 |
+| reused_candidate_count | 9 |
+| changed_candidate_input_count | 1 |
+| selected_candidate_count | 1 |
+| guardrail_block_count | 9 |
+| solar_call_count | 0 |
+| hard_cap_exceeded | False |
+
+Reuse decision:
+
+| reuse_decision | count |
+| --- | ---: |
+| `candidate_live_call_required` | 1 |
+| `reuse_baseline_result` | 9 |
+
+Public output gate:
+
+| metric | value |
+| --- | ---: |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+| forbidden_result_field_count | 0 |
+
+판단:
+
+- live 실행 전 input fingerprint와 call budget이 계획 범위 안에 있다.
+- candidate live call은 1건만 필요하다.
+- 이 결과는 live 품질 개선 주장이 아니다.
+- 다음 단계는 live 호출이 아니라 live paired comparison runner 구현 및 실행 전 승인이다.
 
 ## 외부 감사 체크
 
@@ -231,7 +273,7 @@ public report에 기록하지 않는 것:
 
 ## 다음 액션
 
-1. 이 계획 문서를 commit한다.
-2. 별도 승인 후 HD-SOLAR-014 runner를 구현한다.
-3. runner는 live 호출 전 dry-run mode로 input fingerprint와 예상 call count를 먼저 출력한다.
-4. dry-run report 통과 후 다시 승인받고 live call을 실행한다.
+1. HD-SOLAR-014 dry-run 결과를 commit한다.
+2. 별도 승인 후 HD-SOLAR-015 live paired comparison runner를 구현한다.
+3. live runner는 실행 전 dry-run 재검증과 call cap 확인을 먼저 수행한다.
+4. 다시 승인받고 HD-SOLAR-016에서 실제 live call을 실행한다.

@@ -228,6 +228,29 @@ Route decision 분포:
 - public report에는 raw query, raw answer, raw evidence, prompt, private path, secret을 기록하지 않는다.
 - live 실행은 별도 승인 후 진행한다.
 
+## HD-SOLAR-014 실행 결과
+
+Solar Pro 3를 호출하지 않는 dry-run runner를 실행했다.
+
+| metric | value |
+| --- | ---: |
+| query_count | 10 |
+| expected_total_live_call_count | 11 |
+| baseline_live_call_count | 10 |
+| candidate_live_call_count | 1 |
+| reused_candidate_count | 9 |
+| live_call_hard_cap | 20 |
+| solar_call_count | 0 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+판단:
+
+- guarded router가 차단한 9건은 baseline generation 결과를 재사용한다.
+- candidate가 선택된 1건만 추가 live call이 필요하다.
+- live 호출 전 call budget과 public-safe gate가 계획과 일치한다.
+
 ## 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
@@ -235,7 +258,8 @@ Route decision 분포:
 | HD-PLACE-STORY-011 | HD-PLACE-STORY-010 | guardrail/router 계획 문서화 | 계획 문서, README/TODO 링크, leakage scan 통과 | Low | 문서 revert |
 | HD-PLACE-STORY-012 | HD-PLACE-STORY-011 | guarded boost comparison runner 구현 | 완료. baseline/always/guarded 3-way report, pytest, ruff, leakage 0 | Medium | runner/report revert |
 | HD-SOLAR-013 | HD-PLACE-STORY-012 | Solar Pro 3 live 재비교 계획 | 완료. live call 전 query set, cost, pass/fail gate 문서화 | Medium | 문서 revert |
-| HD-SOLAR-014 | HD-SOLAR-013 | Solar Pro 3 guarded boost live comparison dry-run runner | input fingerprint, 예상 call count, public-safe dry-run report | High | runner/report revert |
+| HD-SOLAR-014 | HD-SOLAR-013 | Solar Pro 3 guarded boost live comparison dry-run runner | 완료. input fingerprint, 예상 call count, public-safe dry-run report | High | runner/report revert |
+| HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner | live 실행 전 dry-run 재검증, call cap 확인 | High | runner/report revert |
 
 ## Non-goal
 
@@ -246,6 +270,6 @@ Route decision 분포:
 
 ## 결정
 
-다음 구현 작업은 `HD-SOLAR-014` dry-run runner다.
+다음 구현 작업은 `HD-SOLAR-015` live paired comparison runner다.
 
-목표는 Solar Pro 3를 호출하기 전에 baseline/guarded input fingerprint, reuse 대상, 예상 live call count를 검증하는 것이다.
+목표는 실제 live call을 바로 실행하지 않고, live runner 안에서도 dry-run 재검증과 call cap 확인을 강제하는 것이다.
