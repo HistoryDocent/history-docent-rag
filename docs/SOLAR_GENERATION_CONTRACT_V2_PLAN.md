@@ -212,3 +212,14 @@ v2 후보 통과 기준:
 v2는 citation precision과 latency는 개선했지만, `Correct-with-Evidence`, `citation_recall`, `docent_usefulness`, `unsupported_claim_rate`가 악화됐다. 따라서 현재 v2는 production 기본 contract로 채택하지 않는다.
 
 다음 작업은 v2 채택이 아니라 `place_story`와 selected evidence prompt의 실패 원인을 분리하는 것이다. 특히 v2가 근거를 적게 선택하면서 답변 유용성과 근거 충족률을 떨어뜨렸는지 확인해야 한다.
+
+## HD-SOLAR-024 Prompt Repair 계획
+
+selected evidence over-pruning을 보정하기 위한 prompt repair 계획을 추가했다.
+
+핵심 방향:
+
+- raw prompt는 public 문서에 기록하지 않는다.
+- prompt 전문 대신 `prompt_policy_id`, query type별 evidence floor, validator gate를 기록한다.
+- live Solar Pro 3 호출 전에 fake provider/validator와 dry-run readiness를 통과해야 한다.
+- 다음 구현 후보는 `HD-SOLAR-025 repaired v2 prompt policy validator`다.

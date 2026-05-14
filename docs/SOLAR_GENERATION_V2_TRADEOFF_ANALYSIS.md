@@ -99,3 +99,14 @@ v2를 다시 실험하려면 다음 조건이 필요하다.
 3. 필요 시 승인 후 소규모 live 재실험
 
 청킹 비교는 이 다음이다. 현재 병목은 chunk boundary보다 generation contract와 selected evidence coverage에 있다.
+
+## HD-SOLAR-024 Prompt Repair 계획
+
+v2 prompt repair 후보를 [Solar Pro 3 Generation v2 Prompt Repair 계획](SOLAR_GENERATION_V2_PROMPT_REPAIR_PLAN.md)에 고정했다.
+
+결정:
+
+- 청킹 비교는 계속 보류한다.
+- repaired v2를 production 기본값으로 채택하지 않는다.
+- Solar Pro 3 live 재호출은 보류한다.
+- 다음 구현 후보는 live 호출 없이 `repaired v2 prompt policy validator`를 만드는 것이다.

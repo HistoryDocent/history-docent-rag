@@ -326,6 +326,7 @@ Solar Pro 3 guarded boost live paired comparison을 private `place_story` dev 10
 | HD-SOLAR-021 | HD-SOLAR-020 | guarded boost locked test 실행 전 승인 계획 | 완료. locked test 사용 조건, call budget, stop condition, claim boundary 문서화 | Medium | 문서 revert |
 | HD-SOLAR-022 | HD-SOLAR-021 | guarded boost locked test readiness dry-run runner | 완료. locked place_story 5건, selected candidate 0, Solar call 0, public leakage 0 | Medium | runner/report revert |
 | HD-SOLAR-023 | HD-SOLAR-022 | guarded boost locked readiness 결과 기반 next gate 판단 | 완료. locked live 보류, production 채택 기각, generation v2 prompt repair로 복귀 | Medium | 문서 revert |
+| HD-SOLAR-024 | HD-SOLAR-023 | Solar Pro 3 generation v2 prompt repair 계획 | 완료. selected evidence over-pruning 보정 방향, no-live-call gate, validator 다음 작업 정의 | Medium | 문서 revert |
 
 ## Non-goal
 
@@ -336,6 +337,6 @@ Solar Pro 3 guarded boost live paired comparison을 private `place_story` dev 10
 
 ## 결정
 
-다음 작업은 `HD-SOLAR-024` Solar Pro 3 generation v2 prompt repair 계획 작성이다.
+다음 작업은 `HD-SOLAR-025` Solar Pro 3 generation v2 repaired prompt policy validator 구현이다.
 
 `guarded_boost`는 dev-only live comparison에서 next gate 승격 후보가 됐지만, locked readiness에서 candidate 적용 폭이 0건이었다. 따라서 production 기본값으로 채택하지 않고 dev-only limited generalization 사례로 보관한다.
