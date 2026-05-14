@@ -220,6 +220,7 @@ public report에 기록하지 않는 것:
 | HD-SOLAR-016 | HD-SOLAR-015 승인 | 승인 후 live paired comparison 실행 | 완료. live report, public leakage 0, call count/cost 기록 | High | candidate 미채택, public report revert |
 | HD-SOLAR-017 | HD-SOLAR-016 | guarded boost next gate 판단 문서화 | 완료. dev-only 승격 판단, claim boundary, 청킹 재개 조건 정리 | Low | 문서 revert |
 | HD-SOLAR-018 | HD-SOLAR-017 | 추가 dev hard-case 검증 계획 문서화 | 완료. hard-case bucket, 정량/정성 gate, data mart grain 정리, Solar call 0 | Low | 문서 revert |
+| HD-SOLAR-019 | HD-SOLAR-018 | guarded boost hard-case validation runner 구현 | 완료. bucket coverage 10/10, route mismatch 0, Solar call 0, public leakage 0 | Medium | runner/report revert |
 
 ## HD-SOLAR-014 실행 결과
 
@@ -387,7 +388,7 @@ Public output gate:
 
 ## 다음 액션
 
-1. HD-SOLAR-018 hard-case 검증 계획 문서를 commit한다.
-2. HD-SOLAR-019에서 Solar call 0 조건의 hard-case validation runner를 구현한다.
+1. HD-SOLAR-019 hard-case validation runner 결과를 commit한다.
+2. HD-SOLAR-020에서 router threshold 유지/수정 판단을 문서화한다.
 3. 추가 Solar Pro 3 호출이 필요하면 별도 승인과 call budget을 먼저 고정한다.
 4. 최종 성능 개선 주장은 locked test와 bootstrap confidence interval 이후에만 작성한다.

@@ -195,3 +195,28 @@ free-text는 warehouse fact에 저장하지 않는다. raw answer와 raw evidenc
 - HD-SOLAR-016 route decision을 6개 hard-case bucket으로 나눠 검증한다.
 - public report에는 query id, bucket, metric delta, route decision label, leakage count만 허용한다.
 - 다음 구현은 HD-SOLAR-019 guarded boost hard-case validation runner다.
+
+## HD-SOLAR-019 실행 결과
+
+[Solar Pro 3 Guarded Boost Hard-case Validation Report](../evals/reports/solar_guarded_boost_hard_case_validation_report.md)를 생성했다.
+
+결과:
+
+| metric | value |
+| --- | ---: |
+| query_count | 10 |
+| bucket_coverage_count | 10 |
+| hard_case_bucket_count | 6 |
+| selected_candidate_count | 1 |
+| guardrail_block_count | 9 |
+| manual_review_count | 2 |
+| route_decision_mismatch_count | 0 |
+| citation_recoverability_min | 1.000000 |
+| solar_call_count | 0 |
+| validation_decision | `keep_guarded_router_for_next_runner` |
+
+판단:
+
+- 청킹 비교 재개 조건은 여전히 충족하지 않는다.
+- 추가 Solar Pro 3 호출 없이 router safety를 확인했다.
+- 다음 작업은 router threshold를 유지할지 수정할지 문서화하는 것이다.
