@@ -109,6 +109,7 @@
 ## Experiments
 
 - [ ] RAPTOR-lite overview/place_story 비교
+- [x] GraphRAG-lite relationship 계획 및 runner skeleton 작성
 - [ ] GraphRAG-lite relationship 비교
 - [ ] HyDE overview/relationship subset 비교
 - [ ] ColBERT style late interaction hard subset 검토

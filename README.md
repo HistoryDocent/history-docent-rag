@@ -283,6 +283,10 @@ Solar Pro 3 generation v2 repaired prompt policy validator를 추가했다. fake
 
 Solar Pro 3 generation v2 repaired dry-run/readiness runner를 추가했다. 기존 7개 query type dev subset 구조에서 route와 call budget을 검증했고 `baseline_live_call_count=6`, `repaired_candidate_live_call_count=5`, `v1_fallback_route_count=1`, `expected_total_live_call_count=11`, `solar_call_count=0`, `readiness_decision=ready_for_repaired_v2_live_approval`을 기록했다. 이 결과는 live 품질 개선 주장이 아니라 별도 승인 전 readiness gate다.
 
+Solar Pro 3 generation v2 repaired live paired comparison을 실행했다. 실제 Solar Pro 3 호출은 총 11회였고 `Correct-with-Evidence=1.000000 -> 1.000000`, `citation_precision=0.566667 -> 0.783333`, `citation_recall=0.509722 -> 0.481944`, `unsupported_claim_rate=0.000000 -> 0.000000`을 기록했다. gate는 통과했지만 recall 하락 때문에 `adoption_decision=reject_repaired_v2_default`로 기본값 승격을 보류했다.
+
+GraphRAG-lite relationship 실험 계획과 runner skeleton을 추가했다. 범위는 `relationship` query type 전용 input-only 계획이며 `planned_dev_query_count=10`, `planned_test_query_count=5`, `strategy_count=3`, `candidate_count=2`, `planned_solar_call_count=0`, `decision=ready_for_graphrag_lite_input_only_approval`을 기록했다. 이 결과는 GraphRAG-lite 실행 성능이나 production 채택 주장이 아니다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -368,6 +372,8 @@ Solar Pro 3 generation v2 repaired dry-run/readiness runner를 추가했다. 기
 | [Solar Pro 3 Generation v2 Prompt Policy Validator Report](evals/reports/solar_generation_v2_prompt_policy_validator_report.md) | HD-SOLAR-025 repaired v2 prompt policy validator의 정량/정성 검증과 public-safe gate 결과 |
 | [Solar Pro 3 Generation v2 Repaired Dry-run Readiness Report](evals/reports/solar_generation_v2_repaired_dry_run_readiness_report.md) | HD-SOLAR-026 repaired v2 route, fallback, call budget, public-safe readiness 결과 |
 | [Solar Pro 3 Generation v2 Repaired Live Comparison Report](evals/reports/solar_generation_v2_repaired_live_comparison_report.md) | HD-SOLAR-027 Solar Pro 3 실제 호출 기반 repaired v2 routed policy 비교와 기본값 승격 보류 판단 |
+| [GraphRAG-lite Relationship Plan](docs/GRAPHRAG_LITE_RELATIONSHIP_PLAN.md) | HD-ADV-RAG-001 relationship 전용 GraphRAG-lite input-only 실험 계획과 gate |
+| [GraphRAG-lite Relationship Plan Report](evals/reports/graphrag_lite_relationship_plan_report.md) | HD-ADV-RAG-001 계획 runner skeleton, 정량/정성 report, public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
