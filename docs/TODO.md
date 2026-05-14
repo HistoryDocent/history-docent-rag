@@ -89,7 +89,9 @@
 - [x] `parent_doc_context_boost` 적용 후 Solar Pro 3 호출 전 generation input-only 평가
 - [x] `parent_doc_context_boost` query별 input regression 원인 점검
 - [x] `parent_doc_context_boost` 적용 조건 제한 guardrail/router 계획 작성
-- [ ] `parent_doc_context_boost` guarded 3-way 비교 runner 구현
+- [x] `parent_doc_context_boost` guarded 3-way 비교 runner 구현
+- [ ] `parent_doc_context_boost_guarded` 기반 Solar Pro 3 live paired comparison 계획 작성
+- [ ] Solar Pro 3 live paired comparison 실행 승인 여부 결정
 
 ## Experiments
 

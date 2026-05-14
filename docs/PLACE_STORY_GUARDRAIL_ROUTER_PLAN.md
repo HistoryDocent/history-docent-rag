@@ -180,13 +180,49 @@ public artifact 허용:
 - block reason tag
 - public-safe report
 
+## HD-PLACE-STORY-012 실행 결과
+
+`baseline_dense_e5_voice_rewrite`, `parent_doc_context_boost_always`, `parent_doc_context_boost_guarded`를 같은 `place_story` dev query 10개에서 비교했다. Solar Pro 3는 호출하지 않았다.
+
+| 항목 | 값 |
+| --- | ---: |
+| selected_candidate_count | 1 |
+| guardrail_block_count | 9 |
+| guarded_Correct-with-Evidence | 0.900000 |
+| guarded_citation_precision | 0.580000 |
+| guarded_citation_recall | 0.509881 |
+| guarded_doc_coverage | 0.900000 |
+| guarded_evidence_order | 0.770000 |
+| solar_call_count | 0 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+Route decision 분포:
+
+| route_decision | count |
+| --- | ---: |
+| `manual_review_required` | 2 |
+| `use_baseline_correctness_guardrail` | 1 |
+| `use_baseline_doc_guardrail` | 1 |
+| `use_baseline_no_candidate_gain` | 3 |
+| `use_baseline_precision_guardrail` | 2 |
+| `use_candidate_direct_gain` | 1 |
+
+판단:
+
+- `always_boost`는 recall 이득이 있지만 correctness와 precision/order regression이 있어 기본값으로 부적합하다.
+- `guarded_boost`는 baseline safety metric을 유지하면서 안전한 candidate 1건만 통과시켰다.
+- 결과 label은 `promote_guarded_to_live_plan_review`다.
+- 이 결과는 live generation 품질 개선 주장이 아니라 live paired comparison 계획으로 넘어갈 수 있다는 input-only gate 통과다.
+
 ## 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
 | HD-PLACE-STORY-011 | HD-PLACE-STORY-010 | guardrail/router 계획 문서화 | 계획 문서, README/TODO 링크, leakage scan 통과 | Low | 문서 revert |
-| HD-PLACE-STORY-012 | HD-PLACE-STORY-011 | guarded boost comparison runner 구현 | baseline/always/guarded 3-way report, pytest, ruff, leakage 0 | Medium | runner/report revert |
-| HD-SOLAR-013 | HD-PLACE-STORY-012 | Solar Pro 3 live 재비교 계획 | live call 전 별도 승인 | High | live call 전 중단 |
+| HD-PLACE-STORY-012 | HD-PLACE-STORY-011 | guarded boost comparison runner 구현 | 완료. baseline/always/guarded 3-way report, pytest, ruff, leakage 0 | Medium | runner/report revert |
+| HD-SOLAR-013 | HD-PLACE-STORY-012 | Solar Pro 3 live 재비교 계획 | live call 전 query set, cost, pass/fail gate 별도 승인 | High | live call 전 중단 |
 
 ## Non-goal
 
@@ -197,6 +233,6 @@ public artifact 허용:
 
 ## 결정
 
-다음 구현 작업은 `HD-PLACE-STORY-012`다.
+다음 구현 작업은 `HD-SOLAR-013` 계획이다.
 
-목표는 `baseline`, `always_boost`, `guarded_boost`를 같은 query set에서 비교해 guardrail이 correctness regression을 막는지 확인하는 것이다.
+목표는 `parent_doc_context_boost_guarded`를 Solar Pro 3 live generation에 넣기 전에 paired comparison 범위, 비용, 중단 조건, 공개 리포트 구조를 고정하는 것이다.
