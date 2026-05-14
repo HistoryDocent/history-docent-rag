@@ -30,6 +30,12 @@ DEFAULT_SOLAR_PRO_3_MAX_RETRIES = 2
 DEFAULT_SOLAR_PRO_3_MAX_TOKENS = 700
 RETRYABLE_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
 CitationDraftSchemaVersion = Literal["v1", "v2"]
+CitationDraftPromptPolicyId = Literal[
+    "default",
+    "v2_repair_coverage_floor",
+    "v2_repair_risk_aware_selection",
+    "v2_repair_query_type_router",
+]
 
 
 @dataclass(frozen=True)
@@ -46,6 +52,7 @@ class SolarPro3ProviderConfig:
     cost_per_1k_input_tokens: float = 0.0
     cost_per_1k_output_tokens: float = 0.0
     draft_schema_version: CitationDraftSchemaVersion = "v1"
+    prompt_policy_id: CitationDraftPromptPolicyId = "default"
 
     def __post_init__(self) -> None:
         if not self.credential.strip():
@@ -62,12 +69,15 @@ class SolarPro3ProviderConfig:
             raise LlmProviderConfigError("RAG_MAX_OUTPUT_TOKENS must be positive")
         if self.draft_schema_version not in ("v1", "v2"):
             raise LlmProviderConfigError("draft_schema_version must be v1 or v2")
+        if self.prompt_policy_id != "default" and self.draft_schema_version != "v2":
+            raise LlmProviderConfigError("prompt_policy_id is only supported for v2")
 
     @classmethod
     def from_env(
         cls,
         *,
         draft_schema_version: CitationDraftSchemaVersion = "v1",
+        prompt_policy_id: CitationDraftPromptPolicyId = "default",
     ) -> "SolarPro3ProviderConfig":
         return cls(
             credential=os.environ.get("UPSTAGE_API_KEY", ""),
@@ -86,6 +96,7 @@ class SolarPro3ProviderConfig:
                 DEFAULT_SOLAR_PRO_3_MAX_TOKENS,
             ),
             draft_schema_version=draft_schema_version,
+            prompt_policy_id=prompt_policy_id,
         )
 
     @property
@@ -104,6 +115,7 @@ class SolarPro3ProviderConfig:
             "top_p": self.top_p,
             "reasoning_effort": self.reasoning_effort,
             "structured_output": f"citation_rag_draft_schema_{self.draft_schema_version}",
+            "prompt_policy_id": self.prompt_policy_id,
         }
         digest = hashlib.sha256(
             json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8"),
@@ -124,6 +136,7 @@ class SolarPro3ProviderConfig:
             "reasoning_effort": self.reasoning_effort,
             "response_format": "json_schema",
             "draft_schema_version": self.draft_schema_version,
+            "prompt_policy_id": self.prompt_policy_id,
             "api_key_source": "environment",
         }
 
@@ -228,13 +241,17 @@ class SolarPro3CitationDraftProvider:
             "messages": [
                 {
                     "role": "system",
-                    "content": _system_prompt(self.config.draft_schema_version),
+                    "content": _system_prompt(
+                        self.config.draft_schema_version,
+                        prompt_policy_id=self.config.prompt_policy_id,
+                    ),
                 },
                 {
                     "role": "user",
                     "content": _user_prompt(
                         request,
                         schema_version=self.config.draft_schema_version,
+                        prompt_policy_id=self.config.prompt_policy_id,
                     ),
                 },
             ],
@@ -280,7 +297,11 @@ def build_solar_provider_public_rows(
     ]
 
 
-def _system_prompt(schema_version: CitationDraftSchemaVersion) -> str:
+def _system_prompt(
+    schema_version: CitationDraftSchemaVersion,
+    *,
+    prompt_policy_id: CitationDraftPromptPolicyId = "default",
+) -> str:
     base_prompt = (
         "당신은 서울/한양 역사 관광 도슨트 RAG 시스템의 답변 초안 작성자입니다. "
         "반드시 제공된 evidence 안에서만 답하고, 모르면 과장하지 않습니다. "
@@ -288,10 +309,15 @@ def _system_prompt(schema_version: CitationDraftSchemaVersion) -> str:
     )
     if schema_version == "v1":
         return base_prompt
-    return (
-        base_prompt
-        + " CitationRagDraftV2에서는 실제로 사용한 evidence rank만 "
+    v2_prompt = (
+        base_prompt + " CitationRagDraftV2에서는 실제로 사용한 evidence rank만 "
         "used_evidence_pack_ranks에 기록합니다."
+    )
+    if prompt_policy_id == "default":
+        return v2_prompt
+    return (
+        v2_prompt + " repaired v2 policy에서는 근거를 과도하게 줄이지 않고, "
+        "query type별 최소 evidence coverage와 unsupported risk 판단을 함께 지킨다."
     )
 
 
@@ -299,6 +325,7 @@ def _user_prompt(
     request: CitationDraftRequest,
     *,
     schema_version: CitationDraftSchemaVersion,
+    prompt_policy_id: CitationDraftPromptPolicyId = "default",
 ) -> str:
     place_text = ", ".join(request.place_ids) if request.place_ids else "unknown"
     prompt = (
@@ -318,7 +345,7 @@ def _user_prompt(
     if schema_version == "v1":
         return prompt
     evidence_rank_text = _available_evidence_rank_text(request.evidence_context)
-    return (
+    v2_prompt = (
         prompt
         + "\n"
         + "- used_evidence_pack_ranks는 답변 작성에 실제 사용한 evidence rank만 오름차순으로 넣습니다.\n"
@@ -327,6 +354,38 @@ def _user_prompt(
         + "- coverage_intent는 focused, multi_evidence, abstain 중 하나입니다.\n"
         + f"- 사용 가능한 evidence rank: {evidence_rank_text}\n"
     )
+    if prompt_policy_id == "default":
+        return v2_prompt
+    return v2_prompt + _repaired_v2_policy_text(
+        request=request,
+        evidence_rank_text=evidence_rank_text,
+    )
+
+
+def _repaired_v2_policy_text(
+    *,
+    request: CitationDraftRequest,
+    evidence_rank_text: str,
+) -> str:
+    min_required = _min_required_evidence_count(request.query_type)
+    return (
+        "\nrepaired v2 policy\n"
+        f"- 이 query_type의 최소 used_evidence_pack_ranks 수는 {min_required}입니다.\n"
+        "- available evidence가 최소 수 이상이면 최소 수 이상을 선택합니다.\n"
+        "- available evidence가 최소 수보다 적으면 사용 가능한 evidence만 선택하고 unsupported_claim_risk를 medium으로 둡니다.\n"
+        "- overview, relationship, voice_followup은 가능한 한 서로 다른 evidence 2개 이상을 대조합니다.\n"
+        "- place_fact와 route_context는 핵심 근거 1개 이상을 정확히 선택합니다.\n"
+        "- 답변의 핵심 주장에 쓰지 않은 evidence는 선택하지 않습니다.\n"
+        f"- 현재 사용 가능한 evidence rank는 {evidence_rank_text}입니다.\n"
+    )
+
+
+def _min_required_evidence_count(query_type: str) -> int:
+    if query_type in {"overview", "relationship", "voice_followup", "place_story"}:
+        return 2
+    if query_type == "no_answer":
+        return 0
+    return 1
 
 
 def _extract_message_content(payload: dict[str, Any]) -> str:
@@ -398,10 +457,7 @@ def _provider_compatible_v2_schema() -> dict[str, object]:
 
 def _available_evidence_rank_text(evidence_context: str) -> str:
     ranks = sorted(
-        {
-            int(match.group(1))
-            for match in re.finditer(r"\[evidence:(\d+)\]", evidence_context)
-        },
+        {int(match.group(1)) for match in re.finditer(r"\[evidence:(\d+)\]", evidence_context)},
     )
     if not ranks:
         return "unknown"
@@ -410,10 +466,7 @@ def _available_evidence_rank_text(evidence_context: str) -> str:
 
 def _should_retry_error(exc: LlmProviderRequestError) -> bool:
     message = str(exc)
-    return (
-        "Solar Pro 3 retryable status" in message
-        or "timed out" in message
-    )
+    return "Solar Pro 3 retryable status" in message or "timed out" in message
 
 
 def _public_endpoint_alias(endpoint: str) -> str:

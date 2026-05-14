@@ -101,6 +101,7 @@ def test_solar_provider_builds_structured_request_and_parses_draft() -> None:
         provider.config.public_config_summary["draft_schema_version"]
         == provider.config.draft_schema_version
     )
+    assert provider.config.public_config_summary["prompt_policy_id"] == "default"
 
 
 def test_solar_provider_v2_builds_structured_request_and_parses_selected_ranks() -> None:
@@ -177,6 +178,63 @@ def test_solar_provider_v2_builds_structured_request_and_parses_selected_ranks()
     user_prompt = payload["messages"][1]["content"]
     assert "used_evidence_pack_ranks" in user_prompt
     assert "사용 가능한 evidence rank: 1, 2" in user_prompt
+
+
+def test_solar_provider_v2_repaired_policy_adds_coverage_rules() -> None:
+    captured: dict[str, object] = {}
+    config = SolarPro3ProviderConfig(
+        credential="mock-provider-key",
+        base_url=DEFAULT_UPSTAGE_BASE_URL,
+        model_id="solar-pro3",
+        timeout_seconds=3.0,
+        max_retries=1,
+        max_tokens=700,
+        draft_schema_version="v2",
+        prompt_policy_id="v2_repair_coverage_floor",
+    )
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["payload"] = json.loads(request.content.decode("utf-8"))
+        draft = CitationRagDraftV2(
+            answer="경복궁은 한양의 중심축을 설명할 때 두 근거를 함께 사용할 수 있습니다.",
+            spoken_answer="경복궁은 한양의 중심축을 이해하기 좋은 장소입니다.",
+            used_evidence_pack_ranks=(1, 2),
+            coverage_intent="multi_evidence",
+            unsupported_claim_risk="low",
+        )
+        return httpx.Response(
+            status_code=200,
+            json={
+                "id": "mock-response-v2-repaired",
+                "model": "solar-pro3",
+                "choices": [{"message": {"content": draft.model_dump_json()}}],
+                "usage": {},
+            },
+        )
+
+    provider = SolarPro3CitationDraftProvider(
+        config=config,
+        client=_client(handler),
+    )
+    result = provider.generate_draft(
+        _request().model_copy(
+            update={
+                "query_type": "overview",
+                "evidence_context": "[evidence:1] 테스트 근거\n\n[evidence:2] 보조 근거",
+            },
+        ),
+    )
+    payload = captured["payload"]
+
+    assert isinstance(result.draft, CitationRagDraftV2)
+    assert provider.config.public_config_summary["prompt_policy_id"] == ("v2_repair_coverage_floor")
+    assert isinstance(payload, dict)
+    assert config.provider_config_id != _config().provider_config_id
+    system_prompt = payload["messages"][0]["content"]
+    user_prompt = payload["messages"][1]["content"]
+    assert "repaired v2 policy" in system_prompt
+    assert "최소 used_evidence_pack_ranks 수는 2" in user_prompt
+    assert "사용 가능한 evidence rank는 1, 2" in user_prompt
 
 
 def test_solar_provider_v2_mock_response_schema_contract() -> None:

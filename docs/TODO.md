@@ -83,7 +83,8 @@
 - [x] Solar Pro 3 generation v2 prompt repair 계획 작성
 - [x] Solar Pro 3 generation v2 repaired prompt policy validator 구현
 - [x] Solar Pro 3 generation v2 repaired dry-run/readiness runner 구현
-- [ ] Solar Pro 3 generation v2 repaired live paired comparison 실행 승인 여부 결정
+- [x] Solar Pro 3 generation v2 repaired live paired comparison 실행 승인 여부 결정
+- [x] Solar Pro 3 generation v2 repaired live paired comparison 실행 및 기본값 승격 보류 판단
 - [x] `place_story` retrieval hard-case 원인 분석
 - [x] `place_story` target grain 및 top-rank coverage 개선 계획 작성
 - [x] `place_story` 전체 dev query target grain coverage diagnostic runner 구현

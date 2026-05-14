@@ -107,6 +107,48 @@ HD-SOLAR-023 locked readiness next gate 결과:
 4. repaired v2 후보가 live 재실험 가치가 있는지 readiness report로 판단한다.
 5. 별도 승인 후에만 Solar Pro 3 live paired comparison을 실행한다.
 
+## HD-SOLAR-027 Live 결과
+
+별도 승인 후 Solar Pro 3 실제 호출 기반 repaired v2 routed policy paired comparison을 실행했다.
+
+결론은 `reject_repaired_v2_default`다. gate 자체는 통과했지만 citation recall이 하락했기 때문에 repaired v2를 기본 generation policy로 승격하지 않는다.
+
+| metric | v1 baseline | repaired v2 routed | delta |
+| --- | ---: | ---: | ---: |
+| eval_count | 7 | 7 | 0 |
+| Correct-with-Evidence | 1.000000 | 1.000000 | 0.000000 |
+| citation_precision | 0.566667 | 0.783333 | 0.216666 |
+| citation_recall | 0.509722 | 0.481944 | -0.027778 |
+| unsupported_claim_rate | 0.000000 | 0.000000 | 0.000000 |
+| abstention_accuracy | 1.000000 | 1.000000 | 0.000000 |
+| latency_p95_ms | 12026.922400 | 3675.885500 | -8351.036900 |
+| solar_call_count | 6 | 5 | -1 |
+| actual_total_solar_call_count | 11 | 11 | 0 |
+
+route decision:
+
+| route_decision | count |
+| --- | ---: |
+| `use_repaired_v2_candidate` | 5 |
+| `use_v1_fallback` | 1 |
+| `abstain_no_live_call` | 1 |
+
+public gate:
+
+| metric | value |
+| --- | ---: |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+| forbidden_result_field_count | 0 |
+
+판단:
+
+- precision은 개선됐지만 recall 하락이 남아 있다.
+- `relationship`에서 recall regression, `voice_followup`에서 precision regression이 관찰됐다.
+- `place_story`는 v1 fallback으로 보호됐으나 이는 repaired v2 자체의 성공을 의미하지 않는다.
+- dev 7건 결과는 포트폴리오에서 "채택 보류 판단"으로만 사용하고, 최종 성능 개선 주장은 하지 않는다.
+
 ## 정량 Gate
 
 | gate | 기준 |

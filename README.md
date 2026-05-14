@@ -367,6 +367,7 @@ Solar Pro 3 generation v2 repaired dry-run/readiness runner를 추가했다. 기
 | [Solar Pro 3 Generation v2 Prompt Repair Plan Report](evals/reports/solar_generation_v2_prompt_repair_plan_report.md) | HD-SOLAR-024 계획 문서의 정량/정성 검토와 public-safe gate 결과 |
 | [Solar Pro 3 Generation v2 Prompt Policy Validator Report](evals/reports/solar_generation_v2_prompt_policy_validator_report.md) | HD-SOLAR-025 repaired v2 prompt policy validator의 정량/정성 검증과 public-safe gate 결과 |
 | [Solar Pro 3 Generation v2 Repaired Dry-run Readiness Report](evals/reports/solar_generation_v2_repaired_dry_run_readiness_report.md) | HD-SOLAR-026 repaired v2 route, fallback, call budget, public-safe readiness 결과 |
+| [Solar Pro 3 Generation v2 Repaired Live Comparison Report](evals/reports/solar_generation_v2_repaired_live_comparison_report.md) | HD-SOLAR-027 Solar Pro 3 실제 호출 기반 repaired v2 routed policy 비교와 기본값 승격 보류 판단 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
