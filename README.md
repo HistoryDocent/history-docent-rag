@@ -255,6 +255,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `place_story` guarded boost 3-way input-only 비교를 실행했다. CUDA 실행 기준 `parent_doc_context_boost_guarded`는 10개 query 중 candidate 1건만 선택하고 9건을 차단했다. baseline 대비 `Correct-with-Evidence=0.900000`, `citation_precision=0.580000`, `doc_coverage=0.900000`, `evidence_order=0.770000`을 유지하면서 `citation_recall`은 `0.481309`에서 `0.509881`로 소폭 개선됐다. Solar Pro 3 호출 수는 0이고 public-safe gate는 모두 0이다. 결론은 live 품질 개선 주장이 아니라 `promote_guarded_to_live_plan_review`다.
 
+`parent_doc_context_boost_guarded` 기반 Solar Pro 3 live paired comparison 계획을 추가했다. 비교 범위는 private `place_story` dev 10개로 제한하고, baseline과 guarded 입력 fingerprint가 동일한 query는 baseline generation 결과를 재사용하도록 계획했다. 예상 live call은 11회, hard cap은 20회다. 이 문서는 실행 계획이며 Solar Pro 3 추가 호출 또는 품질 개선 주장이 아니다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -320,6 +322,7 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 | [Place Story Generation Input Regression Analysis Report](evals/reports/place_story_generation_input_regression_analysis_report.md) | `parent_doc_context_boost` query별 input regression tag와 guardrail 필요성 |
 | [Place Story Guardrail/Router Plan](docs/PLACE_STORY_GUARDRAIL_ROUTER_PLAN.md) | `parent_doc_context_boost` 적용 조건, 차단 조건, 3-way guarded comparison 설계 |
 | [Place Story Guarded Boost Comparison Report](evals/reports/place_story_guarded_boost_comparison_report.md) | baseline, always boost, guarded boost 3-way input-only 비교와 route decision 결과 |
+| [Solar Pro 3 Guarded Boost Live Comparison Plan](docs/SOLAR_GUARDED_BOOST_LIVE_COMPARISON_PLAN.md) | `parent_doc_context_boost_guarded`의 Solar Pro 3 live paired comparison 실행 전 계획, 비용, 중단 조건, 공개 경계 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |

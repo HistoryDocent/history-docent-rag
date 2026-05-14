@@ -216,13 +216,26 @@ Route decision 분포:
 - 결과 label은 `promote_guarded_to_live_plan_review`다.
 - 이 결과는 live generation 품질 개선 주장이 아니라 live paired comparison 계획으로 넘어갈 수 있다는 input-only gate 통과다.
 
+## HD-SOLAR-013 계획 결과
+
+[Solar Pro 3 Guarded Boost Live Comparison Plan](SOLAR_GUARDED_BOOST_LIVE_COMPARISON_PLAN.md)에 live paired comparison 실행 전 조건을 고정했다.
+
+핵심 결정:
+
+- 비교 범위는 private `place_story` dev 10개로 제한한다.
+- baseline과 guarded 입력 fingerprint가 동일한 query는 baseline generation 결과를 재사용한다.
+- 예상 live call은 11회, hard cap은 20회다.
+- public report에는 raw query, raw answer, raw evidence, prompt, private path, secret을 기록하지 않는다.
+- live 실행은 별도 승인 후 진행한다.
+
 ## 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
 | HD-PLACE-STORY-011 | HD-PLACE-STORY-010 | guardrail/router 계획 문서화 | 계획 문서, README/TODO 링크, leakage scan 통과 | Low | 문서 revert |
 | HD-PLACE-STORY-012 | HD-PLACE-STORY-011 | guarded boost comparison runner 구현 | 완료. baseline/always/guarded 3-way report, pytest, ruff, leakage 0 | Medium | runner/report revert |
-| HD-SOLAR-013 | HD-PLACE-STORY-012 | Solar Pro 3 live 재비교 계획 | live call 전 query set, cost, pass/fail gate 별도 승인 | High | live call 전 중단 |
+| HD-SOLAR-013 | HD-PLACE-STORY-012 | Solar Pro 3 live 재비교 계획 | 완료. live call 전 query set, cost, pass/fail gate 문서화 | Medium | 문서 revert |
+| HD-SOLAR-014 | HD-SOLAR-013 | Solar Pro 3 guarded boost live comparison dry-run runner | input fingerprint, 예상 call count, public-safe dry-run report | High | runner/report revert |
 
 ## Non-goal
 
@@ -233,6 +246,6 @@ Route decision 분포:
 
 ## 결정
 
-다음 구현 작업은 `HD-SOLAR-013` 계획이다.
+다음 구현 작업은 `HD-SOLAR-014` dry-run runner다.
 
-목표는 `parent_doc_context_boost_guarded`를 Solar Pro 3 live generation에 넣기 전에 paired comparison 범위, 비용, 중단 조건, 공개 리포트 구조를 고정하는 것이다.
+목표는 Solar Pro 3를 호출하기 전에 baseline/guarded input fingerprint, reuse 대상, 예상 live call count를 검증하는 것이다.
