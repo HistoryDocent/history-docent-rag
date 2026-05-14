@@ -80,3 +80,14 @@ HD-SOLAR-020의 router threshold 판단이 HD-SOLAR-016, HD-SOLAR-019 결과를 
 HD-SOLAR-020은 문서 gate를 통과했다.
 
 `place_story_guarded_boost_v1` threshold는 유지한다. 다음 작업은 HD-SOLAR-021 locked test 또는 expanded dev 검증 승인 계획 작성이다.
+
+## HD-SOLAR-021 후속 반영
+
+HD-SOLAR-021에서 locked test 승인 계획을 작성했다.
+
+결정:
+
+- locked test를 즉시 실행하지 않는다.
+- 다음 작업은 Solar Pro 3 호출 0회의 readiness dry-run runner 구현이다.
+- future live paired comparison은 `place_story` locked subset으로 제한한다.
+- production 기본값 채택과 최종 성능 개선 주장은 계속 금지한다.

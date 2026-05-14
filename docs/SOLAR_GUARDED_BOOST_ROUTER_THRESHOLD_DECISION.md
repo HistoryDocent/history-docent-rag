@@ -184,3 +184,15 @@ free-text query, raw answer, raw evidence, prompt, chunk text는 fact에 저장�
 `place_story_guarded_boost_v1` threshold는 유지한다.
 
 다음 작업은 locked test 실행이 아니라 HD-SOLAR-021에서 locked test 또는 expanded dev 검증을 위한 승인 계획을 작성하는 것이다.
+
+## HD-SOLAR-021 계획 결과
+
+[Solar Pro 3 Guarded Boost Locked Test Approval Plan](SOLAR_GUARDED_BOOST_LOCKED_TEST_APPROVAL_PLAN.md)에 locked test 실행 전 승인 조건을 고정했다.
+
+결정:
+
+- locked test를 즉시 실행하지 않는다.
+- 다음 작업은 Solar Pro 3 호출 0회의 readiness dry-run runner 구현이다.
+- future live paired comparison은 `place_story` locked subset으로 제한한다.
+- live 실행은 별도 명시 승인 후에만 허용한다.
+- production 기본값 채택은 계속 보류한다.

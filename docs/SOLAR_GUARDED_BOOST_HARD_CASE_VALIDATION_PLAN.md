@@ -267,3 +267,15 @@ Public output gate:
 - 추가 Solar Pro 3 호출은 수행하지 않는다.
 - production 기본값 채택은 계속 보류한다.
 - 다음 작업은 HD-SOLAR-021 locked test 또는 expanded dev 검증 승인 계획 작성이다.
+
+## HD-SOLAR-021 계획 결과
+
+[Solar Pro 3 Guarded Boost Locked Test Approval Plan](SOLAR_GUARDED_BOOST_LOCKED_TEST_APPROVAL_PLAN.md)에 locked test 실행 전 승인 조건, call budget, stop condition, claim boundary를 고정했다.
+
+결정:
+
+- locked test를 지금 실행하지 않는다.
+- 먼저 Solar Pro 3 호출 0회의 readiness dry-run을 구현한다.
+- `place_story` locked subset 외 범위로 확장하지 않는다.
+- locked test 결과를 본 뒤 threshold를 재튜닝하지 않는다.
+- 최종 성능 개선 주장은 locked test live 결과와 별도 final ablation 이후에만 허용한다.

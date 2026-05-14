@@ -389,7 +389,8 @@ Public output gate:
 
 ## 다음 액션
 
-1. HD-SOLAR-020 threshold 판단 문서를 commit한다.
-2. HD-SOLAR-021에서 locked test 또는 expanded dev 검증 실행 전 승인 계획을 작성한다.
-3. 추가 Solar Pro 3 호출이 필요하면 별도 승인과 call budget을 먼저 고정한다.
-4. 최종 성능 개선 주장은 locked test와 bootstrap confidence interval 이후에만 작성한다.
+1. HD-SOLAR-021 locked test 승인 계획은 완료됐다.
+2. HD-SOLAR-022에서 locked test readiness dry-run runner를 구현한다.
+3. dry-run은 Solar Pro 3 호출 0회로 expected call budget, route decision, public-safe gate만 검증한다.
+4. 추가 Solar Pro 3 호출이 필요하면 별도 승인과 call budget을 먼저 고정한다.
+5. 최종 성능 개선 주장은 locked test와 bootstrap confidence interval 이후에만 작성한다.

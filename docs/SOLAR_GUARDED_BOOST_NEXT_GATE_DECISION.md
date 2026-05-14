@@ -237,3 +237,15 @@ free-text는 warehouse fact에 저장하지 않는다. raw answer와 raw evidenc
 - production 기본값 채택은 보류한다.
 - 청킹 비교 재개 조건은 충족하지 않는다.
 - 다음 작업은 locked test 또는 expanded dev 검증 실행 전 승인 계획 작성이다.
+
+## HD-SOLAR-021 계획 결과
+
+[Solar Pro 3 Guarded Boost Locked Test Approval Plan](SOLAR_GUARDED_BOOST_LOCKED_TEST_APPROVAL_PLAN.md)에 locked test 승인 조건을 고정했다.
+
+결론:
+
+- locked test는 아직 실행하지 않는다.
+- 다음 작업은 `locked_test_readiness_dry_run`이다.
+- dry-run은 Solar Pro 3 호출 0회로 expected call budget, route decision, public-safe gate만 검증한다.
+- future live paired comparison은 별도 승인 전까지 금지한다.
+- production 기본값 채택과 통계적 개선 주장은 계속 금지한다.
