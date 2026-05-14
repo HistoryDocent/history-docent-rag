@@ -189,6 +189,47 @@ Baseline delta:
 - 결론은 `keep_as_tradeoff_candidate`다. production 기본값 또는 live generation 개선 주장으로 확정하지 않는다.
 - 다음 단계는 raw text를 공개하지 않는 방식으로 query별 input regression 원인을 분류한 뒤, v2 prompt repair 또는 reranking guardrail을 결정하는 것이다.
 
+## HD-PLACE-STORY-010 실행 결과
+
+HD-009의 trade-off를 query 단위로 분해했다. Solar Pro 3는 호출하지 않았고, 공개 리포트에는 raw query, raw evidence, prompt, answer text를 기록하지 않았다. 실행 device는 `cuda`다.
+
+| metric | value |
+| --- | ---: |
+| query_count | 10 |
+| direct_ready_gain_count | 1 |
+| direct_ready_loss_count | 0 |
+| correct_with_evidence_regression_count | 1 |
+| citation_precision_regression_count | 3 |
+| citation_recall_gain_count | 3 |
+| evidence_order_regression_count | 3 |
+| mixed_tradeoff_count | 1 |
+| guardrail_required_count | 1 |
+| input_latency_improved_count | 5 |
+| solar_call_count | 0 |
+
+Tag distribution:
+
+| tag | count |
+| --- | ---: |
+| `citation_precision_regression` | 3 |
+| `citation_recall_gain` | 3 |
+| `citation_recall_regression` | 1 |
+| `correctness_regression` | 1 |
+| `direct_ready_gain` | 1 |
+| `evidence_order_regression` | 3 |
+| `guardrail_required` | 1 |
+| `latency_improved` | 5 |
+| `mixed_tradeoff` | 1 |
+| `no_material_change` | 2 |
+
+판단:
+
+- candidate가 실제로 도움이 된 query는 존재한다. `direct_ready_gain_count=1`이다.
+- 그러나 correctness regression 1건과 precision regression 3건이 있어 전체 기본값으로 승격할 수 없다.
+- evidence order regression 3건은 parent/doc boost가 관련 근거를 찾더라도 generation에 넣는 순서를 흐릴 수 있음을 의미한다.
+- 결론은 `require_guardrail_before_live_generation`이다.
+- 다음 단계는 Solar Pro 3 live 호출이 아니라 `parent_doc_context_boost` 적용 조건을 제한하는 router 또는 reranking guardrail 계획이다.
+
 ## 정량 Gate
 
 최소 기록 metric:
@@ -268,11 +309,12 @@ dimension 후보:
 | HD-PLACE-STORY-007 | HD-PLACE-STORY-006 | hard subset 기준 rewrite/boost 후보 비교 | 완료. paired comparison report 생성, latency 기록, leakage count 0 | Medium | strategy flag 비활성화 |
 | HD-PLACE-STORY-008 | HD-PLACE-STORY-007 | `parent_doc_context_boost` full `place_story` dev 재검증 및 generation 입력 영향 분석 | 완료. full place_story report 생성, target grain metric 기록, leakage count 0 | Medium | 후보 strategy 비활성화 |
 | HD-PLACE-STORY-009 | HD-PLACE-STORY-008 | `parent_doc_context_boost` 적용 후 Solar Pro 3 호출 전 generation input-only 평가 | 완료. input-only report 생성, Solar call 0, leakage count 0 | Medium | report/runner revert |
-| HD-PLACE-STORY-010 | HD-PLACE-STORY-009 | `parent_doc_context_boost` query별 input regression 원인 점검 | raw text 없이 regression tag와 aggregate count 기록 | Medium | report/runner revert |
-| HD-SOLAR-011 | HD-PLACE-STORY-010 | Solar Pro 3 v2 prompt repair 재검토 | retrieval 개선 후 live paired comparison 계획 승인 | High | live call 실행 전 중단 |
+| HD-PLACE-STORY-010 | HD-PLACE-STORY-009 | `parent_doc_context_boost` query별 input regression 원인 점검 | 완료. regression tag report 생성, Solar call 0, leakage count 0 | Medium | report/runner revert |
+| HD-PLACE-STORY-011 | HD-PLACE-STORY-010 | `parent_doc_context_boost` 적용 조건 제한 guardrail/router 계획 | correctness regression을 막는 적용 조건 정의 | Medium | plan/report revert |
+| HD-SOLAR-012 | HD-PLACE-STORY-011 | Solar Pro 3 v2 prompt repair 재검토 | retrieval 개선 후 live paired comparison 계획 승인 | High | live call 실행 전 중단 |
 
 ## 결정
 
-다음 구현 우선순위는 `HD-PLACE-STORY-010`이다.
+다음 구현 우선순위는 `HD-PLACE-STORY-011`이다.
 
-청킹 비교 테스트는 계속 보류한다. `parent_doc_context_boost`는 generation 입력 후보로 유지하지만 input-only 평가에서 precision과 Correct-with-Evidence 하락이 확인됐다. Solar Pro 3 live 호출 전에 query별 input regression을 먼저 점검한다.
+청킹 비교 테스트는 계속 보류한다. `parent_doc_context_boost`는 일부 query에서 효과가 있지만 correctness regression이 확인됐다. Solar Pro 3 live 호출 전에는 candidate 적용 조건을 제한하는 guardrail 또는 router를 먼저 설계한다.

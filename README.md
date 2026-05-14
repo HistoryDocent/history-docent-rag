@@ -249,6 +249,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `parent_doc_context_boost`의 Solar Pro 3 호출 전 generation input-only 평가를 추가했다. CUDA 실행 기준 full `place_story` dev 10개에서 `direct_ready=0.600000 -> 0.700000`, `citation_recall=0.481309 -> 0.565953`로 개선됐지만 `Correct-with-Evidence=0.900000 -> 0.800000`, `citation_precision=0.580000 -> 0.550000`, `evidence_order=0.770000 -> 0.616667`로 하락했다. Solar Pro 3 호출 수는 0이고 public-safe gate는 모두 0이다. 결론은 즉시 채택이 아니라 `keep_as_tradeoff_candidate`이며, live generation 전에 query별 input regression을 점검해야 한다.
 
+`parent_doc_context_boost`의 query별 input regression 분석을 추가했다. full `place_story` dev 10개에서 `direct_ready_gain_count=1`, `correct_with_evidence_regression_count=1`, `citation_precision_regression_count=3`, `citation_recall_gain_count=3`, `evidence_order_regression_count=3`, `mixed_tradeoff_count=1`, `guardrail_required_count=1`로 기록됐다. Solar Pro 3 호출 수는 0이고 public-safe gate는 모두 0이다. 결론은 `require_guardrail_before_live_generation`이며, candidate는 전체 기본값이 아니라 hard-case router 또는 reranking guardrail 후보로 제한한다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -311,6 +313,7 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 | [Place Story Target Grain and Coverage Plan](docs/PLACE_STORY_TARGET_GRAIN_AND_COVERAGE_PLAN.md) | `place_story` target grain 정책, top-rank coverage 개선 후보, 청킹 재실험 재개 조건 |
 | [Place Story Target Grain Coverage Report](evals/reports/place_story_target_grain_coverage_report.md) | `place_story` dev 10개 target grain별 coverage, hard-case tag, public-safe gate 결과 |
 | [Place Story Generation Input-only Eval Report](evals/reports/place_story_generation_input_only_eval_report.md) | `parent_doc_context_boost`의 Solar Pro 3 호출 전 evidence input 품질과 trade-off 결과 |
+| [Place Story Generation Input Regression Analysis Report](evals/reports/place_story_generation_input_regression_analysis_report.md) | `parent_doc_context_boost` query별 input regression tag와 guardrail 필요성 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
