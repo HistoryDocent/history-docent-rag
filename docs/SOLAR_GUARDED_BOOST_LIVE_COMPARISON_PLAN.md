@@ -392,6 +392,7 @@ Public output gate:
 1. HD-SOLAR-021 locked test 승인 계획은 완료됐다.
 2. HD-SOLAR-022 locked test readiness dry-run runner도 완료됐다.
 3. locked `place_story` 5건에서 candidate live call 대상이 0건이라 locked live paired comparison은 보류한다.
-4. 다음 작업은 HD-SOLAR-023에서 router 적용 폭과 next gate를 다시 판단하는 문서화다.
-5. 추가 Solar Pro 3 호출이 필요하면 별도 승인과 call budget을 먼저 고정한다.
-6. 최종 성능 개선 주장은 locked test와 bootstrap confidence interval 이후에만 작성한다.
+4. HD-SOLAR-023 next gate 판단에서 `place_story_guarded_boost_v1` production 채택을 기각했다.
+5. 다음 작업은 HD-SOLAR-024 Solar Pro 3 generation v2 prompt repair 계획 작성이다.
+6. 추가 Solar Pro 3 호출이 필요하면 별도 승인과 call budget을 먼저 고정한다.
+7. 최종 성능 개선 주장은 locked test와 bootstrap confidence interval 이후에만 작성한다.

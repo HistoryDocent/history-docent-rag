@@ -261,3 +261,15 @@ free-text는 warehouse fact에 저장하지 않는다. raw answer와 raw evidenc
 - expected live call은 baseline 5회지만 candidate live call이 0회라 paired comparison 이득 검증이 불가능하다.
 - 따라서 locked live paired comparison은 보류한다.
 - 다음 작업은 router 적용 폭과 next gate를 재판단하는 문서화다.
+
+## HD-SOLAR-023 판단 결과
+
+[Solar Pro 3 Guarded Boost Locked Readiness Next Gate Decision](SOLAR_GUARDED_BOOST_LOCKED_READINESS_NEXT_GATE_DECISION.md)에 final next gate를 고정했다.
+
+결론:
+
+- `place_story_guarded_boost_v1`은 production 기본값으로 채택하지 않는다.
+- locked live paired comparison은 실행하지 않는다.
+- locked test 결과로 threshold를 재튜닝하지 않는다.
+- 청킹 비교 재개 조건은 충족하지 않는다.
+- 다음 작업은 retrieval repair가 아니라 Solar Pro 3 generation v2 prompt repair 계획 작성이다.

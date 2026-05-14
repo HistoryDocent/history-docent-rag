@@ -103,3 +103,14 @@ HD-SOLAR-022에서 locked test readiness dry-run을 실행했다.
 - locked live paired comparison은 보류한다.
 - Solar Pro 3 호출은 0회다.
 - 다음 작업은 router 적용 폭과 next gate 판단 문서화다.
+
+## HD-SOLAR-023 후속 반영
+
+HD-SOLAR-023에서 next gate 판단을 작성했다.
+
+결정:
+
+- threshold는 locked 결과로 수정하지 않는다.
+- locked live paired comparison은 treatment가 0건이라 보류한다.
+- production 기본값 채택은 기각한다.
+- 다음 작업은 Solar Pro 3 generation v2 prompt repair 계획 작성이다.

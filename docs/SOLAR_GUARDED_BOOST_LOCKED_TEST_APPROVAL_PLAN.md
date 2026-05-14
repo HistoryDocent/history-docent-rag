@@ -278,3 +278,16 @@ Public output gate:
 - candidate live call 대상이 0건이므로 locked live paired comparison은 실행하지 않는다.
 - 이 결과는 locked test 성능 개선 주장이 아니다.
 - 다음 작업은 locked readiness 결과를 바탕으로 router 적용 폭과 next gate를 판단하는 문서화다.
+
+## HD-SOLAR-023 판단 결과
+
+[Solar Pro 3 Guarded Boost Locked Readiness Next Gate Decision](SOLAR_GUARDED_BOOST_LOCKED_READINESS_NEXT_GATE_DECISION.md)에 locked readiness 결과 해석을 고정했다.
+
+결정:
+
+- locked live paired comparison은 보류한다.
+- locked 결과를 보고 router threshold를 완화하지 않는다.
+- `place_story_guarded_boost_v1`은 production 기본값으로 채택하지 않는다.
+- 청킹 비교 재개 조건은 충족하지 않는다.
+- `guarded_boost`는 dev-only limited generalization 사례로 보관한다.
+- 다음 작업은 Solar Pro 3 generation v2 prompt repair 계획 작성이다.

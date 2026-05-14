@@ -104,3 +104,15 @@
 readiness gate는 통과했지만 candidate live call 대상이 없다.
 
 이 경우 locked live paired comparison은 보류하고 router 적용 폭을 재검토한다.
+
+## HD-SOLAR-023 후속 판단
+
+[Solar Pro 3 Guarded Boost Locked Readiness Next Gate Decision](../../docs/SOLAR_GUARDED_BOOST_LOCKED_READINESS_NEXT_GATE_DECISION.md)에 후속 판단을 고정했다.
+
+결정:
+
+- locked live paired comparison은 실행하지 않는다.
+- locked test 결과를 기준으로 router threshold를 완화하지 않는다.
+- `place_story_guarded_boost_v1`은 production 기본값으로 채택하지 않는다.
+- 청킹 비교 재개 조건은 충족하지 않는다.
+- 다음 작업은 Solar Pro 3 generation v2 prompt repair 계획 작성이다.

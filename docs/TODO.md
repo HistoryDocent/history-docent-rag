@@ -100,7 +100,7 @@
 - [x] Solar Pro 3 guarded boost router threshold 유지/수정 판단 문서 작성
 - [x] Solar Pro 3 guarded boost locked test 실행 전 승인 계획 작성
 - [x] Solar Pro 3 guarded boost locked test readiness dry-run runner 구현
-- [ ] Solar Pro 3 guarded boost locked readiness 결과 기반 next gate 판단 문서 작성
+- [x] Solar Pro 3 guarded boost locked readiness 결과 기반 next gate 판단 문서 작성
 
 ## Experiments
 

@@ -275,6 +275,8 @@ Solar Pro 3 guarded boost locked test 승인 계획을 추가했다. 결론은 l
 
 Solar Pro 3 guarded boost locked test readiness dry-run runner를 추가했다. CUDA 실행 기준 locked `place_story` test subset 5건에서 `selected_candidate_count=0`, `candidate_live_call_count=0`, `expected_total_live_call_count=5`, `target_resolvability_fail_count=0`, `solar_call_count=0`, `readiness_decision=ready_without_candidate_live_call`을 기록했다. readiness gate는 통과했지만 candidate live call 대상이 없으므로 locked live paired comparison은 보류한다.
 
+Solar Pro 3 guarded boost locked readiness next gate 판단 문서를 추가했다. 결론은 `place_story_guarded_boost_v1`을 production 기본값으로 채택하지 않는 것이다. locked 결과를 보고 threshold를 완화하지 않고, 청킹 비교도 재개하지 않는다. `guarded_boost`는 dev-only limited generalization 사례로 보관하고 다음 작업은 Solar Pro 3 generation v2 prompt repair 계획으로 돌린다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -353,6 +355,8 @@ Solar Pro 3 guarded boost locked test readiness dry-run runner를 추가했다. 
 | [Solar Pro 3 Guarded Boost Locked Test Approval Plan](docs/SOLAR_GUARDED_BOOST_LOCKED_TEST_APPROVAL_PLAN.md) | guarded boost locked test 실행 전 승인 조건, call budget, stop condition, claim boundary |
 | [Solar Pro 3 Guarded Boost Locked Test Approval Plan Report](evals/reports/solar_guarded_boost_locked_test_approval_plan_report.md) | HD-SOLAR-021 승인 계획의 정량/정성 검토와 public-safe gate 결과 |
 | [Solar Pro 3 Guarded Boost Locked Test Readiness Report](evals/reports/solar_guarded_boost_locked_test_readiness_report.md) | HD-SOLAR-022 locked `place_story` readiness dry-run, call budget, public-safe gate 결과 |
+| [Solar Pro 3 Guarded Boost Locked Readiness Next Gate Decision](docs/SOLAR_GUARDED_BOOST_LOCKED_READINESS_NEXT_GATE_DECISION.md) | HD-SOLAR-022 결과 기반 locked live 보류, production 채택 기각, 다음 gate 판단 |
+| [Solar Pro 3 Guarded Boost Locked Readiness Next Gate Decision Report](evals/reports/solar_guarded_boost_locked_readiness_next_gate_decision_report.md) | HD-SOLAR-023 next gate 판단의 정량/정성 검토와 public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |

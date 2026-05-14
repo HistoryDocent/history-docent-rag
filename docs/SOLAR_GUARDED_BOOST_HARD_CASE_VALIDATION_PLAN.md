@@ -291,3 +291,14 @@ Public output gate:
 - readiness gate, target resolvability, public-safe gate는 통과했다.
 - 추가 Solar Pro 3 호출은 수행하지 않았다.
 - 다음 작업은 router 적용 폭과 next gate 판단 문서화다.
+
+## HD-SOLAR-023 판단 결과
+
+[Solar Pro 3 Guarded Boost Locked Readiness Next Gate Decision](SOLAR_GUARDED_BOOST_LOCKED_READINESS_NEXT_GATE_DECISION.md)에 next gate 판단을 고정했다.
+
+결정:
+
+- guarded boost 실험선은 dev-only limited generalization으로 보관한다.
+- locked live paired comparison과 production 채택은 기각한다.
+- 청킹 비교 재개는 계속 보류한다.
+- 다음 작업은 Solar Pro 3 generation v2 prompt repair 계획 작성이다.
