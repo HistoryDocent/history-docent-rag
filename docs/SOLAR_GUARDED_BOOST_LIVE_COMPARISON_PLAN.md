@@ -216,7 +216,7 @@ public report에 기록하지 않는 것:
 | --- | --- | --- | --- | --- | --- |
 | HD-SOLAR-013 | HD-PLACE-STORY-012 | guarded boost live comparison 계획 문서화 | README/TODO 링크, leakage scan, live call 0 | Medium | 문서 revert |
 | HD-SOLAR-014 | HD-SOLAR-013 승인 | Solar Pro 3 guarded boost live comparison dry-run runner 구현 | 완료. unit test, dry-run, public-safe report, Solar call 0 | High | runner/report revert |
-| HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner 구현 | live 실행 전 dry-run 재검증, call cap 확인 | High | runner/report revert |
+| HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner 구현 | 완료. readiness mode, dry-run 재검증, call cap 확인, Solar call 0 | High | runner/report revert |
 | HD-SOLAR-016 | HD-SOLAR-015 승인 | 승인 후 live paired comparison 실행 | live report, public leakage 0, call count/cost 기록 | High | candidate 미채택, public report revert |
 
 ## HD-SOLAR-014 실행 결과
@@ -260,6 +260,50 @@ Public output gate:
 - 이 결과는 live 품질 개선 주장이 아니다.
 - 다음 단계는 live 호출이 아니라 live paired comparison runner 구현 및 실행 전 승인이다.
 
+## HD-SOLAR-015 실행 결과
+
+Solar Pro 3 guarded boost live paired comparison readiness runner를 구현했다. 기본 실행은 live 호출을 수행하지 않고 dry-run 재검증, call cap 확인, public-safe readiness report 생성까지만 수행한다. 실행 device는 `cuda`다.
+
+| metric | value |
+| --- | ---: |
+| dry_run_gate_passed | True |
+| call_cap_passed | True |
+| public_safety_passed | True |
+| readiness_decision | `ready_for_live_execution_approval` |
+| expected_total_live_call_count | 11 |
+| baseline_live_call_count | 10 |
+| candidate_live_call_count | 1 |
+| reused_candidate_count | 9 |
+| changed_candidate_input_count | 1 |
+| live_call_hard_cap | 20 |
+| live_execution_requested | False |
+| live_execution_confirmed | False |
+| live_call_executed | False |
+| solar_call_count | 0 |
+
+Reuse decision:
+
+| reuse_decision | count |
+| --- | ---: |
+| `candidate_live_call_required` | 1 |
+| `reuse_baseline_result` | 9 |
+
+Public output gate:
+
+| metric | value |
+| --- | ---: |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+| forbidden_result_field_count | 0 |
+
+판단:
+
+- runner는 실제 live 실행 전 readiness check까지 완료한다.
+- 이번 단계에서 Solar Pro 3 실제 호출은 0회다.
+- dev 10건 live 품질 개선 주장은 아직 없다.
+- 다음 단계는 HD-SOLAR-016 실제 live 실행 승인 여부 결정이다.
+
 ## 외부 감사 체크
 
 | 감사 항목 | 기대 결과 |
@@ -273,7 +317,7 @@ Public output gate:
 
 ## 다음 액션
 
-1. HD-SOLAR-014 dry-run 결과를 commit한다.
-2. 별도 승인 후 HD-SOLAR-015 live paired comparison runner를 구현한다.
-3. live runner는 실행 전 dry-run 재검증과 call cap 확인을 먼저 수행한다.
-4. 다시 승인받고 HD-SOLAR-016에서 실제 live call을 실행한다.
+1. HD-SOLAR-015 readiness runner 결과를 commit한다.
+2. HD-SOLAR-016 실행 여부를 별도 승인받는다.
+3. 승인 시 private `place_story` dev 10개, expected call 11회, hard cap 20회로 제한해 실제 live paired comparison을 실행한다.
+4. live 결과는 aggregate metric, paired delta, cost/latency, public-safe leakage gate만 공개한다.

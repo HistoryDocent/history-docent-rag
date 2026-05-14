@@ -310,6 +310,32 @@ Solar Pro 3 guarded boost live comparison dry-run runner를 실행했다. Solar 
 - guarded input이 baseline과 달라지는 query는 1건이다.
 - 다음 단계는 live call 실행이 아니라 live paired comparison runner 구현과 실행 전 재승인이다.
 
+## HD-SOLAR-015 실행 결과
+
+Solar Pro 3 guarded boost live paired comparison readiness runner를 구현했다. 기본 실행은 dry-run 재검증과 call cap 확인만 수행하며, 실제 Solar Pro 3 호출은 차단한다. 실행 device는 `cuda`다.
+
+| metric | value |
+| --- | ---: |
+| readiness_decision | `ready_for_live_execution_approval` |
+| expected_total_live_call_count | 11 |
+| candidate_live_call_count | 1 |
+| reused_candidate_count | 9 |
+| live_call_hard_cap | 20 |
+| dry_run_gate_passed | True |
+| call_cap_passed | True |
+| public_safety_passed | True |
+| live_call_executed | False |
+| solar_call_count | 0 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+판단:
+
+- 청킹 비교 테스트는 계속 보류한다.
+- `guarded_boost`는 live 실행 준비성 gate까지 통과했지만 live 답변 품질은 아직 검증하지 않았다.
+- 다음 단계는 HD-SOLAR-016 live paired comparison 실행 승인 여부 결정이다.
+
 ## 정량 Gate
 
 최소 기록 metric:
@@ -394,10 +420,10 @@ dimension 후보:
 | HD-PLACE-STORY-012 | HD-PLACE-STORY-011 | guarded boost 3-way 비교 runner 구현 | 완료. baseline/always/guarded report 생성, Solar call 0, leakage count 0 | Medium | runner/report revert |
 | HD-SOLAR-013 | HD-PLACE-STORY-012 | `parent_doc_context_boost_guarded` 기반 Solar Pro 3 live paired comparison 계획 | 완료. live call 전 query set, cost, pass/fail gate 문서화 | Medium | 문서 revert |
 | HD-SOLAR-014 | HD-SOLAR-013 | Solar Pro 3 guarded boost live comparison dry-run runner | 완료. input fingerprint, 예상 call count, public-safe dry-run report | High | runner/report revert |
-| HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner | live 실행 전 dry-run 재검증, call cap 확인 | High | runner/report revert |
+| HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner | 완료. readiness mode, dry-run 재검증, call cap 확인, Solar call 0 | High | runner/report revert |
 
 ## 결정
 
-다음 구현 우선순위는 `HD-SOLAR-015`다.
+다음 결정 우선순위는 `HD-SOLAR-016` 실제 live paired comparison 실행 승인 여부다.
 
-청킹 비교 테스트는 계속 보류한다. `guarded_boost`는 input-only 기준과 dry-run call budget gate를 통과했지만 Solar Pro 3 live generation 품질은 아직 검증하지 않았다. 다음 단계는 live runner를 구현하되, 실제 live call 실행은 다시 승인받는 것이다.
+청킹 비교 테스트는 계속 보류한다. `guarded_boost`는 input-only 기준, dry-run call budget gate, readiness gate를 통과했지만 Solar Pro 3 live generation 품질은 아직 검증하지 않았다. 실제 live call 실행은 별도 승인 후에만 진행한다.

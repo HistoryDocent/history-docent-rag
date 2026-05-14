@@ -251,6 +251,34 @@ Solar Pro 3를 호출하지 않는 dry-run runner를 실행했다.
 - candidate가 선택된 1건만 추가 live call이 필요하다.
 - live 호출 전 call budget과 public-safe gate가 계획과 일치한다.
 
+## HD-SOLAR-015 실행 결과
+
+Solar Pro 3 guarded boost live paired comparison readiness runner를 구현했다. 실행은 readiness mode이며 Solar Pro 3 실제 호출은 수행하지 않았다.
+
+| metric | value |
+| --- | ---: |
+| readiness_decision | `ready_for_live_execution_approval` |
+| expected_total_live_call_count | 11 |
+| baseline_live_call_count | 10 |
+| candidate_live_call_count | 1 |
+| reused_candidate_count | 9 |
+| changed_candidate_input_count | 1 |
+| live_call_hard_cap | 20 |
+| dry_run_gate_passed | True |
+| call_cap_passed | True |
+| public_safety_passed | True |
+| live_call_executed | False |
+| solar_call_count | 0 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+
+판단:
+
+- runner는 live 실행 직전 dry-run 재검증과 call cap 검사를 강제한다.
+- 이번 단계는 live 품질 비교가 아니라 live 실행 준비성 검증이다.
+- 다음 결정은 HD-SOLAR-016 실제 live paired comparison 실행 승인 여부다.
+
 ## 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
@@ -259,7 +287,7 @@ Solar Pro 3를 호출하지 않는 dry-run runner를 실행했다.
 | HD-PLACE-STORY-012 | HD-PLACE-STORY-011 | guarded boost comparison runner 구현 | 완료. baseline/always/guarded 3-way report, pytest, ruff, leakage 0 | Medium | runner/report revert |
 | HD-SOLAR-013 | HD-PLACE-STORY-012 | Solar Pro 3 live 재비교 계획 | 완료. live call 전 query set, cost, pass/fail gate 문서화 | Medium | 문서 revert |
 | HD-SOLAR-014 | HD-SOLAR-013 | Solar Pro 3 guarded boost live comparison dry-run runner | 완료. input fingerprint, 예상 call count, public-safe dry-run report | High | runner/report revert |
-| HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner | live 실행 전 dry-run 재검증, call cap 확인 | High | runner/report revert |
+| HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner | 완료. readiness mode, dry-run 재검증, call cap 확인, Solar call 0 | High | runner/report revert |
 
 ## Non-goal
 
@@ -270,6 +298,6 @@ Solar Pro 3를 호출하지 않는 dry-run runner를 실행했다.
 
 ## 결정
 
-다음 구현 작업은 `HD-SOLAR-015` live paired comparison runner다.
+다음 작업은 `HD-SOLAR-016` 실제 live paired comparison 실행 승인 여부 결정이다.
 
-목표는 실제 live call을 바로 실행하지 않고, live runner 안에서도 dry-run 재검증과 call cap 확인을 강제하는 것이다.
+실행한다면 private `place_story` dev 10개, expected call 11회, hard cap 20회, public-safe aggregate report 조건으로 제한한다.
