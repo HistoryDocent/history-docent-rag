@@ -4,7 +4,7 @@
 
 - [x] 현업형 RAG ablation 비교 실험 계획 문서화
 - [ ] `notebooks/` numbered skeleton 확인
-- [ ] `docs/PRD.md` 기준으로 README 첫 화면 재정리
+- [x] `docs/PRD.md` 기준으로 README 첫 화면 재정리
 - [x] `data_manifest` schema 설계
 - [x] `normalized_blocks` schema 설계
 - [x] schema unit test 작성
@@ -121,7 +121,7 @@
 
 ## Portfolio
 
-- [ ] README 결과 표 실제 수치로 갱신
+- [x] README 결과 표 실제 수치로 갱신
 - [ ] failure analysis 10개 작성
 - [ ] API response sample 작성
 - [ ] 이력서 한 줄 설명 작성

@@ -1,0 +1,93 @@
+# Portfolio Result Summary Report
+
+## 목적
+
+README와 포트폴리오 문구에 사용할 RAG 실험 결과를 public-safe 형태로 압축한다.
+
+이 문서는 성능 개선 주장이 아니다. dev-only, dev-input-only, live-dev-subset, locked-readiness-only 결과를 구분해 제출용 메시지의 claim boundary를 고정한다.
+
+raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
+
+## 실행 정보
+
+| 항목 | 값 |
+| --- | --- |
+| report_version | `portfolio-result-summary-report/v1` |
+| work_id | `HD-PORTFOLIO-001` |
+| source_decision_ledger | `docs/RAG_DECISION_LEDGER.md` |
+| source_final_ablation_report | `evals/reports/final_ablation_status_report.md` |
+| solar_call_count | 0 |
+| cuda_required | false |
+
+## 정량 리포트
+
+| metric | value |
+| --- | ---: |
+| summarized_stage_count | 12 |
+| adopted_or_implemented_count | 4 |
+| rejected_default_count | 5 |
+| held_candidate_count | 3 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+| live_solar_call_count_for_this_report | 0 |
+
+## Result Snapshot
+
+| stage | candidate | scope | key_metric | value | portfolio_status |
+| --- | --- | --- | --- | ---: | --- |
+| chunking | `C0 current parent-child` | dev 70 | Recall@5 | 0.566667 | adopted |
+| dense retrieval | `dense_multilingual_e5_small` | dev 70 | Recall@5 | 0.733333 | base candidate |
+| dense retrieval | `dense_bge_m3` | dev 70 | Recall@5 | 0.800000 | held quality ceiling |
+| hybrid | `hybrid_weighted_e5_small_alpha_0_5` | dev 70 | Recall@5 | 0.783333 | route candidate |
+| reranker | `bge-reranker-v2-m3 top20` | dev 70 | latency_p95_ms | 13140.690300 | reject default |
+| query rewrite | `dense_multilingual_e5_small_voice_rewrite` | dev 70 | Recall@5 | 0.850000 | adopted candidate |
+| evidence packing | `P0_rank_order` | dev 70 | citation_recoverability | 1.000000 | adopted |
+| generation v2 repair | `solar-generation-v2-repaired` | live dev subset 7 | citation_recall_delta | -0.027778 | reject default |
+| place_story router | `place_story_guarded_boost_v1` | locked readiness 5 | selected_candidate_count | 0 | reject production route |
+| GraphRAG-lite | `entity_path_v1` | relationship dev 10 | nDCG@5 delta | -0.002056 | reject default |
+| GraphRAG-lite | `community_hint_v1` | relationship dev 10 | nDCG@5 delta | -0.030337 | reject default |
+| router skeleton | `query_type_router_v1` | contract-only | route_policy_count | 3 | implemented |
+
+## 정성 리포트
+
+- `portfolio_scope`: README 첫 화면에서 현재 stack, 실험 결과, 채택/기각 이유, claim boundary를 먼저 보이게 한다.
+- `decision_quality`: 좋은 수치만 선택하지 않고 latency, citation recall, locked readiness를 기준으로 기각한 과정을 강조한다.
+- `retrieval_message`: BM25에서 neural dense, hybrid, reranker, query rewrite로 확장했지만 최종 기본 후보는 균형이 가장 좋은 dense voice rewrite로 둔다.
+- `advanced_rag_message`: GraphRAG-lite는 relationship에 한정해 비교했고 개선이 없어 기본값에서 제외했다.
+- `router_message`: query type router skeleton은 구현됐지만 classifier와 locked 성능 개선은 아직 없다.
+- `security_boundary`: public README와 docs에는 저작권 원문, private eval payload, secret을 넣지 않는다.
+- `claim_boundary`: production 성능, locked 개선, 통계적 유의성 표현은 금지한다.
+- `external_audit`: 포트폴리오 제출 전에는 새 실험 추가보다 설명 가능한 결과 표와 금지 표현 점검이 우선이다.
+
+## Public Output Gate
+
+| metric | value |
+| --- | ---: |
+| result_row_count | 12 |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+| forbidden_result_field_count | 0 |
+
+## 채택 판단
+
+`HD-PORTFOLIO-001`은 문서 gate로 통과한다.
+
+README 첫 화면에는 다음이 보여야 한다.
+
+- 프로젝트 목적
+- 현재 RAG stack
+- 핵심 실험 결과 표
+- 채택/보류/기각 판단
+- public 데이터 정책
+- claim boundary
+
+## 금지 문구
+
+- production 성능 검증 완료
+- locked test 개선 입증
+- GraphRAG로 성능 개선
+- 음성 관광 앱 완성
+- Solar Pro 3 품질 최종 개선
+- 원본 도서 데이터 공개

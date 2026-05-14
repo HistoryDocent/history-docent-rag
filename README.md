@@ -4,6 +4,42 @@
 
 원본 데이터는 `벌거벗은 한국사` 등 한국사 도서의 Upstage Parser 결과를 기반으로 한다.
 
+## 포트폴리오 결과 요약
+
+현재 공개 가능한 결론은 “production 성능 개선 완료”가 아니라 “평가 기반 RAG 의사결정 구조를 구현했다”이다.
+
+| 항목 | 현재 결정 |
+| --- | --- |
+| 현재 stack | `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1` |
+| query type router | `relationship`은 hybrid weighted E5 route, `no_answer`는 abstain-first, 나머지는 dense voice rewrite |
+| 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
+| 보류한 핵심 | BGE-M3 dense, BGE reranker, RAPTOR-lite, HyDE, query type classifier |
+| 기각한 핵심 | GraphRAG-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route |
+| 공개 경계 | 원본 PDF, 전체 parser JSON, 전체 chunk text, vector index, raw eval payload, secret은 public repo에 포함하지 않음 |
+
+핵심 수치:
+
+| stage | candidate | scope | metric | value | decision |
+| --- | --- | --- | --- | ---: | --- |
+| chunking | `C0 current parent-child` | dev 70 | Recall@5 | 0.566667 | adopt |
+| dense retrieval | `dense_multilingual_e5_small` | dev 70 | Recall@5 | 0.733333 | base candidate |
+| hybrid | `hybrid_weighted_e5_small_alpha_0_5` | dev 70 | Recall@5 | 0.783333 | route candidate |
+| reranker | `bge-reranker-v2-m3 top20` | dev 70 | latency_p95_ms | 13140.690300 | reject default |
+| query rewrite | `dense_multilingual_e5_small_voice_rewrite` | dev 70 | Recall@5 | 0.850000 | adopt candidate |
+| evidence packing | `P0_rank_order` | dev 70 | citation_recoverability | 1.000000 | adopt |
+| GraphRAG-lite | `entity_path_v1` | relationship dev 10 | nDCG@5 delta | -0.002056 | reject default |
+| router skeleton | `query_type_router_v1` | contract-only | route_policy_count | 3 | implemented |
+
+금지 claim:
+
+- production 성능 검증 완료
+- locked test에서 최종 개선 입증
+- GraphRAG로 성능 개선
+- 음성 관광 앱 완성
+- 전체 도서 데이터 공개
+
+상세 요약은 [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md)와 [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md)를 기준으로 한다.
+
 ## 프로젝트 정체성
 
 이 저장소는 일반 챗봇 데모가 아니다.
@@ -75,7 +111,7 @@
 
 ## 목표 Pipeline과 현재 구현 범위
 
-현재 구현 완료:
+현재 구현 및 검증 완료:
 
 ```text
 PDF
@@ -85,6 +121,14 @@ PDF
 -> 서울/한양 장소 catalog
 -> parent/child chunks
 -> BM25 baseline
+-> dense retrieval / hybrid retrieval / reranker 비교
+-> deterministic query rewrite
+-> evidence packing
+-> citation RAG answer contract
+-> Solar Pro 3 provider contract
+-> FastAPI /api/v1/chat contract
+-> retrieval-backed smoke
+-> query type router skeleton
 -> retrieval evaluation harness
 -> public-safe aggregate reports
 ```
@@ -92,28 +136,25 @@ PDF
 후속 구현 대상:
 
 ```text
-chunking ablation
--> dense/vector indexes
--> hybrid retrieval
--> place-aware query rewrite
--> parent context expansion
--> evidence packing
--> Solar Pro 3 generation
--> answer with citations
--> evaluation logging
+RAPTOR-lite overview/place_story input-only 비교
+-> query type classifier 설계
+-> HyDE subset 비교
+-> failure analysis 10개 정리
+-> locked test 기반 최종 개선 주장 검증
+-> frontend/voice UI
 ```
 
 ## RAG 전략
 
-현재 검증 중인 production 후보:
+현재 검증 중인 기본 후보:
 
 ```text
 Place-aware Retrieval + Query Rewrite + Parent-Child Chunking + Citation RAG
 ```
 
-검색 method는 실험 결과에 따라 고정한다. dev 기준 현재 1차 후보는 `multilingual-e5-small` dense 단독이고, Hybrid는 reranker 적용 전 recall-oriented 후보로 유지한다.
+검색 method는 실험 결과에 따라 고정한다. dev 기준 현재 non-rerank 기본 후보는 `dense_multilingual_e5_small_voice_rewrite`이고, `relationship` query type에는 `hybrid_weighted_e5_small_alpha_0_5`를 제한적 route 후보로 둔다.
 
-RAPTOR-lite와 GraphRAG-lite는 초기 기본 구조가 아니라 비교 실험군으로 둔다.
+GraphRAG-lite는 relationship input-only 비교에서 기본값으로 승격하지 않았다. RAPTOR-lite는 아직 overview/place_story 장문 맥락 질문에 한정한 후속 실험군이다.
 
 비교 실험의 순서와 후보군은 [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md)에 고정한다.
 이 계획은 chunking, embedding, hybrid retrieval, reranker, query rewrite, evidence packing, Solar Pro 3 generation, RAPTOR-lite, GraphRAG-lite를 한 번에 섞지 않고 단계별로 검증하기 위한 문서다.
@@ -385,6 +426,8 @@ GraphRAG-lite relationship 실험 계획과 runner skeleton을 추가했다. 범
 | [Query Type Router Decision](docs/QUERY_TYPE_ROUTER_DECISION.md) | HD-ROUTER-001 query type별 route policy, 채택/보류/기각 판단, claim boundary |
 | [Query Type Router Decision Report](evals/reports/query_type_router_decision_report.md) | HD-ROUTER-001 route policy 정량/정성 리포트와 public-safe gate 결과 |
 | [Query Type Router Skeleton Report](evals/reports/query_type_router_skeleton_report.md) | HD-ROUTER-002 deterministic router skeleton, route table, public-safe gate 결과 |
+| [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
+| [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
