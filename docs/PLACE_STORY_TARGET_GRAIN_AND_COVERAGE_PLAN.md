@@ -160,6 +160,35 @@ Baseline delta:
 - 그러나 MRR, nDCG@5, doc@5가 악화됐으므로 production 기본값 또는 최종 개선 주장으로 확정하지 않는다.
 - 다음 단계는 Solar Pro 3 live 호출 전에 같은 query set에서 generation input-only 품질을 검토하는 것이다.
 
+## HD-PLACE-STORY-009 실행 결과
+
+`parent_doc_context_boost`를 full `place_story` dev query 10개에서 baseline과 비교하되, Solar Pro 3는 호출하지 않았다. dummy draft와 citation assembler만 사용해 generation 입력 evidence가 citation 평가에 어떤 영향을 주는지 확인했다. 실행 device는 `cuda`다.
+
+| strategy_id | context_build | direct_ready | Correct-with-Evidence | citation_precision | citation_recall | citation_recoverability | evidence_order | avg_context_chars | input_latency_p95_ms | solar_calls |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `baseline_dense_e5_voice_rewrite` | 1.000000 | 0.600000 | 0.900000 | 0.580000 | 0.481309 | 1.000000 | 0.770000 | 4317.000000 | 11.764400 | 0 |
+| `parent_doc_context_boost` | 1.000000 | 0.700000 | 0.800000 | 0.550000 | 0.565953 | 1.000000 | 0.616667 | 4309.600000 | 8.362300 | 0 |
+
+Baseline delta:
+
+| metric | delta |
+| --- | ---: |
+| direct_ready | 0.100000 |
+| Correct-with-Evidence | -0.100000 |
+| citation_precision | -0.030000 |
+| citation_recall | 0.084644 |
+| evidence_order | -0.153333 |
+| avg_context_chars | -7.400000 |
+| input_latency_p95_ms | -3.402100 |
+
+판단:
+
+- `parent_doc_context_boost`는 direct evidence와 citation recall을 개선했다.
+- 그러나 Correct-with-Evidence, citation precision, evidence order가 하락했다.
+- Solar Pro 3 호출 수는 0이고 public-safe gate는 모두 0이다.
+- 결론은 `keep_as_tradeoff_candidate`다. production 기본값 또는 live generation 개선 주장으로 확정하지 않는다.
+- 다음 단계는 raw text를 공개하지 않는 방식으로 query별 input regression 원인을 분류한 뒤, v2 prompt repair 또는 reranking guardrail을 결정하는 것이다.
+
 ## 정량 Gate
 
 최소 기록 metric:
@@ -238,11 +267,12 @@ dimension 후보:
 | HD-PLACE-STORY-006 | `PLACE_STORY_HARD_CASE_ANALYSIS` | `place_story` 전체 dev query의 child/parent/doc coverage diagnostic runner 구현 | 완료. pytest 통과, public-safe report 생성, leakage count 0 | Medium | runner와 report만 revert |
 | HD-PLACE-STORY-007 | HD-PLACE-STORY-006 | hard subset 기준 rewrite/boost 후보 비교 | 완료. paired comparison report 생성, latency 기록, leakage count 0 | Medium | strategy flag 비활성화 |
 | HD-PLACE-STORY-008 | HD-PLACE-STORY-007 | `parent_doc_context_boost` full `place_story` dev 재검증 및 generation 입력 영향 분석 | 완료. full place_story report 생성, target grain metric 기록, leakage count 0 | Medium | 후보 strategy 비활성화 |
-| HD-PLACE-STORY-009 | HD-PLACE-STORY-008 | `parent_doc_context_boost` 적용 후 Solar Pro 3 호출 전 generation input-only 평가 | selected evidence citation 품질, evidence order, prompt 입력 안정성 기록 | Medium | report/runner revert |
-| HD-SOLAR-010 | HD-PLACE-STORY-009 | Solar Pro 3 v2 prompt repair 재검토 | retrieval 개선 후 live paired comparison 계획 승인 | High | live call 실행 전 중단 |
+| HD-PLACE-STORY-009 | HD-PLACE-STORY-008 | `parent_doc_context_boost` 적용 후 Solar Pro 3 호출 전 generation input-only 평가 | 완료. input-only report 생성, Solar call 0, leakage count 0 | Medium | report/runner revert |
+| HD-PLACE-STORY-010 | HD-PLACE-STORY-009 | `parent_doc_context_boost` query별 input regression 원인 점검 | raw text 없이 regression tag와 aggregate count 기록 | Medium | report/runner revert |
+| HD-SOLAR-011 | HD-PLACE-STORY-010 | Solar Pro 3 v2 prompt repair 재검토 | retrieval 개선 후 live paired comparison 계획 승인 | High | live call 실행 전 중단 |
 
 ## 결정
 
-다음 구현 우선순위는 `HD-PLACE-STORY-009`다.
+다음 구현 우선순위는 `HD-PLACE-STORY-010`이다.
 
-청킹 비교 테스트는 계속 보류한다. `parent_doc_context_boost`는 generation 입력 후보로 승격하지만 rank 품질 trade-off가 있으므로, Solar Pro 3 live 호출 전에 generation input-only 평가를 먼저 수행한다.
+청킹 비교 테스트는 계속 보류한다. `parent_doc_context_boost`는 generation 입력 후보로 유지하지만 input-only 평가에서 precision과 Correct-with-Evidence 하락이 확인됐다. Solar Pro 3 live 호출 전에 query별 input regression을 먼저 점검한다.

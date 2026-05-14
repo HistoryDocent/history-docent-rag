@@ -86,7 +86,8 @@
 - [x] `place_story` 전체 dev query target grain coverage diagnostic runner 구현
 - [x] `place_story` top-rank retrieval coverage 개선 후보 비교 실험
 - [x] `parent_doc_context_boost` full place_story/dev 재검증 및 generation 입력 영향 분석
-- [ ] `parent_doc_context_boost` 적용 후 Solar Pro 3 호출 전 generation input-only 평가
+- [x] `parent_doc_context_boost` 적용 후 Solar Pro 3 호출 전 generation input-only 평가
+- [ ] `parent_doc_context_boost` query별 input regression 원인 점검
 
 ## Experiments
 

@@ -247,6 +247,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `parent_doc_context_boost`를 full `place_story` dev query 10개에서 재검증했다. CUDA 실행 기준 `child_or_parent_recall_at_5`와 `generation_input_ready_rate`가 각각 `0.600000`에서 `0.700000`으로 개선됐고 direct evidence regression은 0건이었다. 다만 `MRR=0.770000 -> 0.616667`, `nDCG@5=0.616818 -> 0.544546`, `target_doc_recall_at_5=0.900000 -> 0.800000`으로 악화되어 최종 검색 기본값으로 확정하지 않는다. 이 결과는 Solar Pro 3 호출 전 generation 입력 후보 선별이다.
 
+`parent_doc_context_boost`의 Solar Pro 3 호출 전 generation input-only 평가를 추가했다. CUDA 실행 기준 full `place_story` dev 10개에서 `direct_ready=0.600000 -> 0.700000`, `citation_recall=0.481309 -> 0.565953`로 개선됐지만 `Correct-with-Evidence=0.900000 -> 0.800000`, `citation_precision=0.580000 -> 0.550000`, `evidence_order=0.770000 -> 0.616667`로 하락했다. Solar Pro 3 호출 수는 0이고 public-safe gate는 모두 0이다. 결론은 즉시 채택이 아니라 `keep_as_tradeoff_candidate`이며, live generation 전에 query별 input regression을 점검해야 한다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -308,6 +310,7 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 | [Place Story Hard-case Analysis Report](evals/reports/place_story_hard_case_analysis_report.md) | `q-dev-place-story-001` target coverage, rank, failure tag, public-safe gate 결과 |
 | [Place Story Target Grain and Coverage Plan](docs/PLACE_STORY_TARGET_GRAIN_AND_COVERAGE_PLAN.md) | `place_story` target grain 정책, top-rank coverage 개선 후보, 청킹 재실험 재개 조건 |
 | [Place Story Target Grain Coverage Report](evals/reports/place_story_target_grain_coverage_report.md) | `place_story` dev 10개 target grain별 coverage, hard-case tag, public-safe gate 결과 |
+| [Place Story Generation Input-only Eval Report](evals/reports/place_story_generation_input_only_eval_report.md) | `parent_doc_context_boost`의 Solar Pro 3 호출 전 evidence input 품질과 trade-off 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
