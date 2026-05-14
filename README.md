@@ -265,6 +265,8 @@ Solar Pro 3 guarded boost live paired comparison을 private `place_story` dev 10
 
 Solar Pro 3 guarded boost next gate 판단 문서를 추가했다. 결론은 `parent_doc_context_boost_guarded`를 next gate로 승격하되 production 기본값 채택은 보류하는 것이다. 청킹 비교는 계속 보류하고, 다음 작업은 추가 Solar Pro 3 호출 없이 query-level paired delta와 route decision을 기준으로 추가 dev hard-case 검증 범위를 정하는 것이다.
 
+Solar Pro 3 guarded boost 추가 dev hard-case 검증 계획을 추가했다. 결론은 청킹 비교 재개가 아니라 HD-SOLAR-016의 route decision을 `candidate_direct_gain`, `correctness_guardrail`, `doc_guardrail`, `precision_guardrail`, `manual_review_required`, `no_candidate_gain_control` bucket으로 나눠 검증하는 것이다. 이번 문서 작업은 새 retrieval/generation 실행이나 Solar Pro 3 추가 호출을 하지 않았고, 다음 구현 후보는 Solar call 0 조건의 hard-case validation runner다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -335,6 +337,8 @@ Solar Pro 3 guarded boost next gate 판단 문서를 추가했다. 결론은 `pa
 | [Solar Pro 3 Guarded Boost Live Comparison Readiness Report](evals/reports/solar_guarded_boost_live_comparison_readiness_report.md) | live paired comparison 실행 전 dry-run 재검증, call cap, live 실행 차단 상태, public-safe gate 결과 |
 | [Solar Pro 3 Guarded Boost Live Comparison Report](evals/reports/solar_guarded_boost_live_comparison_report.md) | private `place_story` dev 10개 Solar Pro 3 live paired comparison과 public-safe gate 결과 |
 | [Solar Pro 3 Guarded Boost Next Gate Decision](docs/SOLAR_GUARDED_BOOST_NEXT_GATE_DECISION.md) | guarded boost next gate 승격 판단, 청킹 재개 조건, 포트폴리오 claim boundary |
+| [Solar Pro 3 Guarded Boost Hard-case Validation Plan](docs/SOLAR_GUARDED_BOOST_HARD_CASE_VALIDATION_PLAN.md) | guarded boost 추가 dev hard-case bucket, 정량/정성 gate, data mart grain, 다음 runner 구현 지시서 |
+| [Solar Pro 3 Guarded Boost Hard-case Validation Plan Report](evals/reports/solar_guarded_boost_hard_case_validation_plan_report.md) | HD-SOLAR-018 계획 문서의 정량/정성 검토와 public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |

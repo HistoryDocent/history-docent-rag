@@ -183,3 +183,15 @@ free-text는 warehouse fact에 저장하지 않는다. raw answer와 raw evidenc
 다음 작업은 `HD-SOLAR-018 guarded boost 추가 dev hard-case 검증 계획`이다.
 
 추가 Solar Pro 3 호출 없이, 먼저 HD-SOLAR-016의 query-level paired delta와 route decision을 기준으로 어떤 query를 추가 검증할지 정한다. 그 뒤 별도 승인 시에만 추가 live call을 실행한다.
+
+## HD-SOLAR-018 계획 결과
+
+[Solar Pro 3 Guarded Boost Hard-case Validation Plan](SOLAR_GUARDED_BOOST_HARD_CASE_VALIDATION_PLAN.md)에 추가 dev hard-case 검증 범위와 gate를 고정했다.
+
+결정:
+
+- 청킹 비교 재개는 계속 보류한다.
+- 추가 Solar Pro 3 호출은 수행하지 않는다.
+- HD-SOLAR-016 route decision을 6개 hard-case bucket으로 나눠 검증한다.
+- public report에는 query id, bucket, metric delta, route decision label, leakage count만 허용한다.
+- 다음 구현은 HD-SOLAR-019 guarded boost hard-case validation runner다.
