@@ -43,8 +43,9 @@ def test_portfolio_result_summary_records_current_stack_and_decisions() -> None:
     assert "`dense_multilingual_e5_small_voice_rewrite`" in summary
     assert "`query_type_router_v1`" in summary
     assert "GraphRAG-lite" in summary
+    assert "RAPTOR-lite" in summary
     assert "selected_candidate_count | 0" in summary
-    assert "summarized_stage_count | 12" in report
+    assert "summarized_stage_count | 13" in report
     assert "public_raw_text_leakage_count | 0" in report
 
 

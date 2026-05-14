@@ -92,6 +92,6 @@
 
 | ID | 작업 | 산출물 | 완료 기준 | Commit |
 | --- | --- | --- | --- | --- |
-| 8.1 | RAPTOR-lite | experiment module | overview/place_story만 비교 | `feat: add raptor lite experiment` |
+| 8.1 | RAPTOR-lite | experiment module/report | overview/place_story input-only 비교 완료 | `실험: RAPTOR-lite input-only 비교 추가` |
 | 8.2 | GraphRAG-lite | experiment module | relationship만 비교 | `feat: add graphrag lite experiment` |
 | 8.3 | final report | docs/notebook | query type별 최종 판단 | `docs: add final ablation report` |

@@ -34,6 +34,7 @@
 | generation policy | v1 baseline 유지 | repaired v2는 precision 개선에도 citation recall 하락 |
 | place_story boost | guarded router 후보 유지 | live-dev-subset에서 citation recall은 소폭 개선, 최종 채택은 locked gate 전 보류 |
 | GraphRAG-lite | 기본값 기각 | relationship input-only에서 nDCG@5 개선 없음 |
+| RAPTOR-lite | 기본값 기각 | overview/place_story input-only에서 Recall/MRR 개선 없음, nDCG@5 하락 |
 
 ## Decision Ledger
 
@@ -60,6 +61,8 @@
 | `portfolio_summary` | `HD-PORTFOLIO-001` | public README/docs summary | summarized_stage_count=12, leakage_count=0 | implemented | public-safe-summary | `evals/reports/portfolio_result_summary_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
+| `raptor_lite` | `raptor_lite_parent_summary_v1` | overview/place_story dev 20 | Recall@5 delta=0.000000, nDCG@5 delta=-0.074957 | reject_default | dev-input-only | `evals/reports/raptor_lite_input_only_report.md` |
+| `raptor_lite` | `raptor_lite_summary_node_v1` | overview/place_story dev 20 | Recall@5 delta=0.000000, nDCG@5 delta=-0.029969 | reject_default | dev-input-only | same report |
 
 ## 청킹 재비교 판단
 
@@ -82,11 +85,10 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-RAPTOR-001` | RAPTOR-lite overview/place_story input-only 비교 | overview/place_story 장문 맥락 질문에 한정해 실험 가치가 있다. | 예 |
-| 2 | `HD-ROUTER-003` | query type classifier 설계 | skeleton은 query_type label이 이미 있다는 전제이므로 classifier는 별도 gate가 필요하다. | 예 |
-| 3 | `HD-HYDE-001` | HyDE overview/relationship subset 비교 | LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard가 필요하다. | 예 |
-| 4 | `HD-COLBERT-001` | ColBERT-style late interaction 검토 | 품질 상한 실험이지만 구현 비용과 serving 비용이 커서 후순위다. | 예 |
-| 5 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 | 제출용 README 다음에는 실패 사례별 원인과 조치가 필요하다. | 예 |
+| 1 | `HD-ROUTER-003` | query type classifier 설계 | skeleton은 query_type label이 이미 있다는 전제이므로 classifier는 별도 gate가 필요하다. | 예 |
+| 2 | `HD-HYDE-001` | HyDE overview/relationship subset 비교 | LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard가 필요하다. | 예 |
+| 3 | `HD-COLBERT-001` | ColBERT-style late interaction 검토 | 품질 상한 실험이지만 구현 비용과 serving 비용이 커서 후순위다. | 예 |
+| 4 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 | 제출용 README 다음에는 실패 사례별 원인과 조치가 필요하다. | 예 |
 
 ## Data Mart 설계
 
@@ -95,7 +97,7 @@
 | field | 설명 |
 | --- | --- |
 | `decision_id` | stable decision id |
-| `stage_id` | chunking, embedding, hybrid, reranker, query_rewrite, packing, generation, router, graphrag_lite |
+| `stage_id` | chunking, embedding, hybrid, reranker, query_rewrite, packing, generation, router, graphrag_lite, raptor_lite |
 | `candidate_id` | method, policy, router, prompt 후보 id |
 | `split_scope` | seed, dev, live-dev-subset, locked-test 등 |
 | `metric_family` | retrieval, latency, citation, safety, generation, cost |
@@ -124,6 +126,7 @@
 - 청킹, retrieval, reranker, query rewrite, evidence packing, generation을 분리해서 비교했다.
 - 좋은 수치만 골라 채택하지 않고 latency, citation recall, unsupported claim risk 때문에 후보를 기각했다.
 - GraphRAG-lite도 relationship 질문에 한정해 검증했고 개선이 없어 기본값에서 제외했다.
+- RAPTOR-lite도 overview/place_story 질문에 한정해 검증했고 개선이 없어 기본값에서 제외했다.
 - public repo에는 저작권 원문과 private eval payload를 올리지 않고 집계 metric만 공개했다.
 
 ## 최종 감사 의견

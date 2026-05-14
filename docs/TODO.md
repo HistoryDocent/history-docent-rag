@@ -108,7 +108,7 @@
 
 ## Experiments
 
-- [ ] RAPTOR-lite overview/place_story 비교
+- [x] RAPTOR-lite overview/place_story input-only 비교
 - [x] GraphRAG-lite relationship 계획 및 runner skeleton 작성
 - [x] GraphRAG-lite relationship input-only 비교
 - [x] RAG decision ledger 및 final ablation status report 작성

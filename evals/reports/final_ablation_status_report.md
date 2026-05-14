@@ -4,7 +4,7 @@
 
 현재 RAG 기본선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다.
 
-GraphRAG-lite는 relationship 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. 다음 우선순위는 query type별 router decision report다.
+GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. 다음 우선순위는 query type classifier 설계다.
 
 이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked test 전까지 모든 수치는 dev-only 또는 live-dev-subset으로 제한한다.
 
@@ -15,10 +15,10 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | 항목 | 값 |
 | --- | --- |
 | report_version | `final-ablation-status-report/v1` |
-| source_report_count | 8 |
-| decision_row_count | 18 |
+| source_report_count | 9 |
+| decision_row_count | 20 |
 | adopted_default_count | 4 |
-| rejected_default_count | 9 |
+| rejected_default_count | 11 |
 | route_or_router_candidate_count | 3 |
 | quality_ceiling_candidate_count | 2 |
 | raw_text_public_count | 0 |
@@ -36,6 +36,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | evidence packing | `P0_rank_order` | adopted |
 | generation | `solar-generation-baseline-v1` | maintained |
 | GraphRAG-lite | none | rejected as default |
+| RAPTOR-lite | none | rejected as default |
 
 ## Quantitative Snapshot
 
@@ -53,6 +54,8 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | place_story_router | `parent_doc_context_boost_guarded` | citation_recall_delta | 0.028571 | keep router candidate |
 | graphrag_lite | `graphrag_lite_entity_path_v1` | nDCG@5 delta | -0.002056 | reject default |
 | graphrag_lite | `graphrag_lite_community_hint_v1` | nDCG@5 delta | -0.030337 | reject default |
+| raptor_lite | `raptor_lite_parent_summary_v1` | nDCG@5 delta | -0.074957 | reject default |
+| raptor_lite | `raptor_lite_summary_node_v1` | nDCG@5 delta | -0.029969 | reject default |
 
 ## Qualitative Assessment
 
@@ -63,6 +66,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - `packing`: P0와 P3는 거의 동률이나 P3 개선폭이 작아 기본값을 바꾸지 않는다.
 - `generation`: repaired v2는 citation precision과 latency를 개선했지만 citation recall을 떨어뜨려 기본값으로 채택하지 않는다.
 - `GraphRAG-lite`: relationship input-only에서 기존 hybrid reference를 넘지 못했다.
+- `RAPTOR-lite`: overview/place_story input-only에서 기존 dense voice rewrite reference를 넘지 못했다.
 - `portfolio`: 기법 추가보다 실험으로 선택과 기각을 설명하는 편이 더 강하다.
 
 ## Claim Boundary
@@ -72,20 +76,22 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | dev retrieval 후보가 BM25보다 좋았다 | yes | dev-only로 표현 |
 | locked test에서 성능 개선 확정 | no | locked test 미실행 |
 | GraphRAG가 relationship에서 더 좋다 | no | input-only 결과 개선 없음 |
+| RAPTOR가 overview/place_story에서 더 좋다 | no | input-only 결과 개선 없음 |
 | Solar Pro 3 v2 repaired가 기본값이다 | no | citation recall 하락 |
 | 청킹은 C0로 고정한다 | yes | 현재 실험 흐름 기준 |
 | production 성능 검증 완료 | no | 배포/운영 검증 없음 |
 
 ## Next Gate
 
-다음 gate는 `HD-ROUTER-001 query-type router decision report`다.
+다음 gate는 `HD-ROUTER-003 query type classifier 설계`다.
 
 이유:
 
 - 전체 기본 retrieval 후보와 query type별 강한 후보가 다르다.
 - relationship은 hybrid weighted 후보가 강하고, place_story는 guarded boost 후보가 존재한다.
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
-- RAPTOR-lite와 HyDE는 router baseline을 정리한 뒤 비교해야 변수 통제가 된다.
+- RAPTOR-lite도 reject됐기 때문에 overview/place_story 개선은 query classifier와 generation prompt 경계에서 다시 봐야 한다.
+- HyDE는 LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard를 별도 승인해야 한다.
 
 ## External Audit
 

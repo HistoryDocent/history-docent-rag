@@ -13,8 +13,8 @@
 | 현재 stack | `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1` |
 | query type router | `relationship`은 hybrid weighted E5 route, `no_answer`는 abstain-first, 나머지는 dense voice rewrite |
 | 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
-| 보류한 핵심 | BGE-M3 dense, BGE reranker, RAPTOR-lite, HyDE, query type classifier |
-| 기각한 핵심 | GraphRAG-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route |
+| 보류한 핵심 | BGE-M3 dense, BGE reranker, HyDE, query type classifier |
+| 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route |
 | 공개 경계 | 원본 PDF, 전체 parser JSON, 전체 chunk text, vector index, raw eval payload, secret은 public repo에 포함하지 않음 |
 
 핵심 수치:
@@ -28,6 +28,7 @@
 | query rewrite | `dense_multilingual_e5_small_voice_rewrite` | dev 70 | Recall@5 | 0.850000 | adopt candidate |
 | evidence packing | `P0_rank_order` | dev 70 | citation_recoverability | 1.000000 | adopt |
 | GraphRAG-lite | `entity_path_v1` | relationship dev 10 | nDCG@5 delta | -0.002056 | reject default |
+| RAPTOR-lite | `summary_node_v1` | overview/place_story dev 20 | nDCG@5 delta | -0.029969 | reject default |
 | router skeleton | `query_type_router_v1` | contract-only | route_policy_count | 3 | implemented |
 
 금지 claim:
@@ -35,6 +36,7 @@
 - production 성능 검증 완료
 - locked test에서 최종 개선 입증
 - GraphRAG로 성능 개선
+- RAPTOR로 성능 개선
 - 음성 관광 앱 완성
 - 전체 도서 데이터 공개
 
@@ -107,7 +109,7 @@
 - frontend service
 - voice UI
 - 기본 pipeline으로서의 GraphRAG
-- 기본 pipeline으로서의 full RAPTOR
+- 기본 pipeline으로서의 RAPTOR/RAPTOR-lite
 
 ## 목표 Pipeline과 현재 구현 범위
 
@@ -136,8 +138,7 @@ PDF
 후속 구현 대상:
 
 ```text
-RAPTOR-lite overview/place_story input-only 비교
--> query type classifier 설계
+query type classifier 설계
 -> HyDE subset 비교
 -> failure analysis 10개 정리
 -> locked test 기반 최종 개선 주장 검증
@@ -154,7 +155,7 @@ Place-aware Retrieval + Query Rewrite + Parent-Child Chunking + Citation RAG
 
 검색 method는 실험 결과에 따라 고정한다. dev 기준 현재 non-rerank 기본 후보는 `dense_multilingual_e5_small_voice_rewrite`이고, `relationship` query type에는 `hybrid_weighted_e5_small_alpha_0_5`를 제한적 route 후보로 둔다.
 
-GraphRAG-lite는 relationship input-only 비교에서 기본값으로 승격하지 않았다. RAPTOR-lite는 아직 overview/place_story 장문 맥락 질문에 한정한 후속 실험군이다.
+GraphRAG-lite는 relationship input-only 비교에서 기본값으로 승격하지 않았다. RAPTOR-lite도 overview/place_story input-only 비교에서 기본값으로 승격하지 않았다.
 
 비교 실험의 순서와 후보군은 [Retrieval Ablation Plan](docs/RETRIEVAL_ABLATION_PLAN.md)에 고정한다.
 이 계획은 chunking, embedding, hybrid retrieval, reranker, query rewrite, evidence packing, Solar Pro 3 generation, RAPTOR-lite, GraphRAG-lite를 한 번에 섞지 않고 단계별로 검증하기 위한 문서다.
@@ -262,6 +263,8 @@ Generation evaluation harness v1을 추가했다. `CitationRagAnswer`를 `Correc
 
 GraphRAG-lite relationship input-only 비교를 실행했다. `relationship` dev 10개에서 기존 `hybrid_weighted_e5_small_alpha_0_5_reference`가 `Recall@5=1.000000`, `MRR=0.833333`, `nDCG@5=0.709355`로 가장 적합했다. `entity_path`와 `community_hint` 후보는 citation recoverability는 1.000000이었지만 nDCG@5 개선이 없어 기본 RAG pipeline으로 승격하지 않는다. 이 결과는 dev input-only 비교이며 locked test 또는 production 개선 주장이 아니다.
 
+RAPTOR-lite overview/place_story input-only 비교를 실행했다. private dev 20개에서 `dense_multilingual_e5_small_voice_rewrite_reference`와 `raptor_lite_parent_summary_v1`, `raptor_lite_summary_node_v1`를 비교했고, 최고 후보도 `Recall@5 delta=0.000000`, `MRR delta=0.000000`, `nDCG@5 delta=-0.029969`로 기준선을 넘지 못했다. Solar Pro 3 호출 수는 0이고 public-safe gate는 모두 0이다. 결론은 `reject_raptor_lite_default`다.
+
 RAG 실험 decision ledger와 final ablation status report를 추가했다. 현재 기준선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다. 청킹 재비교는 지금 열지 않는다. 이 판단 역시 locked test 전의 public-safe 상태 요약이며 production 성능 주장이 아니다.
 
 Query type router decision을 추가했다. 기본 answerable query는 `dense_multilingual_e5_small_voice_rewrite`를 유지하고, `relationship`은 `hybrid_weighted_e5_small_alpha_0_5`를 제한적 route 후보로 둔다. `place_story_guarded_boost_v1`은 locked readiness에서 candidate 선택 0건이므로 production route로 채택하지 않는다. 이번 산출물은 decision report이며 runtime router 구현 또는 locked 성능 개선 주장이 아니다.
@@ -335,6 +338,8 @@ Solar Pro 3 generation v2 repaired dry-run/readiness runner를 추가했다. 기
 Solar Pro 3 generation v2 repaired live paired comparison을 실행했다. 실제 Solar Pro 3 호출은 총 11회였고 `Correct-with-Evidence=1.000000 -> 1.000000`, `citation_precision=0.566667 -> 0.783333`, `citation_recall=0.509722 -> 0.481944`, `unsupported_claim_rate=0.000000 -> 0.000000`을 기록했다. gate는 통과했지만 recall 하락 때문에 `adoption_decision=reject_repaired_v2_default`로 기본값 승격을 보류했다.
 
 GraphRAG-lite relationship 실험 계획과 runner skeleton을 추가했다. 범위는 `relationship` query type 전용 input-only 계획이며 `planned_dev_query_count=10`, `planned_test_query_count=5`, `strategy_count=3`, `candidate_count=2`, `planned_solar_call_count=0`, `decision=ready_for_graphrag_lite_input_only_approval`을 기록했다. 이 결과는 GraphRAG-lite 실행 성능이나 production 채택 주장이 아니다.
+
+RAPTOR-lite overview/place_story input-only runner와 report를 추가했다. 범위는 `overview`, `place_story` dev 20개이며 `candidate_count=2`, `promoted_candidate_count=0`, `solar_call_count=0`, `decision=reject_raptor_lite_default`를 기록했다. 이 결과는 RAPTOR-lite production 채택 또는 generation 품질 개선 주장이 아니다.
 
 ## 실행 전략
 
@@ -423,6 +428,7 @@ GraphRAG-lite relationship 실험 계획과 runner skeleton을 추가했다. 범
 | [Solar Pro 3 Generation v2 Repaired Live Comparison Report](evals/reports/solar_generation_v2_repaired_live_comparison_report.md) | HD-SOLAR-027 Solar Pro 3 실제 호출 기반 repaired v2 routed policy 비교와 기본값 승격 보류 판단 |
 | [GraphRAG-lite Relationship Plan](docs/GRAPHRAG_LITE_RELATIONSHIP_PLAN.md) | HD-ADV-RAG-001 relationship 전용 GraphRAG-lite input-only 실험 계획과 gate |
 | [GraphRAG-lite Relationship Plan Report](evals/reports/graphrag_lite_relationship_plan_report.md) | HD-ADV-RAG-001 계획 runner skeleton, 정량/정성 report, public-safe gate 결과 |
+| [RAPTOR-lite Input-only Report](evals/reports/raptor_lite_input_only_report.md) | HD-RAPTOR-001 overview/place_story 전용 RAPTOR-lite input-only 비교와 기본값 기각 판단 |
 | [Query Type Router Decision](docs/QUERY_TYPE_ROUTER_DECISION.md) | HD-ROUTER-001 query type별 route policy, 채택/보류/기각 판단, claim boundary |
 | [Query Type Router Decision Report](evals/reports/query_type_router_decision_report.md) | HD-ROUTER-001 route policy 정량/정성 리포트와 public-safe gate 결과 |
 | [Query Type Router Skeleton Report](evals/reports/query_type_router_skeleton_report.md) | HD-ROUTER-002 deterministic router skeleton, route table, public-safe gate 결과 |

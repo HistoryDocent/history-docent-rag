@@ -801,6 +801,13 @@ Advanced RAG는 기본 pipeline 후보가 아니다.
 | `A3` | Self-check / CRAG style guard | `no_answer`, low confidence query | 검색 실패 시 답변 거절이 개선되는가 |
 | `A4` | ColBERT style late interaction | hard retrieval subset | top rank 품질을 reranker보다 효율적으로 개선하는가 |
 
+현재 실행 결과:
+
+| 기법 | scope | 대표 결과 | 판단 |
+| --- | --- | --- | --- |
+| RAPTOR-lite | `overview`, `place_story` dev 20 | 최고 후보 nDCG@5 delta=-0.029969 | 기본값 기각 |
+| GraphRAG-lite | `relationship` dev 10 | 최고 후보 nDCG@5 delta=-0.002056 | 기본값 기각 |
+
 제약:
 
 - RAPTOR summary와 graph community summary는 최종 citation이 될 수 없다.

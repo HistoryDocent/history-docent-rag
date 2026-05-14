@@ -23,10 +23,10 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| summarized_stage_count | 12 |
+| summarized_stage_count | 13 |
 | adopted_or_implemented_count | 4 |
-| rejected_default_count | 5 |
-| held_candidate_count | 3 |
+| rejected_default_count | 6 |
+| held_candidate_count | 2 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |
@@ -47,14 +47,15 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 | place_story router | `place_story_guarded_boost_v1` | locked readiness 5 | selected_candidate_count | 0 | reject production route |
 | GraphRAG-lite | `entity_path_v1` | relationship dev 10 | nDCG@5 delta | -0.002056 | reject default |
 | GraphRAG-lite | `community_hint_v1` | relationship dev 10 | nDCG@5 delta | -0.030337 | reject default |
+| RAPTOR-lite | `summary_node_v1` | overview/place_story dev 20 | nDCG@5 delta | -0.029969 | reject default |
 | router skeleton | `query_type_router_v1` | contract-only | route_policy_count | 3 | implemented |
 
 ## 정성 리포트
 
 - `portfolio_scope`: README 첫 화면에서 현재 stack, 실험 결과, 채택/기각 이유, claim boundary를 먼저 보이게 한다.
-- `decision_quality`: 좋은 수치만 선택하지 않고 latency, citation recall, locked readiness를 기준으로 기각한 과정을 강조한다.
+- `decision_quality`: 좋은 수치만 선택하지 않고 latency, citation recall, nDCG 하락, locked readiness를 기준으로 기각한 과정을 강조한다.
 - `retrieval_message`: BM25에서 neural dense, hybrid, reranker, query rewrite로 확장했지만 최종 기본 후보는 균형이 가장 좋은 dense voice rewrite로 둔다.
-- `advanced_rag_message`: GraphRAG-lite는 relationship에 한정해 비교했고 개선이 없어 기본값에서 제외했다.
+- `advanced_rag_message`: GraphRAG-lite와 RAPTOR-lite는 특정 query type에 한정해 비교했고 개선이 없어 기본값에서 제외했다.
 - `router_message`: query type router skeleton은 구현됐지만 classifier와 locked 성능 개선은 아직 없다.
 - `security_boundary`: public README와 docs에는 저작권 원문, private eval payload, secret을 넣지 않는다.
 - `claim_boundary`: production 성능, locked 개선, 통계적 유의성 표현은 금지한다.
@@ -64,7 +65,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| result_row_count | 12 |
+| result_row_count | 13 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |
@@ -88,6 +89,7 @@ README 첫 화면에는 다음이 보여야 한다.
 - production 성능 검증 완료
 - locked test 개선 입증
 - GraphRAG로 성능 개선
+- RAPTOR로 성능 개선
 - 음성 관광 앱 완성
 - Solar Pro 3 품질 최종 개선
 - 원본 도서 데이터 공개
