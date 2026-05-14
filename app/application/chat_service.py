@@ -19,6 +19,7 @@ from app.application.chat_retrieval import (
     ChatRetrievalOutcome,
     PrivateArtifactRetrievalBackend,
 )
+from app.application.query_type_router import QueryTypeRouter
 from app.domain.generation import AnswerProviderKind, CitationRagAnswer
 from app.domain.retrieval import (
     LanguageCode,
@@ -56,6 +57,9 @@ class ChatUsage(ChatServiceModel):
     estimated_context_chars: int = Field(ge=0)
     retrieval_mode: ChatRetrievalMode = "contract_only"
     retrieval_method: str | None = None
+    route_policy_id: str | None = None
+    route_candidate_id: str | None = None
+    route_claim_boundary: str | None = None
     retrieval_candidate_count: int = Field(default=0, ge=0)
     retrieval_latency_ms: float = Field(default=0.0, ge=0.0)
     query_rewrite_changed: bool = False
@@ -88,6 +92,7 @@ class ChatContractService:
     ) -> None:
         self.provider = provider
         self.retrieval_backend = retrieval_backend or PrivateArtifactRetrievalBackend()
+        self.router = QueryTypeRouter()
         self.assembler = CitationRagAnswerAssembler(
             config=CitationRagAssemblerConfig(
                 answer_policy_id=CHAT_SERVICE_POLICY_ID,
@@ -103,6 +108,7 @@ class ChatContractService:
                 "Solar Pro 3 live generation is disabled for the public API contract."
             )
         item = _build_eval_item(command)
+        route_decision = self.router.route(command.query_type)
         if command.retrieval_mode == "retrieval_backed":
             retrieval = self.retrieval_backend.retrieve(command=command, item=item)
             evidence_pack = retrieval.evidence_pack
@@ -127,7 +133,24 @@ class ChatContractService:
         return ChatServiceResult(
             request_id=command.request_id,
             answer=answer,
-            usage=_build_usage(command=command, evidence_pack=evidence_pack, retrieval=retrieval),
+            usage=_build_usage(
+                command=command,
+                evidence_pack=evidence_pack,
+                retrieval=retrieval,
+                route_policy_id=(
+                    retrieval.route_policy_id if retrieval is not None else route_decision.route_policy_id
+                ),
+                route_candidate_id=(
+                    retrieval.route_candidate_id
+                    if retrieval is not None
+                    else route_decision.selected_candidate_id
+                ),
+                route_claim_boundary=(
+                    retrieval.route_claim_boundary
+                    if retrieval is not None
+                    else route_decision.claim_boundary
+                ),
+            ),
             latency_ms=latency_ms,
         )
 
@@ -284,6 +307,9 @@ def _build_usage(
     command: ChatCommand,
     evidence_pack: EvidencePack,
     retrieval: ChatRetrievalOutcome | None,
+    route_policy_id: str,
+    route_candidate_id: str,
+    route_claim_boundary: str,
 ) -> ChatUsage:
     return ChatUsage(
         input_chars=len(command.query),
@@ -291,6 +317,9 @@ def _build_usage(
         estimated_context_chars=evidence_pack.total_estimated_chars,
         retrieval_mode=command.retrieval_mode,
         retrieval_method=retrieval.retrieval_method if retrieval is not None else "contract_fixture",
+        route_policy_id=route_policy_id,
+        route_candidate_id=route_candidate_id,
+        route_claim_boundary=route_claim_boundary,
         retrieval_candidate_count=(
             retrieval.retrieval_candidate_count if retrieval is not None else 0
         ),

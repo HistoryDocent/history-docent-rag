@@ -17,6 +17,10 @@ from app.application.evidence_packing import (
     build_evidence_corpus_from_chunks_payload,
 )
 from app.application.query_rewrite import PlaceAwareQueryRewriter, QueryRewriteConfig
+from app.application.query_type_router import (
+    QueryTypeRouteDecision,
+    QueryTypeRouter,
+)
 from app.core.project_paths import project_path
 from app.domain.chunking import ChildChunk
 from app.domain.place_catalog import load_place_catalog
@@ -27,16 +31,20 @@ from app.domain.retrieval import (
     RetrievalRunResult,
     build_retrieval_document_from_child,
 )
+from app.infrastructure.index.bm25 import Bm25Retriever
 from app.infrastructure.index.dense import DenseRetrievalConfig, DenseRetriever
 from app.infrastructure.index.dense import SentenceTransformerEncoder
 from app.infrastructure.index.device import resolve_torch_device
+from app.infrastructure.index.hybrid import HybridRetrievalConfig, HybridRetriever
 
 
 ChatRetrievalMode = Literal["contract_only", "retrieval_backed"]
 ChatRetrievalMethod = Literal[
+    "abstain_first_v1",
     "contract_fixture",
     "fixture_retrieval",
     "dense_multilingual_e5_small_voice_rewrite",
+    "hybrid_weighted_e5_small_alpha_0_5",
 ]
 
 
@@ -57,6 +65,9 @@ class ChatRetrievalCommand(Protocol):
 class ChatRetrievalOutcome(ChatRetrievalModel):
     evidence_pack: EvidencePack
     retrieval_method: ChatRetrievalMethod
+    route_policy_id: str = Field(min_length=1)
+    route_candidate_id: str = Field(min_length=1)
+    route_claim_boundary: str = Field(min_length=1)
     retrieval_candidate_count: int = Field(ge=0)
     retrieval_latency_ms: float = Field(ge=0.0)
     query_rewrite_changed: bool = False
@@ -80,6 +91,9 @@ class ChatRetrievalBackend(Protocol):
 
 
 class StaticRetrievalBackend:
+    def __init__(self, *, router: QueryTypeRouter | None = None) -> None:
+        self.router = router or QueryTypeRouter()
+
     def retrieve(
         self,
         *,
@@ -87,11 +101,15 @@ class StaticRetrievalBackend:
         item: RetrievalEvalItem,
     ) -> ChatRetrievalOutcome:
         started = time.perf_counter()
-        if item.query.expected_behavior == "abstain":
+        route_decision = self.router.route(command.query_type)
+        if item.query.expected_behavior == "abstain" or not route_decision.should_retrieve:
             pack = _empty_pack(item=item)
             return ChatRetrievalOutcome(
                 evidence_pack=pack,
-                retrieval_method="fixture_retrieval",
+                retrieval_method="abstain_first_v1",
+                route_policy_id=route_decision.route_policy_id,
+                route_candidate_id=route_decision.selected_candidate_id,
+                route_claim_boundary=route_decision.claim_boundary,
                 retrieval_candidate_count=0,
                 retrieval_latency_ms=_elapsed_ms(started),
                 place_ids=tuple(command.place_context),
@@ -125,6 +143,9 @@ class StaticRetrievalBackend:
         return ChatRetrievalOutcome(
             evidence_pack=pack,
             retrieval_method="fixture_retrieval",
+            route_policy_id=route_decision.route_policy_id,
+            route_candidate_id=route_decision.selected_candidate_id,
+            route_claim_boundary=route_decision.claim_boundary,
             retrieval_candidate_count=1,
             retrieval_latency_ms=_elapsed_ms(started),
             place_ids=tuple(command.place_context) or ("gyeongbokgung",),
@@ -134,8 +155,10 @@ class StaticRetrievalBackend:
 @dataclass(frozen=True)
 class _PrivateRetrievalState:
     retriever: DenseRetriever
+    hybrid_retriever: HybridRetriever
     corpus: object
     rewriter: PlaceAwareQueryRewriter
+    router: QueryTypeRouter
 
 
 class PrivateArtifactRetrievalBackend:
@@ -159,19 +182,24 @@ class PrivateArtifactRetrievalBackend:
         command: ChatRetrievalCommand,
         item: RetrievalEvalItem,
     ) -> ChatRetrievalOutcome:
-        if item.query.expected_behavior == "abstain":
+        state = self._load_state()
+        route_decision = state.router.route(command.query_type)
+        if item.query.expected_behavior == "abstain" or not route_decision.should_retrieve:
             return ChatRetrievalOutcome(
                 evidence_pack=_empty_pack(item=item),
-                retrieval_method="dense_multilingual_e5_small_voice_rewrite",
+                retrieval_method="abstain_first_v1",
+                route_policy_id=route_decision.route_policy_id,
+                route_candidate_id=route_decision.selected_candidate_id,
+                route_claim_boundary=route_decision.claim_boundary,
                 retrieval_candidate_count=0,
                 retrieval_latency_ms=0.0,
                 place_ids=tuple(command.place_context),
             )
-        state = self._load_state()
         rewrite = state.rewriter.rewrite(item)
-        result = state.retriever.search(
-            query_id=item.query.query_id,
-            query_type=item.query.query_type,
+        result = _search_with_route(
+            route_decision=route_decision,
+            state=state,
+            item=item,
             query_text=rewrite.rewritten_query_text,
             top_k=self.top_k,
         )
@@ -182,7 +210,10 @@ class PrivateArtifactRetrievalBackend:
         )
         return ChatRetrievalOutcome(
             evidence_pack=pack,
-            retrieval_method="dense_multilingual_e5_small_voice_rewrite",
+            retrieval_method=_retrieval_method_label(route_decision),
+            route_policy_id=route_decision.route_policy_id,
+            route_candidate_id=route_decision.selected_candidate_id,
+            route_claim_boundary=route_decision.claim_boundary,
             retrieval_candidate_count=len(result.candidates),
             retrieval_latency_ms=result.latency_ms,
             query_rewrite_changed=rewrite.changed,
@@ -229,9 +260,20 @@ class PrivateArtifactRetrievalBackend:
             config=config,
             cache_dir=embedding_cache_dir,
         )
+        hybrid_retriever = HybridRetriever(
+            documents=tuple(documents),
+            bm25_retriever=Bm25Retriever.from_documents(documents),
+            dense_retriever=retriever,
+            config=HybridRetrievalConfig(
+                method="hybrid_weighted",
+                alpha=0.5,
+                dense_config=config,
+            ),
+        )
         catalog = load_place_catalog(place_catalog_path)
         self._state = _PrivateRetrievalState(
             retriever=retriever,
+            hybrid_retriever=hybrid_retriever,
             corpus=build_evidence_corpus_from_chunks_payload(payload),
             rewriter=PlaceAwareQueryRewriter(
                 catalog=catalog,
@@ -240,8 +282,40 @@ class PrivateArtifactRetrievalBackend:
                     target_query_types=("voice_followup",),
                 ),
             ),
+            router=QueryTypeRouter(),
         )
         return self._state
+
+
+def _search_with_route(
+    *,
+    route_decision: QueryTypeRouteDecision,
+    state: _PrivateRetrievalState,
+    item: RetrievalEvalItem,
+    query_text: str,
+    top_k: int,
+) -> RetrievalRunResult:
+    if route_decision.execution_mode == "hybrid_weighted":
+        return state.hybrid_retriever.search(
+            query_id=item.query.query_id,
+            query_type=item.query.query_type,
+            query_text=query_text,
+            top_k=top_k,
+        )
+    return state.retriever.search(
+        query_id=item.query.query_id,
+        query_type=item.query.query_type,
+        query_text=query_text,
+        top_k=top_k,
+    )
+
+
+def _retrieval_method_label(route_decision: QueryTypeRouteDecision) -> ChatRetrievalMethod:
+    if route_decision.execution_mode == "hybrid_weighted":
+        return "hybrid_weighted_e5_small_alpha_0_5"
+    if route_decision.execution_mode == "abstain":
+        return "abstain_first_v1"
+    return "dense_multilingual_e5_small_voice_rewrite"
 
 
 def _pack_retrieval_result(

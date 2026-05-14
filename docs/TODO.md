@@ -114,7 +114,7 @@
 - [x] RAG decision ledger 및 final ablation status report 작성
 - [x] query-type router decision report 작성
 - [x] query-type router 채택 여부 판단
-- [ ] deterministic query-type router skeleton 구현
+- [x] deterministic query-type router skeleton 구현
 - [ ] HyDE overview/relationship subset 비교
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성
