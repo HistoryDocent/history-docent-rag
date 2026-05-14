@@ -176,7 +176,7 @@ free-text query, raw answer, raw evidence, raw prompt, chunk text는 fact에 저
 | --- | --- | --- | --- | --- | --- |
 | HD-SOLAR-024 | HD-SOLAR-023 | Solar Pro 3 generation v2 prompt repair 계획 작성 | 계획 문서, 평가 리포트, TODO/README 갱신, Solar call 0, leakage scan 0 | Medium | 문서 revert |
 | HD-SOLAR-025 | HD-SOLAR-024 | repaired v2 prompt policy validator 구현 | 완료. unit test, fake provider test, evidence floor violation test, Solar call 0, public-safe report | Medium | validator와 report revert |
-| HD-SOLAR-026 | HD-SOLAR-025 | repaired v2 dry-run/readiness runner 구현 | 기존 7건 dev subset 기준 call budget, fallback route, public-safe report | High | runner/report revert |
+| HD-SOLAR-026 | HD-SOLAR-025 | repaired v2 dry-run/readiness runner 구현 | 완료. 기존 7건 dev subset 구조 기준 call budget, fallback route, public-safe report, Solar call 0 | High | runner/report revert |
 | HD-SOLAR-027 | HD-SOLAR-026 + 별도 승인 | repaired v2 Solar Pro 3 live paired comparison | live call cap 준수, paired metric report, public leakage 0 | High | candidate 미채택, public report revert |
 
 ## Non-goal
@@ -245,3 +245,31 @@ repaired v2 prompt policy validator를 구현했다. 실행은 fake provider/val
 - `place_story`는 v1 fallback monitor case로 분리한다.
 - repaired v2는 live comparison이 아니라 dry-run/readiness runner로만 다음 gate에 보낸다.
 - 다음 구현 후보는 `HD-SOLAR-026 repaired v2 dry-run/readiness runner`다.
+
+## HD-SOLAR-026 실행 결과
+
+repaired v2 dry-run/readiness runner를 구현했다. 실행은 readiness dry-run 단계이며 Solar Pro 3 live 호출은 수행하지 않았다.
+
+| metric | value |
+| --- | ---: |
+| query_count | 7 |
+| query_type_count | 7 |
+| validation_pass_count | 6 |
+| validation_fallback_required_count | 1 |
+| validation_fail_count | 0 |
+| repaired_candidate_route_count | 5 |
+| v1_fallback_route_count | 1 |
+| baseline_live_call_count | 6 |
+| repaired_candidate_live_call_count | 5 |
+| no_answer_live_call_count | 0 |
+| expected_total_live_call_count | 11 |
+| live_call_hard_cap | 20 |
+| solar_call_count | 0 |
+| readiness_decision | `ready_for_repaired_v2_live_approval` |
+
+판단:
+
+- 청킹 비교는 계속 보류한다.
+- `place_story`는 repaired v2 live 후보에서 제외하고 v1 fallback route로 둔다.
+- `no_answer`는 abstain path를 유지하며 live call을 요구하지 않는다.
+- 다음 단계는 별도 승인 후 `HD-SOLAR-027 repaired v2 Solar Pro 3 live paired comparison` 실행 여부를 결정하는 것이다.
