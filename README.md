@@ -251,6 +251,8 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 
 `parent_doc_context_boost`의 query별 input regression 분석을 추가했다. full `place_story` dev 10개에서 `direct_ready_gain_count=1`, `correct_with_evidence_regression_count=1`, `citation_precision_regression_count=3`, `citation_recall_gain_count=3`, `evidence_order_regression_count=3`, `mixed_tradeoff_count=1`, `guardrail_required_count=1`로 기록됐다. Solar Pro 3 호출 수는 0이고 public-safe gate는 모두 0이다. 결론은 `require_guardrail_before_live_generation`이며, candidate는 전체 기본값이 아니라 hard-case router 또는 reranking guardrail 후보로 제한한다.
 
+`parent_doc_context_boost` guardrail/router 계획을 추가했다. candidate를 전역 적용하지 않고 `place_story` query에서 baseline과 candidate를 함께 계산한 뒤, direct evidence gain, doc coverage 유지, evidence order, citation precision/correctness proxy 조건을 통과할 때만 candidate를 선택한다. 다음 구현은 `baseline`, `always_boost`, `guarded_boost` 3-way input-only 비교다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -314,6 +316,7 @@ Solar Pro 3 generation v2 trade-off 원인 분석을 추가했다. 기존 live p
 | [Place Story Target Grain Coverage Report](evals/reports/place_story_target_grain_coverage_report.md) | `place_story` dev 10개 target grain별 coverage, hard-case tag, public-safe gate 결과 |
 | [Place Story Generation Input-only Eval Report](evals/reports/place_story_generation_input_only_eval_report.md) | `parent_doc_context_boost`의 Solar Pro 3 호출 전 evidence input 품질과 trade-off 결과 |
 | [Place Story Generation Input Regression Analysis Report](evals/reports/place_story_generation_input_regression_analysis_report.md) | `parent_doc_context_boost` query별 input regression tag와 guardrail 필요성 |
+| [Place Story Guardrail/Router Plan](docs/PLACE_STORY_GUARDRAIL_ROUTER_PLAN.md) | `parent_doc_context_boost` 적용 조건, 차단 조건, 3-way guarded comparison 설계 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |

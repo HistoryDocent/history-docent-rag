@@ -230,6 +230,18 @@ Tag distribution:
 - 결론은 `require_guardrail_before_live_generation`이다.
 - 다음 단계는 Solar Pro 3 live 호출이 아니라 `parent_doc_context_boost` 적용 조건을 제한하는 router 또는 reranking guardrail 계획이다.
 
+## HD-PLACE-STORY-011 계획 결과
+
+별도 문서 [Place Story Guardrail/Router Plan](PLACE_STORY_GUARDRAIL_ROUTER_PLAN.md)에 `parent_doc_context_boost` 적용 조건과 차단 조건을 고정했다.
+
+핵심 결정:
+
+- `parent_doc_context_boost`는 전체 기본값으로 채택하지 않는다.
+- Router는 `place_story` query에만 적용한다.
+- baseline과 candidate를 모두 계산한 뒤 guardrail 조건을 통과할 때만 candidate를 선택한다.
+- `Correct-with-Evidence` proxy regression, precision/order regression, doc coverage loss가 있으면 baseline을 유지한다.
+- 다음 실험은 `baseline`, `always_boost`, `guarded_boost` 3-way input-only 비교다.
+
 ## 정량 Gate
 
 최소 기록 metric:
@@ -310,11 +322,12 @@ dimension 후보:
 | HD-PLACE-STORY-008 | HD-PLACE-STORY-007 | `parent_doc_context_boost` full `place_story` dev 재검증 및 generation 입력 영향 분석 | 완료. full place_story report 생성, target grain metric 기록, leakage count 0 | Medium | 후보 strategy 비활성화 |
 | HD-PLACE-STORY-009 | HD-PLACE-STORY-008 | `parent_doc_context_boost` 적용 후 Solar Pro 3 호출 전 generation input-only 평가 | 완료. input-only report 생성, Solar call 0, leakage count 0 | Medium | report/runner revert |
 | HD-PLACE-STORY-010 | HD-PLACE-STORY-009 | `parent_doc_context_boost` query별 input regression 원인 점검 | 완료. regression tag report 생성, Solar call 0, leakage count 0 | Medium | report/runner revert |
-| HD-PLACE-STORY-011 | HD-PLACE-STORY-010 | `parent_doc_context_boost` 적용 조건 제한 guardrail/router 계획 | correctness regression을 막는 적용 조건 정의 | Medium | plan/report revert |
-| HD-SOLAR-012 | HD-PLACE-STORY-011 | Solar Pro 3 v2 prompt repair 재검토 | retrieval 개선 후 live paired comparison 계획 승인 | High | live call 실행 전 중단 |
+| HD-PLACE-STORY-011 | HD-PLACE-STORY-010 | `parent_doc_context_boost` 적용 조건 제한 guardrail/router 계획 | 완료. 적용 조건, 차단 조건, 3-way 비교 설계 문서화 | Low | 문서 revert |
+| HD-PLACE-STORY-012 | HD-PLACE-STORY-011 | guarded boost 3-way 비교 runner 구현 | baseline/always/guarded report 생성, leakage count 0 | Medium | runner/report revert |
+| HD-SOLAR-013 | HD-PLACE-STORY-012 | Solar Pro 3 v2 prompt repair 재검토 | retrieval 개선 후 live paired comparison 계획 승인 | High | live call 실행 전 중단 |
 
 ## 결정
 
-다음 구현 우선순위는 `HD-PLACE-STORY-011`이다.
+다음 구현 우선순위는 `HD-PLACE-STORY-012`다.
 
-청킹 비교 테스트는 계속 보류한다. `parent_doc_context_boost`는 일부 query에서 효과가 있지만 correctness regression이 확인됐다. Solar Pro 3 live 호출 전에는 candidate 적용 조건을 제한하는 guardrail 또는 router를 먼저 설계한다.
+청킹 비교 테스트는 계속 보류한다. `parent_doc_context_boost`는 일부 query에서 효과가 있지만 correctness regression이 확인됐다. 다음 단계는 guardrail/router가 이 regression을 막는지 `baseline`, `always_boost`, `guarded_boost` 3-way 비교로 검증하는 것이다.
