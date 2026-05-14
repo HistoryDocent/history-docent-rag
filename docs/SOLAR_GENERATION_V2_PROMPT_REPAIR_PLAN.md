@@ -175,7 +175,7 @@ free-text query, raw answer, raw evidence, raw prompt, chunk text는 fact에 저
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
 | HD-SOLAR-024 | HD-SOLAR-023 | Solar Pro 3 generation v2 prompt repair 계획 작성 | 계획 문서, 평가 리포트, TODO/README 갱신, Solar call 0, leakage scan 0 | Medium | 문서 revert |
-| HD-SOLAR-025 | HD-SOLAR-024 | repaired v2 prompt policy validator 구현 | unit test, fake provider test, evidence floor violation test, Solar call 0 | Medium | validator와 report revert |
+| HD-SOLAR-025 | HD-SOLAR-024 | repaired v2 prompt policy validator 구현 | 완료. unit test, fake provider test, evidence floor violation test, Solar call 0, public-safe report | Medium | validator와 report revert |
 | HD-SOLAR-026 | HD-SOLAR-025 | repaired v2 dry-run/readiness runner 구현 | 기존 7건 dev subset 기준 call budget, fallback route, public-safe report | High | runner/report revert |
 | HD-SOLAR-027 | HD-SOLAR-026 + 별도 승인 | repaired v2 Solar Pro 3 live paired comparison | live call cap 준수, paired metric report, public leakage 0 | High | candidate 미채택, public report revert |
 
@@ -219,4 +219,29 @@ free-text query, raw answer, raw evidence, raw prompt, chunk text는 fact에 저
 
 HD-SOLAR-024는 문서 gate로 통과한다.
 
-다음 구현 후보는 `HD-SOLAR-025 repaired v2 prompt policy validator`다. 이 단계도 Solar Pro 3 live 호출 없이 진행한다.
+## HD-SOLAR-025 실행 결과
+
+repaired v2 prompt policy validator를 구현했다. 실행은 fake provider/validator 단계이며 Solar Pro 3 live 호출은 수행하지 않았다.
+
+| metric | value |
+| --- | ---: |
+| row_count | 7 |
+| query_type_policy_count | 7 |
+| prompt_policy_count | 3 |
+| pass_count | 6 |
+| fallback_required_count | 1 |
+| fail_count | 0 |
+| invalid_rank_count | 0 |
+| evidence_floor_violation_count | 0 |
+| coverage_intent_violation_count | 0 |
+| unsupported_risk_violation_count | 0 |
+| no_answer_abstain_pass_count | 1 |
+| live_solar_call_count | 0 |
+| readiness_decision | `ready_for_repaired_prompt_dry_run` |
+
+판단:
+
+- 청킹 비교는 계속 보류한다.
+- `place_story`는 v1 fallback monitor case로 분리한다.
+- repaired v2는 live comparison이 아니라 dry-run/readiness runner로만 다음 gate에 보낸다.
+- 다음 구현 후보는 `HD-SOLAR-026 repaired v2 dry-run/readiness runner`다.

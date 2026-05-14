@@ -457,9 +457,10 @@ dimension 후보:
 | HD-SOLAR-022 | HD-SOLAR-021 | guarded boost locked test readiness dry-run runner | 완료. locked place_story 5건에서 candidate live call 0, Solar call 0, readiness gate PASS | Medium | runner/report revert |
 | HD-SOLAR-023 | HD-SOLAR-022 | guarded boost locked readiness 결과 기반 next gate 판단 | 완료. 청킹 재개 보류, locked live 보류, production 채택 기각 | Medium | 문서 revert |
 | HD-SOLAR-024 | HD-SOLAR-023 | Solar Pro 3 generation v2 prompt repair 계획 | 완료. v2 over-pruning 보정 계획, no-live-call gate, 다음 validator 구현 지시서 | Medium | 문서 revert |
+| HD-SOLAR-025 | HD-SOLAR-024 | repaired v2 prompt policy validator 구현 | 완료. 7개 query type policy 검증, fail 0, Solar call 0 | Medium | validator/report revert |
 
 ## 결정
 
-다음 결정 우선순위는 `HD-SOLAR-025` Solar Pro 3 generation v2 repaired prompt policy validator 구현이다.
+다음 결정 우선순위는 `HD-SOLAR-026` Solar Pro 3 generation v2 repaired dry-run/readiness runner 구현이다.
 
 청킹 비교 테스트는 계속 보류한다. `guarded_boost`는 input-only 기준, dry-run call budget gate, readiness gate, dev-only live comparison을 통과했다. 다만 locked test와 bootstrap confidence interval 전에는 최종 성능 개선 주장으로 쓰지 않는다.

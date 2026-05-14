@@ -109,4 +109,5 @@ v2 prompt repair 후보를 [Solar Pro 3 Generation v2 Prompt Repair 계획](SOLA
 - 청킹 비교는 계속 보류한다.
 - repaired v2를 production 기본값으로 채택하지 않는다.
 - Solar Pro 3 live 재호출은 보류한다.
-- 다음 구현 후보는 live 호출 없이 `repaired v2 prompt policy validator`를 만드는 것이다.
+- `HD-SOLAR-025` validator는 live 호출 0회, fail 0건으로 통과했다.
+- 다음 구현 후보는 live 호출 없이 `repaired v2 dry-run/readiness runner`를 만드는 것이다.
