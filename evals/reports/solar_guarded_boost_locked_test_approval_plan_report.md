@@ -91,3 +91,22 @@ HD-SOLAR-021의 locked test 승인 계획이 실행 조건, call budget, 중단 
 HD-SOLAR-021은 문서 gate를 통과했다.
 
 다음 작업은 HD-SOLAR-022 `guarded boost locked test readiness dry-run runner` 구현이다. 이 작업은 Solar Pro 3 호출 없이 locked test live 실행 가능성, 예상 call budget, public-safe gate만 검증한다.
+
+## HD-SOLAR-022 후속 반영
+
+HD-SOLAR-022 locked test readiness dry-run을 실행했다.
+
+결과:
+
+- locked `place_story` query 5건을 확인했다.
+- route decision 5건을 계산했다.
+- selected candidate는 0건이다.
+- candidate live call 대상도 0건이다.
+- target resolvability failure는 0건이다.
+- Solar Pro 3 호출은 0회다.
+- public leakage gate는 모두 0이다.
+
+결정:
+
+- locked live paired comparison은 보류한다.
+- 다음 작업은 router 적용 폭과 next gate 판단 문서화다.

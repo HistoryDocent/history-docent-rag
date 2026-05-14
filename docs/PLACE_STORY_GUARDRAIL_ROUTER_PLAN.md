@@ -324,6 +324,7 @@ Solar Pro 3 guarded boost live paired comparison을 private `place_story` dev 10
 | HD-SOLAR-019 | HD-SOLAR-018 | guarded boost hard-case validation runner 구현 | 완료. route mismatch 0, selected candidate safety 통과, Solar call 0 | Medium | runner/report revert |
 | HD-SOLAR-020 | HD-SOLAR-019 | guarded boost router threshold 유지/수정 판단 | 완료. threshold 유지, 완화/강화 기각, production 채택 보류 | Low | 문서 revert |
 | HD-SOLAR-021 | HD-SOLAR-020 | guarded boost locked test 실행 전 승인 계획 | 완료. locked test 사용 조건, call budget, stop condition, claim boundary 문서화 | Medium | 문서 revert |
+| HD-SOLAR-022 | HD-SOLAR-021 | guarded boost locked test readiness dry-run runner | 완료. locked place_story 5건, selected candidate 0, Solar call 0, public leakage 0 | Medium | runner/report revert |
 
 ## Non-goal
 
@@ -334,6 +335,6 @@ Solar Pro 3 guarded boost live paired comparison을 private `place_story` dev 10
 
 ## 결정
 
-다음 작업은 `HD-SOLAR-022` guarded boost locked test readiness dry-run runner 구현이다.
+다음 작업은 `HD-SOLAR-023` guarded boost locked readiness 결과 기반 next gate 판단 문서화다.
 
 `guarded_boost`는 dev-only live comparison에서 next gate 승격 후보가 됐지만, locked test 또는 production 기본값으로는 아직 확정하지 않는다.

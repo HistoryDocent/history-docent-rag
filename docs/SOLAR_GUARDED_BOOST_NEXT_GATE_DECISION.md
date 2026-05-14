@@ -249,3 +249,15 @@ free-text는 warehouse fact에 저장하지 않는다. raw answer와 raw evidenc
 - dry-run은 Solar Pro 3 호출 0회로 expected call budget, route decision, public-safe gate만 검증한다.
 - future live paired comparison은 별도 승인 전까지 금지한다.
 - production 기본값 채택과 통계적 개선 주장은 계속 금지한다.
+
+## HD-SOLAR-022 실행 결과
+
+[Solar Pro 3 Guarded Boost Locked Test Readiness Report](../evals/reports/solar_guarded_boost_locked_test_readiness_report.md)를 생성했다.
+
+결론:
+
+- locked `place_story` test subset 5건에서 readiness gate를 통과했다.
+- candidate가 자동 선택된 query는 0건이다.
+- expected live call은 baseline 5회지만 candidate live call이 0회라 paired comparison 이득 검증이 불가능하다.
+- 따라서 locked live paired comparison은 보류한다.
+- 다음 작업은 router 적용 폭과 next gate를 재판단하는 문서화다.

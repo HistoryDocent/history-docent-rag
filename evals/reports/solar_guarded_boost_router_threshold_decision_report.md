@@ -91,3 +91,15 @@ HD-SOLAR-021에서 locked test 승인 계획을 작성했다.
 - 다음 작업은 Solar Pro 3 호출 0회의 readiness dry-run runner 구현이다.
 - future live paired comparison은 `place_story` locked subset으로 제한한다.
 - production 기본값 채택과 최종 성능 개선 주장은 계속 금지한다.
+
+## HD-SOLAR-022 후속 반영
+
+HD-SOLAR-022에서 locked test readiness dry-run을 실행했다.
+
+결정:
+
+- locked `place_story` 5건에서 readiness gate를 통과했다.
+- `selected_candidate_count=0`, `candidate_live_call_count=0`이다.
+- locked live paired comparison은 보류한다.
+- Solar Pro 3 호출은 0회다.
+- 다음 작업은 router 적용 폭과 next gate 판단 문서화다.

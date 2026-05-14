@@ -279,3 +279,15 @@ Public output gate:
 - `place_story` locked subset 외 범위로 확장하지 않는다.
 - locked test 결과를 본 뒤 threshold를 재튜닝하지 않는다.
 - 최종 성능 개선 주장은 locked test live 결과와 별도 final ablation 이후에만 허용한다.
+
+## HD-SOLAR-022 실행 결과
+
+[Solar Pro 3 Guarded Boost Locked Test Readiness Report](../evals/reports/solar_guarded_boost_locked_test_readiness_report.md)를 생성했다.
+
+결정:
+
+- locked test live 실행은 보류한다.
+- locked `place_story` 5건에서 candidate live call 대상이 0건이다.
+- readiness gate, target resolvability, public-safe gate는 통과했다.
+- 추가 Solar Pro 3 호출은 수행하지 않았다.
+- 다음 작업은 router 적용 폭과 next gate 판단 문서화다.

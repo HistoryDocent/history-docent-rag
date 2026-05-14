@@ -233,3 +233,48 @@ free-text query, raw answer, raw evidence, prompt, chunk text, private path, sec
 HD-SOLAR-021은 문서 gate로 통과한다.
 
 다음 추천 작업은 HD-SOLAR-022 `guarded boost locked test readiness dry-run runner` 구현이다. 이 runner는 locked test live 실행이 아니라, Solar Pro 3 호출 0회로 실행 가능성, call budget, public-safe gate만 확인한다.
+
+## HD-SOLAR-022 실행 결과
+
+[Solar Pro 3 Guarded Boost Locked Test Readiness Report](../evals/reports/solar_guarded_boost_locked_test_readiness_report.md)를 생성했다.
+
+실행 조건:
+
+- locked `place_story` test subset 5건
+- `place_story_guarded_boost_v1` threshold 유지
+- baseline과 guarded 입력 fingerprint 비교
+- Solar Pro 3 호출 0회
+- CUDA 사용 가능 시 CUDA 사용
+
+정량 결과:
+
+| metric | value |
+| --- | ---: |
+| locked_place_story_query_count | 5 |
+| route_decision_computed_count | 5 |
+| selected_candidate_count | 0 |
+| guardrail_block_count | 5 |
+| baseline_live_call_count | 5 |
+| candidate_live_call_count | 0 |
+| expected_total_live_call_count | 5 |
+| live_call_hard_cap | 20 |
+| target_resolvability_fail_count | 0 |
+| citation_recoverability_min | 1.000000 |
+| solar_call_count | 0 |
+| readiness_decision | `ready_without_candidate_live_call` |
+
+Public output gate:
+
+| metric | value |
+| --- | ---: |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+| forbidden_result_field_count | 0 |
+
+판단:
+
+- readiness gate는 통과했다.
+- candidate live call 대상이 0건이므로 locked live paired comparison은 실행하지 않는다.
+- 이 결과는 locked test 성능 개선 주장이 아니다.
+- 다음 작업은 locked readiness 결과를 바탕으로 router 적용 폭과 next gate를 판단하는 문서화다.
