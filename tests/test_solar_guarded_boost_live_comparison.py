@@ -10,9 +10,12 @@ from pipelines.run_place_story_guarded_boost_comparison import (
     ROUTER_POLICY_ID,
 )
 from pipelines.run_solar_guarded_boost_live_comparison import (
+    SolarGuardedBoostLivePairDelta,
+    build_public_solar_guarded_boost_live_paired_comparison_rows_from_deltas,
     build_public_solar_guarded_boost_live_comparison_rows,
     build_solar_guarded_boost_live_comparison_readiness_report,
     collect_solar_guarded_boost_live_comparison_failures,
+    validate_live_execution_approval,
     validate_live_execution_request,
 )
 from pipelines.run_solar_guarded_boost_live_dry_run import (
@@ -63,6 +66,57 @@ def test_live_execution_request_is_blocked_until_next_approval_stage() -> None:
             execute_live=False,
             confirm_live_execution=True,
         )
+
+
+def test_live_execution_approval_requires_double_confirmation() -> None:
+    validate_live_execution_approval(
+        execute_live=True,
+        confirm_live_execution=True,
+    )
+
+    with pytest.raises(PermissionError):
+        validate_live_execution_approval(
+            execute_live=True,
+            confirm_live_execution=False,
+        )
+
+    with pytest.raises(PermissionError):
+        validate_live_execution_approval(
+            execute_live=False,
+            confirm_live_execution=True,
+        )
+
+
+def test_live_paired_public_rows_are_sanitized() -> None:
+    rows = build_public_solar_guarded_boost_live_paired_comparison_rows_from_deltas(
+        (
+            SolarGuardedBoostLivePairDelta(
+                query_id="q-dev-place-story-001",
+                query_type="place_story",
+                route_decision="reuse_baseline_result",
+                reuse_decision="reuse_baseline_result",
+                baseline_correct_with_evidence=True,
+                candidate_correct_with_evidence=True,
+                correct_with_evidence_delta=0,
+                baseline_citation_precision=0.5,
+                candidate_citation_precision=0.5,
+                citation_precision_delta=0.0,
+                baseline_citation_recall=0.5,
+                candidate_citation_recall=0.5,
+                citation_recall_delta=0.0,
+                baseline_unsupported_claim=False,
+                candidate_unsupported_claim=False,
+                unsupported_claim_delta=0,
+                baseline_citation_count=5,
+                candidate_citation_count=5,
+                citation_count_delta=0,
+                latency_ms_delta=0.0,
+            ),
+        ),
+    )
+
+    assert rows
+    assert all(FORBIDDEN_PUBLIC_EVAL_FIELDS.isdisjoint(row.keys()) for row in rows)
 
 
 def test_readiness_blocks_when_call_cap_failed() -> None:

@@ -217,7 +217,7 @@ public report에 기록하지 않는 것:
 | HD-SOLAR-013 | HD-PLACE-STORY-012 | guarded boost live comparison 계획 문서화 | README/TODO 링크, leakage scan, live call 0 | Medium | 문서 revert |
 | HD-SOLAR-014 | HD-SOLAR-013 승인 | Solar Pro 3 guarded boost live comparison dry-run runner 구현 | 완료. unit test, dry-run, public-safe report, Solar call 0 | High | runner/report revert |
 | HD-SOLAR-015 | HD-SOLAR-014 | Solar Pro 3 guarded boost live paired comparison runner 구현 | 완료. readiness mode, dry-run 재검증, call cap 확인, Solar call 0 | High | runner/report revert |
-| HD-SOLAR-016 | HD-SOLAR-015 승인 | 승인 후 live paired comparison 실행 | live report, public leakage 0, call count/cost 기록 | High | candidate 미채택, public report revert |
+| HD-SOLAR-016 | HD-SOLAR-015 승인 | 승인 후 live paired comparison 실행 | 완료. live report, public leakage 0, call count/cost 기록 | High | candidate 미채택, public report revert |
 
 ## HD-SOLAR-014 실행 결과
 
@@ -304,6 +304,62 @@ Public output gate:
 - dev 10건 live 품질 개선 주장은 아직 없다.
 - 다음 단계는 HD-SOLAR-016 실제 live 실행 승인 여부 결정이다.
 
+## HD-SOLAR-016 실행 결과
+
+Solar Pro 3 guarded boost live paired comparison을 private `place_story` dev 10개에서 실행했다.
+
+| metric | baseline | guarded candidate | delta |
+| --- | ---: | ---: | ---: |
+| eval_count | 10 | 10 | 0 |
+| Correct-with-Evidence | 0.900000 | 0.900000 | 0.000000 |
+| citation_precision | 0.580000 | 0.580000 | 0.000000 |
+| citation_recall | 0.481309 | 0.509881 | 0.028572 |
+| place_relevance | 1.000000 | 1.000000 | 0.000000 |
+| docent_usefulness | 0.800000 | 0.800000 | 0.000000 |
+| spoken_answer_naturalness | 0.900000 | 0.900000 | 0.000000 |
+| unsupported_claim_rate | 0.100000 | 0.100000 | 0.000000 |
+| latency_p95_ms | 5066.690100 | 5455.679600 | 388.989500 |
+
+Live call summary:
+
+| metric | value |
+| --- | ---: |
+| baseline_live_call_count | 10 |
+| candidate_live_call_count | 1 |
+| reused_candidate_count | 9 |
+| expected_total_live_call_count | 11 |
+| actual_solar_call_count | 11 |
+| live_call_hard_cap | 20 |
+| total_tokens | 29737 |
+| estimated_cost | 0.000000 |
+
+Public output gate:
+
+| metric | value |
+| --- | ---: |
+| public_raw_text_leakage_count | 0 |
+| private_path_leakage_count | 0 |
+| secret_like_leakage_count | 0 |
+| forbidden_result_field_count | 0 |
+
+정성 tag:
+
+| tag | count |
+| --- | ---: |
+| citation_recall_gain | 1 |
+| citation_precision_regression | 0 |
+| unsupported_regression | 0 |
+| no_material_change | 9 |
+
+판단:
+
+- `guarded_boost`는 live 답변에서도 Correct-with-Evidence, citation precision, unsupported claim을 악화시키지 않았다.
+- citation recall은 `+0.028572` 개선됐다.
+- candidate 1건에서만 실제 입력이 달라졌으므로 전체 성능 개선 주장으로 쓰면 안 된다.
+- latency는 candidate changed query 기준 증가했고, 전체 p95도 `+388.989500ms` 증가했다.
+- 결정은 `promote_guarded_candidate_for_next_gate`다.
+- 다음 단계는 locked test가 아니라 dev-only 결과 해석과 next gate 판단 문서화다.
+
 ## 외부 감사 체크
 
 | 감사 항목 | 기대 결과 |
@@ -317,7 +373,7 @@ Public output gate:
 
 ## 다음 액션
 
-1. HD-SOLAR-015 readiness runner 결과를 commit한다.
-2. HD-SOLAR-016 실행 여부를 별도 승인받는다.
-3. 승인 시 private `place_story` dev 10개, expected call 11회, hard cap 20회로 제한해 실제 live paired comparison을 실행한다.
-4. live 결과는 aggregate metric, paired delta, cost/latency, public-safe leakage gate만 공개한다.
+1. HD-SOLAR-016 live paired comparison 결과를 commit한다.
+2. HD-SOLAR-017에서 `guarded_boost`를 next gate로 승격할지 문서화한다.
+3. 승격 시 locked test가 아니라 추가 dev hard-case 또는 router 정책 보강을 먼저 검토한다.
+4. 최종 성능 개선 주장은 locked test와 bootstrap confidence interval 이후에만 작성한다.
