@@ -219,6 +219,8 @@ Citation RAG answer contract v1을 추가했다. `answer`, `spoken_answer`, `cit
 
 Generation evaluation harness v1을 추가했다. `CitationRagAnswer`를 `Correct-with-Evidence`, `citation_precision`, `citation_recall`, `place_relevance`, `docent_usefulness`, `spoken_answer_naturalness`, `unsupported_claim_rate`, `abstention_accuracy`, `latency_p95_ms`, `solar_call_count`, `estimated_cost`로 평가하는 구조를 고정했다. 현재 리포트는 contract-only smoke run이며 Solar Pro 3 품질 주장이 아니다. public-safe gate 기준 원문 answer/chunk text, private path, secret 누출은 0이다.
 
+GraphRAG-lite relationship input-only 비교를 실행했다. `relationship` dev 10개에서 기존 `hybrid_weighted_e5_small_alpha_0_5_reference`가 `Recall@5=1.000000`, `MRR=0.833333`, `nDCG@5=0.709355`로 가장 적합했다. `entity_path`와 `community_hint` 후보는 citation recoverability는 1.000000이었지만 nDCG@5 개선이 없어 기본 RAG pipeline으로 승격하지 않는다. 이 결과는 dev input-only 비교이며 locked test 또는 production 개선 주장이 아니다.
+
 Solar Pro 3 provider contract v1을 추가했다. Upstage Chat Completions API의 `solar-pro3` 모델과 `response_format=json_schema`를 사용해 `CitationRagDraft`를 생성하는 provider를 구현했다. 현재 contract report는 mock transport 검증이며 live API 호출은 수행하지 않았다. API key는 환경변수에서만 읽고 public report/result row에는 저장하지 않는다.
 
 FastAPI `/api/v1/chat` contract v1을 추가했다. 현재 API는 contract-only service로 `answer`, `spoken_answer`, `citations`, `evidence_ids`, `abstained`, `usage`를 반환한다. blank query는 422 error envelope로 검증하고, `provider_mode=solar_pro_3` 요청은 live 호출 없이 503 `provider_unavailable`로 차단한다. public-safe contract report 기준 `request_count=4`, `success_count=2`, `validation_error_count=1`, `provider_unavailable_count=1`, `live_solar_call_count=0`, leakage gate는 0이다.

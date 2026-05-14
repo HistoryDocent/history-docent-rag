@@ -87,3 +87,17 @@ free-text query, raw answer, raw evidence, raw prompt, chunk text는 fact에 저
 ## 다음 승인 후보
 
 다음 작업은 HD-ADV-RAG-002다. 승인 전에는 실제 graph index build와 input-only 비교를 실행하지 않는다.
+
+## HD-ADV-RAG-002 실행 결과
+
+승인 후 `relationship` dev 10개에 대해 GraphRAG-lite input-only 비교를 실행했다.
+
+결론은 `reject_graphrag_lite_default`다. 기존 `hybrid_weighted_e5_small_alpha_0_5_reference`가 `Recall@5=1.000000`, `MRR=0.833333`, `nDCG@5=0.709355`로 이미 강했고, 후보 2개는 개선 gate를 통과하지 못했다.
+
+| strategy_id | Recall@5 | MRR | nDCG@5 | latency_p95_ms | citation_recoverability | 판단 |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `hybrid_weighted_e5_small_alpha_0_5_reference` | 1.000000 | 0.833333 | 0.709355 | 18.375100 | 1.000000 | baseline 유지 |
+| `graphrag_lite_entity_path_v1` | 1.000000 | 0.833333 | 0.707299 | 27.580100 | 1.000000 | 기본값 승격 보류 |
+| `graphrag_lite_community_hint_v1` | 1.000000 | 0.833333 | 0.679018 | 27.511100 | 1.000000 | 기본값 승격 보류 |
+
+Public-safe report는 `evals/reports/graphrag_lite_relationship_input_only_report.md`에 둔다. private query text, chunk text, raw evidence, private path, secret은 public report에 기록하지 않았다.
