@@ -23,8 +23,8 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| summarized_stage_count | 13 |
-| adopted_or_implemented_count | 4 |
+| summarized_stage_count | 14 |
+| adopted_or_implemented_count | 5 |
 | rejected_default_count | 6 |
 | held_candidate_count | 2 |
 | public_raw_text_leakage_count | 0 |
@@ -49,6 +49,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 | GraphRAG-lite | `community_hint_v1` | relationship dev 10 | nDCG@5 delta | -0.030337 | reject default |
 | RAPTOR-lite | `summary_node_v1` | overview/place_story dev 20 | nDCG@5 delta | -0.029969 | reject default |
 | router skeleton | `query_type_router_v1` | contract-only | route_policy_count | 3 | implemented |
+| query type classifier | `deterministic_query_type_classifier_v1` | dev 70 | macro_f1 | 0.956818 | implemented baseline |
 
 ## 정성 리포트
 
@@ -56,7 +57,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 - `decision_quality`: 좋은 수치만 선택하지 않고 latency, citation recall, nDCG 하락, locked readiness를 기준으로 기각한 과정을 강조한다.
 - `retrieval_message`: BM25에서 neural dense, hybrid, reranker, query rewrite로 확장했지만 최종 기본 후보는 균형이 가장 좋은 dense voice rewrite로 둔다.
 - `advanced_rag_message`: GraphRAG-lite와 RAPTOR-lite는 특정 query type에 한정해 비교했고 개선이 없어 기본값에서 제외했다.
-- `router_message`: query type router skeleton은 구현됐지만 classifier와 locked 성능 개선은 아직 없다.
+- `router_message`: query type classifier baseline과 router skeleton은 구현됐지만 production routing과 locked 성능 개선은 아직 없다.
 - `security_boundary`: public README와 docs에는 저작권 원문, private eval payload, secret을 넣지 않는다.
 - `claim_boundary`: production 성능, locked 개선, 통계적 유의성 표현은 금지한다.
 - `external_audit`: 포트폴리오 제출 전에는 새 실험 추가보다 설명 가능한 결과 표와 금지 표현 점검이 우선이다.
@@ -65,7 +66,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| result_row_count | 13 |
+| result_row_count | 14 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |

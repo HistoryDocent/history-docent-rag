@@ -115,6 +115,8 @@
 - [x] query-type router decision report 작성
 - [x] query-type router 채택 여부 판단
 - [x] deterministic query-type router skeleton 구현
+- [x] deterministic query-type classifier baseline 평가
+- [ ] query-type classifier 오분류 failure analysis
 - [ ] HyDE overview/relationship subset 비교
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성

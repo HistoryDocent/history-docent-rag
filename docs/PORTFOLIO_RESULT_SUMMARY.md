@@ -19,7 +19,7 @@
 | evidence packing | `P0_rank_order` | citation recoverability 1.000000 |
 | generation | `solar-generation-baseline-v1` | repaired v2는 citation recall 하락으로 기본값 기각 |
 | API | FastAPI `/api/v1/chat` contract + retrieval-backed smoke | live service 품질 주장이 아니라 contract 검증 |
-| router | `query_type_router_v1` skeleton | classifier 없이 deterministic branch만 구현 |
+| classifier/router | `deterministic_query_type_classifier_v1` + `query_type_router_v1` | classifier baseline 통과, production routing 주장은 아님 |
 
 ## 핵심 정량 결과
 
@@ -38,6 +38,7 @@
 | GraphRAG-lite | `entity_path_v1` | relationship dev 10 | nDCG@5 delta | -0.002056 | reject default |
 | RAPTOR-lite | `summary_node_v1` | overview/place_story dev 20 | nDCG@5 delta | -0.029969 | reject default |
 | router skeleton | `query_type_router_v1` | contract-only | route_policy_count | 3 | implemented |
+| query type classifier | `deterministic_query_type_classifier_v1` | dev 70 | macro_f1 | 0.956818 | implemented baseline |
 
 ## 채택, 보류, 기각
 
@@ -47,6 +48,7 @@
 | 채택 | `dense_multilingual_e5_small_voice_rewrite` | Recall@5, MRR, nDCG@5 균형이 가장 좋음 |
 | 채택 | `P0_rank_order` | P3 개선폭이 작고 generation 품질 개선으로 연결되지 않음 |
 | 구현 | `query_type_router_v1` skeleton | relationship/no_answer/default route branch를 contract로 고정 |
+| 구현 | `deterministic_query_type_classifier_v1` | dev 70에서 macro F1과 route policy accuracy gate 통과 |
 | 보류 | BGE-M3 dense | Recall@5는 높지만 latency가 커서 기본값 부적합 |
 | 보류 | BGE reranker | 품질 상한은 높지만 CPU p95 latency가 API 기본값으로 부적합 |
 | 기각 | GraphRAG-lite relationship 기본값 | hybrid reference 대비 nDCG@5 개선 없음 |
@@ -57,7 +59,7 @@
 ## 면접에서 말할 핵심 문장
 
 ```text
-도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type router까지 단계별로 비교했습니다. 좋은 수치만 채택하지 않고 latency, citation recall, nDCG 하락, locked readiness 결과 때문에 후보를 기각한 과정을 포트폴리오 핵심으로 정리했습니다.
+도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router까지 단계별로 비교했습니다. 좋은 수치만 채택하지 않고 latency, citation recall, nDCG 하락, locked readiness 결과 때문에 후보를 기각한 과정을 포트폴리오 핵심으로 정리했습니다.
 ```
 
 ## Claim Boundary
@@ -70,6 +72,7 @@
 - RAPTOR-lite는 이번 overview/place_story input-only 비교에서 기본값으로 승격하지 않았다.
 - public repo에는 저작권 원문과 private eval payload를 포함하지 않았다.
 - API는 contract와 retrieval-backed smoke까지 검증했다.
+- query type classifier baseline은 dev 기준 macro F1 0.956818을 기록했다.
 
 금지 표현:
 
@@ -79,13 +82,14 @@
 - RAPTOR 적용으로 성능 개선
 - 음성 관광 앱 완성
 - Solar Pro 3 generation 품질 최종 개선
+- query type classifier production 검증 완료
 - 전체 도서 데이터 공개
 
 ## 다음 작업
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-ROUTER-003` | query type label을 사용자가 직접 주지 않는 실제 API를 위한 classifier 설계 |
+| 1 | `HD-CLASSIFIER-004` | classifier 오분류 3개의 route/retrieval 영향 failure analysis |
 | 2 | `HD-HYDE-001` | Solar Pro 3 호출 비용과 hallucination guard를 포함한 HyDE subset 비교 |
 | 3 | `HD-COLBERT-001` | 품질 상한 실험으로 late interaction 후보 검토 |
 
