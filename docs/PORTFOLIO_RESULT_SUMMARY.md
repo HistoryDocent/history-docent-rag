@@ -39,6 +39,7 @@
 | RAPTOR-lite | `summary_node_v1` | overview/place_story dev 20 | nDCG@5 delta | -0.029969 | reject default |
 | router skeleton | `query_type_router_v1` | contract-only | route_policy_count | 3 | implemented |
 | query type classifier | `deterministic_query_type_classifier_v1` | dev 70 | macro_f1 | 0.956818 | implemented baseline |
+| classifier failure analysis | `deterministic_query_type_classifier_v1` | dev 70 | route_risk_failure_count | 2 | dry-run before active route |
 
 ## 채택, 보류, 기각
 
@@ -73,6 +74,7 @@
 - public repo에는 저작권 원문과 private eval payload를 포함하지 않았다.
 - API는 contract와 retrieval-backed smoke까지 검증했다.
 - query type classifier baseline은 dev 기준 macro F1 0.956818을 기록했다.
+- classifier failure analysis에서 no-answer 오분류는 0건이지만 false hybrid route 2건이 남았다.
 
 금지 표현:
 
@@ -89,9 +91,9 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-CLASSIFIER-004` | classifier 오분류 3개의 route/retrieval 영향 failure analysis |
-| 2 | `HD-HYDE-001` | Solar Pro 3 호출 비용과 hallucination guard를 포함한 HyDE subset 비교 |
-| 3 | `HD-COLBERT-001` | 품질 상한 실험으로 late interaction 후보 검토 |
+| 1 | `HD-API-ROUTER-001` | `/chat`에 classifier/router dry-run field 연결 |
+| 2 | `HD-CLASSIFIER-005` | relationship false hybrid route guard 설계 |
+| 3 | `HD-HYDE-001` | Solar Pro 3 호출 비용과 hallucination guard를 포함한 HyDE subset 비교 |
 
 ## 외부 감사 결론
 

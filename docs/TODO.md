@@ -116,7 +116,9 @@
 - [x] query-type router 채택 여부 판단
 - [x] deterministic query-type router skeleton 구현
 - [x] deterministic query-type classifier baseline 평가
-- [ ] query-type classifier 오분류 failure analysis
+- [x] query-type classifier 오분류 failure analysis
+- [ ] FastAPI `/chat` classifier/router dry-run field 연결
+- [ ] relationship route guard 설계
 - [ ] HyDE overview/relationship subset 비교
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성

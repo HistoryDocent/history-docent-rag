@@ -4,7 +4,7 @@
 
 현재 RAG 기본선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다.
 
-GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline은 통과했으므로 다음 우선순위는 classifier 오분류 failure analysis다.
+GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline과 failure analysis는 통과했으므로 다음 우선순위는 `/chat` classifier/router dry-run 연결이다.
 
 이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked test 전까지 모든 수치는 dev-only 또는 live-dev-subset으로 제한한다.
 
@@ -58,6 +58,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | raptor_lite | `raptor_lite_parent_summary_v1` | nDCG@5 delta | -0.074957 | reject default |
 | raptor_lite | `raptor_lite_summary_node_v1` | nDCG@5 delta | -0.029969 | reject default |
 | query_type_classifier | `deterministic_query_type_classifier_v1` | macro_f1 | 0.956818 | implemented baseline |
+| query_type_classifier_failure | `deterministic_query_type_classifier_v1` | route_risk_failure_count | 2 | dry-run before active route |
 
 ## Qualitative Assessment
 
@@ -70,6 +71,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - `GraphRAG-lite`: relationship input-only에서 기존 hybrid reference를 넘지 못했다.
 - `RAPTOR-lite`: overview/place_story input-only에서 기존 dense voice rewrite reference를 넘지 못했다.
 - `classifier`: deterministic baseline은 dev 70개에서 gate를 통과했지만 production routing 검증은 아니다.
+- `classifier_failure`: no-answer 오분류는 없지만 false hybrid route 2건이 남아 active route 적용 전 guard가 필요하다.
 - `portfolio`: 기법 추가보다 실험으로 선택과 기각을 설명하는 편이 더 강하다.
 
 ## Claim Boundary
@@ -88,11 +90,12 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 
 ## Next Gate
 
-다음 gate는 `HD-CLASSIFIER-004 query type classifier failure analysis`다.
+다음 gate는 `HD-API-ROUTER-001 /chat classifier/router dry-run 연결`이다.
 
 이유:
 
-- classifier exact accuracy는 통과했지만 route-risk 오분류가 남아 있다.
+- classifier exact accuracy와 failure analysis는 통과했지만 active routing은 아직 이르다.
+- route-risk 오분류 2건이 false hybrid route라 API에서는 먼저 dry-run으로 관찰해야 한다.
 - 전체 기본 retrieval 후보와 query type별 강한 후보가 다르다.
 - relationship은 hybrid weighted 후보가 강하고, place_story는 guarded boost 후보가 존재한다.
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
@@ -108,4 +111,4 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - 대부분 dev split 또는 live-dev-subset 결과다.
 - locked test는 아직 최종 성능 주장에 쓰지 않았다.
 - Solar Pro 3 live 결과는 호출 수가 제한되어 통계적으로 강한 결론이 아니다.
-- classifier/router를 API에 연결하기 전 오분류 route impact를 정리해야 한다.
+- classifier/router를 API에 연결하더라도 active route 적용이 아니라 dry-run field로 제한해야 한다.

@@ -121,10 +121,40 @@
 - 현재 결과는 classifier 평가이지 retrieval/generation 품질 개선 주장이 아니다.
 - `relationship`과 `overview` 경계는 여전히 혼동 가능성이 있다.
 
+## Failure Analysis 결과
+
+`HD-CLASSIFIER-004`에서 classifier baseline의 오분류 3건을 route impact 기준으로 분리했다.
+
+근거 리포트:
+
+- `evals/reports/query_type_classifier_failure_analysis_report.md`
+
+| metric | value |
+| --- | ---: |
+| query_count | 70 |
+| failure_count | 3 |
+| failure_rate | 0.042857 |
+| route_risk_failure_count | 2 |
+| route_risk_failure_rate | 0.028571 |
+| default_route_internal_failure_count | 1 |
+| false_hybrid_route_count | 2 |
+| missed_hybrid_route_count | 0 |
+| false_abstain_count | 0 |
+| missed_abstain_count | 0 |
+| no_answer_failure_count | 0 |
+| public_raw_text_leakage_count | 0 |
+
+해석:
+
+- no-answer 관련 오분류는 없다.
+- 위험은 default query가 relationship hybrid route로 잘못 이동하는 false hybrid route다.
+- `/chat`에 바로 active route로 연결하지 말고, 먼저 classifier/router dry-run field로 노출한다.
+- active routing은 relationship guard를 추가한 뒤 별도 gate로 판단한다.
+
 ## 다음 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
-| HD-CLASSIFIER-004 | HD-ROUTER-003 | classifier 오분류 3개 failure analysis와 route impact 점검 | public-safe failure tag report, raw query 0, route-risk 분리 | Medium | report/module 변경 revert |
-| HD-HYDE-001 | HD-ROUTER-003 | Solar Pro 3 기반 HyDE subset 비교 | 명시 승인, call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
 | HD-API-ROUTER-001 | HD-CLASSIFIER-004 | `/chat`에 classifier + router dry-run field 연결 | contract test, retrieval regression 0, raw output leakage 0 | Medium | API field 제거 |
+| HD-CLASSIFIER-005 | HD-CLASSIFIER-004 | relationship route guard 설계 | false_hybrid_route 재평가, public report, active route 미적용 | Medium | guard module revert |
+| HD-HYDE-001 | HD-ROUTER-003 | Solar Pro 3 기반 HyDE subset 비교 | 명시 승인, call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
