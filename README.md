@@ -50,6 +50,7 @@
 | locked retrieval execution approval | `HD-LOCKED-RETRIEVAL-003` | approval-only | planned_bootstrap_iteration_count | 10000 | ready for user approval |
 | locked retrieval paired comparison | `HD-LOCKED-RETRIEVAL-004` | locked test 35 | MRR delta | -0.100000 | keep shadow without improvement claim |
 | ColBERT-style late interaction | `colbert_style_late_interaction_top50_cuda` | dev hard subset 21 | MRR delta / nDCG@5 delta | +0.022222 / -0.021670 | reject default |
+| voice UI MVP plan | `HD-VOICE-UI-001` | plan-only | frontend_implementation_count | 0 | ready for skeleton |
 
 금지 claim:
 
@@ -177,13 +178,14 @@ PDF
 -> ColBERT-style late interaction plan
 -> ColBERT-style hard subset execution approval
 -> ColBERT-style hard subset comparison
+-> voice UI MVP plan
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-frontend/voice UI
+frontend/voice UI skeleton
 ```
 
 ## RAG 전략
@@ -502,6 +504,9 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [ColBERT-style Late Interaction Execution Approval Report](evals/reports/colbert_late_interaction_execution_approval_report.md) | HD-COLBERT-001B 정량/정성 실행 승인 리포트와 public-safe gate |
 | [ColBERT-style Late Interaction Hard Subset](docs/COLBERT_LATE_INTERACTION_HARD_SUBSET.md) | HD-COLBERT-001C CUDA 기반 dev hard subset 비교와 기본 route 기각 판단 |
 | [ColBERT-style Late Interaction Hard Subset Report](evals/reports/colbert_late_interaction_hard_subset_report.md) | HD-COLBERT-001C 정량/정성 비교 결과와 public-safe gate |
+| [Voice UI MVP Plan](docs/VOICE_UI_MVP_PLAN.md) | HD-VOICE-UI-001 browser voice-ready 관광 도슨트 UI 범위, non-goal, 보안 경계 |
+| [Voice UI API Contract](docs/VOICE_UI_API_CONTRACT.md) | HD-VOICE-UI-001 `/api/v1/chat` request/response field의 UI mapping |
+| [Voice UI MVP Plan Report](evals/reports/voice_ui_mvp_plan_report.md) | HD-VOICE-UI-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

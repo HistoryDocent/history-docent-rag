@@ -159,3 +159,16 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] ColBERT default route adoption claim forbidden
+
+## Voice UI MVP Plan Gate
+
+- [ ] planned user journey count 3
+- [ ] planned screen count 5
+- [ ] `/api/v1/chat` required API field mapping count 12
+- [ ] frontend implementation count 0
+- [ ] STT/TTS production claim count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] voice UI skeleton next gate 분리

@@ -105,3 +105,5 @@
 | --- | --- | --- | --- | --- |
 | 9.1 | portfolio QA | `docs/PORTFOLIO_QA.md`, report | 이력서 한 줄, 면접 답변, 금지 claim 정리 | `문서: 포트폴리오 제출 문구 정리` |
 | 9.2 | submission ready audit | `docs/SUBMISSION_READY_CHECKLIST.md`, report | 제출 전 링크, notebook, public-safe, claim boundary gate 통과 | `문서: 포트폴리오 제출 전 최종 감사 추가` |
+| 9.3 | voice UI MVP plan | `docs/VOICE_UI_MVP_PLAN.md`, `docs/VOICE_UI_API_CONTRACT.md`, report | `/api/v1/chat` field mapping, voice-ready UI 범위, non-goal, public-safe gate 고정 | `문서: voice UI MVP 계획 추가` |
+| 9.4 | frontend/voice UI skeleton | frontend skeleton, UI test | `spoken_answer`, `answer`, `citations`, no-answer, voice fallback state 렌더링 | `기능: voice UI skeleton 추가` |

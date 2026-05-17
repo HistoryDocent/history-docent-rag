@@ -146,3 +146,5 @@
 - [x] 이력서 한 줄 설명 작성
 - [x] 면접 예상 질문 답변 작성
 - [x] 포트폴리오 제출 전 최종 감사 작성
+- [x] voice UI MVP 계획 작성
+- [ ] frontend/voice UI skeleton 구현
