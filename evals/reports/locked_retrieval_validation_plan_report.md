@@ -69,9 +69,9 @@
 
 ## 다음 작업
 
-다음 작업은 `HD-LOCKED-RETRIEVAL-002 locked retrieval readiness dry-run runner`다.
+다음 작업인 `HD-LOCKED-RETRIEVAL-002 locked retrieval readiness dry-run runner`는 완료됐다.
 
-이 작업도 실제 locked retrieval metric 계산이 아니라 다음 항목만 확인한다.
+결과는 `docs/LOCKED_RETRIEVAL_READINESS.md`와 `evals/reports/locked_retrieval_readiness_report.md`에 기록한다. 실제 locked retrieval metric 계산이 아니라 다음 항목만 확인했다.
 
 - locked query target resolvability
 - expected route/candidate count
@@ -79,3 +79,5 @@
 - CUDA device availability
 - public-safe output gate
 - locked metric execution 0
+
+다음 gate는 `HD-LOCKED-RETRIEVAL-003 locked retrieval paired comparison 실행 여부 승인`이다.

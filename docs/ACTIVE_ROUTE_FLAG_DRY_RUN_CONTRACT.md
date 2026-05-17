@@ -62,7 +62,7 @@
 
 ## 다음 Gate
 
-`HD-LOCKED-RETRIEVAL-001` locked retrieval 검증 승인 계획은 완료됐다. 다음 작업은 `HD-LOCKED-RETRIEVAL-002` locked retrieval readiness dry-run runner다.
+`HD-LOCKED-RETRIEVAL-001` locked retrieval 검증 승인 계획과 `HD-LOCKED-RETRIEVAL-002` readiness dry-run runner는 완료됐다. 다음 작업은 `HD-LOCKED-RETRIEVAL-003` locked retrieval paired comparison 실행 여부 승인이다.
 
 locked test 실행 전 금지:
 

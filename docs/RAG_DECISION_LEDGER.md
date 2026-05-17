@@ -4,7 +4,7 @@
 
 청킹 비교 테스트는 지금 다시 열지 않는다.
 
-현재 기준선은 `C0 current parent-child`로 고정한다. 실패 사례 10개 중 `place_story` 1건은 targeted chunk audit으로 확인했고, target child/parent가 chunk artifact에 존재해 전역 재청킹 근거가 아니라고 판단했다. HyDE subset readiness, live paired retrieval comparison, larger dev subset readiness, larger live paired retrieval comparison도 완료됐다. HyDE는 40개 확대 live 비교에서 Recall@5는 소폭 상승했지만 MRR, nDCG@5, latency가 악화되어 기본 retrieval route로 채택하지 않는다. active routing은 바로 적용하지 않고, `relationship_hybrid_weighted_e5_v1`만 shadow evaluation과 API flag dry-run 후보로 제한한다. locked retrieval 검증은 아직 실행하지 않고 승인 계획만 고정했다.
+현재 기준선은 `C0 current parent-child`로 고정한다. 실패 사례 10개 중 `place_story` 1건은 targeted chunk audit으로 확인했고, target child/parent가 chunk artifact에 존재해 전역 재청킹 근거가 아니라고 판단했다. HyDE subset readiness, live paired retrieval comparison, larger dev subset readiness, larger live paired retrieval comparison도 완료됐다. HyDE는 40개 확대 live 비교에서 Recall@5는 소폭 상승했지만 MRR, nDCG@5, latency가 악화되어 기본 retrieval route로 채택하지 않는다. active routing은 바로 적용하지 않고, `relationship_hybrid_weighted_e5_v1`만 shadow evaluation과 API flag dry-run 후보로 제한한다. locked retrieval은 아직 metric을 실행하지 않았고, validation plan과 readiness dry-run만 통과했다.
 
 이 문서는 public-safe 의사결정 장부다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -74,6 +74,7 @@
 | `active_route_shadow_evaluation` | `HD-API-ROUTER-004` | dev 70, paired route shadow | MRR delta=0.013888, relationship Recall@5 delta=0.200000, false_hybrid_route_count=0, no_answer_candidate_route_count=0 | ready_for_active_route_dry_run_contract | dev-shadow-only | `evals/reports/active_route_shadow_evaluation_report.md` |
 | `active_route_flag_dry_run_contract` | `HD-API-ROUTER-005` | API contract + fixture retrieval | active_route_flag_enabled_count=1, active_route_flag_applied_count=0, live_solar_call_count=0 | implemented_dry_run_contract | contract-only | `docs/ACTIVE_ROUTE_FLAG_DRY_RUN_CONTRACT.md`, `evals/reports/chat_api_contract_report.md`, `evals/reports/chat_retrieval_integration_report.md` |
 | `locked_retrieval_validation_plan` | `HD-LOCKED-RETRIEVAL-001` | plan-only | planned_locked_query_count=35, locked_test_execution_count=0, solar_call_count=0 | ready_for_locked_retrieval_readiness_dry_run | plan-only | `docs/LOCKED_RETRIEVAL_VALIDATION_PLAN.md`, `evals/reports/locked_retrieval_validation_plan_report.md` |
+| `locked_retrieval_readiness` | `HD-LOCKED-RETRIEVAL-002` | readiness-only | target_resolvability_fail_count=0, no_answer_candidate_route_count=0, retrieval_execution_count=0, resolved_device=cuda | ready_for_locked_execution_approval | readiness-only | `docs/LOCKED_RETRIEVAL_READINESS.md`, `evals/reports/locked_retrieval_readiness_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
 | `raptor_lite` | `raptor_lite_parent_summary_v1` | overview/place_story dev 20 | Recall@5 delta=0.000000, nDCG@5 delta=-0.074957 | reject_default | dev-input-only | `evals/reports/raptor_lite_input_only_report.md` |
@@ -100,7 +101,7 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-LOCKED-RETRIEVAL-002` | locked retrieval readiness dry-run runner | locked 실행 전 target resolvability, expected route/candidate count, CUDA device를 확인해야 한다. | 예 |
+| 1 | `HD-LOCKED-RETRIEVAL-003` | locked retrieval paired comparison 실행 여부 승인 | readiness는 통과했지만 locked metric 실행은 별도 승인과 stop condition 재확인이 필요하다. | 예 |
 | 2 | `HD-COLBERT-001` | ColBERT style late interaction hard subset 검토 | reranker latency 대안으로만 검토하고 기본 route 후보로 바로 올리지 않는다. | 예 |
 
 ## Data Mart 설계
@@ -143,10 +144,11 @@
 - 실패 사례 10개를 원문 없이 분류했고 `place_story` 1건 targeted audit으로 전역 청킹 재실험을 열지 않는 근거를 확인했다.
 - HyDE live 비교 전 subset, call budget, no-answer guard를 public-safe readiness gate로 고정했고, 40개 확대 live 비교에서는 기본 route 채택을 기각했다.
 - active route shadow evaluation에서 relationship route 후보를 dev 70 paired metric으로 검증했고 active route는 여전히 적용하지 않았다.
+- locked retrieval readiness에서 target resolvability와 route/candidate count를 확인했고 실제 locked metric은 아직 실행하지 않았다.
 - public repo에는 저작권 원문과 private eval payload를 올리지 않고 집계 metric만 공개했다.
 
 ## 최종 감사 의견
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획도 통과했다. 다음에는 locked retrieval readiness dry-run runner로 넘어간다.
+README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner도 통과했다. 다음에는 locked retrieval paired comparison 실행 여부 승인으로 넘어간다.

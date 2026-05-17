@@ -15,6 +15,7 @@
 | 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
 | 보류한 핵심 | BGE-M3 dense, BGE reranker |
 | 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route, HyDE 기본 retrieval route |
+| locked gate | validation plan과 readiness dry-run 완료, retrieval/metric/Solar 실행 0회 유지 |
 | 공개 경계 | 원본 PDF, 전체 parser JSON, 전체 chunk text, vector index, raw eval payload, secret은 public repo에 포함하지 않음 |
 
 핵심 수치:
@@ -45,6 +46,7 @@
 | active route shadow evaluation | `HD-API-ROUTER-004` | dev 70 | MRR delta | 0.013888 | ready for API flag dry-run |
 | active route flag dry-run | `HD-API-ROUTER-005` | API contract + fixture retrieval | active_route_flag_applied_count | 0 | implemented dry-run |
 | locked retrieval validation plan | `HD-LOCKED-RETRIEVAL-001` | plan-only | locked_test_execution_count | 0 | ready for readiness dry-run |
+| locked retrieval readiness | `HD-LOCKED-RETRIEVAL-002` | readiness-only | target_resolvability_fail_count | 0 | ready for execution approval |
 
 금지 claim:
 
@@ -160,6 +162,7 @@ PDF
 -> active route shadow evaluation
 -> active route flag dry-run contract
 -> locked retrieval validation plan
+-> locked retrieval readiness dry-run
 -> query type router skeleton
 -> retrieval evaluation harness
 -> public-safe aggregate reports
@@ -168,7 +171,7 @@ PDF
 후속 구현 대상:
 
 ```text
-locked retrieval readiness dry-run runner
+locked retrieval paired comparison 실행 여부 승인
 -> locked test 기반 최종 개선 주장 검증
 -> frontend/voice UI
 ```
@@ -381,7 +384,7 @@ Solar Pro 3 HyDE larger live paired retrieval comparison을 실행했다. dev su
 
 Active routing 적용 판단 계획을 추가했다. 결론은 `/api/v1/chat`의 실제 retrieval route를 바로 바꾸지 않는 것이다. HyDE, GraphRAG-lite, RAPTOR-lite, `place_story_guarded_boost_v1`은 active route 후보에서 제외하고, `relationship_hybrid_weighted_e5_v1`만 shadow evaluation 후보로 둔다. 이후 active route shadow evaluation을 dev 70개에서 실행했고 `routed_candidate_query_count=10`, `false_hybrid_route_count=0`, `no_answer_candidate_route_count=0`, `MRR delta=0.013888`, `relationship Recall@5 delta=0.200000`, `latency_p95_ms delta=5.035485`, `resolved_device=cuda`를 기록했다. 이번에는 `active_route_mode=shadow` API flag dry-run contract를 추가했고 `active_route_flag_enabled_count=1`, `active_route_flag_applied_count=0`, `active_route_flag_default_enabled_count=0`, `live_solar_call_count=0`을 기록했다.
 
-Locked retrieval 검증 승인 계획을 추가했다. 결론은 locked test를 지금 실행하지 않는 것이다. `planned_locked_query_count=35`, `planned_query_type_count=7`, `planned_retrieval_candidate_count=2`, `locked_test_execution_count=0`, `solar_call_count=0`으로 실행 전 조건을 고정했다. 다음 작업은 `HD-LOCKED-RETRIEVAL-002 locked retrieval readiness dry-run runner`다.
+Locked retrieval 검증 승인 계획과 readiness dry-run runner를 추가했다. 결론은 locked test metric을 아직 실행하지 않는 것이다. `planned_locked_query_count=35`, `planned_query_type_count=7`, `planned_retrieval_candidate_count=2`, `target_resolvability_fail_count=0`, `no_answer_candidate_route_count=0`, `retrieval_execution_count=0`, `solar_call_count=0`, `resolved_device=cuda`로 실행 전 조건을 확인했다. 다음 작업은 `HD-LOCKED-RETRIEVAL-003 locked retrieval paired comparison 실행 여부 승인`이다.
 
 ## 실행 전략
 
@@ -495,6 +498,8 @@ Locked retrieval 검증 승인 계획을 추가했다. 결론은 locked test를 
 | [Active Route Flag Dry-run Contract](docs/ACTIVE_ROUTE_FLAG_DRY_RUN_CONTRACT.md) | HD-API-ROUTER-005 default disabled API flag, fallback reason, active route 미적용 계약 |
 | [Locked Retrieval Validation Plan](docs/LOCKED_RETRIEVAL_VALIDATION_PLAN.md) | HD-LOCKED-RETRIEVAL-001 locked test 실행 전 후보, metric, stop condition, data mart grain |
 | [Locked Retrieval Validation Plan Report](evals/reports/locked_retrieval_validation_plan_report.md) | HD-LOCKED-RETRIEVAL-001 정량/정성 계획 리포트와 public-safe gate 결과 |
+| [Locked Retrieval Readiness](docs/LOCKED_RETRIEVAL_READINESS.md) | HD-LOCKED-RETRIEVAL-002 locked test 실행 전 target resolvability, route/candidate count, CUDA device 확인 |
+| [Locked Retrieval Readiness Report](evals/reports/locked_retrieval_readiness_report.md) | HD-LOCKED-RETRIEVAL-002 정량/정성 readiness 리포트와 public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, classifier/router dry-run, active route flag dry-run, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing, classifier/router dry-run, active route flag dry-run 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |

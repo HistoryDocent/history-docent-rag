@@ -158,6 +158,7 @@ public summary 허용 필드:
 - locked retrieval 검증 승인 계획을 수립했다.
 - locked split은 아직 실행하지 않았다.
 - locked split 결과를 튜닝에 사용하지 않도록 stop condition을 고정했다.
+- locked retrieval readiness에서 target resolvability와 route/candidate count를 실행 없이 검증했다.
 - future locked run은 CUDA 사용 가능 시 CUDA로 실행한다.
 
 금지 표현:
