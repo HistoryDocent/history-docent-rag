@@ -23,10 +23,10 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| summarized_stage_count | 21 |
+| summarized_stage_count | 22 |
 | adopted_or_implemented_count | 11 |
 | rejected_default_count | 6 |
-| held_candidate_count | 2 |
+| held_candidate_count | 3 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |
@@ -57,23 +57,24 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 | portfolio failure analysis | `HD-PORTFOLIO-002` | public-safe summary | case_count | 10 | implemented |
 | targeted chunk audit | `HD-CHUNK-AUDIT-001` | dev-only single case | chunk_boundary_defect_count | 0 | do not reopen global chunking |
 | HyDE readiness | `HD-HYDE-001A` | dev-readiness-only | expected_hyde_generation_live_call_count | 4 | ready for live approval |
+| HyDE live comparison | `HD-HYDE-001B` | live-dev-subset 5 | Recall@5 delta | 0.250000 | held for larger eval |
 
 ## 정성 리포트
 
 - `portfolio_scope`: README 첫 화면에서 현재 stack, 실험 결과, 채택/기각 이유, claim boundary를 먼저 보이게 한다.
-- `decision_quality`: 좋은 수치만 선택하지 않고 latency, citation recall, nDCG 하락, locked readiness를 기준으로 기각한 과정을 강조한다.
+- `decision_quality`: 좋은 수치만 선택하지 않고 latency, citation recall, nDCG 하락, locked readiness, HyDE MRR 하락을 기준으로 기각하거나 보류한 과정을 강조한다.
 - `retrieval_message`: BM25에서 neural dense, hybrid, reranker, query rewrite로 확장했지만 최종 기본 후보는 균형이 가장 좋은 dense voice rewrite로 둔다.
 - `advanced_rag_message`: GraphRAG-lite와 RAPTOR-lite는 특정 query type에 한정해 비교했고 개선이 없어 기본값에서 제외했다.
 - `router_message`: query type classifier baseline, router skeleton, API dry-run, relationship guard, guarded route candidate는 구현됐지만 production routing과 locked 성능 개선은 아직 없다.
 - `security_boundary`: public README와 docs에는 저작권 원문, private eval payload, secret을 넣지 않는다.
 - `claim_boundary`: production 성능, locked 개선, 통계적 유의성 표현은 금지한다.
-- `external_audit`: 실패 원인표와 targeted audit으로 청킹 재실험 범위를 닫았고 HyDE readiness도 완료했다. 다음 비용성 실험은 별도 승인 기반 live paired retrieval comparison으로 제한해야 한다.
+- `external_audit`: 실패 원인표와 targeted audit으로 청킹 재실험 범위를 닫았고 HyDE live paired retrieval comparison도 완료했다. HyDE는 subset이 작고 MRR/latency trade-off가 있으므로 larger eval 전 최종 개선 주장으로 쓰면 안 된다.
 
 ## Public Output Gate
 
 | metric | value |
 | --- | ---: |
-| result_row_count | 21 |
+| result_row_count | 22 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |

@@ -57,7 +57,7 @@ target child와 parent는 chunk artifact 안에 모두 존재하고, child-paren
 
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
-| 1 | `HD-HYDE-001B` | Solar Pro 3 HyDE live paired retrieval comparison | readiness에서 고정한 subset과 guard 기준으로 retrieval miss와 no-answer risk를 비교한다. |
+| 1 | `HD-HYDE-001C` | HyDE larger dev subset readiness | 5개 live-dev-subset에서 place_story miss는 그대로 남았으므로 확대 평가 범위를 먼저 고정한다. |
 | 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guarded route dry-run 이후에도 active 적용은 별도 gate가 필요하다. |
 
 ## Claim Boundary

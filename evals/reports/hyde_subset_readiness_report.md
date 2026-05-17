@@ -87,4 +87,4 @@
 
 ## 해석
 
-readiness gate는 통과했다. 다음 단계는 별도 승인 후 `HD-HYDE-001B` live paired retrieval comparison이다.
+readiness gate는 통과했고, 후속 `HD-HYDE-001B` live paired retrieval comparison은 별도 보고서에서 실행했다.

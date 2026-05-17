@@ -4,7 +4,7 @@
 
 전체 청킹 비교 테스트를 다시 열지 않는다.
 
-현재 10개 실패 사례 중 전역 청킹 재설계가 필요한 증거는 없다. `chunk_boundary_risk` 1건은 `HD-CHUNK-AUDIT-001`로 별도 확인했고, target child/parent chunk가 존재해 전역 재청킹 근거가 아니었다. 다음 개발 우선순위는 `overview`, `relationship`, `no_answer` 일부 subset에서만 HyDE 비용성 실험을 여는 것이다.
+현재 10개 실패 사례 중 전역 청킹 재설계가 필요한 증거는 없다. `chunk_boundary_risk` 1건은 `HD-CHUNK-AUDIT-001`로 별도 확인했고, target child/parent chunk가 존재해 전역 재청킹 근거가 아니었다. HyDE 비용성 실험은 5개 live-dev-subset에서 후보성을 확인했지만, larger eval 전 최종 개선으로 주장하지 않는다.
 
 이 문서는 public-safe failure analysis다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -77,7 +77,7 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
-| 1 | `HD-HYDE-001B` | Solar Pro 3 HyDE live paired retrieval comparison | readiness에서 subset, call budget, no-answer guard는 고정됐고 실제 paired retrieval 비교가 남았다. |
+| 1 | `HD-HYDE-001C` | HyDE larger dev subset readiness | 5개 subset 결과만으로는 HyDE 채택 근거가 약하므로 확대 평가 범위와 call budget을 먼저 고정한다. |
 | 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
 
 ## Claim Boundary
@@ -87,7 +87,7 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 - 실패 10건을 public-safe 방식으로 분류했다.
 - 현재 증거로는 전체 청킹 재실험을 열지 않는 것이 적절하다.
 - `place_story` 1건 targeted audit에서 target child/parent chunk 존재를 확인했다.
-- HyDE는 다음 비용성 실험 후보이며 아직 개선을 입증하지 않았다.
+- HyDE는 5개 live-dev-subset에서 larger eval 후보로 남았지만 아직 최종 개선을 입증하지 않았다.
 
 금지 표현:
 

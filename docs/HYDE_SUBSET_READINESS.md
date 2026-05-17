@@ -52,7 +52,8 @@
 
 | priority | work_id | 작업 | 승인 필요 |
 | ---: | --- | --- | --- |
-| 1 | `HD-HYDE-001B` | Solar Pro 3 HyDE live paired retrieval comparison | 예 |
+| 완료 | `HD-HYDE-001B` | Solar Pro 3 HyDE live paired retrieval comparison | 완료 |
+| 1 | `HD-HYDE-001C` | HyDE larger dev subset readiness | 예 |
 | 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | 예 |
 
 ## Claim Boundary
@@ -61,7 +62,7 @@
 
 - HyDE live 비교 전 subset, call budget, no-answer guard를 고정했다.
 - readiness 단계에서 Solar Pro 3 live 호출은 0회다.
-- HyDE 성능 개선은 아직 입증하지 않았다.
+- 후속 live 비교는 별도 문서에서 실행했고, readiness 문서 자체는 성능 개선 증거가 아니다.
 
 금지 표현:
 
