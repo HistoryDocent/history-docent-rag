@@ -96,6 +96,7 @@
 | 8.2 | GraphRAG-lite | experiment module | relationship만 비교 | `feat: add graphrag lite experiment` |
 | 8.3 | final report | docs/notebook | query type별 최종 판단 | `docs: add final ablation report` |
 | 8.4 | ColBERT-style plan | docs/report/test | late interaction hard subset 실행 전 gate 고정 | `문서: ColBERT late interaction 실험 계획 추가` |
+| 8.5 | ColBERT-style execution approval | docs/report/test | dev hard subset 실행 전 scope, CUDA, locked/Solar 금지 gate 고정 | `문서: ColBERT hard subset 실행 승인 기준 추가` |
 
 ## Phase 9. 제출 패키징
 

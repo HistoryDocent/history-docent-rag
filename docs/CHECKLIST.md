@@ -133,3 +133,15 @@
 - [ ] retrieval execution count 0
 - [ ] public raw payload leakage 0
 - [ ] ColBERT 성능 개선 claim 금지
+
+## ColBERT Execution Approval Gate
+
+- [ ] expected retrieval execution scope is dev-hard-subset-only
+- [ ] actual retrieval execution count 0
+- [ ] locked test execution count 0
+- [ ] Solar Pro 3 call count 0
+- [ ] CUDA availability recorded
+- [ ] candidate_k 20/50 fixed
+- [ ] target resolvability required fail count 0
+- [ ] public raw payload leakage 0
+- [ ] ColBERT execution result claim forbidden

@@ -174,13 +174,14 @@ PDF
 -> portfolio QA
 -> submission ready audit
 -> ColBERT-style late interaction plan
+-> ColBERT-style hard subset execution approval
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-ColBERT style late interaction hard subset 검토
+ColBERT style late interaction hard subset 실행
 -> frontend/voice UI
 ```
 
@@ -496,6 +497,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Submission Ready Report](evals/reports/submission_ready_report.md) | HD-SUBMISSION-READY-001 정량/정성 제출 감사 리포트와 public-safe gate |
 | [ColBERT-style Late Interaction Plan](docs/COLBERT_LATE_INTERACTION_PLAN.md) | HD-COLBERT-001A reranker latency 대안 후보의 hard subset 실행 전 계획과 gate |
 | [ColBERT-style Late Interaction Plan Report](evals/reports/colbert_late_interaction_plan_report.md) | HD-COLBERT-001A 정량/정성 plan-only readiness와 public-safe gate |
+| [ColBERT-style Late Interaction Execution Approval](docs/COLBERT_LATE_INTERACTION_EXECUTION_APPROVAL.md) | HD-COLBERT-001B dev hard subset 실행 전 scope, CUDA, locked/Solar 금지 gate |
+| [ColBERT-style Late Interaction Execution Approval Report](evals/reports/colbert_late_interaction_execution_approval_report.md) | HD-COLBERT-001B 정량/정성 실행 승인 리포트와 public-safe gate |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

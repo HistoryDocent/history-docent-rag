@@ -78,6 +78,7 @@
 | `locked_retrieval_execution_approval` | `HD-LOCKED-RETRIEVAL-003` | approval-only | planned_bootstrap_iteration_count=10000, confidence_interval_percent=95, retrieval_execution_count=0, solar_call_count=0 | ready_for_user_execution_approval | approval-only | `docs/LOCKED_RETRIEVAL_EXECUTION_APPROVAL.md`, `evals/reports/locked_retrieval_execution_approval_report.md` |
 | `locked_retrieval_paired_comparison` | `HD-LOCKED-RETRIEVAL-004` | locked test 35, relationship paired 5 | MRR delta=-0.100000, nDCG@5 delta=-0.073814, 95% CI=[-0.300000, 0.000000] | keep_shadow_without_locked_improvement_claim | locked-retrieval-only | `docs/LOCKED_RETRIEVAL_PAIRED_COMPARISON.md`, `evals/reports/locked_retrieval_paired_comparison_report.md` |
 | `colbert_late_interaction_plan` | `HD-COLBERT-001A` | plan-only | retrieval_execution_count=0, locked_test_execution_count=0, solar_call_count=0 | ready_for_dev_hard_subset_approval | plan-only | `docs/COLBERT_LATE_INTERACTION_PLAN.md`, `evals/reports/colbert_late_interaction_plan_report.md` |
+| `colbert_late_interaction_execution_approval` | `HD-COLBERT-001B` | approval-only | actual_retrieval_execution_count=0, locked_test_execution_count=0, solar_call_count=0 | ready_for_dev_hard_subset_execution | approval-only | `docs/COLBERT_LATE_INTERACTION_EXECUTION_APPROVAL.md`, `evals/reports/colbert_late_interaction_execution_approval_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
 | `raptor_lite` | `raptor_lite_parent_summary_v1` | overview/place_story dev 20 | Recall@5 delta=0.000000, nDCG@5 delta=-0.074957 | reject_default | dev-input-only | `evals/reports/raptor_lite_input_only_report.md` |
@@ -104,7 +105,7 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-COLBERT-001B` | ColBERT style late interaction hard subset 실행 승인 | plan-only gate를 통과했지만 실제 retrieval 실행은 별도 승인 후 진행한다. | 예 |
+| 1 | `HD-COLBERT-001C` | ColBERT style late interaction hard subset 실행 | 실행 승인 기준은 통과했지만 실제 retrieval 실행과 결과 claim은 별도 gate에서 분리한다. | 예 |
 
 ## Data Mart 설계
 
@@ -149,10 +150,11 @@
 - locked retrieval readiness에서 target resolvability와 route/candidate count를 확인했다.
 - locked retrieval execution approval에서 bootstrap, confidence interval, stop condition, data mart grain을 실행 전 고정했다.
 - locked retrieval paired comparison에서 relationship hybrid가 MRR/nDCG 개선을 입증하지 못해 active route 개선 주장을 보류했다.
+- ColBERT-style execution approval gate에서 dev hard subset 실행 전 scope, CUDA, locked/Solar 금지 조건을 고정했다.
 - public repo에는 저작권 원문과 private eval payload를 올리지 않고 집계 metric만 공개했다.
 
 ## 최종 감사 의견
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner, locked retrieval execution approval, locked retrieval paired comparison, final ablation report, API response sample, portfolio QA, submission ready audit, ColBERT-style plan-only gate도 통과했다. 다음에는 별도 승인 후 ColBERT style late interaction hard subset 실행 여부를 결정할 수 있다.
+README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner, locked retrieval execution approval, locked retrieval paired comparison, final ablation report, API response sample, portfolio QA, submission ready audit, ColBERT-style plan-only gate와 execution approval gate도 통과했다. 다음에는 별도 승인 후 ColBERT style late interaction hard subset을 실행할 수 있다.
