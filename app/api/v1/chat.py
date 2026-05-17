@@ -202,6 +202,11 @@ def public_chat_response_row(response: dict[str, Any]) -> dict[str, Any]:
         if isinstance(response.get("classifier_router_dry_run"), dict)
         else {}
     )
+    guarded_route = (
+        dry_run.get("guarded_route_candidate")
+        if isinstance(dry_run.get("guarded_route_candidate"), dict)
+        else {}
+    )
     citations = response.get("citations") if isinstance(response.get("citations"), list) else []
     return {
         "contract_version": response.get("contract_version"),
@@ -240,6 +245,15 @@ def public_chat_response_row(response: dict[str, Any]) -> dict[str, Any]:
         "classifier_route_policy_changed": dry_run.get("route_policy_changed"),
         "classifier_active_route_applied": dry_run.get("active_route_applied"),
         "classifier_latency_ms": dry_run.get("latency_ms"),
+        "guard_policy_id": guarded_route.get("guard_policy_id"),
+        "guarded_query_type": guarded_route.get("guarded_query_type"),
+        "guarded_route_policy_id": guarded_route.get("route_policy_id"),
+        "guarded_route_candidate_id": guarded_route.get("route_candidate_id"),
+        "guarded_route_claim_boundary": guarded_route.get("route_claim_boundary"),
+        "guarded_should_retrieve": guarded_route.get("should_retrieve"),
+        "guard_applied": guarded_route.get("guard_applied"),
+        "guard_reason_tag_count": len(guarded_route.get("guard_reason_tags", [])),
+        "guarded_route_policy_changed": guarded_route.get("route_policy_changed"),
         "citation_count": len(citations),
         "evidence_id_count": len(response.get("evidence_ids", [])),
         "place_id_count": len(response.get("place_ids", [])),

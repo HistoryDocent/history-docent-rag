@@ -44,6 +44,7 @@ def test_chat_endpoint_retrieval_backed_mode_returns_packed_evidence() -> None:
     assert body["usage"]["retrieval_candidate_count"] == 1
     assert body["usage"]["solar_call_count"] == 0
     assert body["classifier_router_dry_run"]["active_route_applied"] is False
+    assert "guarded_route_candidate" in body["classifier_router_dry_run"]
     assert (
         body["classifier_router_dry_run"]["active_route_policy_id"]
         == body["usage"]["route_policy_id"]
@@ -79,6 +80,7 @@ def test_chat_retrieval_integration_report_gate_passes(tmp_path) -> None:
     assert report.summary.retrieval_success_count == 1
     assert report.summary.classifier_dry_run_count == 3
     assert report.summary.classifier_active_route_applied_count == 0
+    assert report.summary.classifier_guarded_route_candidate_count == 3
     assert report.summary.live_solar_call_count == 0
     assert report.output_quality.public_raw_text_leakage_count == 0
     assert report.output_quality.private_path_leakage_count == 0
@@ -90,4 +92,5 @@ def test_chat_retrieval_integration_rows_do_not_include_raw_text() -> None:
     assert all("query" not in row for row in rows)
     assert all("answer" not in row for row in rows)
     assert all("spoken_answer" not in row for row in rows)
+    assert all(row.get("guard_policy_id") for row in rows if row.get("status_code") == 200)
     assert any(row.get("retrieval_mode") == "retrieval_backed" for row in rows)

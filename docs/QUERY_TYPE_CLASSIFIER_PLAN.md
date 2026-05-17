@@ -162,10 +162,12 @@
 
 | metric | chat contract | retrieval integration |
 | --- | ---: | ---: |
-| classifier_dry_run_count | 2 | 3 |
-| classifier_route_policy_changed_count | 1 | 1 |
+| classifier_dry_run_count | 3 | 3 |
+| classifier_route_policy_changed_count | 2 | 1 |
 | classifier_active_route_applied_count | 0 | 0 |
 | classifier_fallback_count | 0 | 1 |
+| classifier_guarded_route_candidate_count | 3 | 3 |
+| classifier_guard_applied_count | 1 | 0 |
 | live_solar_call_count | 0 | 0 |
 | public_raw_text_leakage_count | 0 | 0 |
 
@@ -174,7 +176,7 @@
 - classifier/router 판단은 API 응답에서 관찰 가능하다.
 - active retrieval route는 아직 바꾸지 않는다.
 - `route_policy_changed`는 운영 전 guard 설계를 위한 관찰 지표이지 성능 개선 지표가 아니다.
-- 다음 단계는 false hybrid route를 줄이기 위한 relationship route guard 설계다.
+- `guarded_route_candidate`는 relationship guard 결과를 관찰하기 위한 dry-run field이며 active route에는 적용하지 않는다.
 
 ## Relationship Route Guard 평가 결과
 
@@ -204,11 +206,12 @@
 
 - 이번 guard는 active routing 적용이 아니다.
 - false hybrid route를 dev 70 기준 2건에서 0건으로 줄였지만, production routing 완료로 표현하면 안 된다.
-- 다음 단계는 API dry-run field에 guarded route 후보를 노출하거나, HyDE처럼 별도 비용이 드는 실험을 승인받아 진행하는 것이다.
+- API dry-run field에는 guarded route 후보 노출을 완료했다.
+- 다음 단계는 HyDE처럼 별도 비용이 드는 실험을 승인받아 진행하거나 failure analysis 10개를 제출용으로 정리하는 것이다.
 
 ## 다음 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
-| HD-API-ROUTER-002 | HD-CLASSIFIER-005 | `/chat` dry-run field에 guarded route 후보 노출 | contract test, active route 0, leakage 0 | Medium | guarded field 제거 |
 | HD-HYDE-001 | HD-ROUTER-003 | Solar Pro 3 기반 HyDE subset 비교 | 명시 승인, call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
+| HD-PORTFOLIO-002 | HD-PORTFOLIO-001 | failure analysis 10개 정리 | public-safe failure table, claim boundary, raw payload 0 | Medium | 문서/리포트 revert |

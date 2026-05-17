@@ -120,6 +120,7 @@
 - [x] query-type classifier 오분류 failure analysis
 - [x] FastAPI `/chat` classifier/router dry-run field 연결
 - [x] relationship route guard 설계
+- [x] FastAPI `/chat` guarded route 후보 dry-run field 연결
 - [ ] HyDE overview/relationship subset 비교
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성

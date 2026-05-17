@@ -4,7 +4,7 @@
 
 이 프로젝트의 포트폴리오 메시지는 “최신 RAG 기법을 많이 붙였다”가 아니다.
 
-핵심은 한국사 도서 parser 결과를 citation 가능한 RAG corpus로 정리하고, 청킹, retrieval, reranker, query rewrite, evidence packing, generation, GraphRAG-lite, RAPTOR-lite, query type router, API dry-run, route guard를 같은 평가 원칙으로 비교해 채택과 기각을 분리했다는 점이다.
+핵심은 한국사 도서 parser 결과를 citation 가능한 RAG corpus로 정리하고, 청킹, retrieval, reranker, query rewrite, evidence packing, generation, GraphRAG-lite, RAPTOR-lite, query type router, API dry-run, route guard, guarded route API 관찰 필드를 같은 평가 원칙으로 비교해 채택과 기각을 분리했다는 점이다.
 
 이 문서는 public-safe 요약이다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -19,7 +19,7 @@
 | evidence packing | `P0_rank_order` | citation recoverability 1.000000 |
 | generation | `solar-generation-baseline-v1` | repaired v2는 citation recall 하락으로 기본값 기각 |
 | API | FastAPI `/api/v1/chat` contract + retrieval-backed smoke | live service 품질 주장이 아니라 contract 검증 |
-| classifier/router | `deterministic_query_type_classifier_v1` + `query_type_router_v1` + API dry-run + relationship guard | classifier 판단은 응답에 노출하지만 production routing 주장은 아님 |
+| classifier/router | `deterministic_query_type_classifier_v1` + `query_type_router_v1` + API dry-run + relationship guard + guarded route candidate | classifier와 guard 판단은 응답에 노출하지만 production routing 주장은 아님 |
 
 ## 핵심 정량 결과
 
@@ -42,6 +42,7 @@
 | classifier failure analysis | `deterministic_query_type_classifier_v1` | dev 70 | route_risk_failure_count | 2 | dry-run before active route |
 | classifier/router dry-run | `chat-classifier-router-dry-run-v1` | API contract + fixture retrieval | active_route_applied_count | 0 | implemented dry-run |
 | relationship route guard | `relationship-route-guard-v1` | dev 70 | false_hybrid_route_count | 2 -> 0 | implemented guard |
+| guarded route dry-run | `guarded_route_candidate` | API contract + fixture retrieval | guard_applied_count | 1 | implemented dry-run |
 
 ## 채택, 보류, 기각
 
@@ -53,6 +54,7 @@
 | 구현 | `query_type_router_v1` skeleton | relationship/no_answer/default route branch를 contract로 고정 |
 | 구현 | `deterministic_query_type_classifier_v1` | dev 70에서 macro F1과 route policy accuracy gate 통과 |
 | 구현 | `relationship-route-guard-v1` | false hybrid route를 줄였지만 active route 적용은 보류 |
+| 구현 | `guarded_route_candidate` | guard 결과를 API 응답에서 관찰하되 active route에는 적용하지 않음 |
 | 보류 | BGE-M3 dense | Recall@5는 높지만 latency가 커서 기본값 부적합 |
 | 보류 | BGE reranker | 품질 상한은 높지만 CPU p95 latency가 API 기본값으로 부적합 |
 | 기각 | GraphRAG-lite relationship 기본값 | hybrid reference 대비 nDCG@5 개선 없음 |
@@ -63,7 +65,7 @@
 ## 면접에서 말할 핵심 문장
 
 ```text
-도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router, API dry-run, route guard까지 단계별로 비교했습니다. 좋은 수치만 채택하지 않고 latency, citation recall, nDCG 하락, locked readiness 결과 때문에 후보를 기각한 과정을 포트폴리오 핵심으로 정리했습니다.
+도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router, API dry-run, route guard, guarded route API 관찰 필드까지 단계별로 비교했습니다. 좋은 수치만 채택하지 않고 latency, citation recall, nDCG 하락, locked readiness 결과 때문에 후보를 기각한 과정을 포트폴리오 핵심으로 정리했습니다.
 ```
 
 ## Claim Boundary
@@ -80,6 +82,7 @@
 - classifier failure analysis에서 no-answer 오분류는 0건이지만 false hybrid route 2건이 남았다.
 - `/chat` classifier/router dry-run은 연결됐지만 active route 적용은 0건이다.
 - relationship route guard는 dev 기준 false hybrid route를 2건에서 0건으로 줄였지만 active route에는 적용하지 않았다.
+- `/chat` guarded route candidate는 연결됐지만 active route 적용은 0건이다.
 
 금지 표현:
 
@@ -96,9 +99,9 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-API-ROUTER-002` | `/chat` dry-run field에 guarded route 후보 노출 |
-| 2 | `HD-HYDE-001` | Solar Pro 3 호출 비용과 hallucination guard를 포함한 HyDE subset 비교 |
-| 3 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 |
+| 1 | `HD-HYDE-001` | Solar Pro 3 호출 비용과 hallucination guard를 포함한 HyDE subset 비교 |
+| 2 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 |
+| 3 | `HD-API-ROUTER-003` | active routing 적용 여부 판단 계획 |
 
 ## 외부 감사 결론
 

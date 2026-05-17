@@ -23,6 +23,10 @@ from app.application.query_type_classifier import (
     DeterministicQueryTypeClassifier,
     QueryTypeClassificationInput,
 )
+from app.application.query_type_route_guard import (
+    RelationshipRouteGuard,
+    RelationshipRouteGuardInput,
+)
 from app.application.query_type_router import QueryTypeRouter
 from app.domain.generation import AnswerProviderKind, CitationRagAnswer
 from app.domain.retrieval import (
@@ -77,6 +81,19 @@ class ChatUsage(ChatServiceModel):
     estimated_cost: float = Field(default=0.0, ge=0.0)
 
 
+class ChatGuardedRouteCandidate(ChatServiceModel):
+    guard_policy_id: str = Field(min_length=1)
+    guarded_query_type: QueryType
+    route_policy_id: str = Field(min_length=1)
+    route_candidate_id: str = Field(min_length=1)
+    route_claim_boundary: str = Field(min_length=1)
+    should_retrieve: bool
+    guard_applied: bool
+    guard_reason_tags: tuple[str, ...]
+    route_policy_changed: bool
+    score_margin: float
+
+
 class ChatClassifierRouterDryRun(ChatServiceModel):
     dry_run_policy_id: str = CHAT_CLASSIFIER_ROUTER_DRY_RUN_POLICY_ID
     enabled: bool = True
@@ -96,6 +113,7 @@ class ChatClassifierRouterDryRun(ChatServiceModel):
     route_policy_changed: bool
     active_route_applied: bool = False
     latency_ms: float = Field(ge=0.0)
+    guarded_route_candidate: ChatGuardedRouteCandidate
 
 
 class ChatServiceResult(ChatServiceModel):
@@ -121,6 +139,7 @@ class ChatContractService:
         self.retrieval_backend = retrieval_backend or PrivateArtifactRetrievalBackend()
         self.router = QueryTypeRouter()
         self.classifier = DeterministicQueryTypeClassifier()
+        self.route_guard = RelationshipRouteGuard()
         self.assembler = CitationRagAnswerAssembler(
             config=CitationRagAssemblerConfig(
                 answer_policy_id=CHAT_SERVICE_POLICY_ID,
@@ -141,6 +160,7 @@ class ChatContractService:
             command=command,
             classifier=self.classifier,
             router=self.router,
+            route_guard=self.route_guard,
             active_route_policy_id=route_decision.route_policy_id,
             active_route_candidate_id=route_decision.selected_candidate_id,
             active_route_claim_boundary=route_decision.claim_boundary,
@@ -377,6 +397,7 @@ def _build_classifier_router_dry_run(
     command: ChatCommand,
     classifier: DeterministicQueryTypeClassifier,
     router: QueryTypeRouter,
+    route_guard: RelationshipRouteGuard,
     active_route_policy_id: str,
     active_route_candidate_id: str,
     active_route_claim_boundary: str,
@@ -390,6 +411,13 @@ def _build_classifier_router_dry_run(
         )
     )
     predicted_route = router.route(classification.predicted_query_type)
+    guard_decision = route_guard.apply(
+        RelationshipRouteGuardInput(
+            query_text=command.query,
+            classification=classification,
+        )
+    )
+    guarded_route = router.route(guard_decision.guarded_query_type)
     return ChatClassifierRouterDryRun(
         classifier_id=classification.classifier_id,
         predicted_query_type=classification.predicted_query_type,
@@ -410,6 +438,21 @@ def _build_classifier_router_dry_run(
         ),
         active_route_applied=False,
         latency_ms=classification.latency_ms,
+        guarded_route_candidate=ChatGuardedRouteCandidate(
+            guard_policy_id=guard_decision.guard_policy_id,
+            guarded_query_type=guard_decision.guarded_query_type,
+            route_policy_id=guarded_route.route_policy_id,
+            route_candidate_id=guarded_route.selected_candidate_id,
+            route_claim_boundary=guarded_route.claim_boundary,
+            should_retrieve=guarded_route.should_retrieve,
+            guard_applied=guard_decision.guard_applied,
+            guard_reason_tags=guard_decision.guard_reason_tags,
+            route_policy_changed=(
+                guarded_route.route_policy_id != active_route_policy_id
+                or guarded_route.selected_candidate_id != active_route_candidate_id
+            ),
+            score_margin=guard_decision.score_margin,
+        ),
     )
 
 

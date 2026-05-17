@@ -4,7 +4,7 @@
 
 현재 RAG 기본선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다.
 
-GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가는 통과했다. 다음 우선순위는 guarded route 후보를 API dry-run에 노출할지 결정하는 것이다.
+GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출은 통과했다. 다음 우선순위는 HyDE subset 비교 또는 failure analysis 10개 정리다.
 
 이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked test 전까지 모든 수치는 dev-only 또는 live-dev-subset으로 제한한다.
 
@@ -16,10 +16,10 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | --- | --- |
 | report_version | `final-ablation-status-report/v1` |
 | source_report_count | 13 |
-| decision_row_count | 23 |
+| decision_row_count | 24 |
 | adopted_default_count | 4 |
 | rejected_default_count | 11 |
-| route_or_router_candidate_count | 5 |
+| route_or_router_candidate_count | 6 |
 | quality_ceiling_candidate_count | 2 |
 | raw_text_public_count | 0 |
 | private_path_public_count | 0 |
@@ -38,6 +38,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | query type classifier | `deterministic_query_type_classifier_v1` | implemented baseline, not production claim |
 | classifier/router API | `chat-classifier-router-dry-run-v1` | dry-run only, active route unchanged |
 | relationship route guard | `relationship-route-guard-v1` | implemented guard, active route unchanged |
+| guarded route API field | `guarded_route_candidate` | dry-run only, active route unchanged |
 | GraphRAG-lite | none | rejected as default |
 | RAPTOR-lite | none | rejected as default |
 
@@ -63,6 +64,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | query_type_classifier_failure | `deterministic_query_type_classifier_v1` | route_risk_failure_count | 2 | dry-run before active route |
 | chat_classifier_router_dry_run | `chat-classifier-router-dry-run-v1` | classifier_active_route_applied_count | 0 | implemented dry-run |
 | relationship_route_guard | `relationship-route-guard-v1` | false_hybrid_route_count | 2 -> 0 | implemented guard |
+| chat_guarded_route_dry_run | `guarded_route_candidate` | guard_applied_count | 1 | implemented dry-run |
 
 ## Qualitative Assessment
 
@@ -78,6 +80,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - `classifier_failure`: no-answer 오분류는 없지만 false hybrid route 2건이 남아 active route 적용 전 guard가 필요하다.
 - `api_dry_run`: `/api/v1/chat`은 classifier/router 판단을 응답에 노출하지만 retrieval route 선택에는 적용하지 않는다.
 - `relationship_guard`: dev 70 기준 false hybrid route를 줄였지만 active routing 적용은 아니다.
+- `guarded_route_api`: guard 결과는 `/api/v1/chat`의 `guarded_route_candidate`로 관찰 가능하지만 active route에는 적용하지 않는다.
 - `portfolio`: 기법 추가보다 실험으로 선택과 기각을 설명하는 편이 더 강하다.
 
 ## Claim Boundary
@@ -93,18 +96,19 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | query type classifier baseline이 dev gate를 통과했다 | yes | dev-only로 표현 |
 | `/chat` classifier/router dry-run이 연결됐다 | yes | active route 미적용으로 표현 |
 | relationship route guard가 false hybrid를 줄였다 | yes | dev-only, active route 미적용으로 표현 |
+| `/chat` guarded route candidate가 노출됐다 | yes | dry-run only, active route 미적용으로 표현 |
 | query type classifier production 검증 완료 | no | 실제 API 로그와 locked route impact 미검증 |
 | production 성능 검증 완료 | no | 배포/운영 검증 없음 |
 
 ## Next Gate
 
-다음 gate는 `HD-API-ROUTER-002 guarded route dry-run API field 노출` 또는 `HD-HYDE-001 HyDE subset 비교`다.
+다음 gate는 `HD-HYDE-001 HyDE subset 비교` 또는 `HD-PORTFOLIO-002 failure analysis 10개 정리`다.
 
 이유:
 
-- classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard는 통과했지만 active routing은 아직 이르다.
+- classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard, guarded route dry-run 노출은 통과했지만 active routing은 아직 이르다.
 - route-risk 오분류 2건은 guard 평가에서 0건으로 줄었지만 dev-only 결과다.
-- dry-run은 관찰 장치이므로 guard 결과도 API dry-run에 먼저 노출하는 편이 안전하다.
+- guarded route 후보도 API dry-run에 노출했으므로 active route 적용 전 관찰 경로는 확보됐다.
 - 전체 기본 retrieval 후보와 query type별 강한 후보가 다르다.
 - relationship은 hybrid weighted 후보가 강하고, place_story는 guarded boost 후보가 존재한다.
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
@@ -120,4 +124,4 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - 대부분 dev split 또는 live-dev-subset 결과다.
 - locked test는 아직 최종 성능 주장에 쓰지 않았다.
 - Solar Pro 3 live 결과는 호출 수가 제한되어 통계적으로 강한 결론이 아니다.
-- classifier/router와 guard는 구현됐지만 active route 적용은 아직 금지해야 한다.
+- classifier/router와 guard는 구현됐고 API에서 관찰 가능하지만 active route 적용은 아직 금지해야 한다.

@@ -38,6 +38,9 @@ class ChatApiContractSummary(ChatApiContractReportModel):
     classifier_route_policy_changed_count: int = Field(ge=0)
     classifier_active_route_applied_count: int = Field(ge=0)
     classifier_fallback_count: int = Field(ge=0)
+    classifier_guarded_route_candidate_count: int = Field(ge=0)
+    classifier_guard_applied_count: int = Field(ge=0)
+    classifier_guarded_route_policy_changed_count: int = Field(ge=0)
     live_solar_call_count: int = Field(ge=0)
     latency_p95_ms: float = Field(ge=0.0)
 
@@ -83,6 +86,7 @@ def build_report(*, report_path: Path = DEFAULT_REPORT_PATH) -> ChatApiContractR
         f"validation_error_count={report.summary.validation_error_count} "
         f"provider_unavailable_count={report.summary.provider_unavailable_count} "
         f"classifier_dry_run_count={report.summary.classifier_dry_run_count} "
+        f"guard_applied_count={report.summary.classifier_guard_applied_count} "
         f"live_solar_call_count={report.summary.live_solar_call_count}"
     )
     return report
@@ -99,6 +103,16 @@ def run_contract_smoke_rows() -> list[dict[str, Any]]:
                 "query_type": "place_story",
                 "language": "ko",
                 "place_context": ["gyeongbokgung"],
+            },
+        },
+        {
+            "case_id": "guarded_route_candidate",
+            "payload": {
+                "request_id": "api-contract-guarded-route",
+                "query": "창덕궁이 태종 시기 권력 기억과 연결되는 이유를 설명할 근거를 찾아줘",
+                "query_type": "place_fact",
+                "language": "ko",
+                "place_context": ["changdeokgung", "taejong-memory"],
             },
         },
         {
@@ -148,15 +162,15 @@ def run_contract_smoke_rows() -> list[dict[str, Any]]:
 def collect_chat_api_contract_failures(report: ChatApiContractReport) -> list[str]:
     failures = collect_public_retrieval_artifact_failures(report.output_quality)
     summary = report.summary
-    if summary.request_count != 4:
+    if summary.request_count != 5:
         failures.append("unexpected_contract_case_count")
-    if summary.success_count != 2:
+    if summary.success_count != 3:
         failures.append("unexpected_success_count")
     if summary.validation_error_count != 1:
         failures.append("validation_error_case_missing")
     if summary.provider_unavailable_count != 1:
         failures.append("provider_disabled_case_missing")
-    if summary.answered_count != 1:
+    if summary.answered_count != 2:
         failures.append("answered_case_missing")
     if summary.abstained_count != 1:
         failures.append("abstained_case_missing")
@@ -168,6 +182,10 @@ def collect_chat_api_contract_failures(report: ChatApiContractReport) -> list[st
         failures.append("classifier_dry_run_missing")
     if summary.classifier_active_route_applied_count:
         failures.append("classifier_dry_run_changed_active_route")
+    if summary.classifier_guarded_route_candidate_count != summary.success_count:
+        failures.append("guarded_route_candidate_missing")
+    if summary.classifier_guard_applied_count < 1:
+        failures.append("guard_applied_case_missing")
     return failures
 
 
@@ -203,6 +221,9 @@ FastAPI `/api/v1/chat` 계약을 live Solar Pro 3 호출 없이 검증한다.
 | classifier_route_policy_changed_count | {summary.classifier_route_policy_changed_count} |
 | classifier_active_route_applied_count | {summary.classifier_active_route_applied_count} |
 | classifier_fallback_count | {summary.classifier_fallback_count} |
+| classifier_guarded_route_candidate_count | {summary.classifier_guarded_route_candidate_count} |
+| classifier_guard_applied_count | {summary.classifier_guard_applied_count} |
+| classifier_guarded_route_policy_changed_count | {summary.classifier_guarded_route_policy_changed_count} |
 | live_solar_call_count | {summary.live_solar_call_count} |
 | latency_p95_ms | {summary.latency_p95_ms:.6f} |
 
@@ -277,6 +298,17 @@ def _summarize_rows(rows: list[dict[str, Any]]) -> ChatApiContractSummary:
         classifier_fallback_count=sum(
             1 for row in success_rows if row.get("classifier_fallback_used") is True
         ),
+        classifier_guarded_route_candidate_count=sum(
+            1 for row in success_rows if row.get("guard_policy_id")
+        ),
+        classifier_guard_applied_count=sum(
+            1 for row in success_rows if row.get("guard_applied") is True
+        ),
+        classifier_guarded_route_policy_changed_count=sum(
+            1
+            for row in success_rows
+            if row.get("guarded_route_policy_changed") is True
+        ),
         live_solar_call_count=sum(
             int(row.get("solar_call_count") or 0) for row in success_rows
         ),
@@ -310,6 +342,9 @@ def _build_qualitative_assessment(
         ),
         "classifier_router_boundary": (
             "classifier/router 판단은 dry-run field로만 노출하고 active retrieval route에는 적용하지 않는다."
+        ),
+        "guarded_route_boundary": (
+            "relationship route guard 결과는 guarded_route_candidate로만 노출하며 active route에는 적용하지 않는다."
         ),
         "claim_boundary": (
             "이 리포트는 API 계약 검증이며 검색 또는 생성 품질 개선 주장이 아니다."

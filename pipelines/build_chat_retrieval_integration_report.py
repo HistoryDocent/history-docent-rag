@@ -40,6 +40,9 @@ class ChatRetrievalIntegrationSummary(ChatRetrievalIntegrationModel):
     classifier_route_policy_changed_count: int = Field(ge=0)
     classifier_active_route_applied_count: int = Field(ge=0)
     classifier_fallback_count: int = Field(ge=0)
+    classifier_guarded_route_candidate_count: int = Field(ge=0)
+    classifier_guard_applied_count: int = Field(ge=0)
+    classifier_guarded_route_policy_changed_count: int = Field(ge=0)
     live_solar_call_count: int = Field(ge=0)
     latency_p95_ms: float = Field(ge=0.0)
     retrieval_latency_p95_ms: float = Field(ge=0.0)
@@ -174,6 +177,8 @@ def collect_chat_retrieval_integration_failures(
         failures.append("classifier_dry_run_missing")
     if summary.classifier_active_route_applied_count:
         failures.append("classifier_dry_run_changed_active_route")
+    if summary.classifier_guarded_route_candidate_count != summary.success_count:
+        failures.append("guarded_route_candidate_missing")
     return failures
 
 
@@ -210,6 +215,9 @@ FastAPI `/api/v1/chat`의 `retrieval_backed` mode가 retrieval, evidence packing
 | classifier_route_policy_changed_count | {summary.classifier_route_policy_changed_count} |
 | classifier_active_route_applied_count | {summary.classifier_active_route_applied_count} |
 | classifier_fallback_count | {summary.classifier_fallback_count} |
+| classifier_guarded_route_candidate_count | {summary.classifier_guarded_route_candidate_count} |
+| classifier_guard_applied_count | {summary.classifier_guard_applied_count} |
+| classifier_guarded_route_policy_changed_count | {summary.classifier_guarded_route_policy_changed_count} |
 | live_solar_call_count | {summary.live_solar_call_count} |
 | latency_p95_ms | {summary.latency_p95_ms:.6f} |
 | retrieval_latency_p95_ms | {summary.retrieval_latency_p95_ms:.6f} |
@@ -300,6 +308,17 @@ def _summarize_rows(rows: list[dict[str, Any]]) -> ChatRetrievalIntegrationSumma
         classifier_fallback_count=sum(
             1 for row in success_rows if row.get("classifier_fallback_used") is True
         ),
+        classifier_guarded_route_candidate_count=sum(
+            1 for row in success_rows if row.get("guard_policy_id")
+        ),
+        classifier_guard_applied_count=sum(
+            1 for row in success_rows if row.get("guard_applied") is True
+        ),
+        classifier_guarded_route_policy_changed_count=sum(
+            1
+            for row in success_rows
+            if row.get("guarded_route_policy_changed") is True
+        ),
         live_solar_call_count=sum(
             int(row.get("solar_call_count") or 0) for row in success_rows
         ),
@@ -337,6 +356,9 @@ def _build_qualitative_assessment(
         ),
         "classifier_router_boundary": (
             "classifier/router dry-run은 API 응답에 포함하지만 retrieval_backed route 선택에는 적용하지 않는다."
+        ),
+        "guarded_route_boundary": (
+            "guarded_route_candidate는 관찰 필드이며 retrieval_backed route 선택에는 적용하지 않는다."
         ),
         "gate_status": "PASS" if not failures else f"FAIL: {', '.join(failures)}",
     }

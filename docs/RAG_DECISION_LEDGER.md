@@ -60,8 +60,9 @@
 | `query_type_router_skeleton` | `query_type_router_v1` | deterministic branch contract | query_type_count=7, route_policy_count=3, live_solar_call_count=0 | implemented | contract-only | `evals/reports/query_type_router_skeleton_report.md` |
 | `query_type_classifier` | `deterministic_query_type_classifier_v1` | dev 70 | accuracy=0.957143, macro_f1=0.956818, route_policy_accuracy=0.971429 | implemented_baseline | dev-only | `evals/reports/query_type_classifier_eval_report.md` |
 | `query_type_classifier_failure_analysis` | `deterministic_query_type_classifier_v1` | dev 70 failures | failure_count=3, route_risk_failure_count=2, false_hybrid_route_count=2 | analyzed | dev-only | `evals/reports/query_type_classifier_failure_analysis_report.md` |
-| `chat_classifier_router_dry_run` | `chat-classifier-router-dry-run-v1` | API contract + fixture retrieval | classifier_dry_run_count=5, classifier_active_route_applied_count=0 | implemented_dry_run | contract-only | `evals/reports/chat_api_contract_report.md`, `evals/reports/chat_retrieval_integration_report.md` |
+| `chat_classifier_router_dry_run` | `chat-classifier-router-dry-run-v1` | API contract + fixture retrieval | classifier_dry_run_count=6, classifier_active_route_applied_count=0 | implemented_dry_run | contract-only | `evals/reports/chat_api_contract_report.md`, `evals/reports/chat_retrieval_integration_report.md` |
 | `relationship_route_guard` | `relationship-route-guard-v1` | dev 70 | false_hybrid_route_count 2 -> 0, route_policy_accuracy 0.971429 -> 1.000000 | implemented_guard | dev-only | `evals/reports/relationship_route_guard_eval_report.md` |
+| `chat_guarded_route_dry_run` | `guarded_route_candidate` | API contract + fixture retrieval | guarded_route_candidate_count=6, guard_applied_count=1, active_route_applied_count=0 | implemented_dry_run | contract-only | `evals/reports/chat_api_contract_report.md`, `evals/reports/chat_retrieval_integration_report.md` |
 | `portfolio_summary` | `HD-PORTFOLIO-001` | public README/docs summary | summarized_stage_count=17, leakage_count=0 | implemented | public-safe-summary | `evals/reports/portfolio_result_summary_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
@@ -89,9 +90,9 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-API-ROUTER-002` | `/chat` dry-run field에 guarded route 후보 노출 | guard 결과를 API에서 관찰하되 active route는 계속 바꾸지 않는다. | 예 |
-| 2 | `HD-HYDE-001` | HyDE overview/relationship subset 비교 | LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard가 필요하다. | 예 |
-| 3 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 | 제출용 README 다음에는 실패 사례별 원인과 조치가 필요하다. | 예 |
+| 1 | `HD-HYDE-001` | HyDE overview/relationship subset 비교 | LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard가 필요하다. | 예 |
+| 2 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 | 제출용 README 다음에는 실패 사례별 원인과 조치가 필요하다. | 예 |
+| 3 | `HD-API-ROUTER-003` | active routing 적용 여부 판단 계획 | guarded dry-run은 완료됐지만 active route 적용은 아직 이르다. | 예 |
 
 ## Data Mart 설계
 
@@ -136,4 +137,4 @@
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가도 통과했다. 다음에는 active routing이 아니라 guarded route 후보를 API dry-run으로 노출할지 결정해야 한다.
+README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출도 통과했다. 다음에는 active routing이 아니라 HyDE 비용 실험 또는 failure analysis 10개 정리가 우선이다.

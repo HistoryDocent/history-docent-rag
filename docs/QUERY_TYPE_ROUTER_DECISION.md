@@ -162,6 +162,33 @@ router skeleton은 deterministic query type label을 입력으로 받는다. cla
 - `docs/QUERY_TYPE_CLASSIFIER_PLAN.md`
 - `evals/reports/query_type_classifier_eval_report.md`
 
+## API Guarded Route Dry-run 상태
+
+`HD-API-ROUTER-002`에서 `/api/v1/chat`의 `classifier_router_dry_run.guarded_route_candidate` field를 추가했다.
+
+구현 경계:
+
+- classifier의 원 예측 route와 guard 적용 후 route 후보를 분리한다.
+- active route는 여전히 request의 `query_type` 기반 route를 사용한다.
+- `active_route_applied=false`를 유지한다.
+- Solar Pro 3 호출과 CUDA 연산은 사용하지 않는다.
+- public report에는 raw query, raw answer, raw evidence, chunk text, private path, secret을 기록하지 않는다.
+
+정량 결과:
+
+| metric | chat contract | retrieval integration |
+| --- | ---: | ---: |
+| classifier_guarded_route_candidate_count | 3 | 3 |
+| classifier_guard_applied_count | 1 | 0 |
+| classifier_active_route_applied_count | 0 | 0 |
+| live_solar_call_count | 0 | 0 |
+| public_raw_text_leakage_count | 0 | 0 |
+
+근거 리포트:
+
+- `evals/reports/chat_api_contract_report.md`
+- `evals/reports/chat_retrieval_integration_report.md`
+
 ## Data Mart 설계
 
 `fact_query_type_router_decision`의 grain은 `router_decision_id + query_type + route_policy_id + candidate_id + metric_family + claim_boundary`다.
@@ -195,8 +222,8 @@ router skeleton은 deterministic query type label을 입력으로 받는다. cla
 | HD-CLASSIFIER-004 | HD-ROUTER-003 | classifier 오분류 3개 failure analysis | route impact tag, public-safe report, raw query 0 | Medium | report/module 변경 revert |
 | HD-API-ROUTER-001 | HD-CLASSIFIER-004 | `/chat` classifier/router dry-run 연결 | contract test, leakage 0, retrieval regression 0 | Medium | API field 제거 |
 | HD-CLASSIFIER-005 | HD-API-ROUTER-001 | relationship route guard 평가 | false_hybrid_route_count 감소, active route 0, public report | Medium | guard module revert |
-| HD-CLASSIFIER-005 | HD-CLASSIFIER-004 | relationship false hybrid route guard 설계 | route-risk 재평가, active route 미적용, public report | Medium | guard module revert |
 | HD-HYDE-001 | HD-ROUTER-003 | HyDE overview/relationship subset 비교 | Solar call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
+| HD-PORTFOLIO-002 | HD-PORTFOLIO-001 | failure analysis 10개 정리 | public-safe failure table, claim boundary, raw payload 0 | Medium | 문서/리포트 revert |
 
 ## 외부 감사 결론
 

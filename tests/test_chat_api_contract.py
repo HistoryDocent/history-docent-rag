@@ -42,6 +42,10 @@ def test_chat_endpoint_returns_citation_response_contract() -> None:
     assert dry_run["active_query_type"] == "place_story"
     assert dry_run["active_route_applied"] is False
     assert dry_run["active_route_policy_id"] == body["usage"]["route_policy_id"]
+    guarded_route = dry_run["guarded_route_candidate"]
+    assert guarded_route["guard_policy_id"] == "relationship-route-guard-v1"
+    assert guarded_route["guarded_query_type"] == dry_run["predicted_query_type"]
+    assert guarded_route["guard_applied"] is False
 
 
 def test_chat_endpoint_exposes_classifier_router_dry_run_without_active_route_change() -> None:
@@ -66,6 +70,38 @@ def test_chat_endpoint_exposes_classifier_router_dry_run_without_active_route_ch
     assert dry_run["route_policy_changed"] is True
     assert dry_run["active_route_applied"] is False
     assert dry_run["active_route_policy_id"] == body["usage"]["route_policy_id"]
+    guarded_route = dry_run["guarded_route_candidate"]
+    assert guarded_route["guarded_query_type"] == "relationship"
+    assert guarded_route["route_policy_id"] == "relationship_hybrid_weighted_e5_v1"
+    assert guarded_route["guard_applied"] is False
+    assert guarded_route["route_policy_changed"] is True
+
+
+def test_chat_endpoint_exposes_guarded_route_candidate_without_active_route_change() -> None:
+    response = _client().post(
+        "/api/v1/chat",
+        json={
+            "request_id": "api-test-guarded-route",
+            "query": "창덕궁이 태종 시기 권력 기억과 연결되는 이유를 설명할 근거를 찾아줘",
+            "query_type": "place_fact",
+            "language": "ko",
+            "place_context": ["changdeokgung", "taejong-memory"],
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    dry_run = body["classifier_router_dry_run"]
+    guarded_route = dry_run["guarded_route_candidate"]
+    assert dry_run["predicted_query_type"] == "relationship"
+    assert dry_run["predicted_route_policy_id"] == "relationship_hybrid_weighted_e5_v1"
+    assert guarded_route["guarded_query_type"] == "place_fact"
+    assert guarded_route["route_policy_id"] == "default_dense_voice_rewrite_v1"
+    assert guarded_route["guard_applied"] is True
+    assert "block_fact_reason_risk" in guarded_route["guard_reason_tags"]
+    assert guarded_route["route_policy_changed"] is False
+    assert dry_run["active_route_applied"] is False
+    assert body["usage"]["route_policy_id"] == "default_dense_voice_rewrite_v1"
 
 
 def test_chat_endpoint_abstains_for_no_answer_contract() -> None:
@@ -140,18 +176,23 @@ def test_public_chat_response_row_excludes_raw_answer_text() -> None:
     assert row["solar_call_count"] == 0
     assert row["classifier_dry_run_enabled"] is True
     assert row["classifier_active_route_applied"] is False
+    assert row["guard_policy_id"] == "relationship-route-guard-v1"
+    assert row["guarded_route_candidate_id"] == "dense_multilingual_e5_small_voice_rewrite"
+    assert row["guard_applied"] is False
 
 
 def test_chat_api_contract_report_gate_passes(tmp_path) -> None:
     report = build_report(report_path=tmp_path / "chat_api_contract_report.md")
 
     assert collect_chat_api_contract_failures(report) == []
-    assert report.summary.request_count == 4
-    assert report.summary.success_count == 2
+    assert report.summary.request_count == 5
+    assert report.summary.success_count == 3
     assert report.summary.validation_error_count == 1
     assert report.summary.provider_unavailable_count == 1
-    assert report.summary.classifier_dry_run_count == 2
+    assert report.summary.classifier_dry_run_count == 3
     assert report.summary.classifier_active_route_applied_count == 0
+    assert report.summary.classifier_guarded_route_candidate_count == 3
+    assert report.summary.classifier_guard_applied_count == 1
     assert report.summary.live_solar_call_count == 0
     assert report.output_quality.public_raw_text_leakage_count == 0
     assert report.output_quality.private_path_leakage_count == 0
@@ -162,6 +203,7 @@ def test_chat_api_contract_smoke_rows_are_public_safe() -> None:
 
     assert {row["case_id"] for row in rows} == {
         "answerable_contract",
+        "guarded_route_candidate",
         "no_answer_contract",
         "validation_error",
         "solar_disabled",
