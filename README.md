@@ -35,6 +35,7 @@
 | classifier/router dry-run | `chat-classifier-router-dry-run-v1` | API contract + fixture retrieval | active_route_applied_count | 0 | implemented dry-run |
 | relationship route guard | `relationship-route-guard-v1` | dev 70 | false_hybrid_route_count | 2 -> 0 | implemented guard |
 | guarded route dry-run | `guarded_route_candidate` | API contract + fixture retrieval | guard_applied_count | 1 | implemented dry-run |
+| portfolio failure analysis | `HD-PORTFOLIO-002` | public-safe summary | case_count | 10 | implemented |
 
 금지 claim:
 
@@ -140,6 +141,7 @@ PDF
 -> classifier/router dry-run API field
 -> relationship route guard eval
 -> guarded route dry-run API field
+-> portfolio failure analysis 10 cases
 -> query type router skeleton
 -> retrieval evaluation harness
 -> public-safe aggregate reports
@@ -149,7 +151,7 @@ PDF
 
 ```text
 HyDE subset 비교
--> failure analysis 10개 정리
+-> targeted chunk audit
 -> locked test 기반 최종 개선 주장 검증
 -> frontend/voice UI
 ```

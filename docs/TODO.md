@@ -122,13 +122,14 @@
 - [x] relationship route guard 설계
 - [x] FastAPI `/chat` guarded route 후보 dry-run field 연결
 - [ ] HyDE overview/relationship subset 비교
+- [ ] `place_story` targeted chunk audit
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성
 
 ## Portfolio
 
 - [x] README 결과 표 실제 수치로 갱신
-- [ ] failure analysis 10개 작성
+- [x] failure analysis 10개 작성
 - [ ] API response sample 작성
 - [ ] 이력서 한 줄 설명 작성
 - [ ] 면접 예상 질문 답변 작성

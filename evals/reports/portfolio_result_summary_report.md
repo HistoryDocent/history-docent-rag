@@ -23,8 +23,8 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| summarized_stage_count | 18 |
-| adopted_or_implemented_count | 8 |
+| summarized_stage_count | 19 |
+| adopted_or_implemented_count | 9 |
 | rejected_default_count | 6 |
 | held_candidate_count | 2 |
 | public_raw_text_leakage_count | 0 |
@@ -54,6 +54,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 | classifier/router dry-run | `chat-classifier-router-dry-run-v1` | API contract + fixture retrieval | active_route_applied_count | 0 | implemented dry-run |
 | relationship route guard | `relationship-route-guard-v1` | dev 70 | false_hybrid_route_count | 2 -> 0 | implemented guard |
 | guarded route dry-run | `guarded_route_candidate` | API contract + fixture retrieval | guard_applied_count | 1 | implemented dry-run |
+| portfolio failure analysis | `HD-PORTFOLIO-002` | public-safe summary | case_count | 10 | implemented |
 
 ## 정성 리포트
 
@@ -64,13 +65,13 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 - `router_message`: query type classifier baseline, router skeleton, API dry-run, relationship guard, guarded route candidate는 구현됐지만 production routing과 locked 성능 개선은 아직 없다.
 - `security_boundary`: public README와 docs에는 저작권 원문, private eval payload, secret을 넣지 않는다.
 - `claim_boundary`: production 성능, locked 개선, 통계적 유의성 표현은 금지한다.
-- `external_audit`: 포트폴리오 제출 전에는 새 실험 추가보다 설명 가능한 결과 표와 금지 표현 점검이 우선이다.
+- `external_audit`: 포트폴리오 제출 전에는 HyDE 같은 새 비용성 실험보다 실패 원인표와 금지 표현 점검이 우선이다.
 
 ## Public Output Gate
 
 | metric | value |
 | --- | ---: |
-| result_row_count | 18 |
+| result_row_count | 19 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |
