@@ -106,3 +106,17 @@
 - [ ] 데이터 공개 정책이 있다.
 - [ ] notebook과 report 링크가 있다.
 - [ ] 미검증 성과 표현이 없다.
+
+## Submission Ready Gate
+
+- [ ] README local markdown link missing 0
+- [ ] numbered notebook skeleton 14개 존재
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public env assignment leakage 0
+- [ ] raw payload public artifact 0
+- [ ] 제출용 허용 문장 1개 고정
+- [ ] 금지 claim이 성공 claim으로 쓰이지 않음
+- [ ] `pytest -q` 통과
+- [ ] `ruff check .` 통과
+- [ ] `git diff --check` 통과

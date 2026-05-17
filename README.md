@@ -172,6 +172,7 @@ PDF
 -> final ablation report
 -> API response sample
 -> portfolio QA
+-> submission ready audit
 -> public-safe aggregate reports
 ```
 
@@ -490,6 +491,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [API Response Sample Report](evals/reports/api_response_sample_report.md) | HD-API-SAMPLE-001 정량/정성 sample gate와 public-safe 검증 |
 | [Portfolio QA](docs/PORTFOLIO_QA.md) | HD-PORTFOLIO-QA-001 이력서 한 줄, 면접 답변, 제출 문구, 금지 claim 정리 |
 | [Portfolio QA Report](evals/reports/portfolio_qa_report.md) | HD-PORTFOLIO-QA-001 정량/정성 제출 문구 검수와 public-safe gate |
+| [Submission Ready Checklist](docs/SUBMISSION_READY_CHECKLIST.md) | HD-SUBMISSION-READY-001 포트폴리오 제출 전 최종 검수 항목과 claim boundary |
+| [Submission Ready Report](evals/reports/submission_ready_report.md) | HD-SUBMISSION-READY-001 정량/정성 제출 감사 리포트와 public-safe gate |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

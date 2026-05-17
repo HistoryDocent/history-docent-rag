@@ -3,7 +3,7 @@
 ## Now
 
 - [x] 현업형 RAG ablation 비교 실험 계획 문서화
-- [ ] `notebooks/` numbered skeleton 확인
+- [x] `notebooks/` numbered skeleton 확인
 - [x] `docs/PRD.md` 기준으로 README 첫 화면 재정리
 - [x] `data_manifest` schema 설계
 - [x] `normalized_blocks` schema 설계
@@ -143,3 +143,4 @@
 - [x] API response sample 작성
 - [x] 이력서 한 줄 설명 작성
 - [x] 면접 예상 질문 답변 작성
+- [x] 포트폴리오 제출 전 최종 감사 작성

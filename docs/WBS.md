@@ -95,3 +95,10 @@
 | 8.1 | RAPTOR-lite | experiment module/report | overview/place_story input-only 비교 완료 | `실험: RAPTOR-lite input-only 비교 추가` |
 | 8.2 | GraphRAG-lite | experiment module | relationship만 비교 | `feat: add graphrag lite experiment` |
 | 8.3 | final report | docs/notebook | query type별 최종 판단 | `docs: add final ablation report` |
+
+## Phase 9. 제출 패키징
+
+| ID | 작업 | 산출물 | 완료 기준 | Commit |
+| --- | --- | --- | --- | --- |
+| 9.1 | portfolio QA | `docs/PORTFOLIO_QA.md`, report | 이력서 한 줄, 면접 답변, 금지 claim 정리 | `문서: 포트폴리오 제출 문구 정리` |
+| 9.2 | submission ready audit | `docs/SUBMISSION_READY_CHECKLIST.md`, report | 제출 전 링크, notebook, public-safe, claim boundary gate 통과 | `문서: 포트폴리오 제출 전 최종 감사 추가` |
