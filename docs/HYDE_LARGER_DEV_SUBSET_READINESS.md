@@ -53,7 +53,8 @@
 | priority | work_id | 작업 | 승인 필요 |
 | ---: | --- | --- | --- |
 | 완료 | `HD-HYDE-001D` | HyDE larger dev live paired retrieval comparison | 완료 |
-| 1 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | 예 |
+| 완료 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | 완료 |
+| 1 | `HD-API-ROUTER-004` | active route shadow evaluation runner | 예 |
 
 ## Claim Boundary
 

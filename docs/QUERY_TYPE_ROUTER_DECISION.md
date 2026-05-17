@@ -223,7 +223,8 @@ router skeleton은 deterministic query type label을 입력으로 받는다. cla
 | HD-API-ROUTER-001 | HD-CLASSIFIER-004 | `/chat` classifier/router dry-run 연결 | contract test, leakage 0, retrieval regression 0 | Medium | API field 제거 |
 | HD-CLASSIFIER-005 | HD-API-ROUTER-001 | relationship route guard 평가 | false_hybrid_route_count 감소, active route 0, public report | Medium | guard module revert |
 | HD-HYDE-001D | HD-HYDE-001C | HyDE larger dev live paired retrieval comparison | Solar call budget 준수, no-answer guard, public report | High | 완료, HyDE 기본 route 기각 |
-| HD-API-ROUTER-003 | HD-HYDE-001D | active routing 적용 여부 판단 계획 | route-risk, guard, locked gate 기준 정리 | Medium | active route 미적용 |
+| HD-API-ROUTER-003 | HD-HYDE-001D | active routing 적용 여부 판단 계획 | 완료. route-risk, guard, locked gate 기준 정리 | Medium | active route 미적용 |
+| HD-API-ROUTER-004 | HD-API-ROUTER-003 | active route shadow evaluation runner | dev 70 paired route metric, no-answer candidate route 0, public report | Medium | runner/report revert |
 
 ## 외부 감사 결론
 

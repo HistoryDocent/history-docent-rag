@@ -78,8 +78,8 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
 | 완료 | `HD-HYDE-001D` | HyDE larger dev live paired retrieval comparison | 40개 live 비교에서 HyDE 기본 route는 기각됐다. |
-| 1 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | 남은 리스크는 HyDE보다 router/guard 적용 경계에 있다. |
-| 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
+| 완료 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | relationship route만 shadow 후보로 남기고 active 적용은 보류했다. |
+| 1 | `HD-API-ROUTER-004` | active route shadow evaluation runner | guard dry-run은 완료됐지만 active route 적용은 paired shadow gate가 필요하다. |
 
 ## Claim Boundary
 

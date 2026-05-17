@@ -126,6 +126,8 @@
 - [x] HyDE larger dev subset readiness
 - [x] HyDE larger dev live paired retrieval comparison
 - [x] `place_story` targeted chunk audit
+- [x] active routing 적용 여부 판단 계획
+- [ ] active route shadow evaluation runner
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성
 

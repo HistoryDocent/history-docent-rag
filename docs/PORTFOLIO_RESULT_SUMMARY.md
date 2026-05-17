@@ -20,6 +20,7 @@
 | generation | `solar-generation-baseline-v1` | repaired v2는 citation recall 하락으로 기본값 기각 |
 | API | FastAPI `/api/v1/chat` contract + retrieval-backed smoke | live service 품질 주장이 아니라 contract 검증 |
 | classifier/router | `deterministic_query_type_classifier_v1` + `query_type_router_v1` + API dry-run + relationship guard + guarded route candidate | classifier와 guard 판단은 응답에 노출하지만 production routing 주장은 아님 |
+| active routing | 미적용 | relationship route만 shadow evaluation 후보 |
 
 ## 핵심 정량 결과
 
@@ -49,6 +50,7 @@
 | HyDE live comparison | `HD-HYDE-001B` | live-dev-subset 5 | Recall@5 delta | 0.250000 | larger eval 후보 유지 |
 | HyDE larger readiness | `HD-HYDE-001C` | dev-readiness-only 40 | expected_hyde_generation_live_call_count | 30 | ready for larger live approval |
 | HyDE larger live comparison | `HD-HYDE-001D` | live-dev-subset 40 | MRR delta | -0.035000 | reject default |
+| active routing decision | `HD-API-ROUTER-003` | plan-only | active_route_applied_count | 0 | shadow eval next |
 
 ## 채택, 보류, 기각
 
@@ -65,6 +67,7 @@
 | 구현 | `HD-CHUNK-AUDIT-001` | `place_story` 1건에서 target child/parent chunk 존재를 확인하고 전역 재청킹을 열지 않음 |
 | 구현 | `HD-HYDE-001A` | HyDE live 비교 전 subset, call budget, no-answer guard를 고정 |
 | 구현 | `HD-HYDE-001C` | dev 40개 확대 live 비교 전 query type 범위, call budget, no-answer guard를 고정 |
+| 구현 | `HD-API-ROUTER-003` | active routing을 바로 적용하지 않고 relationship route만 shadow 후보로 고정 |
 | 보류 | `HD-HYDE-001B` | live-dev-subset에서 Recall@5는 올랐지만 MRR 하락과 latency 증가가 있어 larger eval 후보로만 유지 |
 | 기각 | `HD-HYDE-001D` | 40개 확대 live 비교에서 Recall@5는 소폭 상승했지만 MRR, nDCG@5, latency가 악화되어 기본 route로 채택하지 않음 |
 | 보류 | BGE-M3 dense | Recall@5는 높지만 latency가 커서 기본값 부적합 |
@@ -120,11 +123,11 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-API-ROUTER-003` | active routing 적용 여부 판단 계획 |
-| 2 | `HD-LOCKED-RETRIEVAL-001` | locked test 최종 retrieval candidate 검증 계획 |
+| 1 | `HD-API-ROUTER-004` | active route shadow evaluation runner |
+| 2 | `HD-LOCKED-RETRIEVAL-001` | shadow eval 이후 locked test 최종 retrieval candidate 검증 계획 |
 
 ## 외부 감사 결론
 
 현재 포트폴리오 메시지는 타당하다.
 
-다만 “성능 개선”보다 “평가 기반 의사결정”을 강조해야 한다. HyDE도 40개 확대 live 비교에서 기본값으로 기각했으므로, 최종 제출 문구에서는 좋은 수치보다 채택하지 않은 이유를 같이 써야 한다.
+다만 “성능 개선”보다 “평가 기반 의사결정”을 강조해야 한다. HyDE도 40개 확대 live 비교에서 기본값으로 기각했고 active routing도 바로 켜지 않았으므로, 최종 제출 문구에서는 좋은 수치보다 채택하지 않은 이유를 같이 써야 한다.

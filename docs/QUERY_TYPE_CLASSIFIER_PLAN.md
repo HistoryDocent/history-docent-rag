@@ -214,4 +214,5 @@
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
 | HD-HYDE-001D | HD-HYDE-001C | HyDE larger dev live paired retrieval comparison | Solar call budget 준수, no-answer guard, public report | High | 완료, HyDE 기본 route 기각 |
-| HD-API-ROUTER-003 | query type classifier/router docs | active routing 적용 여부 판단 계획 | route-risk, guard, locked gate 기준 정리 | Medium | active route 미적용 |
+| HD-API-ROUTER-003 | query type classifier/router docs | active routing 적용 여부 판단 계획 | 완료. route-risk, guard, locked gate 기준 정리 | Medium | active route 미적용 |
+| HD-API-ROUTER-004 | HD-API-ROUTER-003 | active route shadow evaluation runner | dev 70 paired route metric, no-answer candidate route 0, public report | Medium | runner/report revert |

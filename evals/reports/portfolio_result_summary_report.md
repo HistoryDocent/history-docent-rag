@@ -23,8 +23,8 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| summarized_stage_count | 24 |
-| adopted_or_implemented_count | 12 |
+| summarized_stage_count | 25 |
+| adopted_or_implemented_count | 13 |
 | rejected_default_count | 7 |
 | held_candidate_count | 3 |
 | public_raw_text_leakage_count | 0 |
@@ -60,6 +60,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 | HyDE live comparison | `HD-HYDE-001B` | live-dev-subset 5 | Recall@5 delta | 0.250000 | held for larger eval |
 | HyDE larger readiness | `HD-HYDE-001C` | dev-readiness-only 40 | expected_hyde_generation_live_call_count | 30 | ready for larger live approval |
 | HyDE larger live comparison | `HD-HYDE-001D` | live-dev-subset 40 | MRR delta | -0.035000 | reject default |
+| active routing decision | `HD-API-ROUTER-003` | plan-only | active_route_applied_count | 0 | shadow eval next |
 
 ## 정성 리포트
 
@@ -67,7 +68,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 - `decision_quality`: 좋은 수치만 선택하지 않고 latency, citation recall, nDCG 하락, locked readiness, HyDE MRR 하락을 기준으로 기각하거나 보류한 과정을 강조한다.
 - `retrieval_message`: BM25에서 neural dense, hybrid, reranker, query rewrite로 확장했지만 최종 기본 후보는 균형이 가장 좋은 dense voice rewrite로 둔다.
 - `advanced_rag_message`: GraphRAG-lite와 RAPTOR-lite는 특정 query type에 한정해 비교했고 개선이 없어 기본값에서 제외했다.
-- `router_message`: query type classifier baseline, router skeleton, API dry-run, relationship guard, guarded route candidate는 구현됐지만 production routing과 locked 성능 개선은 아직 없다.
+- `router_message`: query type classifier baseline, router skeleton, API dry-run, relationship guard, guarded route candidate, active routing 판단 계획은 구현됐지만 production routing과 locked 성능 개선은 아직 없다.
 - `security_boundary`: public README와 docs에는 저작권 원문, private eval payload, secret을 넣지 않는다.
 - `claim_boundary`: production 성능, locked 개선, 통계적 유의성 표현은 금지한다.
 - `external_audit`: 실패 원인표와 targeted audit으로 청킹 재실험 범위를 닫았고 HyDE larger live 비교도 완료했다. Recall@5만 보고 채택하지 않고 MRR, nDCG@5, latency 악화를 기준으로 기본 route를 기각한 판단이 타당하다.
@@ -76,7 +77,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| result_row_count | 24 |
+| result_row_count | 25 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |

@@ -58,8 +58,8 @@ target child와 parent는 chunk artifact 안에 모두 존재하고, child-paren
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
 | 완료 | `HD-HYDE-001D` | HyDE larger dev live paired retrieval comparison | place_story Recall@5는 개선됐지만 전체 HyDE 기본 route는 기각했다. |
-| 1 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | HyDE 대신 기존 classifier/router/guard 후보를 기준으로 판단한다. |
-| 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guarded route dry-run 이후에도 active 적용은 별도 gate가 필요하다. |
+| 완료 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | HyDE 대신 relationship shadow route 후보만 남겼다. |
+| 1 | `HD-API-ROUTER-004` | active route shadow evaluation runner | guarded route dry-run 이후에도 active 적용은 별도 gate가 필요하다. |
 
 ## Claim Boundary
 
