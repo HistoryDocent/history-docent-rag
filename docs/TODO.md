@@ -122,7 +122,7 @@
 - [x] relationship route guard 설계
 - [x] FastAPI `/chat` guarded route 후보 dry-run field 연결
 - [ ] HyDE overview/relationship subset 비교
-- [ ] `place_story` targeted chunk audit
+- [x] `place_story` targeted chunk audit
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성
 

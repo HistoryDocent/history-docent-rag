@@ -207,7 +207,7 @@ def build_portfolio_failure_analysis_doc(
 
 전체 청킹 비교 테스트를 다시 열지 않는다.
 
-현재 10개 실패 사례 중 전역 청킹 재설계가 필요한 증거는 없다. 다만 `chunk_boundary_risk` 1건은 targeted chunk audit 후보로 남긴다. 다음 개발 우선순위는 HyDE가 아니라 실패 원인별 후속 작업을 분리한 뒤, `overview`, `relationship`, `no_answer` 일부 subset에서만 비용성 실험을 여는 것이다.
+현재 10개 실패 사례 중 전역 청킹 재설계가 필요한 증거는 없다. `chunk_boundary_risk` 1건은 `HD-CHUNK-AUDIT-001`로 별도 확인했고, target child/parent chunk가 존재해 전역 재청킹 근거가 아니었다. 다음 개발 우선순위는 `overview`, `relationship`, `no_answer` 일부 subset에서만 HyDE 비용성 실험을 여는 것이다.
 
 이 문서는 public-safe failure analysis다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -250,7 +250,7 @@ def build_portfolio_failure_analysis_doc(
 
 ## 판단
 
-청킹은 `C0 current parent-child`를 유지한다. 실패 10건 중 청킹 자체가 원인으로 강하게 확인된 사례는 없다. `q-dev-place-story-001`은 target doc은 잡지만 child/parent grain을 놓치는 사례라 targeted audit 후보지만, 전역 청킹 변경 근거는 아니다.
+청킹은 `C0 current parent-child`를 유지한다. 실패 10건 중 청킹 자체가 원인으로 강하게 확인된 사례는 없다. `q-dev-place-story-001`은 target doc은 잡지만 child/parent grain을 놓치는 사례였고, targeted audit 결과 target child/parent는 chunk artifact에 존재했다. 따라서 전역 청킹 변경 근거는 아니다.
 
 Retrieval 실패는 `place_story`, `relationship`, `overview`, `route_context`에 분포한다. 이 문제는 청킹 후보를 다시 늘리는 것보다 query type route, HyDE subset, hard-case retrieval audit으로 분리해야 한다.
 
@@ -263,15 +263,15 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
 | 1 | `HD-HYDE-001` | overview/relationship/no-answer subset HyDE 비교 | retrieval miss와 abstain risk가 남아 있지만 LLM 비용과 hallucination guard가 필요하다. |
-| 2 | `HD-CHUNK-AUDIT-001` | place_story 1건 targeted chunk audit | 전역 재청킹이 아니라 child/parent grain 손실 여부만 확인한다. |
-| 3 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
+| 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
 
 ## Claim Boundary
 
 허용 표현:
 
 - 실패 10건을 public-safe 방식으로 분류했다.
-- 현재 증거로는 전체 청킹 재실험보다 targeted audit이 적절하다.
+- 현재 증거로는 전체 청킹 재실험을 열지 않는 것이 적절하다.
+- `place_story` 1건 targeted audit에서 target child/parent chunk 존재를 확인했다.
 - HyDE는 다음 비용성 실험 후보이며 아직 개선을 입증하지 않았다.
 
 금지 표현:
@@ -367,7 +367,7 @@ def build_portfolio_failure_analysis_markdown(
 
 ## 해석
 
-실패 사례는 전역 청킹 재설계보다 stage별 후속 실험으로 나누는 것이 맞다. 청킹은 C0를 유지하고, 특정 `place_story` grain miss만 targeted audit으로 본다. HyDE는 다음 실험 후보지만 아직 개선 주장이 아니다.
+실패 사례는 전역 청킹 재설계보다 stage별 후속 실험으로 나누는 것이 맞다. 청킹은 C0를 유지하고, 특정 `place_story` grain miss는 targeted audit에서 전역 재청킹 근거가 아님을 확인했다. HyDE는 다음 실험 후보지만 아직 개선 주장이 아니다.
 """
 
 
@@ -452,7 +452,7 @@ def _build_qualitative_assessment(
     return {
         "analysis_scope": "기존 public-safe report와 query id 단위 결과만 사용해 실패 원인을 분류했다.",
         "chunking_decision": (
-            "전역 청킹 재실험은 열지 않는다. chunk boundary 의심 1건은 targeted audit으로만 다룬다."
+            "전역 청킹 재실험은 열지 않는다. chunk boundary 의심 1건은 targeted audit에서 전역 재청킹 근거가 아님을 확인했다."
         ),
         "retrieval_decision": (
             f"retrieval miss {summary.retrieval_miss_count}건은 HyDE 또는 route-specific retrieval 후보로 분리한다."
@@ -524,8 +524,8 @@ def _portfolio_failure_cases() -> tuple[PortfolioFailureCase, ...]:
             primary_failure_category="chunk_boundary_risk",
             risk_level="high",
             observed_signal="target doc은 잡지만 target child와 parent grain이 빠지고 generation regression도 동반된 사례",
-            decision_impact="전역 재청킹 근거는 아니지만 targeted chunk audit 후보로 남긴다.",
-            next_action="HD-CHUNK-AUDIT-001에서 child/parent grain 손실만 별도 점검한다.",
+            decision_impact="전역 재청킹 근거는 아니지만 targeted chunk audit으로 확인했다.",
+            next_action="HD-CHUNK-AUDIT-001 결과 전역 재청킹은 열지 않고 HyDE/retrieval 실험으로 넘긴다.",
             source_artifact="evals/reports/place_story_hard_case_analysis_report.md",
             claim_boundary="dev-only",
         ),

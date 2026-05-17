@@ -11,9 +11,9 @@
 | 항목 | 값 |
 | --- | --- |
 | report_version | `portfolio-failure-analysis-report/v1` |
-| run_id | `portfolio-failure-analysis-c10-409d2af7` |
+| run_id | `portfolio-failure-analysis-c10-688b2650` |
 | work_id | `HD-PORTFOLIO-002` |
-| generated_at_utc | `2026-05-17T03:12:57+00:00` |
+| generated_at_utc | `2026-05-17T03:54:07+00:00` |
 | result_path | `<private artifact: portfolio_failure_analysis_rows.jsonl>` |
 | live_solar_call_count_for_this_report | 0 |
 | cuda_required | false |
@@ -33,7 +33,7 @@
 | generation_contract_gap_count | 1 |
 | no_answer_risk_count | 1 |
 | reopen_global_chunking_count | 0 |
-| next_hyde_candidate_count | 5 |
+| next_hyde_candidate_count | 6 |
 
 ## Category Breakdown
 
@@ -84,7 +84,7 @@
 ## 정성 리포트
 
 - `analysis_scope`: 기존 public-safe report와 query id 단위 결과만 사용해 실패 원인을 분류했다.
-- `chunking_decision`: 전역 청킹 재실험은 열지 않는다. chunk boundary 의심 1건은 targeted audit으로만 다룬다.
+- `chunking_decision`: 전역 청킹 재실험은 열지 않는다. chunk boundary 의심 1건은 targeted audit에서 전역 재청킹 근거가 아님을 확인했다.
 - `retrieval_decision`: retrieval miss 4건은 HyDE 또는 route-specific retrieval 후보로 분리한다.
 - `generation_decision`: generation contract gap은 Solar Pro 3 repaired v2 기본값 기각 근거로 유지한다.
 - `no_answer_decision`: no-answer risk는 retriever 단독 문제가 아니라 answer abstain contract와 함께 검증한다.
@@ -96,4 +96,4 @@
 
 ## 해석
 
-실패 사례는 전역 청킹 재설계보다 stage별 후속 실험으로 나누는 것이 맞다. 청킹은 C0를 유지하고, 특정 `place_story` grain miss만 targeted audit으로 본다. HyDE는 다음 실험 후보지만 아직 개선 주장이 아니다.
+실패 사례는 전역 청킹 재설계보다 stage별 후속 실험으로 나누는 것이 맞다. 청킹은 C0를 유지하고, 특정 `place_story` grain miss는 targeted audit에서 전역 재청킹 근거가 아님을 확인했다. HyDE는 다음 실험 후보지만 아직 개선 주장이 아니다.

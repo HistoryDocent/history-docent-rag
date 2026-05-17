@@ -4,7 +4,7 @@
 
 전체 청킹 비교 테스트를 다시 열지 않는다.
 
-현재 10개 실패 사례 중 전역 청킹 재설계가 필요한 증거는 없다. 다만 `chunk_boundary_risk` 1건은 targeted chunk audit 후보로 남긴다. 다음 개발 우선순위는 HyDE가 아니라 실패 원인별 후속 작업을 분리한 뒤, `overview`, `relationship`, `no_answer` 일부 subset에서만 비용성 실험을 여는 것이다.
+현재 10개 실패 사례 중 전역 청킹 재설계가 필요한 증거는 없다. `chunk_boundary_risk` 1건은 `HD-CHUNK-AUDIT-001`로 별도 확인했고, target child/parent chunk가 존재해 전역 재청킹 근거가 아니었다. 다음 개발 우선순위는 `overview`, `relationship`, `no_answer` 일부 subset에서만 HyDE 비용성 실험을 여는 것이다.
 
 이 문서는 public-safe failure analysis다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -23,7 +23,7 @@
 | generation_contract_gap_count | 1 |
 | no_answer_risk_count | 1 |
 | reopen_global_chunking_count | 0 |
-| next_hyde_candidate_count | 5 |
+| next_hyde_candidate_count | 6 |
 | live_solar_call_count_for_this_report | 0 |
 | cuda_required | false |
 
@@ -55,7 +55,7 @@
 | `pf-failure-001` | `q-dev-place-fact-004` | `place_fact` | `query_type_classifier` | `query_type_misroute` | `medium` | place_fact가 relationship으로 분류되어 route policy가 바뀐 사례 | active route 적용 전 guarded route dry-run 결과를 더 누적한다. |
 | `pf-failure-002` | `q-dev-overview-009` | `overview` | `query_type_classifier` | `query_type_misroute` | `medium` | overview가 relationship으로 분류되어 hybrid route로 이동할 수 있는 사례 | relationship route는 score margin과 관계 표현 guard를 함께 요구한다. |
 | `pf-failure-003` | `q-dev-place-fact-009` | `place_fact` | `query_type_classifier` | `query_type_misroute` | `low` | default route 내부 query type 경계가 흐린 사례 | classifier label 개선은 active route보다 후순위로 둔다. |
-| `pf-failure-004` | `q-dev-place-story-001` | `place_story` | `chunking_retrieval_generation` | `chunk_boundary_risk` | `high` | target doc은 잡지만 target child와 parent grain이 빠지고 generation regression도 동반된 사례 | HD-CHUNK-AUDIT-001에서 child/parent grain 손실만 별도 점검한다. |
+| `pf-failure-004` | `q-dev-place-story-001` | `place_story` | `chunking_retrieval_generation` | `chunk_boundary_risk` | `high` | target doc은 잡지만 target child와 parent grain이 빠지고 generation regression도 동반된 사례 | HD-CHUNK-AUDIT-001 결과 전역 재청킹은 열지 않고 HyDE/retrieval 실험으로 넘긴다. |
 | `pf-failure-005` | `q-dev-route-context-009` | `route_context` | `retrieval` | `retrieval_miss` | `medium` | route_context query에서 target child miss가 남은 사례 | route_context는 HyDE보다 route-level query rewrite와 packing audit을 먼저 비교한다. |
 | `pf-failure-006` | `q-dev-place-story-008` | `place_story` | `retrieval` | `retrieval_miss` | `medium` | current retrieval 후보에서 target doc까지 miss한 hard case | HyDE 또는 place-aware rewrite 후보를 place_story hard subset에서만 비교한다. |
 | `pf-failure-007` | `q-dev-relationship-008` | `relationship` | `retrieval_router` | `retrieval_miss` | `medium` | global dense candidate에서는 relationship target miss가 남은 사례 | HyDE relationship subset은 hybrid reference와 paired comparison으로만 연다. |
@@ -65,7 +65,7 @@
 
 ## 판단
 
-청킹은 `C0 current parent-child`를 유지한다. 실패 10건 중 청킹 자체가 원인으로 강하게 확인된 사례는 없다. `q-dev-place-story-001`은 target doc은 잡지만 child/parent grain을 놓치는 사례라 targeted audit 후보지만, 전역 청킹 변경 근거는 아니다.
+청킹은 `C0 current parent-child`를 유지한다. 실패 10건 중 청킹 자체가 원인으로 강하게 확인된 사례는 없다. `q-dev-place-story-001`은 target doc은 잡지만 child/parent grain을 놓치는 사례였고, targeted audit 결과 target child/parent는 chunk artifact에 존재했다. 따라서 전역 청킹 변경 근거는 아니다.
 
 Retrieval 실패는 `place_story`, `relationship`, `overview`, `route_context`에 분포한다. 이 문제는 청킹 후보를 다시 늘리는 것보다 query type route, HyDE subset, hard-case retrieval audit으로 분리해야 한다.
 
@@ -78,15 +78,15 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
 | 1 | `HD-HYDE-001` | overview/relationship/no-answer subset HyDE 비교 | retrieval miss와 abstain risk가 남아 있지만 LLM 비용과 hallucination guard가 필요하다. |
-| 2 | `HD-CHUNK-AUDIT-001` | place_story 1건 targeted chunk audit | 전역 재청킹이 아니라 child/parent grain 손실 여부만 확인한다. |
-| 3 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
+| 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
 
 ## Claim Boundary
 
 허용 표현:
 
 - 실패 10건을 public-safe 방식으로 분류했다.
-- 현재 증거로는 전체 청킹 재실험보다 targeted audit이 적절하다.
+- 현재 증거로는 전체 청킹 재실험을 열지 않는 것이 적절하다.
+- `place_story` 1건 targeted audit에서 target child/parent chunk 존재를 확인했다.
 - HyDE는 다음 비용성 실험 후보이며 아직 개선을 입증하지 않았다.
 
 금지 표현:

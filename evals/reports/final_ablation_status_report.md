@@ -4,7 +4,7 @@
 
 현재 RAG 기본선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다.
 
-GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리는 통과했다. 다음 우선순위는 HyDE subset 비교 또는 targeted chunk audit이다.
+GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit은 통과했다. 다음 우선순위는 HyDE subset 비교다.
 
 이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked test 전까지 모든 수치는 dev-only 또는 live-dev-subset으로 제한한다.
 
@@ -15,8 +15,8 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | 항목 | 값 |
 | --- | --- |
 | report_version | `final-ablation-status-report/v1` |
-| source_report_count | 14 |
-| decision_row_count | 25 |
+| source_report_count | 15 |
+| decision_row_count | 26 |
 | adopted_default_count | 4 |
 | rejected_default_count | 11 |
 | route_or_router_candidate_count | 6 |
@@ -66,6 +66,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | relationship_route_guard | `relationship-route-guard-v1` | false_hybrid_route_count | 2 -> 0 | implemented guard |
 | chat_guarded_route_dry_run | `guarded_route_candidate` | guard_applied_count | 1 | implemented dry-run |
 | portfolio_failure_analysis | `HD-PORTFOLIO-002` | case_count | 10 | implemented |
+| place_story_targeted_chunk_audit | `HD-CHUNK-AUDIT-001` | chunk_boundary_defect_count | 0 | do_not_reopen_global_chunking |
 
 ## Qualitative Assessment
 
@@ -83,6 +84,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - `relationship_guard`: dev 70 기준 false hybrid route를 줄였지만 active routing 적용은 아니다.
 - `guarded_route_api`: guard 결과는 `/api/v1/chat`의 `guarded_route_candidate`로 관찰 가능하지만 active route에는 적용하지 않는다.
 - `portfolio`: 기법 추가보다 실험으로 선택과 기각, 실패 원인 10개를 설명하는 편이 더 강하다.
+- `targeted_chunk_audit`: `place_story` 1건에서 target child/parent chunk 존재와 citation provenance를 확인했고 전역 재청킹은 열지 않는다.
 
 ## Claim Boundary
 
@@ -103,7 +105,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 
 ## Next Gate
 
-다음 gate는 `HD-HYDE-001 HyDE subset 비교` 또는 `HD-CHUNK-AUDIT-001 targeted chunk audit`이다.
+다음 gate는 `HD-HYDE-001 HyDE subset 비교`다.
 
 이유:
 
@@ -115,7 +117,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
 - RAPTOR-lite도 reject됐기 때문에 overview/place_story 개선은 classifier와 generation prompt 경계에서 다시 봐야 한다.
 - HyDE는 LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard를 별도 승인해야 한다.
-- targeted chunk audit은 전역 재청킹이 아니라 `place_story` 1건의 child/parent grain 손실 여부만 확인해야 한다.
+- targeted chunk audit은 `place_story` 1건에서 전역 재청킹 근거가 없음을 확인했다.
 
 ## External Audit
 
