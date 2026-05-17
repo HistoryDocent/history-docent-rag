@@ -194,6 +194,7 @@ router skeleton은 deterministic query type label을 입력으로 받는다. cla
 | --- | --- | --- | --- | --- | --- |
 | HD-CLASSIFIER-004 | HD-ROUTER-003 | classifier 오분류 3개 failure analysis | route impact tag, public-safe report, raw query 0 | Medium | report/module 변경 revert |
 | HD-API-ROUTER-001 | HD-CLASSIFIER-004 | `/chat` classifier/router dry-run 연결 | contract test, leakage 0, retrieval regression 0 | Medium | API field 제거 |
+| HD-CLASSIFIER-005 | HD-API-ROUTER-001 | relationship route guard 평가 | false_hybrid_route_count 감소, active route 0, public report | Medium | guard module revert |
 | HD-CLASSIFIER-005 | HD-CLASSIFIER-004 | relationship false hybrid route guard 설계 | route-risk 재평가, active route 미적용, public report | Medium | guard module revert |
 | HD-HYDE-001 | HD-ROUTER-003 | HyDE overview/relationship subset 비교 | Solar call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
 
@@ -206,4 +207,4 @@ router skeleton은 deterministic query type label을 입력으로 받는다. cla
 - route policy는 dev/input-only 근거가 중심이다.
 - relationship hybrid route는 generation 품질까지 검증한 결론이 아니다.
 - place_story guarded boost는 locked readiness에서 treatment가 없어 production route로 부적합하다.
-- query type classifier는 baseline만 구현됐으므로 실제 API routing 완성으로 표현하면 안 된다.
+- query type classifier와 relationship guard는 baseline/dev-only로 구현됐으므로 실제 API routing 완성으로 표현하면 안 된다.

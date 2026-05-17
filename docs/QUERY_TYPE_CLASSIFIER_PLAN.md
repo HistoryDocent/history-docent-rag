@@ -176,9 +176,39 @@
 - `route_policy_changed`는 운영 전 guard 설계를 위한 관찰 지표이지 성능 개선 지표가 아니다.
 - 다음 단계는 false hybrid route를 줄이기 위한 relationship route guard 설계다.
 
+## Relationship Route Guard 평가 결과
+
+`HD-CLASSIFIER-005`에서 `relationship` 예측에만 적용하는 보수적 guard를 추가했다.
+
+근거 리포트:
+
+- `evals/reports/relationship_route_guard_eval_report.md`
+
+| metric | baseline | guarded |
+| --- | ---: | ---: |
+| correct_count | 67 | 69 |
+| accuracy | 0.957143 | 0.985714 |
+| route_policy_correct_count | 68 | 70 |
+| route_policy_accuracy | 0.971429 | 1.000000 |
+| false_hybrid_route_count | 2 | 0 |
+| missed_hybrid_route_count | 0 | 0 |
+
+추가 gate:
+
+- `no_answer_route_regression_count=0`
+- `active_route_applied_count=0`
+- `public_raw_text_leakage_count=0`
+- `live_solar_call_count=0`
+
+해석:
+
+- 이번 guard는 active routing 적용이 아니다.
+- false hybrid route를 dev 70 기준 2건에서 0건으로 줄였지만, production routing 완료로 표현하면 안 된다.
+- 다음 단계는 API dry-run field에 guarded route 후보를 노출하거나, HyDE처럼 별도 비용이 드는 실험을 승인받아 진행하는 것이다.
+
 ## 다음 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
-| HD-CLASSIFIER-005 | HD-API-ROUTER-001 | relationship route guard 설계 | false_hybrid_route 재평가, public report, active route 미적용 | Medium | guard module revert |
+| HD-API-ROUTER-002 | HD-CLASSIFIER-005 | `/chat` dry-run field에 guarded route 후보 노출 | contract test, active route 0, leakage 0 | Medium | guarded field 제거 |
 | HD-HYDE-001 | HD-ROUTER-003 | Solar Pro 3 기반 HyDE subset 비교 | 명시 승인, call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
