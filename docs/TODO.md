@@ -133,6 +133,7 @@
 - [x] locked retrieval readiness dry-run runner
 - [x] locked retrieval paired comparison 실행 여부 승인
 - [x] locked retrieval paired comparison runner 실행
+- [x] ColBERT style late interaction plan-only gate 작성
 - [ ] ColBERT style late interaction hard subset 검토
 - [x] final ablation report 작성
 

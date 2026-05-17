@@ -173,6 +173,7 @@ PDF
 -> API response sample
 -> portfolio QA
 -> submission ready audit
+-> ColBERT-style late interaction plan
 -> public-safe aggregate reports
 ```
 
@@ -493,6 +494,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Portfolio QA Report](evals/reports/portfolio_qa_report.md) | HD-PORTFOLIO-QA-001 정량/정성 제출 문구 검수와 public-safe gate |
 | [Submission Ready Checklist](docs/SUBMISSION_READY_CHECKLIST.md) | HD-SUBMISSION-READY-001 포트폴리오 제출 전 최종 검수 항목과 claim boundary |
 | [Submission Ready Report](evals/reports/submission_ready_report.md) | HD-SUBMISSION-READY-001 정량/정성 제출 감사 리포트와 public-safe gate |
+| [ColBERT-style Late Interaction Plan](docs/COLBERT_LATE_INTERACTION_PLAN.md) | HD-COLBERT-001A reranker latency 대안 후보의 hard subset 실행 전 계획과 gate |
+| [ColBERT-style Late Interaction Plan Report](evals/reports/colbert_late_interaction_plan_report.md) | HD-COLBERT-001A 정량/정성 plan-only readiness와 public-safe gate |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

@@ -95,6 +95,7 @@
 | 8.1 | RAPTOR-lite | experiment module/report | overview/place_story input-only 비교 완료 | `실험: RAPTOR-lite input-only 비교 추가` |
 | 8.2 | GraphRAG-lite | experiment module | relationship만 비교 | `feat: add graphrag lite experiment` |
 | 8.3 | final report | docs/notebook | query type별 최종 판단 | `docs: add final ablation report` |
+| 8.4 | ColBERT-style plan | docs/report/test | late interaction hard subset 실행 전 gate 고정 | `문서: ColBERT late interaction 실험 계획 추가` |
 
 ## Phase 9. 제출 패키징
 

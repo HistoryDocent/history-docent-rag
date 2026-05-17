@@ -120,3 +120,16 @@
 - [ ] `pytest -q` 통과
 - [ ] `ruff check .` 통과
 - [ ] `git diff --check` 통과
+
+## ColBERT Plan Gate
+
+- [ ] hard subset query type 고정
+- [ ] baseline candidate 고정
+- [ ] planned candidate count 기록
+- [ ] `Recall@5`, `MRR`, `nDCG@5`, `latency_p95_ms` 기록 계획
+- [ ] CUDA availability 확인
+- [ ] Solar Pro 3 call count 0
+- [ ] locked test execution count 0
+- [ ] retrieval execution count 0
+- [ ] public raw payload leakage 0
+- [ ] ColBERT 성능 개선 claim 금지

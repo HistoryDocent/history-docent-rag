@@ -77,6 +77,7 @@
 | `locked_retrieval_readiness` | `HD-LOCKED-RETRIEVAL-002` | readiness-only | target_resolvability_fail_count=0, no_answer_candidate_route_count=0, retrieval_execution_count=0, resolved_device=cuda | ready_for_locked_execution_approval | readiness-only | `docs/LOCKED_RETRIEVAL_READINESS.md`, `evals/reports/locked_retrieval_readiness_report.md` |
 | `locked_retrieval_execution_approval` | `HD-LOCKED-RETRIEVAL-003` | approval-only | planned_bootstrap_iteration_count=10000, confidence_interval_percent=95, retrieval_execution_count=0, solar_call_count=0 | ready_for_user_execution_approval | approval-only | `docs/LOCKED_RETRIEVAL_EXECUTION_APPROVAL.md`, `evals/reports/locked_retrieval_execution_approval_report.md` |
 | `locked_retrieval_paired_comparison` | `HD-LOCKED-RETRIEVAL-004` | locked test 35, relationship paired 5 | MRR delta=-0.100000, nDCG@5 delta=-0.073814, 95% CI=[-0.300000, 0.000000] | keep_shadow_without_locked_improvement_claim | locked-retrieval-only | `docs/LOCKED_RETRIEVAL_PAIRED_COMPARISON.md`, `evals/reports/locked_retrieval_paired_comparison_report.md` |
+| `colbert_late_interaction_plan` | `HD-COLBERT-001A` | plan-only | retrieval_execution_count=0, locked_test_execution_count=0, solar_call_count=0 | ready_for_dev_hard_subset_approval | plan-only | `docs/COLBERT_LATE_INTERACTION_PLAN.md`, `evals/reports/colbert_late_interaction_plan_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
 | `raptor_lite` | `raptor_lite_parent_summary_v1` | overview/place_story dev 20 | Recall@5 delta=0.000000, nDCG@5 delta=-0.074957 | reject_default | dev-input-only | `evals/reports/raptor_lite_input_only_report.md` |
@@ -103,7 +104,7 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-COLBERT-001` | ColBERT style late interaction hard subset 검토 | reranker latency 대안으로만 검토하고 기본 route 후보로 바로 올리지 않는다. | 예 |
+| 1 | `HD-COLBERT-001B` | ColBERT style late interaction hard subset 실행 승인 | plan-only gate를 통과했지만 실제 retrieval 실행은 별도 승인 후 진행한다. | 예 |
 
 ## Data Mart 설계
 
@@ -154,4 +155,4 @@
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner, locked retrieval execution approval, locked retrieval paired comparison, final ablation report, API response sample, portfolio QA도 통과했다. 다음에는 ColBERT style late interaction hard subset을 검토할 수 있다.
+README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner, locked retrieval execution approval, locked retrieval paired comparison, final ablation report, API response sample, portfolio QA, submission ready audit, ColBERT-style plan-only gate도 통과했다. 다음에는 별도 승인 후 ColBERT style late interaction hard subset 실행 여부를 결정할 수 있다.
