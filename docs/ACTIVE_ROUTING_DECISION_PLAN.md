@@ -154,7 +154,7 @@
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
 | `HD-API-ROUTER-003` | `HD-HYDE-001D` | active routing 적용 여부 판단 계획 문서화 | 계획 문서, report, README/TODO/ledger 갱신, leakage scan 통과 | Low | 문서 변경 revert |
-| `HD-API-ROUTER-004` | `HD-API-ROUTER-003` | active route shadow evaluation runner 구현 | dev 70 route paired metrics, no-answer route 0, leakage 0 | Medium | runner/report revert |
+| `HD-API-ROUTER-004` | `HD-API-ROUTER-003` | active route shadow evaluation runner 구현 완료 | dev 70 route paired metrics, no-answer route 0, leakage 0 | Medium | runner/report revert |
 | `HD-API-ROUTER-005` | `HD-API-ROUTER-004` | API active route flag dry-run contract | default disabled, fallback/guard field, contract test | Medium | feature flag와 response field revert |
 | `HD-LOCKED-RETRIEVAL-001` | `HD-API-ROUTER-004` | locked retrieval 검증 승인 계획 | locked split 사용 조건, stop condition, claim boundary | High | locked 실행 전 문서 revert |
 
@@ -165,6 +165,7 @@
 - active routing 적용 여부 판단 계획을 수립했다.
 - 현재 active route는 적용하지 않는다.
 - `relationship` hybrid route는 shadow evaluation 후보로 제한한다.
+- active route shadow evaluation은 dev 70에서 실행했고, active route는 여전히 적용하지 않았다.
 - HyDE와 place_story guarded boost는 active route 후보에서 제외했다.
 
 금지 표현:

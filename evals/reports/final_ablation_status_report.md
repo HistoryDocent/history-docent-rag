@@ -4,7 +4,7 @@
 
 현재 RAG 기본선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다.
 
-GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획도 통과했다. HyDE는 확대 live 비교에서 기본 route로 채택하지 않고 active routing도 바로 적용하지 않는다.
+GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation도 통과했다. HyDE는 확대 live 비교에서 기본 route로 채택하지 않고 active routing도 바로 적용하지 않는다.
 
 이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked test 전까지 모든 수치는 dev-only 또는 live-dev-subset으로 제한한다.
 
@@ -15,11 +15,11 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | 항목 | 값 |
 | --- | --- |
 | report_version | `final-ablation-status-report/v1` |
-| source_report_count | 20 |
-| decision_row_count | 31 |
+| source_report_count | 21 |
+| decision_row_count | 32 |
 | adopted_default_count | 4 |
 | rejected_default_count | 12 |
-| route_or_router_candidate_count | 7 |
+| route_or_router_candidate_count | 8 |
 | quality_ceiling_candidate_count | 2 |
 | held_larger_eval_candidate_count | 0 |
 | raw_text_public_count | 0 |
@@ -40,7 +40,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | classifier/router API | `chat-classifier-router-dry-run-v1` | dry-run only, active route unchanged |
 | relationship route guard | `relationship-route-guard-v1` | implemented guard, active route unchanged |
 | guarded route API field | `guarded_route_candidate` | dry-run only, active route unchanged |
-| active routing | none | decision plan complete, shadow evaluation next |
+| active routing | none | shadow evaluation complete, API flag dry-run next |
 | GraphRAG-lite | none | rejected as default |
 | RAPTOR-lite | none | rejected as default |
 
@@ -74,6 +74,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | hyde_larger_dev_readiness | `HD-HYDE-001C` | expected_hyde_generation_live_call_count | 30 | ready_for_hyde_larger_live_approval |
 | hyde_larger_live_paired_retrieval | `HD-HYDE-001D` | MRR delta | -0.035000 | reject_hyde_for_now |
 | active_routing_decision | `HD-API-ROUTER-003` | active_route_applied_count | 0 | shadow_eval_next |
+| active_route_shadow_evaluation | `HD-API-ROUTER-004` | MRR delta | 0.013888 | ready_for_API_flag_dry_run |
 
 ## Qualitative Assessment
 
@@ -97,6 +98,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - `hyde_larger_readiness`: dev 40개로 확대할 범위와 예상 Solar Pro 3 호출 30회를 고정했고 no-answer 10개는 차단했다.
 - `hyde_larger_live`: dev 40개에서 Recall@5 delta는 0.033333이지만 MRR delta=-0.035000, nDCG@5 delta=-0.018384, latency_p95_ms delta=1855.705900으로 악화되어 기본 route로 채택하지 않는다.
 - `active_routing_decision`: active route는 바로 적용하지 않고 `relationship_hybrid_weighted_e5_v1`만 shadow evaluation 후보로 둔다.
+- `active_route_shadow_evaluation`: dev 70 paired shadow에서 relationship route만 후보로 보내고 false hybrid와 no-answer candidate route를 0으로 유지했다.
 
 ## Claim Boundary
 
@@ -116,19 +118,20 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | HyDE live-dev-subset에서 Recall@5 delta가 양수였다 | yes | 5개 subset, Solar Pro 3 호출 4회, MRR/latency trade-off 동시 표기 |
 | HyDE larger dev live 비교를 실행했다 | yes | dev 40개, Solar Pro 3 호출 30회, no-answer 10개 차단 |
 | HyDE가 최종 retrieval 성능을 개선했다 | no | MRR/nDCG/latency 악화로 기본 route 기각 |
+| relationship active route를 바로 켜도 된다 | no | shadow evaluation 통과 후에도 API flag dry-run contract가 먼저 필요 |
 | production 성능 검증 완료 | no | 배포/운영 검증 없음 |
 
 ## Next Gate
 
-다음 gate는 `HD-API-ROUTER-004 active route shadow evaluation runner`다.
+다음 gate는 `HD-API-ROUTER-005 API active route flag dry-run contract`다.
 
 이유:
 
-- classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard, guarded route dry-run 노출, 포트폴리오 실패 분석 10개, active routing 적용 판단 계획은 통과했지만 active routing은 아직 이르다.
-- route-risk 오분류 2건은 guard 평가에서 0건으로 줄었지만 dev-only 결과다.
-- guarded route 후보도 API dry-run에 노출했으므로 active route 적용 전 관찰 경로는 확보됐다.
+- classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard, guarded route dry-run 노출, 포트폴리오 실패 분석 10개, active routing 적용 판단 계획, active route shadow evaluation은 통과했지만 active route default enable은 아직 이르다.
+- route-risk 오분류 2건은 guard 평가에서 0건으로 줄었고, shadow evaluation에서도 false_hybrid_route_count=0으로 유지됐다.
+- guarded route 후보와 shadow evaluation 결과가 있으므로 다음은 default disabled flag로 실제 API 응답 경계를 고정하는 단계다.
 - 전체 기본 retrieval 후보와 query type별 강한 후보가 다르다.
-- relationship은 hybrid weighted 후보가 강하고, place_story는 guarded boost 후보가 존재한다.
+- relationship은 hybrid weighted 후보가 강하지만 active 적용 전 API flag, fallback, telemetry contract가 필요하다.
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
 - RAPTOR-lite도 reject됐기 때문에 overview/place_story 개선은 classifier와 generation prompt 경계에서 다시 봐야 한다.
 - HyDE larger live 비교에서 기본 route 채택이 기각됐으므로 HyDE를 다음 기본 후보로 끌고 가지 않는다.
@@ -144,4 +147,4 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - locked test는 아직 최종 성능 주장에 쓰지 않았다.
 - Solar Pro 3 live 결과는 호출 수가 제한되어 통계적으로 강한 결론이 아니다.
 - HyDE는 40개 live 비교까지 실행했지만 MRR/nDCG/latency 악화 때문에 기본 route 채택으로 주장하면 안 된다.
-- classifier/router와 guard는 구현됐고 API에서 관찰 가능하지만 active route 적용은 아직 금지해야 한다.
+- classifier/router, guard, shadow evaluation은 구현됐고 CUDA dev run도 통과했지만 active route 적용은 아직 금지해야 한다.

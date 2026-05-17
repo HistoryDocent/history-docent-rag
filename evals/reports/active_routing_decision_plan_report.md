@@ -83,7 +83,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 ## 다음 Action
 
-다음 실제 구현 후보는 `HD-API-ROUTER-004 active route shadow evaluation runner`다.
+이 계획의 후속 작업인 `HD-API-ROUTER-004 active route shadow evaluation runner`는 완료됐다. 다음 실제 구현 후보는 `HD-API-ROUTER-005 API active route flag dry-run contract`다.
 
 필수 acceptance:
 
