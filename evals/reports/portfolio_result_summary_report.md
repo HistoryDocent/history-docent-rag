@@ -23,9 +23,9 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| summarized_stage_count | 23 |
+| summarized_stage_count | 24 |
 | adopted_or_implemented_count | 12 |
-| rejected_default_count | 6 |
+| rejected_default_count | 7 |
 | held_candidate_count | 3 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
@@ -59,6 +59,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 | HyDE readiness | `HD-HYDE-001A` | dev-readiness-only | expected_hyde_generation_live_call_count | 4 | ready for live approval |
 | HyDE live comparison | `HD-HYDE-001B` | live-dev-subset 5 | Recall@5 delta | 0.250000 | held for larger eval |
 | HyDE larger readiness | `HD-HYDE-001C` | dev-readiness-only 40 | expected_hyde_generation_live_call_count | 30 | ready for larger live approval |
+| HyDE larger live comparison | `HD-HYDE-001D` | live-dev-subset 40 | MRR delta | -0.035000 | reject default |
 
 ## 정성 리포트
 
@@ -69,13 +70,13 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 - `router_message`: query type classifier baseline, router skeleton, API dry-run, relationship guard, guarded route candidate는 구현됐지만 production routing과 locked 성능 개선은 아직 없다.
 - `security_boundary`: public README와 docs에는 저작권 원문, private eval payload, secret을 넣지 않는다.
 - `claim_boundary`: production 성능, locked 개선, 통계적 유의성 표현은 금지한다.
-- `external_audit`: 실패 원인표와 targeted audit으로 청킹 재실험 범위를 닫았고 HyDE larger readiness도 완료했다. 다음 live 비교는 예상 Solar Pro 3 호출 30회와 no-answer guard 10건을 기준으로 별도 승인 후 실행해야 한다.
+- `external_audit`: 실패 원인표와 targeted audit으로 청킹 재실험 범위를 닫았고 HyDE larger live 비교도 완료했다. Recall@5만 보고 채택하지 않고 MRR, nDCG@5, latency 악화를 기준으로 기본 route를 기각한 판단이 타당하다.
 
 ## Public Output Gate
 
 | metric | value |
 | --- | ---: |
-| result_row_count | 23 |
+| result_row_count | 24 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |

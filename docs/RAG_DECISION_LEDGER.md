@@ -4,7 +4,7 @@
 
 청킹 비교 테스트는 지금 다시 열지 않는다.
 
-현재 기준선은 `C0 current parent-child`로 고정한다. 실패 사례 10개 중 `place_story` 1건은 targeted chunk audit으로 확인했고, target child/parent가 chunk artifact에 존재해 전역 재청킹 근거가 아니라고 판단했다. HyDE subset readiness, live paired retrieval comparison, larger dev subset readiness도 완료됐다. HyDE는 40개 확대 live 비교 전 단계까지 준비됐지만 아직 최종 채택 근거는 아니다.
+현재 기준선은 `C0 current parent-child`로 고정한다. 실패 사례 10개 중 `place_story` 1건은 targeted chunk audit으로 확인했고, target child/parent가 chunk artifact에 존재해 전역 재청킹 근거가 아니라고 판단했다. HyDE subset readiness, live paired retrieval comparison, larger dev subset readiness, larger live paired retrieval comparison도 완료됐다. HyDE는 40개 확대 live 비교에서 Recall@5는 소폭 상승했지만 MRR, nDCG@5, latency가 악화되어 기본 retrieval route로 채택하지 않는다.
 
 이 문서는 public-safe 의사결정 장부다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -63,12 +63,13 @@
 | `chat_classifier_router_dry_run` | `chat-classifier-router-dry-run-v1` | API contract + fixture retrieval | classifier_dry_run_count=6, classifier_active_route_applied_count=0 | implemented_dry_run | contract-only | `evals/reports/chat_api_contract_report.md`, `evals/reports/chat_retrieval_integration_report.md` |
 | `relationship_route_guard` | `relationship-route-guard-v1` | dev 70 | false_hybrid_route_count 2 -> 0, route_policy_accuracy 0.971429 -> 1.000000 | implemented_guard | dev-only | `evals/reports/relationship_route_guard_eval_report.md` |
 | `chat_guarded_route_dry_run` | `guarded_route_candidate` | API contract + fixture retrieval | guarded_route_candidate_count=6, guard_applied_count=1, active_route_applied_count=0 | implemented_dry_run | contract-only | `evals/reports/chat_api_contract_report.md`, `evals/reports/chat_retrieval_integration_report.md` |
-| `portfolio_summary` | `HD-PORTFOLIO-001` | public README/docs summary | summarized_stage_count=23, leakage_count=0 | implemented | public-safe-summary | `evals/reports/portfolio_result_summary_report.md` |
+| `portfolio_summary` | `HD-PORTFOLIO-001` | public README/docs summary | summarized_stage_count=24, leakage_count=0 | implemented | public-safe-summary | `evals/reports/portfolio_result_summary_report.md` |
 | `portfolio_failure_analysis` | `HD-PORTFOLIO-002` | public-safe failure cases | case_count=10, chunk_boundary_audit_candidate_count=1, reopen_global_chunking_count=0 | implemented | public-safe-summary | `evals/reports/portfolio_failure_analysis_report.md` |
 | `place_story_targeted_chunk_audit` | `HD-CHUNK-AUDIT-001` | dev-only single failure case | target_child_exists_rate=1.000000, chunk_boundary_defect_count=0, reopen_global_chunking_count=0 | do_not_reopen_global_chunking | dev-only | `evals/reports/place_story_targeted_chunk_audit_report.md` |
 | `hyde_subset_readiness` | `HD-HYDE-001A` | dev-readiness-only, 5 queries | expected_hyde_generation_live_call_count=4, no_answer_guard_query_count=1, solar_call_count=0 | ready_for_hyde_live_approval | dev-readiness-only | `evals/reports/hyde_subset_readiness_report.md` |
 | `hyde_live_paired_retrieval` | `HD-HYDE-001B` | live-dev-subset, 5 queries | Recall@5 delta=0.250000, MRR delta=-0.062500, nDCG@5 delta=0.015402, solar_api_call_count=4 | keep_hyde_candidate_for_larger_eval | live-dev-subset | `evals/reports/hyde_live_paired_retrieval_comparison_report.md` |
 | `hyde_larger_dev_readiness` | `HD-HYDE-001C` | dev-readiness-only, 40 queries | expected_hyde_generation_live_call_count=30, no_answer_guard_query_count=10, solar_call_count=0 | ready_for_hyde_larger_live_approval | larger-dev-readiness-only | `evals/reports/hyde_larger_dev_subset_readiness_report.md` |
+| `hyde_larger_live_paired_retrieval` | `HD-HYDE-001D` | live-dev-subset, 40 queries | Recall@5 delta=0.033333, MRR delta=-0.035000, nDCG@5 delta=-0.018384, solar_api_call_count=30 | reject_hyde_for_now | larger-live-dev-only | `evals/reports/hyde_larger_live_paired_retrieval_comparison_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
 | `raptor_lite` | `raptor_lite_parent_summary_v1` | overview/place_story dev 20 | Recall@5 delta=0.000000, nDCG@5 delta=-0.074957 | reject_default | dev-input-only | `evals/reports/raptor_lite_input_only_report.md` |
@@ -95,8 +96,8 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-HYDE-001D` | HyDE larger dev live paired retrieval comparison | 40개 readiness와 call budget은 고정됐고 실제 Solar Pro 3 호출은 별도 승인이 필요하다. | 예 |
-| 2 | `HD-API-ROUTER-003` | active routing 적용 여부 판단 계획 | guarded dry-run은 완료됐지만 active route 적용은 아직 이르다. | 예 |
+| 1 | `HD-API-ROUTER-003` | active routing 적용 여부 판단 계획 | HyDE 기본 route는 larger live에서 기각됐고, 남은 route 후보는 classifier/router/guard 경계에서 판단해야 한다. | 예 |
+| 2 | `HD-LOCKED-RETRIEVAL-001` | locked test 최종 retrieval candidate 검증 계획 | dev-only 후보를 최종 claim으로 확장하기 전에 locked split 사용 기준이 필요하다. | 예 |
 
 ## Data Mart 설계
 
@@ -136,11 +137,11 @@
 - GraphRAG-lite도 relationship 질문에 한정해 검증했고 개선이 없어 기본값에서 제외했다.
 - RAPTOR-lite도 overview/place_story 질문에 한정해 검증했고 개선이 없어 기본값에서 제외했다.
 - 실패 사례 10개를 원문 없이 분류했고 `place_story` 1건 targeted audit으로 전역 청킹 재실험을 열지 않는 근거를 확인했다.
-- HyDE live 비교 전 subset, call budget, no-answer guard를 public-safe readiness gate로 고정했다.
+- HyDE live 비교 전 subset, call budget, no-answer guard를 public-safe readiness gate로 고정했고, 40개 확대 live 비교에서는 기본 route 채택을 기각했다.
 - public repo에는 저작권 원문과 private eval payload를 올리지 않고 집계 metric만 공개했다.
 
 ## 최종 감사 의견
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness도 통과했다. 다음에는 별도 승인 후 HyDE larger dev live paired comparison을 실행할지 결정한다.
+README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison도 통과했다. 다음에는 HyDE가 아니라 active routing 적용 여부를 별도 계획으로 판단한다.

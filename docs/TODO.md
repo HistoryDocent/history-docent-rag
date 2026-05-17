@@ -124,7 +124,7 @@
 - [x] HyDE subset readiness dry-run
 - [x] HyDE live paired retrieval comparison
 - [x] HyDE larger dev subset readiness
-- [ ] HyDE larger dev live paired retrieval comparison
+- [x] HyDE larger dev live paired retrieval comparison
 - [x] `place_story` targeted chunk audit
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성

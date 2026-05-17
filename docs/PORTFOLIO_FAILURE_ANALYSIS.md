@@ -77,7 +77,8 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
-| 1 | `HD-HYDE-001D` | HyDE larger dev live paired retrieval comparison | 40개 readiness와 call budget은 고정됐고 실제 live 비교만 남았다. |
+| 완료 | `HD-HYDE-001D` | HyDE larger dev live paired retrieval comparison | 40개 live 비교에서 HyDE 기본 route는 기각됐다. |
+| 1 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | 남은 리스크는 HyDE보다 router/guard 적용 경계에 있다. |
 | 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
 
 ## Claim Boundary
@@ -87,7 +88,7 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 - 실패 10건을 public-safe 방식으로 분류했다.
 - 현재 증거로는 전체 청킹 재실험을 열지 않는 것이 적절하다.
 - `place_story` 1건 targeted audit에서 target child/parent chunk 존재를 확인했다.
-- HyDE는 5개 live-dev-subset에서 larger eval 후보로 남았지만 아직 최종 개선을 입증하지 않았다.
+- HyDE는 5개 live-dev-subset에서 larger eval 후보로 남았지만 40개 확대 live 비교에서 기본 route로 기각됐다.
 
 금지 표현:
 

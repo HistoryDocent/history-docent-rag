@@ -4,7 +4,7 @@
 
 이 프로젝트의 포트폴리오 메시지는 “최신 RAG 기법을 많이 붙였다”가 아니다.
 
-핵심은 한국사 도서 parser 결과를 citation 가능한 RAG corpus로 정리하고, 청킹, retrieval, reranker, query rewrite, evidence packing, generation, GraphRAG-lite, RAPTOR-lite, query type router, API dry-run, route guard, guarded route API 관찰 필드, 실패 사례 10개, targeted chunk audit, HyDE readiness, HyDE live 비교, HyDE larger readiness를 같은 평가 원칙으로 비교해 채택, 보류, 기각을 분리했다는 점이다.
+핵심은 한국사 도서 parser 결과를 citation 가능한 RAG corpus로 정리하고, 청킹, retrieval, reranker, query rewrite, evidence packing, generation, GraphRAG-lite, RAPTOR-lite, query type router, API dry-run, route guard, guarded route API 관찰 필드, 실패 사례 10개, targeted chunk audit, HyDE readiness, HyDE live 비교, HyDE larger readiness, HyDE larger live 비교를 같은 평가 원칙으로 비교해 채택, 보류, 기각을 분리했다는 점이다.
 
 이 문서는 public-safe 요약이다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -48,6 +48,7 @@
 | HyDE readiness | `HD-HYDE-001A` | dev-readiness-only | expected_hyde_generation_live_call_count | 4 | ready for live approval |
 | HyDE live comparison | `HD-HYDE-001B` | live-dev-subset 5 | Recall@5 delta | 0.250000 | larger eval 후보 유지 |
 | HyDE larger readiness | `HD-HYDE-001C` | dev-readiness-only 40 | expected_hyde_generation_live_call_count | 30 | ready for larger live approval |
+| HyDE larger live comparison | `HD-HYDE-001D` | live-dev-subset 40 | MRR delta | -0.035000 | reject default |
 
 ## 채택, 보류, 기각
 
@@ -65,6 +66,7 @@
 | 구현 | `HD-HYDE-001A` | HyDE live 비교 전 subset, call budget, no-answer guard를 고정 |
 | 구현 | `HD-HYDE-001C` | dev 40개 확대 live 비교 전 query type 범위, call budget, no-answer guard를 고정 |
 | 보류 | `HD-HYDE-001B` | live-dev-subset에서 Recall@5는 올랐지만 MRR 하락과 latency 증가가 있어 larger eval 후보로만 유지 |
+| 기각 | `HD-HYDE-001D` | 40개 확대 live 비교에서 Recall@5는 소폭 상승했지만 MRR, nDCG@5, latency가 악화되어 기본 route로 채택하지 않음 |
 | 보류 | BGE-M3 dense | Recall@5는 높지만 latency가 커서 기본값 부적합 |
 | 보류 | BGE reranker | 품질 상한은 높지만 CPU p95 latency가 API 기본값으로 부적합 |
 | 기각 | GraphRAG-lite relationship 기본값 | hybrid reference 대비 nDCG@5 개선 없음 |
@@ -75,7 +77,7 @@
 ## 면접에서 말할 핵심 문장
 
 ```text
-도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router, API dry-run, route guard, guarded route API 관찰 필드, 실패 사례 10개, targeted chunk audit, HyDE readiness와 HyDE live 비교까지 단계별로 검증했습니다. 작은 subset의 좋은 수치를 바로 채택하지 않고, HyDE larger readiness로 확대 검증 조건을 고정한 과정을 포트폴리오 핵심으로 정리했습니다.
+도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router, API dry-run, route guard, guarded route API 관찰 필드, 실패 사례 10개, targeted chunk audit, HyDE readiness와 HyDE live 비교까지 단계별로 검증했습니다. 작은 subset의 좋은 수치를 바로 채택하지 않고, HyDE를 40개 dev live 비교로 확장한 뒤 MRR과 nDCG 하락 때문에 기본 route에서 기각한 과정을 포트폴리오 핵심으로 정리했습니다.
 ```
 
 ## Claim Boundary
@@ -99,6 +101,7 @@
 - HyDE live-dev-subset 5개에서 Solar Pro 3 호출 4회로 paired retrieval 비교를 실행했고, Recall@5 delta는 0.250000이다.
 - HyDE live 비교에서 no-answer 1개는 generation과 retrieval을 모두 차단했다.
 - HyDE larger dev readiness에서 40개 query와 예상 Solar Pro 3 호출 30회를 고정했고, no-answer 10개는 차단했다.
+- HyDE larger live 비교에서 Solar Pro 3 호출 30회로 paired retrieval 비교를 실행했고, Recall@5 delta는 0.033333이지만 MRR delta는 -0.035000, nDCG@5 delta는 -0.018384라 기본 route로 채택하지 않았다.
 
 금지 표현:
 
@@ -117,11 +120,11 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-HYDE-001D` | HyDE larger dev live paired retrieval comparison |
-| 2 | `HD-API-ROUTER-003` | active routing 적용 여부 판단 계획 |
+| 1 | `HD-API-ROUTER-003` | active routing 적용 여부 판단 계획 |
+| 2 | `HD-LOCKED-RETRIEVAL-001` | locked test 최종 retrieval candidate 검증 계획 |
 
 ## 외부 감사 결론
 
 현재 포트폴리오 메시지는 타당하다.
 
-다만 “성능 개선”보다 “평가 기반 의사결정”을 강조해야 한다. HyDE도 live-dev-subset 후보 유지이지 최종 채택이 아니므로, 최종 제출 문구에서는 claim boundary를 같이 써야 한다.
+다만 “성능 개선”보다 “평가 기반 의사결정”을 강조해야 한다. HyDE도 40개 확대 live 비교에서 기본값으로 기각했으므로, 최종 제출 문구에서는 좋은 수치보다 채택하지 않은 이유를 같이 써야 한다.
