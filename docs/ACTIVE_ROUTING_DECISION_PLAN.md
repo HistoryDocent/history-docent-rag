@@ -159,6 +159,7 @@
 | `HD-LOCKED-RETRIEVAL-001` | `HD-API-ROUTER-005` | locked retrieval 검증 승인 계획 완료 | locked split 사용 조건, stop condition, claim boundary | High | locked 실행 전 문서 revert |
 | `HD-LOCKED-RETRIEVAL-002` | `HD-LOCKED-RETRIEVAL-001` | locked retrieval readiness dry-run runner 완료 | target resolvability, expected route/candidate count, locked metric execution 0 | High | runner/report revert |
 | `HD-LOCKED-RETRIEVAL-003` | `HD-LOCKED-RETRIEVAL-002` | locked retrieval paired comparison 실행 여부 승인 | stop condition 재확인, 실행 승인서 | High | locked 실행 전 문서 revert |
+| `HD-LOCKED-RETRIEVAL-004` | `HD-LOCKED-RETRIEVAL-003` | locked retrieval paired comparison runner 실행 | paired metric, bootstrap CI, public-safe summary | High | private result 폐기, public summary revert |
 
 ## Claim Boundary
 
@@ -171,6 +172,7 @@
 - `/api/v1/chat` active route flag dry-run contract를 추가했고, `active_route_applied_count=0`을 유지했다.
 - locked retrieval 검증 승인 계획을 추가했고, locked test는 아직 실행하지 않았다.
 - locked retrieval readiness를 추가했고, retrieval execution과 Solar Pro 3 호출은 0회로 유지했다.
+- locked retrieval execution approval을 추가했고, bootstrap과 confidence interval 기준을 고정했다.
 - HyDE와 place_story guarded boost는 active route 후보에서 제외했다.
 
 금지 표현:

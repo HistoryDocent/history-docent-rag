@@ -69,7 +69,7 @@
 
 | priority | work_id | 작업 | 승인 필요 |
 | ---: | --- | --- | --- |
-| 1 | `HD-LOCKED-RETRIEVAL-003` | locked retrieval paired comparison 실행 여부 승인 | 예 |
+| 1 | `HD-LOCKED-RETRIEVAL-004` | locked retrieval paired comparison runner 실행 | 예 |
 | 2 | `HD-COLBERT-001` | late interaction hard subset 검토 | 예 |
 
 ## Claim Boundary

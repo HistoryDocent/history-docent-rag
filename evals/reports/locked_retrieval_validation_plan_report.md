@@ -80,4 +80,6 @@
 - public-safe output gate
 - locked metric execution 0
 
-다음 gate는 `HD-LOCKED-RETRIEVAL-003 locked retrieval paired comparison 실행 여부 승인`이다.
+`HD-LOCKED-RETRIEVAL-003 locked retrieval paired comparison 실행 여부 승인`도 완료됐다.
+
+다음 gate는 `HD-LOCKED-RETRIEVAL-004 locked retrieval paired comparison runner 실행`이다. 실제 실행은 별도 사용자 승인 후에만 진행한다.

@@ -103,4 +103,4 @@ readiness_failures=[]
 
 ## 해석
 
-readiness gate는 통과했다. 다음 단계는 별도 승인 후 locked retrieval paired comparison 실행 여부를 결정하는 것이다.
+readiness gate는 통과했다. `HD-LOCKED-RETRIEVAL-003` 실행 승인 조건도 문서화했다. 다음 단계는 별도 승인 후 locked retrieval paired comparison runner를 실행하는 것이다.

@@ -150,6 +150,7 @@ public summary 허용 필드:
 | `HD-LOCKED-RETRIEVAL-001` | `HD-API-ROUTER-005` | locked retrieval 검증 승인 계획 문서화 | plan/report/test 존재, locked 실행 0, Solar call 0, leakage 0 | High | 문서/리포트/test 변경 revert |
 | `HD-LOCKED-RETRIEVAL-002` | `HD-LOCKED-RETRIEVAL-001` | locked retrieval readiness dry-run runner | private locked target resolvability, expected route/candidate count, CUDA device 확인, execution 0 | High | runner/report revert |
 | `HD-LOCKED-RETRIEVAL-003` | `HD-LOCKED-RETRIEVAL-002` | locked retrieval paired comparison 실행 여부 승인 | live/locked 실행 승인서, stop condition 재확인 | High | 실행 전 문서 revert |
+| `HD-LOCKED-RETRIEVAL-004` | `HD-LOCKED-RETRIEVAL-003` | locked retrieval paired comparison runner 실행 | 별도 승인 후 paired metric, bootstrap, public-safe summary | High | private result 폐기, public summary revert |
 
 ## Claim Boundary
 
@@ -159,6 +160,7 @@ public summary 허용 필드:
 - locked split은 아직 실행하지 않았다.
 - locked split 결과를 튜닝에 사용하지 않도록 stop condition을 고정했다.
 - locked retrieval readiness에서 target resolvability와 route/candidate count를 실행 없이 검증했다.
+- locked retrieval paired comparison 실행 승인 조건을 문서화했다.
 - future locked run은 CUDA 사용 가능 시 CUDA로 실행한다.
 
 금지 표현:
