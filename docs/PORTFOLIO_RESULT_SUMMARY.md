@@ -144,9 +144,8 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-FINAL-ABLATION-001` | final ablation report 작성 |
-| 2 | `HD-API-SAMPLE-001` | API response sample 작성 |
-| 3 | `HD-COLBERT-001` | late interaction hard subset 검토 |
+| 1 | `HD-API-SAMPLE-001` | API response sample 작성 |
+| 2 | `HD-COLBERT-001` | late interaction hard subset 검토 |
 
 ## 외부 감사 결론
 

@@ -138,13 +138,13 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 
 ## Next Gate
 
-다음 gate는 `HD-FINAL-ABLATION-001 final ablation report 작성`이다.
+`HD-FINAL-ABLATION-001 final ablation report 작성`은 완료됐다. 다음 gate는 `HD-API-SAMPLE-001 API response sample 작성`이다.
 
 이유:
 
 - classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard, guarded route dry-run 노출, 포트폴리오 실패 분석 10개, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness, execution approval, paired comparison은 통과했지만 active route default enable은 아직 이르다.
 - route-risk 오분류 2건은 guard 평가에서 0건으로 줄었고, shadow evaluation에서도 false_hybrid_route_count=0으로 유지됐다.
-- locked paired comparison에서 relationship hybrid 개선 주장이 통과하지 못했으므로 다음은 최종 ablation 결과를 정리하는 단계다.
+- locked paired comparison에서 relationship hybrid 개선 주장이 통과하지 못했고 최종 ablation 결과 정리도 완료했으므로 다음은 public-safe API response sample을 정리하는 단계다.
 - 전체 기본 retrieval 후보와 query type별 강한 후보가 다르다.
 - relationship은 hybrid weighted 후보가 강하지만 active 적용 전 API flag, fallback, telemetry contract가 필요하다.
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
