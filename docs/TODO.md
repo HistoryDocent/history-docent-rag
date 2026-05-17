@@ -141,5 +141,5 @@
 - [x] README 결과 표 실제 수치로 갱신
 - [x] failure analysis 10개 작성
 - [x] API response sample 작성
-- [ ] 이력서 한 줄 설명 작성
-- [ ] 면접 예상 질문 답변 작성
+- [x] 이력서 한 줄 설명 작성
+- [x] 면접 예상 질문 답변 작성

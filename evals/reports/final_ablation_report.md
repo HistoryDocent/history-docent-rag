@@ -114,4 +114,4 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 - retrieval metric은 generation 품질 개선을 자동으로 의미하지 않는다.
 - active route 기본 활성화는 별도 gate가 필요하다.
 
-`HD-API-SAMPLE-001`은 완료됐다. 다음 gate는 `HD-PORTFOLIO-QA-001`이다.
+`HD-API-SAMPLE-001`과 `HD-PORTFOLIO-QA-001`은 완료됐다. 다음 gate는 `HD-COLBERT-001`이다.

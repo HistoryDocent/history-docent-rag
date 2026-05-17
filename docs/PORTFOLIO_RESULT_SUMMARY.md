@@ -144,8 +144,7 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-PORTFOLIO-QA-001` | 이력서/면접용 문구 정리 |
-| 2 | `HD-COLBERT-001` | late interaction hard subset 검토 |
+| 1 | `HD-COLBERT-001` | late interaction hard subset 검토 |
 
 ## 외부 감사 결론
 
