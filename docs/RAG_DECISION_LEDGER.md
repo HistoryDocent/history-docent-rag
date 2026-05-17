@@ -4,7 +4,7 @@
 
 청킹 비교 테스트는 지금 다시 열지 않는다.
 
-현재 기준선은 `C0 current parent-child`로 고정한다. 실패 사례 10개 중 `place_story` 1건은 targeted chunk audit으로 확인했고, target child/parent가 chunk artifact에 존재해 전역 재청킹 근거가 아니라고 판단했다. HyDE subset readiness, live paired retrieval comparison, larger dev subset readiness, larger live paired retrieval comparison도 완료됐다. HyDE는 40개 확대 live 비교에서 Recall@5는 소폭 상승했지만 MRR, nDCG@5, latency가 악화되어 기본 retrieval route로 채택하지 않는다. active routing은 바로 적용하지 않고, `relationship_hybrid_weighted_e5_v1`만 shadow evaluation과 API flag dry-run 후보로 제한한다. locked retrieval은 아직 metric을 실행하지 않았고, validation plan, readiness dry-run, execution approval만 통과했다.
+현재 기준선은 `C0 current parent-child`로 고정한다. 실패 사례 10개 중 `place_story` 1건은 targeted chunk audit으로 확인했고, target child/parent가 chunk artifact에 존재해 전역 재청킹 근거가 아니라고 판단했다. HyDE subset readiness, live paired retrieval comparison, larger dev subset readiness, larger live paired retrieval comparison도 완료됐다. HyDE는 40개 확대 live 비교에서 Recall@5는 소폭 상승했지만 MRR, nDCG@5, latency가 악화되어 기본 retrieval route로 채택하지 않는다. active routing은 바로 적용하지 않는다. `relationship_hybrid_weighted_e5_v1`는 dev shadow에서는 좋아 보였지만 locked paired comparison에서 MRR delta=-0.100000, nDCG@5 delta=-0.073814라 개선 주장을 보류한다.
 
 이 문서는 public-safe 의사결정 장부다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -15,7 +15,7 @@
 | RAG 아키텍처 | 청킹은 C0로 고정하고 retrieval, packing, generation, router 판단을 이어간다. |
 | Retrieval | 전체 기본 후보는 `dense_multilingual_e5_small_voice_rewrite`가 가장 설득력 있다. |
 | Generation | Solar Pro 3 v2 repaired는 citation recall 저하 때문에 기본값으로 채택하지 않는다. |
-| Evaluation | 모든 개선 주장은 dev-only 또는 live-dev-subset 경계를 붙인다. locked test 전 최종 개선 표현은 금지한다. |
+| Evaluation | locked test를 실행했지만 relationship hybrid 개선 주장은 통과하지 못했다. 최종 개선 표현은 여전히 금지한다. |
 | Data warehouse | fact grain은 `decision_id + stage_id + candidate_id + metric_family + claim_boundary`로 둔다. |
 | Security | public report에는 식별자와 집계 metric만 남긴다. 원문 계열 필드는 금지한다. |
 | Portfolio | “많은 기법을 붙였다”보다 “실험으로 기각할 것은 기각했다”를 핵심 메시지로 둔다. |
@@ -28,7 +28,7 @@
 | source normalization | 유지 | parser quality와 normalized block gate 통과 |
 | chunking | `C0 current parent-child` 유지 | C1-C6가 selection gate와 개선 조건을 동시에 충족하지 못함 |
 | base retrieval | `dense_multilingual_e5_small_voice_rewrite` 후보 유지 | dev 70개 기준 Recall@5, MRR, nDCG@5가 non-rerank 후보 중 가장 강함 |
-| relationship retrieval option | `hybrid_weighted_e5_small_alpha_0_5`는 route 후보 | active route shadow evaluation dev 70에서 relationship Recall@5 delta=0.200000, false_hybrid_route_count=0 |
+| relationship retrieval option | `hybrid_weighted_e5_small_alpha_0_5`는 shadow 후보로 보류 | dev shadow에서는 좋았지만 locked relationship 5개에서 MRR/nDCG가 하락 |
 | reranker | 기본값 보류 | 품질은 최고지만 CPU p95 latency가 실서비스 기본값으로 부적합 |
 | evidence packing | `P0_rank_order` 유지 | P3 개선폭이 작고 generation 품질 개선으로 아직 연결되지 않음 |
 | generation policy | v1 baseline 유지 | repaired v2는 precision 개선에도 citation recall 하락 |
@@ -76,6 +76,7 @@
 | `locked_retrieval_validation_plan` | `HD-LOCKED-RETRIEVAL-001` | plan-only | planned_locked_query_count=35, locked_test_execution_count=0, solar_call_count=0 | ready_for_locked_retrieval_readiness_dry_run | plan-only | `docs/LOCKED_RETRIEVAL_VALIDATION_PLAN.md`, `evals/reports/locked_retrieval_validation_plan_report.md` |
 | `locked_retrieval_readiness` | `HD-LOCKED-RETRIEVAL-002` | readiness-only | target_resolvability_fail_count=0, no_answer_candidate_route_count=0, retrieval_execution_count=0, resolved_device=cuda | ready_for_locked_execution_approval | readiness-only | `docs/LOCKED_RETRIEVAL_READINESS.md`, `evals/reports/locked_retrieval_readiness_report.md` |
 | `locked_retrieval_execution_approval` | `HD-LOCKED-RETRIEVAL-003` | approval-only | planned_bootstrap_iteration_count=10000, confidence_interval_percent=95, retrieval_execution_count=0, solar_call_count=0 | ready_for_user_execution_approval | approval-only | `docs/LOCKED_RETRIEVAL_EXECUTION_APPROVAL.md`, `evals/reports/locked_retrieval_execution_approval_report.md` |
+| `locked_retrieval_paired_comparison` | `HD-LOCKED-RETRIEVAL-004` | locked test 35, relationship paired 5 | MRR delta=-0.100000, nDCG@5 delta=-0.073814, 95% CI=[-0.300000, 0.000000] | keep_shadow_without_locked_improvement_claim | locked-retrieval-only | `docs/LOCKED_RETRIEVAL_PAIRED_COMPARISON.md`, `evals/reports/locked_retrieval_paired_comparison_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
 | `raptor_lite` | `raptor_lite_parent_summary_v1` | overview/place_story dev 20 | Recall@5 delta=0.000000, nDCG@5 delta=-0.074957 | reject_default | dev-input-only | `evals/reports/raptor_lite_input_only_report.md` |
@@ -102,8 +103,9 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-LOCKED-RETRIEVAL-004` | locked retrieval paired comparison runner 실행 | 승인 조건은 문서화됐지만 실제 locked metric 실행은 별도 승인 후에만 진행한다. | 예 |
-| 2 | `HD-COLBERT-001` | ColBERT style late interaction hard subset 검토 | reranker latency 대안으로만 검토하고 기본 route 후보로 바로 올리지 않는다. | 예 |
+| 1 | `HD-FINAL-ABLATION-001` | final ablation report 작성 | locked 결과까지 반영한 최종 제출용 판단을 정리한다. | 예 |
+| 2 | `HD-API-SAMPLE-001` | API response sample 작성 | 포트폴리오에서 실제 백엔드 계약을 보여준다. | 예 |
+| 3 | `HD-COLBERT-001` | ColBERT style late interaction hard subset 검토 | reranker latency 대안으로만 검토하고 기본 route 후보로 바로 올리지 않는다. | 예 |
 
 ## Data Mart 설계
 
@@ -145,12 +147,13 @@
 - 실패 사례 10개를 원문 없이 분류했고 `place_story` 1건 targeted audit으로 전역 청킹 재실험을 열지 않는 근거를 확인했다.
 - HyDE live 비교 전 subset, call budget, no-answer guard를 public-safe readiness gate로 고정했고, 40개 확대 live 비교에서는 기본 route 채택을 기각했다.
 - active route shadow evaluation에서 relationship route 후보를 dev 70 paired metric으로 검증했고 active route는 여전히 적용하지 않았다.
-- locked retrieval readiness에서 target resolvability와 route/candidate count를 확인했고 실제 locked metric은 아직 실행하지 않았다.
+- locked retrieval readiness에서 target resolvability와 route/candidate count를 확인했다.
 - locked retrieval execution approval에서 bootstrap, confidence interval, stop condition, data mart grain을 실행 전 고정했다.
+- locked retrieval paired comparison에서 relationship hybrid가 MRR/nDCG 개선을 입증하지 못해 active route 개선 주장을 보류했다.
 - public repo에는 저작권 원문과 private eval payload를 올리지 않고 집계 metric만 공개했다.
 
 ## 최종 감사 의견
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner, locked retrieval execution approval도 통과했다. 다음에는 별도 승인 후 locked retrieval paired comparison runner 실행으로 넘어간다.
+README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner, locked retrieval execution approval, locked retrieval paired comparison도 통과했다. 다음에는 final ablation report와 API response sample을 정리한다.

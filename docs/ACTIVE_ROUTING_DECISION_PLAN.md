@@ -188,6 +188,8 @@
 
 확인된 주요 문제는 없다.
 
+후속 상태: `HD-LOCKED-RETRIEVAL-004`에서 relationship hybrid는 locked 개선 주장을 통과하지 못했다. 따라서 이 문서의 active route 검토는 historical shadow plan으로 유지한다.
+
 남은 리스크:
 
 - classifier와 guard는 dev-only 기준이다.

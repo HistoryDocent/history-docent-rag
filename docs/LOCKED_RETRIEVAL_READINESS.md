@@ -8,6 +8,8 @@
 
 이 문서는 public-safe readiness 문서다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
+후속 상태: `HD-LOCKED-RETRIEVAL-004`에서 locked retrieval paired comparison은 실행 완료됐다. 이 문서의 실행 0회 수치는 `HD-LOCKED-RETRIEVAL-002` readiness 시점 기록이다.
+
 ## 정량 요약
 
 | metric | value |

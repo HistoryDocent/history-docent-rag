@@ -4,9 +4,9 @@
 
 현재 RAG 기본선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다.
 
-GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run, locked retrieval execution approval도 통과했다. HyDE는 확대 live 비교에서 기본 route로 채택하지 않고 active routing도 바로 적용하지 않는다.
+GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run, locked retrieval execution approval, locked retrieval paired comparison도 통과했다. HyDE는 확대 live 비교에서 기본 route로 채택하지 않고 active routing도 바로 적용하지 않는다.
 
-이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked test 전까지 모든 수치는 dev-only 또는 live-dev-subset으로 제한한다.
+이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked 결과도 retrieval-only claim boundary로 제한한다.
 
 Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, private path, secret을 기록하지 않는다.
 
@@ -15,11 +15,11 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | 항목 | 값 |
 | --- | --- |
 | report_version | `final-ablation-status-report/v1` |
-| source_report_count | 24 |
-| decision_row_count | 36 |
+| source_report_count | 25 |
+| decision_row_count | 37 |
 | adopted_default_count | 4 |
 | rejected_default_count | 12 |
-| route_or_router_candidate_count | 8 |
+| route_or_router_candidate_count | 7 |
 | quality_ceiling_candidate_count | 2 |
 | held_larger_eval_candidate_count | 0 |
 | raw_text_public_count | 0 |
@@ -32,7 +32,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | --- | --- | --- |
 | chunking | `C0 current parent-child` | adopted |
 | retrieval | `dense_multilingual_e5_small_voice_rewrite` | adopted as dev retrieval candidate |
-| relationship route option | `hybrid_weighted_e5_small_alpha_0_5` | route candidate, not global default |
+| relationship route option | `hybrid_weighted_e5_small_alpha_0_5` | shadow only, no locked improvement claim |
 | reranker | none | rejected as default due latency |
 | evidence packing | `P0_rank_order` | adopted |
 | generation | `solar-generation-baseline-v1` | maintained |
@@ -79,6 +79,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | locked_retrieval_validation_plan | `HD-LOCKED-RETRIEVAL-001` | locked_test_execution_count | 0 | ready_for_readiness_dry_run |
 | locked_retrieval_readiness | `HD-LOCKED-RETRIEVAL-002` | target_resolvability_fail_count | 0 | ready_for_execution_approval |
 | locked_retrieval_execution_approval | `HD-LOCKED-RETRIEVAL-003` | planned_bootstrap_iteration_count | 10000 | ready_for_user_approval |
+| locked_retrieval_paired_comparison | `HD-LOCKED-RETRIEVAL-004` | MRR delta | -0.100000 | keep_shadow_no_improvement_claim |
 
 ## Qualitative Assessment
 
@@ -107,13 +108,14 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - `locked_retrieval_validation_plan`: locked test를 실행하지 않고 후보, metric, stop condition, data mart grain을 먼저 고정했다.
 - `locked_retrieval_readiness`: locked query 35개, query type 7개, target resolvability failure 0, no-answer candidate route 0, retrieval execution 0으로 실행 전 준비 상태를 확인했다.
 - `locked_retrieval_execution_approval`: bootstrap 10000회, 95% CI, 후보 2개, stop condition, data mart grain을 실행 전 고정했다.
+- `locked_retrieval_paired_comparison`: locked relationship 5개에서 Recall@5 delta=0.000000, MRR delta=-0.100000, nDCG@5 delta=-0.073814라 relationship hybrid 개선 주장을 보류했다.
 
 ## Claim Boundary
 
 | claim | allowed? | 조건 |
 | --- | --- | --- |
 | dev retrieval 후보가 BM25보다 좋았다 | yes | dev-only로 표현 |
-| locked test에서 성능 개선 확정 | no | locked test 미실행 |
+| locked test에서 성능 개선 확정 | no | locked retrieval-only 실행에서 개선 주장 미통과 |
 | GraphRAG가 relationship에서 더 좋다 | no | input-only 결과 개선 없음 |
 | RAPTOR가 overview/place_story에서 더 좋다 | no | input-only 결과 개선 없음 |
 | Solar Pro 3 v2 repaired가 기본값이다 | no | citation recall 하락 |
@@ -131,17 +133,18 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | locked retrieval 검증 승인 계획이 작성됐다 | yes | locked_test_execution_count=0, plan-only로 표현 |
 | locked retrieval readiness가 통과했다 | yes | readiness-only, retrieval_execution_count=0으로 표현 |
 | locked retrieval execution approval이 작성됐다 | yes | approval-only, locked_metric_result_count=0으로 표현 |
+| locked retrieval paired comparison을 실행했다 | yes | retrieval-only, relationship 개선 주장은 보류로 표현 |
 | production 성능 검증 완료 | no | 배포/운영 검증 없음 |
 
 ## Next Gate
 
-다음 gate는 `HD-LOCKED-RETRIEVAL-004 locked retrieval paired comparison runner 실행`이다.
+다음 gate는 `HD-FINAL-ABLATION-001 final ablation report 작성`이다.
 
 이유:
 
-- classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard, guarded route dry-run 노출, 포트폴리오 실패 분석 10개, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness, execution approval은 통과했지만 active route default enable은 아직 이르다.
+- classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard, guarded route dry-run 노출, 포트폴리오 실패 분석 10개, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness, execution approval, paired comparison은 통과했지만 active route default enable은 아직 이르다.
 - route-risk 오분류 2건은 guard 평가에서 0건으로 줄었고, shadow evaluation에서도 false_hybrid_route_count=0으로 유지됐다.
-- execution approval에서 bootstrap, CI, stop condition을 고정했으므로 다음은 별도 승인 후 locked metric runner를 실행하는 단계다.
+- locked paired comparison에서 relationship hybrid 개선 주장이 통과하지 못했으므로 다음은 최종 ablation 결과를 정리하는 단계다.
 - 전체 기본 retrieval 후보와 query type별 강한 후보가 다르다.
 - relationship은 hybrid weighted 후보가 강하지만 active 적용 전 API flag, fallback, telemetry contract가 필요하다.
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
@@ -156,7 +159,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 남은 리스크:
 
 - 대부분 dev split 또는 live-dev-subset 결과다.
-- locked test는 아직 실행하지 않았고 최종 성능 주장에 쓰지 않았다.
+- locked retrieval-only test는 실행했지만 최종 성능 개선 주장에 쓰지 않는다.
 - Solar Pro 3 live 결과는 호출 수가 제한되어 통계적으로 강한 결론이 아니다.
 - HyDE는 40개 live 비교까지 실행했지만 MRR/nDCG/latency 악화 때문에 기본 route 채택으로 주장하면 안 된다.
-- classifier/router, guard, shadow evaluation, API flag dry-run, locked validation plan, locked readiness, execution approval은 구현됐고 CUDA device도 확인했지만 active route 적용은 아직 금지해야 한다.
+- classifier/router, guard, shadow evaluation, API flag dry-run, locked validation plan, locked readiness, execution approval, paired comparison은 구현됐고 CUDA device도 확인했지만 active route 적용은 아직 금지해야 한다.

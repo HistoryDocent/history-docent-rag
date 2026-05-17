@@ -62,7 +62,7 @@
 
 ## 다음 Gate
 
-`HD-LOCKED-RETRIEVAL-001` locked retrieval 검증 승인 계획, `HD-LOCKED-RETRIEVAL-002` readiness dry-run runner, `HD-LOCKED-RETRIEVAL-003` execution approval은 완료됐다. 다음 작업은 `HD-LOCKED-RETRIEVAL-004` locked retrieval paired comparison runner 실행이다.
+`HD-LOCKED-RETRIEVAL-001` locked retrieval 검증 승인 계획, `HD-LOCKED-RETRIEVAL-002` readiness dry-run runner, `HD-LOCKED-RETRIEVAL-003` execution approval, `HD-LOCKED-RETRIEVAL-004` paired comparison은 완료됐다. locked 결과 기준 relationship hybrid는 active route 개선 주장을 통과하지 못했다.
 
 locked test 실행 전 금지:
 
