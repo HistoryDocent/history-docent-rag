@@ -77,7 +77,7 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
-| 1 | `HD-HYDE-001` | overview/relationship/no-answer subset HyDE 비교 | retrieval miss와 abstain risk가 남아 있지만 LLM 비용과 hallucination guard가 필요하다. |
+| 1 | `HD-HYDE-001B` | Solar Pro 3 HyDE live paired retrieval comparison | readiness에서 subset, call budget, no-answer guard는 고정됐고 실제 paired retrieval 비교가 남았다. |
 | 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
 
 ## Claim Boundary

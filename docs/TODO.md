@@ -121,7 +121,8 @@
 - [x] FastAPI `/chat` classifier/router dry-run field 연결
 - [x] relationship route guard 설계
 - [x] FastAPI `/chat` guarded route 후보 dry-run field 연결
-- [ ] HyDE overview/relationship subset 비교
+- [x] HyDE subset readiness dry-run
+- [ ] HyDE live paired retrieval comparison
 - [x] `place_story` targeted chunk audit
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성

@@ -23,8 +23,8 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 
 | metric | value |
 | --- | ---: |
-| summarized_stage_count | 20 |
-| adopted_or_implemented_count | 10 |
+| summarized_stage_count | 21 |
+| adopted_or_implemented_count | 11 |
 | rejected_default_count | 6 |
 | held_candidate_count | 2 |
 | public_raw_text_leakage_count | 0 |
@@ -56,6 +56,7 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 | guarded route dry-run | `guarded_route_candidate` | API contract + fixture retrieval | guard_applied_count | 1 | implemented dry-run |
 | portfolio failure analysis | `HD-PORTFOLIO-002` | public-safe summary | case_count | 10 | implemented |
 | targeted chunk audit | `HD-CHUNK-AUDIT-001` | dev-only single case | chunk_boundary_defect_count | 0 | do not reopen global chunking |
+| HyDE readiness | `HD-HYDE-001A` | dev-readiness-only | expected_hyde_generation_live_call_count | 4 | ready for live approval |
 
 ## 정성 리포트
 
@@ -66,13 +67,13 @@ raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은
 - `router_message`: query type classifier baseline, router skeleton, API dry-run, relationship guard, guarded route candidate는 구현됐지만 production routing과 locked 성능 개선은 아직 없다.
 - `security_boundary`: public README와 docs에는 저작권 원문, private eval payload, secret을 넣지 않는다.
 - `claim_boundary`: production 성능, locked 개선, 통계적 유의성 표현은 금지한다.
-- `external_audit`: 실패 원인표와 targeted audit으로 청킹 재실험 범위를 닫았으므로, 다음 비용성 실험은 HyDE subset으로 제한해야 한다.
+- `external_audit`: 실패 원인표와 targeted audit으로 청킹 재실험 범위를 닫았고 HyDE readiness도 완료했다. 다음 비용성 실험은 별도 승인 기반 live paired retrieval comparison으로 제한해야 한다.
 
 ## Public Output Gate
 
 | metric | value |
 | --- | ---: |
-| result_row_count | 20 |
+| result_row_count | 21 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |

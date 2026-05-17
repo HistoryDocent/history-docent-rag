@@ -207,10 +207,10 @@
 - 이번 guard는 active routing 적용이 아니다.
 - false hybrid route를 dev 70 기준 2건에서 0건으로 줄였지만, production routing 완료로 표현하면 안 된다.
 - API dry-run field에는 guarded route 후보 노출을 완료했다.
-- failure analysis 10개 제출용 정리와 `place_story` targeted chunk audit은 완료했다. 다음 단계는 HyDE처럼 별도 비용이 드는 실험을 승인받아 진행하는 것이다.
+- failure analysis 10개 제출용 정리, `place_story` targeted chunk audit, HyDE subset readiness는 완료했다. 다음 단계는 별도 비용이 드는 HyDE live paired retrieval comparison을 승인받아 진행하는 것이다.
 
 ## 다음 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
-| HD-HYDE-001 | HD-ROUTER-003 | Solar Pro 3 기반 HyDE subset 비교 | 명시 승인, call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
+| HD-HYDE-001B | HD-HYDE-001A | Solar Pro 3 기반 HyDE live paired retrieval comparison | 명시 승인, call budget, hallucination guard, public report | High | HyDE candidate 미채택 |

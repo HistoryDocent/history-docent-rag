@@ -222,7 +222,7 @@ router skeleton은 deterministic query type label을 입력으로 받는다. cla
 | HD-CLASSIFIER-004 | HD-ROUTER-003 | classifier 오분류 3개 failure analysis | route impact tag, public-safe report, raw query 0 | Medium | report/module 변경 revert |
 | HD-API-ROUTER-001 | HD-CLASSIFIER-004 | `/chat` classifier/router dry-run 연결 | contract test, leakage 0, retrieval regression 0 | Medium | API field 제거 |
 | HD-CLASSIFIER-005 | HD-API-ROUTER-001 | relationship route guard 평가 | false_hybrid_route_count 감소, active route 0, public report | Medium | guard module revert |
-| HD-HYDE-001 | HD-ROUTER-003 | HyDE overview/relationship subset 비교 | Solar call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
+| HD-HYDE-001B | HD-HYDE-001A | HyDE live paired retrieval comparison | Solar call budget, hallucination guard, public report | High | HyDE candidate 미채택 |
 
 ## 외부 감사 결론
 
