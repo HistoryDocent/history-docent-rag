@@ -4,7 +4,7 @@
 
 현재 RAG 기본선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다.
 
-GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract도 통과했다. HyDE는 확대 live 비교에서 기본 route로 채택하지 않고 active routing도 바로 적용하지 않는다.
+GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획도 통과했다. HyDE는 확대 live 비교에서 기본 route로 채택하지 않고 active routing도 바로 적용하지 않는다.
 
 이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked test 전까지 모든 수치는 dev-only 또는 live-dev-subset으로 제한한다.
 
@@ -15,8 +15,8 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | 항목 | 값 |
 | --- | --- |
 | report_version | `final-ablation-status-report/v1` |
-| source_report_count | 21 |
-| decision_row_count | 33 |
+| source_report_count | 22 |
+| decision_row_count | 34 |
 | adopted_default_count | 4 |
 | rejected_default_count | 12 |
 | route_or_router_candidate_count | 8 |
@@ -76,6 +76,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | active_routing_decision | `HD-API-ROUTER-003` | active_route_applied_count | 0 | shadow_eval_next |
 | active_route_shadow_evaluation | `HD-API-ROUTER-004` | MRR delta | 0.013888 | ready_for_API_flag_dry_run |
 | active_route_flag_dry_run | `HD-API-ROUTER-005` | active_route_flag_applied_count | 0 | implemented_dry_run_contract |
+| locked_retrieval_validation_plan | `HD-LOCKED-RETRIEVAL-001` | locked_test_execution_count | 0 | ready_for_readiness_dry_run |
 
 ## Qualitative Assessment
 
@@ -101,6 +102,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - `active_routing_decision`: active route는 바로 적용하지 않고 `relationship_hybrid_weighted_e5_v1`만 shadow evaluation 후보로 둔다.
 - `active_route_shadow_evaluation`: dev 70 paired shadow에서 relationship route만 후보로 보내고 false hybrid와 no-answer candidate route를 0으로 유지했다.
 - `active_route_flag_dry_run`: `/api/v1/chat`은 `active_route_mode=shadow`를 받을 수 있지만 actual retrieval route에는 적용하지 않는다.
+- `locked_retrieval_validation_plan`: locked test를 실행하지 않고 후보, metric, stop condition, data mart grain을 먼저 고정했다.
 
 ## Claim Boundary
 
@@ -122,17 +124,18 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | HyDE가 최종 retrieval 성능을 개선했다 | no | MRR/nDCG/latency 악화로 기본 route 기각 |
 | relationship active route를 바로 켜도 된다 | no | shadow evaluation 통과 후에도 API flag dry-run contract가 먼저 필요 |
 | `/chat` active route flag dry-run이 연결됐다 | yes | default disabled, active_route_applied_count=0으로 표현 |
+| locked retrieval 검증 승인 계획이 작성됐다 | yes | locked_test_execution_count=0, plan-only로 표현 |
 | production 성능 검증 완료 | no | 배포/운영 검증 없음 |
 
 ## Next Gate
 
-다음 gate는 `HD-LOCKED-RETRIEVAL-001 locked retrieval 검증 승인 계획`이다.
+다음 gate는 `HD-LOCKED-RETRIEVAL-002 locked retrieval readiness dry-run runner`다.
 
 이유:
 
-- classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard, guarded route dry-run 노출, 포트폴리오 실패 분석 10개, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract는 통과했지만 active route default enable은 아직 이르다.
+- classifier exact accuracy, failure analysis, API dry-run 연결, relationship guard, guarded route dry-run 노출, 포트폴리오 실패 분석 10개, active routing 적용 판단 계획, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획은 통과했지만 active route default enable은 아직 이르다.
 - route-risk 오분류 2건은 guard 평가에서 0건으로 줄었고, shadow evaluation에서도 false_hybrid_route_count=0으로 유지됐다.
-- guarded route 후보, shadow evaluation, default disabled API flag가 있으므로 다음은 locked split 사용 조건을 고정하는 단계다.
+- guarded route 후보, shadow evaluation, default disabled API flag, locked split 사용 조건이 있으므로 다음은 실행 없이 readiness를 검증하는 단계다.
 - 전체 기본 retrieval 후보와 query type별 강한 후보가 다르다.
 - relationship은 hybrid weighted 후보가 강하지만 active 적용 전 API flag, fallback, telemetry contract가 필요하다.
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
@@ -147,7 +150,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 남은 리스크:
 
 - 대부분 dev split 또는 live-dev-subset 결과다.
-- locked test는 아직 최종 성능 주장에 쓰지 않았다.
+- locked test는 아직 실행하지 않았고 최종 성능 주장에 쓰지 않았다.
 - Solar Pro 3 live 결과는 호출 수가 제한되어 통계적으로 강한 결론이 아니다.
 - HyDE는 40개 live 비교까지 실행했지만 MRR/nDCG/latency 악화 때문에 기본 route 채택으로 주장하면 안 된다.
-- classifier/router, guard, shadow evaluation, API flag dry-run은 구현됐고 CUDA dev run도 통과했지만 active route 적용은 아직 금지해야 한다.
+- classifier/router, guard, shadow evaluation, API flag dry-run, locked validation plan은 구현됐고 CUDA dev run도 통과했지만 active route 적용은 아직 금지해야 한다.

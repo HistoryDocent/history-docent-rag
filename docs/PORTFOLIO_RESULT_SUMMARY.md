@@ -4,7 +4,7 @@
 
 이 프로젝트의 포트폴리오 메시지는 “최신 RAG 기법을 많이 붙였다”가 아니다.
 
-핵심은 한국사 도서 parser 결과를 citation 가능한 RAG corpus로 정리하고, 청킹, retrieval, reranker, query rewrite, evidence packing, generation, GraphRAG-lite, RAPTOR-lite, query type router, API dry-run, route guard, guarded route API 관찰 필드, 실패 사례 10개, targeted chunk audit, HyDE readiness, HyDE live 비교, HyDE larger readiness, HyDE larger live 비교, active route shadow evaluation, active route flag dry-run contract를 같은 평가 원칙으로 비교해 채택, 보류, 기각을 분리했다는 점이다.
+핵심은 한국사 도서 parser 결과를 citation 가능한 RAG corpus로 정리하고, 청킹, retrieval, reranker, query rewrite, evidence packing, generation, GraphRAG-lite, RAPTOR-lite, query type router, API dry-run, route guard, guarded route API 관찰 필드, 실패 사례 10개, targeted chunk audit, HyDE readiness, HyDE live 비교, HyDE larger readiness, HyDE larger live 비교, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획을 같은 평가 원칙으로 비교해 채택, 보류, 기각을 분리했다는 점이다.
 
 이 문서는 public-safe 요약이다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -53,6 +53,7 @@
 | active routing decision | `HD-API-ROUTER-003` | plan-only | active_route_applied_count | 0 | shadow eval completed |
 | active route shadow evaluation | `HD-API-ROUTER-004` | dev 70 | MRR delta | 0.013888 | ready for API flag dry-run |
 | active route flag dry-run | `HD-API-ROUTER-005` | API contract + fixture retrieval | active_route_flag_applied_count | 0 | implemented dry-run |
+| locked retrieval validation plan | `HD-LOCKED-RETRIEVAL-001` | plan-only | locked_test_execution_count | 0 | ready for readiness dry-run |
 
 ## 채택, 보류, 기각
 
@@ -72,6 +73,7 @@
 | 구현 | `HD-API-ROUTER-003` | active routing을 바로 적용하지 않고 relationship route만 shadow 후보로 고정 |
 | 구현 | `HD-API-ROUTER-004` | relationship route shadow 평가를 통과했지만 active route default enable은 보류 |
 | 구현 | `HD-API-ROUTER-005` | `active_route_mode=shadow`를 추가했지만 actual retrieval route 적용은 0건으로 유지 |
+| 구현 | `HD-LOCKED-RETRIEVAL-001` | locked test를 실행하지 않고 승인 조건, 후보, stop condition, data mart grain을 먼저 고정 |
 | 보류 | `HD-HYDE-001B` | live-dev-subset에서 Recall@5는 올랐지만 MRR 하락과 latency 증가가 있어 larger eval 후보로만 유지 |
 | 기각 | `HD-HYDE-001D` | 40개 확대 live 비교에서 Recall@5는 소폭 상승했지만 MRR, nDCG@5, latency가 악화되어 기본 route로 채택하지 않음 |
 | 보류 | BGE-M3 dense | Recall@5는 높지만 latency가 커서 기본값 부적합 |
@@ -84,7 +86,7 @@
 ## 면접에서 말할 핵심 문장
 
 ```text
-도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router, API dry-run, route guard, guarded route API 관찰 필드, 실패 사례 10개, targeted chunk audit, HyDE readiness와 HyDE live 비교, active route shadow evaluation, active route flag dry-run contract까지 단계별로 검증했습니다. 작은 subset의 좋은 수치를 바로 채택하지 않고, HyDE를 40개 dev live 비교로 확장한 뒤 MRR과 nDCG 하락 때문에 기본 route에서 기각하고, relationship route도 shadow 통과 후 default disabled API flag로 제한한 과정을 포트폴리오 핵심으로 정리했습니다.
+도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router, API dry-run, route guard, guarded route API 관찰 필드, 실패 사례 10개, targeted chunk audit, HyDE readiness와 HyDE live 비교, active route shadow evaluation, active route flag dry-run contract, locked retrieval 검증 승인 계획까지 단계별로 검증했습니다. 작은 subset의 좋은 수치를 바로 채택하지 않고, HyDE를 40개 dev live 비교로 확장한 뒤 MRR과 nDCG 하락 때문에 기본 route에서 기각하고, relationship route도 shadow 통과 후 default disabled API flag와 locked 실행 전 승인 계획으로 제한한 과정을 포트폴리오 핵심으로 정리했습니다.
 ```
 
 ## Claim Boundary
@@ -111,6 +113,7 @@
 - HyDE larger live 비교에서 Solar Pro 3 호출 30회로 paired retrieval 비교를 실행했고, Recall@5 delta는 0.033333이지만 MRR delta는 -0.035000, nDCG@5 delta는 -0.018384라 기본 route로 채택하지 않았다.
 - active route shadow evaluation에서 dev 70개 paired 비교를 실행했고, false_hybrid_route_count=0, no_answer_candidate_route_count=0, MRR delta=0.013888, relationship Recall@5 delta=0.200000을 기록했다.
 - `/chat` active route flag dry-run contract에서 `active_route_mode=shadow`를 검증했고, active_route_flag_applied_count=0과 default_enabled=0을 유지했다.
+- locked retrieval 검증 승인 계획에서 planned_locked_query_count=35, locked_test_execution_count=0, solar_call_count=0으로 실행 전 조건을 고정했다.
 
 금지 표현:
 
@@ -131,7 +134,7 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-LOCKED-RETRIEVAL-001` | API dry-run 이후 locked test 최종 retrieval candidate 검증 계획 |
+| 1 | `HD-LOCKED-RETRIEVAL-002` | locked retrieval readiness dry-run runner |
 | 2 | `HD-COLBERT-001` | late interaction hard subset 검토 |
 
 ## 외부 감사 결론
