@@ -42,6 +42,13 @@ def test_chat_endpoint_returns_citation_response_contract() -> None:
     assert dry_run["active_query_type"] == "place_story"
     assert dry_run["active_route_applied"] is False
     assert dry_run["active_route_policy_id"] == body["usage"]["route_policy_id"]
+    active_route_flag = dry_run["active_route_flag_dry_run"]
+    assert active_route_flag["flag_policy_id"] == "chat-active-route-flag-dry-run-v1"
+    assert active_route_flag["enabled"] is False
+    assert active_route_flag["mode"] == "disabled"
+    assert active_route_flag["default_enabled"] is False
+    assert active_route_flag["active_route_applied"] is False
+    assert active_route_flag["fallback_reason_tag"] == "feature_flag_disabled"
     guarded_route = dry_run["guarded_route_candidate"]
     assert guarded_route["guard_policy_id"] == "relationship-route-guard-v1"
     assert guarded_route["guarded_query_type"] == dry_run["predicted_query_type"]
@@ -75,6 +82,46 @@ def test_chat_endpoint_exposes_classifier_router_dry_run_without_active_route_ch
     assert guarded_route["route_policy_id"] == "relationship_hybrid_weighted_e5_v1"
     assert guarded_route["guard_applied"] is False
     assert guarded_route["route_policy_changed"] is True
+    active_route_flag = dry_run["active_route_flag_dry_run"]
+    assert active_route_flag["enabled"] is False
+    assert active_route_flag["selected_query_type"] == "relationship"
+    assert active_route_flag["selected_route_policy_id"] == (
+        "relationship_hybrid_weighted_e5_v1"
+    )
+    assert active_route_flag["route_policy_changed"] is True
+    assert active_route_flag["active_route_applied"] is False
+
+
+def test_chat_endpoint_active_route_shadow_flag_does_not_change_active_route() -> None:
+    response = _client().post(
+        "/api/v1/chat",
+        json={
+            "request_id": "api-test-active-route-shadow",
+            "query": "경복궁과 창덕궁은 왕권 정통성과 어떤 관계로 연결돼?",
+            "query_type": "overview",
+            "language": "ko",
+            "place_context": ["gyeongbokgung", "changdeokgung"],
+            "active_route_mode": "shadow",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    dry_run = body["classifier_router_dry_run"]
+    active_route_flag = dry_run["active_route_flag_dry_run"]
+    assert body["usage"]["route_policy_id"] == "default_dense_voice_rewrite_v1"
+    assert dry_run["active_route_policy_id"] == body["usage"]["route_policy_id"]
+    assert dry_run["active_route_applied"] is False
+    assert active_route_flag["enabled"] is True
+    assert active_route_flag["mode"] == "shadow"
+    assert active_route_flag["default_enabled"] is False
+    assert active_route_flag["selected_query_type"] == "relationship"
+    assert active_route_flag["selected_route_policy_id"] == (
+        "relationship_hybrid_weighted_e5_v1"
+    )
+    assert active_route_flag["route_policy_changed"] is True
+    assert active_route_flag["fallback_reason_tag"] == "shadow_only_candidate_route"
+    assert active_route_flag["active_route_applied"] is False
 
 
 def test_chat_endpoint_exposes_guarded_route_candidate_without_active_route_change() -> None:
@@ -179,20 +226,29 @@ def test_public_chat_response_row_excludes_raw_answer_text() -> None:
     assert row["guard_policy_id"] == "relationship-route-guard-v1"
     assert row["guarded_route_candidate_id"] == "dense_multilingual_e5_small_voice_rewrite"
     assert row["guard_applied"] is False
+    assert row["active_route_flag_policy_id"] == "chat-active-route-flag-dry-run-v1"
+    assert row["active_route_flag_enabled"] is False
+    assert row["active_route_flag_default_enabled"] is False
+    assert row["active_route_fallback_reason_tag"] == "feature_flag_disabled"
+    assert row["active_route_applied"] is False
 
 
 def test_chat_api_contract_report_gate_passes(tmp_path) -> None:
     report = build_report(report_path=tmp_path / "chat_api_contract_report.md")
 
     assert collect_chat_api_contract_failures(report) == []
-    assert report.summary.request_count == 5
-    assert report.summary.success_count == 3
+    assert report.summary.request_count == 6
+    assert report.summary.success_count == 4
     assert report.summary.validation_error_count == 1
     assert report.summary.provider_unavailable_count == 1
-    assert report.summary.classifier_dry_run_count == 3
+    assert report.summary.classifier_dry_run_count == 4
     assert report.summary.classifier_active_route_applied_count == 0
-    assert report.summary.classifier_guarded_route_candidate_count == 3
+    assert report.summary.classifier_guarded_route_candidate_count == 4
     assert report.summary.classifier_guard_applied_count == 1
+    assert report.summary.active_route_flag_dry_run_count == 4
+    assert report.summary.active_route_flag_enabled_count == 1
+    assert report.summary.active_route_flag_applied_count == 0
+    assert report.summary.active_route_flag_default_enabled_count == 0
     assert report.summary.live_solar_call_count == 0
     assert report.output_quality.public_raw_text_leakage_count == 0
     assert report.output_quality.private_path_leakage_count == 0
@@ -203,6 +259,7 @@ def test_chat_api_contract_smoke_rows_are_public_safe() -> None:
 
     assert {row["case_id"] for row in rows} == {
         "answerable_contract",
+        "active_route_shadow_flag",
         "guarded_route_candidate",
         "no_answer_contract",
         "validation_error",

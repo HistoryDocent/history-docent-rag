@@ -10,29 +10,35 @@ FastAPI `/api/v1/chat` 계약을 live Solar Pro 3 호출 없이 검증한다.
 
 | metric | value |
 | --- | ---: |
-| request_count | 5 |
-| success_count | 3 |
+| request_count | 6 |
+| success_count | 4 |
 | validation_error_count | 1 |
 | provider_unavailable_count | 1 |
-| answered_count | 2 |
+| answered_count | 3 |
 | abstained_count | 1 |
-| citation_count | 2 |
-| evidence_id_count | 2 |
-| classifier_dry_run_count | 3 |
-| classifier_route_policy_changed_count | 2 |
+| citation_count | 3 |
+| evidence_id_count | 3 |
+| classifier_dry_run_count | 4 |
+| classifier_route_policy_changed_count | 3 |
 | classifier_active_route_applied_count | 0 |
 | classifier_fallback_count | 0 |
-| classifier_guarded_route_candidate_count | 3 |
+| classifier_guarded_route_candidate_count | 4 |
 | classifier_guard_applied_count | 1 |
-| classifier_guarded_route_policy_changed_count | 1 |
+| classifier_guarded_route_policy_changed_count | 2 |
+| active_route_flag_dry_run_count | 4 |
+| active_route_flag_enabled_count | 1 |
+| active_route_flag_shadow_mode_count | 1 |
+| active_route_flag_default_enabled_count | 0 |
+| active_route_flag_applied_count | 0 |
+| active_route_flag_policy_changed_count | 2 |
 | live_solar_call_count | 0 |
-| latency_p95_ms | 0.887400 |
+| latency_p95_ms | 0.886000 |
 
 ## Public Output Gate
 
 | metric | value |
 | --- | ---: |
-| result_row_count | 5 |
+| result_row_count | 6 |
 | public_raw_text_leakage_count | 0 |
 | private_path_leakage_count | 0 |
 | secret_like_leakage_count | 0 |
@@ -46,6 +52,7 @@ FastAPI `/api/v1/chat` 계약을 live Solar Pro 3 호출 없이 검증한다.
 - `citation_boundary`: answerable 응답은 recoverable citation과 evidence_id를 포함하고, no-answer 응답은 citation 없이 abstained=true를 반환한다.
 - `classifier_router_boundary`: classifier/router 판단은 dry-run field로만 노출하고 active retrieval route에는 적용하지 않는다.
 - `guarded_route_boundary`: relationship route guard 결과는 guarded_route_candidate로만 노출하며 active route에는 적용하지 않는다.
+- `active_route_flag_boundary`: active_route_mode=shadow 요청은 candidate route와 fallback reason만 노출하며 default_enabled=false와 active_route_applied=false를 유지한다.
 - `claim_boundary`: 이 리포트는 API 계약 검증이며 검색 또는 생성 품질 개선 주장이 아니다.
 - `gate_status`: PASS
 

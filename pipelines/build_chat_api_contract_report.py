@@ -41,6 +41,12 @@ class ChatApiContractSummary(ChatApiContractReportModel):
     classifier_guarded_route_candidate_count: int = Field(ge=0)
     classifier_guard_applied_count: int = Field(ge=0)
     classifier_guarded_route_policy_changed_count: int = Field(ge=0)
+    active_route_flag_dry_run_count: int = Field(ge=0)
+    active_route_flag_enabled_count: int = Field(ge=0)
+    active_route_flag_shadow_mode_count: int = Field(ge=0)
+    active_route_flag_default_enabled_count: int = Field(ge=0)
+    active_route_flag_applied_count: int = Field(ge=0)
+    active_route_flag_policy_changed_count: int = Field(ge=0)
     live_solar_call_count: int = Field(ge=0)
     latency_p95_ms: float = Field(ge=0.0)
 
@@ -87,6 +93,8 @@ def build_report(*, report_path: Path = DEFAULT_REPORT_PATH) -> ChatApiContractR
         f"provider_unavailable_count={report.summary.provider_unavailable_count} "
         f"classifier_dry_run_count={report.summary.classifier_dry_run_count} "
         f"guard_applied_count={report.summary.classifier_guard_applied_count} "
+        f"active_route_flag_enabled_count={report.summary.active_route_flag_enabled_count} "
+        f"active_route_flag_applied_count={report.summary.active_route_flag_applied_count} "
         f"live_solar_call_count={report.summary.live_solar_call_count}"
     )
     return report
@@ -103,6 +111,17 @@ def run_contract_smoke_rows() -> list[dict[str, Any]]:
                 "query_type": "place_story",
                 "language": "ko",
                 "place_context": ["gyeongbokgung"],
+            },
+        },
+        {
+            "case_id": "active_route_shadow_flag",
+            "payload": {
+                "request_id": "api-contract-active-route-shadow",
+                "query": "경복궁과 창덕궁은 왕권 정통성과 어떤 관계로 연결돼?",
+                "query_type": "overview",
+                "language": "ko",
+                "place_context": ["gyeongbokgung", "changdeokgung"],
+                "active_route_mode": "shadow",
             },
         },
         {
@@ -162,15 +181,15 @@ def run_contract_smoke_rows() -> list[dict[str, Any]]:
 def collect_chat_api_contract_failures(report: ChatApiContractReport) -> list[str]:
     failures = collect_public_retrieval_artifact_failures(report.output_quality)
     summary = report.summary
-    if summary.request_count != 5:
+    if summary.request_count != 6:
         failures.append("unexpected_contract_case_count")
-    if summary.success_count != 3:
+    if summary.success_count != 4:
         failures.append("unexpected_success_count")
     if summary.validation_error_count != 1:
         failures.append("validation_error_case_missing")
     if summary.provider_unavailable_count != 1:
         failures.append("provider_disabled_case_missing")
-    if summary.answered_count != 2:
+    if summary.answered_count != 3:
         failures.append("answered_case_missing")
     if summary.abstained_count != 1:
         failures.append("abstained_case_missing")
@@ -186,6 +205,16 @@ def collect_chat_api_contract_failures(report: ChatApiContractReport) -> list[st
         failures.append("guarded_route_candidate_missing")
     if summary.classifier_guard_applied_count < 1:
         failures.append("guard_applied_case_missing")
+    if summary.active_route_flag_dry_run_count != summary.success_count:
+        failures.append("active_route_flag_dry_run_missing")
+    if summary.active_route_flag_enabled_count != 1:
+        failures.append("active_route_shadow_flag_case_missing")
+    if summary.active_route_flag_shadow_mode_count != 1:
+        failures.append("active_route_shadow_mode_case_missing")
+    if summary.active_route_flag_default_enabled_count:
+        failures.append("active_route_default_enabled_detected")
+    if summary.active_route_flag_applied_count:
+        failures.append("active_route_flag_changed_active_route")
     return failures
 
 
@@ -224,6 +253,12 @@ FastAPI `/api/v1/chat` 계약을 live Solar Pro 3 호출 없이 검증한다.
 | classifier_guarded_route_candidate_count | {summary.classifier_guarded_route_candidate_count} |
 | classifier_guard_applied_count | {summary.classifier_guard_applied_count} |
 | classifier_guarded_route_policy_changed_count | {summary.classifier_guarded_route_policy_changed_count} |
+| active_route_flag_dry_run_count | {summary.active_route_flag_dry_run_count} |
+| active_route_flag_enabled_count | {summary.active_route_flag_enabled_count} |
+| active_route_flag_shadow_mode_count | {summary.active_route_flag_shadow_mode_count} |
+| active_route_flag_default_enabled_count | {summary.active_route_flag_default_enabled_count} |
+| active_route_flag_applied_count | {summary.active_route_flag_applied_count} |
+| active_route_flag_policy_changed_count | {summary.active_route_flag_policy_changed_count} |
 | live_solar_call_count | {summary.live_solar_call_count} |
 | latency_p95_ms | {summary.latency_p95_ms:.6f} |
 
@@ -309,6 +344,30 @@ def _summarize_rows(rows: list[dict[str, Any]]) -> ChatApiContractSummary:
             for row in success_rows
             if row.get("guarded_route_policy_changed") is True
         ),
+        active_route_flag_dry_run_count=sum(
+            1 for row in success_rows if row.get("active_route_flag_policy_id")
+        ),
+        active_route_flag_enabled_count=sum(
+            1 for row in success_rows if row.get("active_route_flag_enabled") is True
+        ),
+        active_route_flag_shadow_mode_count=sum(
+            1
+            for row in success_rows
+            if row.get("active_route_flag_mode") == "shadow"
+        ),
+        active_route_flag_default_enabled_count=sum(
+            1
+            for row in success_rows
+            if row.get("active_route_flag_default_enabled") is True
+        ),
+        active_route_flag_applied_count=sum(
+            1 for row in success_rows if row.get("active_route_applied") is True
+        ),
+        active_route_flag_policy_changed_count=sum(
+            1
+            for row in success_rows
+            if row.get("active_route_policy_changed") is True
+        ),
         live_solar_call_count=sum(
             int(row.get("solar_call_count") or 0) for row in success_rows
         ),
@@ -345,6 +404,10 @@ def _build_qualitative_assessment(
         ),
         "guarded_route_boundary": (
             "relationship route guard 결과는 guarded_route_candidate로만 노출하며 active route에는 적용하지 않는다."
+        ),
+        "active_route_flag_boundary": (
+            "active_route_mode=shadow 요청은 candidate route와 fallback reason만 노출하며 "
+            "default_enabled=false와 active_route_applied=false를 유지한다."
         ),
         "claim_boundary": (
             "이 리포트는 API 계약 검증이며 검색 또는 생성 품질 개선 주장이 아니다."

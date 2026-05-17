@@ -26,9 +26,15 @@ FastAPI `/api/v1/chat`의 `retrieval_backed` mode가 retrieval, evidence packing
 | classifier_guarded_route_candidate_count | 3 |
 | classifier_guard_applied_count | 0 |
 | classifier_guarded_route_policy_changed_count | 1 |
+| active_route_flag_dry_run_count | 3 |
+| active_route_flag_enabled_count | 1 |
+| active_route_flag_shadow_mode_count | 1 |
+| active_route_flag_default_enabled_count | 0 |
+| active_route_flag_applied_count | 0 |
+| active_route_flag_policy_changed_count | 1 |
 | live_solar_call_count | 0 |
-| latency_p95_ms | 0.926300 |
-| retrieval_latency_p95_ms | 0.022600 |
+| latency_p95_ms | 0.901100 |
+| retrieval_latency_p95_ms | 0.021800 |
 
 ## Public Output Gate
 
@@ -49,6 +55,7 @@ FastAPI `/api/v1/chat`의 `retrieval_backed` mode가 retrieval, evidence packing
 - `provider_boundary`: Solar Pro 3 live generation은 호출하지 않고, provider_call_count와 solar_call_count를 0으로 유지한다.
 - `classifier_router_boundary`: classifier/router dry-run은 API 응답에 포함하지만 retrieval_backed route 선택에는 적용하지 않는다.
 - `guarded_route_boundary`: guarded_route_candidate는 관찰 필드이며 retrieval_backed route 선택에는 적용하지 않는다.
+- `active_route_flag_boundary`: active_route_mode=shadow 요청에서도 retrieval_backed route는 기존 query_type 기준을 유지하고 active_route_applied=false를 반환한다.
 - `gate_status`: PASS
 
 ## 해석

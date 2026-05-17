@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.application.chat_service import (
+    ChatActiveRouteMode,
     ChatClassifierRouterDryRun,
     ChatCommand,
     ChatContractService,
@@ -51,6 +52,7 @@ class ChatRequest(ChatApiModel):
     user_context: str | None = Field(default=None, max_length=600)
     retrieval_mode: ChatRetrievalMode = "contract_only"
     provider_mode: ChatProviderMode = "contract_only"
+    active_route_mode: ChatActiveRouteMode = "disabled"
 
     @field_validator("request_id")
     @classmethod
@@ -93,6 +95,7 @@ class ChatRequest(ChatApiModel):
             user_context=self.user_context.strip() if self.user_context else None,
             retrieval_mode=self.retrieval_mode,
             provider_mode=self.provider_mode,
+            active_route_mode=self.active_route_mode,
         )
 
 
@@ -207,6 +210,11 @@ def public_chat_response_row(response: dict[str, Any]) -> dict[str, Any]:
         if isinstance(dry_run.get("guarded_route_candidate"), dict)
         else {}
     )
+    active_route_flag = (
+        dry_run.get("active_route_flag_dry_run")
+        if isinstance(dry_run.get("active_route_flag_dry_run"), dict)
+        else {}
+    )
     citations = response.get("citations") if isinstance(response.get("citations"), list) else []
     return {
         "contract_version": response.get("contract_version"),
@@ -254,6 +262,29 @@ def public_chat_response_row(response: dict[str, Any]) -> dict[str, Any]:
         "guard_applied": guarded_route.get("guard_applied"),
         "guard_reason_tag_count": len(guarded_route.get("guard_reason_tags", [])),
         "guarded_route_policy_changed": guarded_route.get("route_policy_changed"),
+        "active_route_flag_policy_id": active_route_flag.get("flag_policy_id"),
+        "active_route_flag_enabled": active_route_flag.get("enabled"),
+        "active_route_flag_mode": active_route_flag.get("mode"),
+        "active_route_flag_requested_mode": active_route_flag.get("requested_mode"),
+        "active_route_flag_default_enabled": active_route_flag.get("default_enabled"),
+        "active_route_selected_query_type": active_route_flag.get("selected_query_type"),
+        "active_route_selected_policy_id": active_route_flag.get("selected_route_policy_id"),
+        "active_route_selected_candidate_id": active_route_flag.get(
+            "selected_route_candidate_id"
+        ),
+        "active_route_selected_claim_boundary": active_route_flag.get(
+            "selected_route_claim_boundary"
+        ),
+        "active_route_selected_should_retrieve": active_route_flag.get(
+            "selected_should_retrieve"
+        ),
+        "active_route_guard_policy_id": active_route_flag.get("guard_policy_id"),
+        "active_route_guarded_query_type": active_route_flag.get("guarded_query_type"),
+        "active_route_guard_applied": active_route_flag.get("guard_applied"),
+        "active_route_policy_changed": active_route_flag.get("route_policy_changed"),
+        "active_route_fallback_reason_tag": active_route_flag.get("fallback_reason_tag"),
+        "active_route_applied": active_route_flag.get("active_route_applied"),
+        "active_route_shadow_decision_ref": active_route_flag.get("shadow_decision_ref"),
         "citation_count": len(citations),
         "evidence_id_count": len(response.get("evidence_ids", [])),
         "place_id_count": len(response.get("place_ids", [])),

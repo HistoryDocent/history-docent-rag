@@ -11,7 +11,7 @@
 | 항목 | 현재 결정 |
 | --- | --- |
 | 현재 stack | `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1` |
-| query type classifier/router | classifier baseline accuracy 0.957143, router는 `relationship` hybrid route, `no_answer` abstain-first, 나머지 dense voice rewrite, API는 dry-run만 적용, active route는 아직 미적용 |
+| query type classifier/router | classifier baseline accuracy 0.957143, router는 `relationship` hybrid route, `no_answer` abstain-first, 나머지 dense voice rewrite, API는 dry-run/flag dry-run만 적용, active route는 아직 미적용 |
 | 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
 | 보류한 핵심 | BGE-M3 dense, BGE reranker |
 | 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route, HyDE 기본 retrieval route |
@@ -43,6 +43,7 @@
 | HyDE larger live comparison | `HD-HYDE-001D` | live-dev-subset 40 | MRR delta | -0.035000 | reject default |
 | active routing decision | `HD-API-ROUTER-003` | plan-only | active_route_applied_count | 0 | shadow eval completed |
 | active route shadow evaluation | `HD-API-ROUTER-004` | dev 70 | MRR delta | 0.013888 | ready for API flag dry-run |
+| active route flag dry-run | `HD-API-ROUTER-005` | API contract + fixture retrieval | active_route_flag_applied_count | 0 | implemented dry-run |
 
 금지 claim:
 
@@ -156,6 +157,7 @@ PDF
 -> HyDE larger live paired retrieval comparison
 -> active routing decision plan
 -> active route shadow evaluation
+-> active route flag dry-run contract
 -> query type router skeleton
 -> retrieval evaluation harness
 -> public-safe aggregate reports
@@ -164,7 +166,7 @@ PDF
 후속 구현 대상:
 
 ```text
-API active route flag dry-run contract
+locked retrieval 검증 승인 계획
 -> locked test 기반 최종 개선 주장 검증
 -> frontend/voice UI
 ```
@@ -375,7 +377,7 @@ HyDE larger dev subset readiness를 실행했다. dev 70개 중 `overview`, `pla
 
 Solar Pro 3 HyDE larger live paired retrieval comparison을 실행했다. dev subset 40개에서 answerable 30개만 HyDE generation을 실행했고 `no_answer` 10개는 generation과 retrieval을 모두 차단했다. CUDA 실행 기준 `Recall@5 delta=0.033333`, `MRR delta=-0.035000`, `nDCG@5 delta=-0.018384`, `latency_p95_ms delta=1855.705900`으로 기록했다. 결론은 HyDE를 기본 retrieval route로 채택하지 않는 것이다.
 
-Active routing 적용 판단 계획을 추가했다. 결론은 `/api/v1/chat`의 실제 retrieval route를 바로 바꾸지 않는 것이다. HyDE, GraphRAG-lite, RAPTOR-lite, `place_story_guarded_boost_v1`은 active route 후보에서 제외하고, `relationship_hybrid_weighted_e5_v1`만 shadow evaluation 후보로 둔다. 이후 active route shadow evaluation을 dev 70개에서 실행했고 `routed_candidate_query_count=10`, `false_hybrid_route_count=0`, `no_answer_candidate_route_count=0`, `MRR delta=0.013888`, `relationship Recall@5 delta=0.200000`, `latency_p95_ms delta=5.035485`, `resolved_device=cuda`를 기록했다. `active_route_applied_count=0`, `live_solar_call_count=0`이며 다음 작업은 `HD-API-ROUTER-005 API active route flag dry-run contract`다.
+Active routing 적용 판단 계획을 추가했다. 결론은 `/api/v1/chat`의 실제 retrieval route를 바로 바꾸지 않는 것이다. HyDE, GraphRAG-lite, RAPTOR-lite, `place_story_guarded_boost_v1`은 active route 후보에서 제외하고, `relationship_hybrid_weighted_e5_v1`만 shadow evaluation 후보로 둔다. 이후 active route shadow evaluation을 dev 70개에서 실행했고 `routed_candidate_query_count=10`, `false_hybrid_route_count=0`, `no_answer_candidate_route_count=0`, `MRR delta=0.013888`, `relationship Recall@5 delta=0.200000`, `latency_p95_ms delta=5.035485`, `resolved_device=cuda`를 기록했다. 이번에는 `active_route_mode=shadow` API flag dry-run contract를 추가했고 `active_route_flag_enabled_count=1`, `active_route_flag_applied_count=0`, `active_route_flag_default_enabled_count=0`, `live_solar_call_count=0`을 기록했다. 다음 작업은 `HD-LOCKED-RETRIEVAL-001 locked retrieval 검증 승인 계획`이다.
 
 ## 실행 전략
 
@@ -486,8 +488,9 @@ Active routing 적용 판단 계획을 추가했다. 결론은 `/api/v1/chat`의
 | [Active Routing Decision Plan Report](evals/reports/active_routing_decision_plan_report.md) | HD-API-ROUTER-003 정량/정성 계획 검토와 public-safe gate 결과 |
 | [Active Route Shadow Evaluation](docs/ACTIVE_ROUTE_SHADOW_EVALUATION.md) | HD-API-ROUTER-004 active route 미적용 상태의 relationship route shadow 평가 |
 | [Active Route Shadow Evaluation Report](evals/reports/active_route_shadow_evaluation_report.md) | HD-API-ROUTER-004 dev 70 paired retrieval metric, CUDA 실행, public-safe gate 결과 |
-| [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, classifier/router dry-run, error envelope, provider boundary, public-safe gate 결과 |
-| [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing, classifier/router dry-run 연결, public-safe gate 결과 |
+| [Active Route Flag Dry-run Contract](docs/ACTIVE_ROUTE_FLAG_DRY_RUN_CONTRACT.md) | HD-API-ROUTER-005 default disabled API flag, fallback reason, active route 미적용 계약 |
+| [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, classifier/router dry-run, active route flag dry-run, error envelope, provider boundary, public-safe gate 결과 |
+| [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing, classifier/router dry-run, active route flag dry-run 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |
 | [Solar Pro 3 Live Generation Smoke Runbook](docs/SOLAR_LIVE_GENERATION_SMOKE.md) | live provider smoke 실행 조건, 산출물, 통과 기준 |
 | [WBS](docs/WBS.md) | 단계별 작업, 산출물, commit 단위 |

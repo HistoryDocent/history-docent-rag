@@ -43,6 +43,12 @@ class ChatRetrievalIntegrationSummary(ChatRetrievalIntegrationModel):
     classifier_guarded_route_candidate_count: int = Field(ge=0)
     classifier_guard_applied_count: int = Field(ge=0)
     classifier_guarded_route_policy_changed_count: int = Field(ge=0)
+    active_route_flag_dry_run_count: int = Field(ge=0)
+    active_route_flag_enabled_count: int = Field(ge=0)
+    active_route_flag_shadow_mode_count: int = Field(ge=0)
+    active_route_flag_default_enabled_count: int = Field(ge=0)
+    active_route_flag_applied_count: int = Field(ge=0)
+    active_route_flag_policy_changed_count: int = Field(ge=0)
     live_solar_call_count: int = Field(ge=0)
     latency_p95_ms: float = Field(ge=0.0)
     retrieval_latency_p95_ms: float = Field(ge=0.0)
@@ -91,6 +97,8 @@ def build_report(
         f"retrieval_backed_request_count={report.summary.retrieval_backed_request_count} "
         f"retrieval_success_count={report.summary.retrieval_success_count} "
         f"classifier_dry_run_count={report.summary.classifier_dry_run_count} "
+        f"active_route_flag_enabled_count={report.summary.active_route_flag_enabled_count} "
+        f"active_route_flag_applied_count={report.summary.active_route_flag_applied_count} "
         f"live_solar_call_count={report.summary.live_solar_call_count}"
     )
     return report
@@ -112,6 +120,7 @@ def run_integration_smoke_rows() -> list[dict[str, Any]]:
                 "language": "ko",
                 "place_context": ["gyeongbokgung"],
                 "retrieval_mode": "retrieval_backed",
+                "active_route_mode": "shadow",
             },
         },
         {
@@ -179,6 +188,14 @@ def collect_chat_retrieval_integration_failures(
         failures.append("classifier_dry_run_changed_active_route")
     if summary.classifier_guarded_route_candidate_count != summary.success_count:
         failures.append("guarded_route_candidate_missing")
+    if summary.active_route_flag_dry_run_count != summary.success_count:
+        failures.append("active_route_flag_dry_run_missing")
+    if summary.active_route_flag_enabled_count != 1:
+        failures.append("active_route_shadow_flag_case_missing")
+    if summary.active_route_flag_default_enabled_count:
+        failures.append("active_route_default_enabled_detected")
+    if summary.active_route_flag_applied_count:
+        failures.append("active_route_flag_changed_active_route")
     return failures
 
 
@@ -218,6 +235,12 @@ FastAPI `/api/v1/chat`의 `retrieval_backed` mode가 retrieval, evidence packing
 | classifier_guarded_route_candidate_count | {summary.classifier_guarded_route_candidate_count} |
 | classifier_guard_applied_count | {summary.classifier_guard_applied_count} |
 | classifier_guarded_route_policy_changed_count | {summary.classifier_guarded_route_policy_changed_count} |
+| active_route_flag_dry_run_count | {summary.active_route_flag_dry_run_count} |
+| active_route_flag_enabled_count | {summary.active_route_flag_enabled_count} |
+| active_route_flag_shadow_mode_count | {summary.active_route_flag_shadow_mode_count} |
+| active_route_flag_default_enabled_count | {summary.active_route_flag_default_enabled_count} |
+| active_route_flag_applied_count | {summary.active_route_flag_applied_count} |
+| active_route_flag_policy_changed_count | {summary.active_route_flag_policy_changed_count} |
 | live_solar_call_count | {summary.live_solar_call_count} |
 | latency_p95_ms | {summary.latency_p95_ms:.6f} |
 | retrieval_latency_p95_ms | {summary.retrieval_latency_p95_ms:.6f} |
@@ -319,6 +342,30 @@ def _summarize_rows(rows: list[dict[str, Any]]) -> ChatRetrievalIntegrationSumma
             for row in success_rows
             if row.get("guarded_route_policy_changed") is True
         ),
+        active_route_flag_dry_run_count=sum(
+            1 for row in success_rows if row.get("active_route_flag_policy_id")
+        ),
+        active_route_flag_enabled_count=sum(
+            1 for row in success_rows if row.get("active_route_flag_enabled") is True
+        ),
+        active_route_flag_shadow_mode_count=sum(
+            1
+            for row in success_rows
+            if row.get("active_route_flag_mode") == "shadow"
+        ),
+        active_route_flag_default_enabled_count=sum(
+            1
+            for row in success_rows
+            if row.get("active_route_flag_default_enabled") is True
+        ),
+        active_route_flag_applied_count=sum(
+            1 for row in success_rows if row.get("active_route_applied") is True
+        ),
+        active_route_flag_policy_changed_count=sum(
+            1
+            for row in success_rows
+            if row.get("active_route_policy_changed") is True
+        ),
         live_solar_call_count=sum(
             int(row.get("solar_call_count") or 0) for row in success_rows
         ),
@@ -359,6 +406,10 @@ def _build_qualitative_assessment(
         ),
         "guarded_route_boundary": (
             "guarded_route_candidate는 관찰 필드이며 retrieval_backed route 선택에는 적용하지 않는다."
+        ),
+        "active_route_flag_boundary": (
+            "active_route_mode=shadow 요청에서도 retrieval_backed route는 기존 query_type 기준을 "
+            "유지하고 active_route_applied=false를 반환한다."
         ),
         "gate_status": "PASS" if not failures else f"FAIL: {', '.join(failures)}",
     }

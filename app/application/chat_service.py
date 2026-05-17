@@ -40,8 +40,11 @@ CHAT_SERVICE_POLICY_ID = "chat-citation-rag-contract-v1"
 CHAT_SERVICE_MODEL_ID = "contract-only"
 CHAT_API_DEFAULT_PLACE_ID = "seoul-hanyang"
 CHAT_CLASSIFIER_ROUTER_DRY_RUN_POLICY_ID = "chat-classifier-router-dry-run-v1"
+CHAT_ACTIVE_ROUTE_FLAG_DRY_RUN_POLICY_ID = "chat-active-route-flag-dry-run-v1"
+CHAT_ACTIVE_ROUTE_SHADOW_DECISION_REF = "active-route-shadow-evaluation-dev70-v1"
 
 ChatProviderMode = Literal["contract_only", "solar_pro_3"]
+ChatActiveRouteMode = Literal["disabled", "shadow"]
 
 
 class ChatServiceModel(BaseModel):
@@ -58,6 +61,7 @@ class ChatCommand(ChatServiceModel):
     user_context: str | None = Field(default=None, max_length=600)
     retrieval_mode: ChatRetrievalMode = "contract_only"
     provider_mode: ChatProviderMode = "contract_only"
+    active_route_mode: ChatActiveRouteMode = "disabled"
 
 
 class ChatUsage(ChatServiceModel):
@@ -94,6 +98,26 @@ class ChatGuardedRouteCandidate(ChatServiceModel):
     score_margin: float
 
 
+class ChatActiveRouteFlagDryRun(ChatServiceModel):
+    flag_policy_id: str = CHAT_ACTIVE_ROUTE_FLAG_DRY_RUN_POLICY_ID
+    enabled: bool = False
+    mode: ChatActiveRouteMode = "disabled"
+    requested_mode: ChatActiveRouteMode = "disabled"
+    default_enabled: bool = False
+    selected_query_type: QueryType
+    selected_route_policy_id: str = Field(min_length=1)
+    selected_route_candidate_id: str = Field(min_length=1)
+    selected_route_claim_boundary: str = Field(min_length=1)
+    selected_should_retrieve: bool
+    guard_policy_id: str = Field(min_length=1)
+    guarded_query_type: QueryType
+    guard_applied: bool
+    route_policy_changed: bool
+    fallback_reason_tag: str = Field(min_length=1)
+    active_route_applied: bool = False
+    shadow_decision_ref: str = CHAT_ACTIVE_ROUTE_SHADOW_DECISION_REF
+
+
 class ChatClassifierRouterDryRun(ChatServiceModel):
     dry_run_policy_id: str = CHAT_CLASSIFIER_ROUTER_DRY_RUN_POLICY_ID
     enabled: bool = True
@@ -114,6 +138,7 @@ class ChatClassifierRouterDryRun(ChatServiceModel):
     active_route_applied: bool = False
     latency_ms: float = Field(ge=0.0)
     guarded_route_candidate: ChatGuardedRouteCandidate
+    active_route_flag_dry_run: ChatActiveRouteFlagDryRun
 
 
 class ChatServiceResult(ChatServiceModel):
@@ -418,6 +443,21 @@ def _build_classifier_router_dry_run(
         )
     )
     guarded_route = router.route(guard_decision.guarded_query_type)
+    guarded_route_candidate = ChatGuardedRouteCandidate(
+        guard_policy_id=guard_decision.guard_policy_id,
+        guarded_query_type=guard_decision.guarded_query_type,
+        route_policy_id=guarded_route.route_policy_id,
+        route_candidate_id=guarded_route.selected_candidate_id,
+        route_claim_boundary=guarded_route.claim_boundary,
+        should_retrieve=guarded_route.should_retrieve,
+        guard_applied=guard_decision.guard_applied,
+        guard_reason_tags=guard_decision.guard_reason_tags,
+        route_policy_changed=(
+            guarded_route.route_policy_id != active_route_policy_id
+            or guarded_route.selected_candidate_id != active_route_candidate_id
+        ),
+        score_margin=guard_decision.score_margin,
+    )
     return ChatClassifierRouterDryRun(
         classifier_id=classification.classifier_id,
         predicted_query_type=classification.predicted_query_type,
@@ -438,22 +478,55 @@ def _build_classifier_router_dry_run(
         ),
         active_route_applied=False,
         latency_ms=classification.latency_ms,
-        guarded_route_candidate=ChatGuardedRouteCandidate(
-            guard_policy_id=guard_decision.guard_policy_id,
-            guarded_query_type=guard_decision.guarded_query_type,
-            route_policy_id=guarded_route.route_policy_id,
-            route_candidate_id=guarded_route.selected_candidate_id,
-            route_claim_boundary=guarded_route.claim_boundary,
-            should_retrieve=guarded_route.should_retrieve,
-            guard_applied=guard_decision.guard_applied,
-            guard_reason_tags=guard_decision.guard_reason_tags,
-            route_policy_changed=(
-                guarded_route.route_policy_id != active_route_policy_id
-                or guarded_route.selected_candidate_id != active_route_candidate_id
-            ),
-            score_margin=guard_decision.score_margin,
+        guarded_route_candidate=guarded_route_candidate,
+        active_route_flag_dry_run=_build_active_route_flag_dry_run(
+            command=command,
+            guarded_route_candidate=guarded_route_candidate,
         ),
     )
+
+
+def _build_active_route_flag_dry_run(
+    *,
+    command: ChatCommand,
+    guarded_route_candidate: ChatGuardedRouteCandidate,
+) -> ChatActiveRouteFlagDryRun:
+    enabled = command.active_route_mode == "shadow"
+    return ChatActiveRouteFlagDryRun(
+        enabled=enabled,
+        mode=command.active_route_mode,
+        requested_mode=command.active_route_mode,
+        selected_query_type=guarded_route_candidate.guarded_query_type,
+        selected_route_policy_id=guarded_route_candidate.route_policy_id,
+        selected_route_candidate_id=guarded_route_candidate.route_candidate_id,
+        selected_route_claim_boundary=guarded_route_candidate.route_claim_boundary,
+        selected_should_retrieve=guarded_route_candidate.should_retrieve,
+        guard_policy_id=guarded_route_candidate.guard_policy_id,
+        guarded_query_type=guarded_route_candidate.guarded_query_type,
+        guard_applied=guarded_route_candidate.guard_applied,
+        route_policy_changed=guarded_route_candidate.route_policy_changed,
+        fallback_reason_tag=_active_route_fallback_reason_tag(
+            enabled=enabled,
+            guarded_route_candidate=guarded_route_candidate,
+        ),
+        active_route_applied=False,
+    )
+
+
+def _active_route_fallback_reason_tag(
+    *,
+    enabled: bool,
+    guarded_route_candidate: ChatGuardedRouteCandidate,
+) -> str:
+    if not enabled:
+        return "feature_flag_disabled"
+    if not guarded_route_candidate.should_retrieve:
+        return "no_answer_abstain_first"
+    if guarded_route_candidate.guard_applied:
+        return "guard_kept_current_active_route"
+    if guarded_route_candidate.route_policy_changed:
+        return "shadow_only_candidate_route"
+    return "shadow_route_matches_current_active_route"
 
 
 def _contract_child_id(command: ChatCommand) -> str:

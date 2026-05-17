@@ -128,7 +128,8 @@
 - [x] `place_story` targeted chunk audit
 - [x] active routing 적용 여부 판단 계획
 - [x] active route shadow evaluation runner
-- [ ] API active route flag dry-run contract
+- [x] API active route flag dry-run contract
+- [ ] locked retrieval 검증 승인 계획
 - [ ] ColBERT style late interaction hard subset 검토
 - [ ] final ablation report 작성
 
