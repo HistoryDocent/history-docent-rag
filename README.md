@@ -39,6 +39,7 @@
 | targeted chunk audit | `HD-CHUNK-AUDIT-001` | dev-only single case | chunk_boundary_defect_count | 0 | do not reopen global chunking |
 | HyDE readiness | `HD-HYDE-001A` | dev-readiness-only | expected_hyde_generation_live_call_count | 4 | ready for live approval |
 | HyDE live comparison | `HD-HYDE-001B` | live-dev-subset 5 | Recall@5 delta | 0.250000 | larger eval 후보 유지 |
+| HyDE larger readiness | `HD-HYDE-001C` | dev-readiness-only 40 | expected_hyde_generation_live_call_count | 30 | ready for larger live approval |
 
 금지 claim:
 
@@ -148,6 +149,7 @@ PDF
 -> place_story targeted chunk audit
 -> HyDE subset readiness dry-run
 -> HyDE live paired retrieval comparison
+-> HyDE larger dev subset readiness
 -> query type router skeleton
 -> retrieval evaluation harness
 -> public-safe aggregate reports
@@ -156,8 +158,7 @@ PDF
 후속 구현 대상:
 
 ```text
-HyDE larger dev subset readiness
--> HyDE larger dev subset paired comparison
+HyDE larger dev subset paired comparison
 -> locked test 기반 최종 개선 주장 검증
 -> frontend/voice UI
 ```
@@ -364,6 +365,8 @@ HyDE subset readiness dry-run을 실행했다. dev subset 5개에서 answerable 
 
 Solar Pro 3 HyDE live paired retrieval comparison을 실행했다. dev subset 5개에서 Solar Pro 3 HyDE generation 호출은 4회였고, `no_answer` 1개는 generation과 retrieval을 모두 차단했다. CUDA 실행 기준 `Recall@5 delta=0.250000`, `MRR delta=-0.062500`, `nDCG@5 delta=0.015402`, `latency_p95_ms delta=1499.894500`으로 기록했다. 결론은 HyDE를 larger eval 후보로 유지하되 기본값이나 locked 개선 주장으로 채택하지 않는 것이다.
 
+HyDE larger dev subset readiness를 실행했다. dev 70개 중 `overview`, `place_story`, `relationship`, `no_answer` 4개 query type을 각 10개씩 고정해 총 40개를 다음 비교 대상으로 잡았다. 예상 Solar Pro 3 HyDE generation 호출은 answerable 30회이고, `no_answer` 10개는 generation과 retrieval 후보에서 차단했다. readiness 단계의 실제 Solar Pro 3 호출은 0회이며, 다음 단계는 별도 승인 기반 `HD-HYDE-001D` live paired comparison이다.
+
 ## 실행 전략
 
 단계별 구현 순서, 정량/정성 평가 기준, 포트폴리오 산출물 기준은 [실행 전략](docs/EXECUTION_STRATEGY.md)에 정리한다.
@@ -465,6 +468,8 @@ Solar Pro 3 HyDE live paired retrieval comparison을 실행했다. dev subset 5�
 | [HyDE Subset Readiness Report](evals/reports/hyde_subset_readiness_report.md) | HD-HYDE-001A 정량/정성 readiness report와 public-safe gate 결과 |
 | [HyDE Live Paired Retrieval Comparison](docs/HYDE_LIVE_PAIRED_RETRIEVAL_COMPARISON.md) | HD-HYDE-001B Solar Pro 3 HyDE live paired retrieval comparison 결과와 claim boundary |
 | [HyDE Live Paired Retrieval Comparison Report](evals/reports/hyde_live_paired_retrieval_comparison_report.md) | HD-HYDE-001B 정량/정성 live comparison report와 public-safe gate 결과 |
+| [HyDE Larger Dev Subset Readiness](docs/HYDE_LARGER_DEV_SUBSET_READINESS.md) | HD-HYDE-001C HyDE 확대 dev subset, call budget, no-answer guard 고정 |
+| [HyDE Larger Dev Subset Readiness Report](evals/reports/hyde_larger_dev_subset_readiness_report.md) | HD-HYDE-001C 정량/정성 readiness report와 public-safe gate 결과 |
 | [Chat API Contract Report](evals/reports/chat_api_contract_report.md) | FastAPI `/api/v1/chat`의 response contract, classifier/router dry-run, error envelope, provider boundary, public-safe gate 결과 |
 | [Chat Retrieval Integration Report](evals/reports/chat_retrieval_integration_report.md) | `/api/v1/chat` retrieval-backed mode의 API grain, evidence packing, classifier/router dry-run 연결, public-safe gate 결과 |
 | [Chat Private Retrieval Smoke Report](evals/reports/chat_private_retrieval_smoke_report.md) | private corpus 기반 dense retrieval-backed smoke 결과와 공개 경계 검증 |

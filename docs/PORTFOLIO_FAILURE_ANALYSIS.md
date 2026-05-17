@@ -77,7 +77,7 @@ No-answer는 검색기 단독으로는 후보를 반환할 수 있으므로 retr
 
 | priority | work_id | 작업 | 이유 |
 | ---: | --- | --- | --- |
-| 1 | `HD-HYDE-001C` | HyDE larger dev subset readiness | 5개 subset 결과만으로는 HyDE 채택 근거가 약하므로 확대 평가 범위와 call budget을 먼저 고정한다. |
+| 1 | `HD-HYDE-001D` | HyDE larger dev live paired retrieval comparison | 40개 readiness와 call budget은 고정됐고 실제 live 비교만 남았다. |
 | 2 | `HD-API-ROUTER-003` | active routing 적용 판단 계획 | guard dry-run은 완료됐지만 active route 적용은 별도 gate가 필요하다. |
 
 ## Claim Boundary

@@ -4,7 +4,7 @@
 
 현재 RAG 기본선은 `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1`로 둔다.
 
-GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison은 통과했다. HyDE는 larger eval 후보로만 유지한다.
+GraphRAG-lite와 RAPTOR-lite는 기본값으로 채택하지 않는다. 청킹 비교도 지금 다시 열지 않는다. query type classifier baseline, failure analysis, `/chat` classifier/router dry-run 연결, relationship route guard 평가, guarded route 후보 API dry-run 노출, 포트폴리오 실패 분석 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness는 통과했다.
 
 이 문서는 최종 성능 개선 주장이 아니다. public-safe 실험 상태 요약이며 locked test 전까지 모든 수치는 dev-only 또는 live-dev-subset으로 제한한다.
 
@@ -15,8 +15,8 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | 항목 | 값 |
 | --- | --- |
 | report_version | `final-ablation-status-report/v1` |
-| source_report_count | 17 |
-| decision_row_count | 28 |
+| source_report_count | 18 |
+| decision_row_count | 29 |
 | adopted_default_count | 4 |
 | rejected_default_count | 11 |
 | route_or_router_candidate_count | 6 |
@@ -70,6 +70,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | place_story_targeted_chunk_audit | `HD-CHUNK-AUDIT-001` | chunk_boundary_defect_count | 0 | do_not_reopen_global_chunking |
 | hyde_subset_readiness | `HD-HYDE-001A` | expected_hyde_generation_live_call_count | 4 | ready_for_hyde_live_approval |
 | hyde_live_paired_retrieval | `HD-HYDE-001B` | Recall@5 delta | 0.250000 | keep candidate for larger eval |
+| hyde_larger_dev_readiness | `HD-HYDE-001C` | expected_hyde_generation_live_call_count | 30 | ready_for_hyde_larger_live_approval |
 
 ## Qualitative Assessment
 
@@ -90,6 +91,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - `targeted_chunk_audit`: `place_story` 1건에서 target child/parent chunk 존재와 citation provenance를 확인했고 전역 재청킹은 열지 않는다.
 - `hyde_readiness`: subset, call budget, no-answer guard를 고정했고 live call은 readiness 단계에서 실행하지 않았다.
 - `hyde_live`: live-dev-subset 5개에서 Recall@5 delta는 0.250000이지만 MRR delta는 -0.062500이고 p95 latency가 증가했다. HyDE는 larger eval 후보이지 기본값이 아니다.
+- `hyde_larger_readiness`: dev 40개로 확대할 범위와 예상 Solar Pro 3 호출 30회를 고정했고 no-answer 10개는 차단했다.
 
 ## Claim Boundary
 
@@ -107,12 +109,13 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 | `/chat` guarded route candidate가 노출됐다 | yes | dry-run only, active route 미적용으로 표현 |
 | query type classifier production 검증 완료 | no | 실제 API 로그와 locked route impact 미검증 |
 | HyDE live-dev-subset에서 Recall@5 delta가 양수였다 | yes | 5개 subset, Solar Pro 3 호출 4회, MRR/latency trade-off 동시 표기 |
+| HyDE larger dev live 비교 전 범위와 call budget을 고정했다 | yes | readiness-only, Solar Pro 3 호출 0회 |
 | HyDE가 최종 retrieval 성능을 개선했다 | no | larger dev/locked test 미검증 |
 | production 성능 검증 완료 | no | 배포/운영 검증 없음 |
 
 ## Next Gate
 
-다음 gate는 `HD-HYDE-001C HyDE larger dev subset readiness`다.
+다음 gate는 `HD-HYDE-001D HyDE larger dev live paired retrieval comparison`이다.
 
 이유:
 
@@ -123,7 +126,7 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - relationship은 hybrid weighted 후보가 강하고, place_story는 guarded boost 후보가 존재한다.
 - GraphRAG-lite는 reject됐기 때문에 relationship 개선은 GraphRAG가 아니라 router 판단으로 다뤄야 한다.
 - RAPTOR-lite도 reject됐기 때문에 overview/place_story 개선은 classifier와 generation prompt 경계에서 다시 봐야 한다.
-- HyDE live-dev-subset에서는 Recall@5가 올랐지만 MRR 하락과 latency 증가가 있어 확대 검증 전 채택하면 안 된다.
+- HyDE larger readiness에서 예상 Solar Pro 3 호출 30회와 no-answer guard 10건은 고정됐지만 live 실행은 별도 승인이 필요하다.
 - targeted chunk audit은 `place_story` 1건에서 전역 재청킹 근거가 없음을 확인했다.
 
 ## External Audit
@@ -135,5 +138,5 @@ Public artifact에는 raw query, raw answer, raw evidence, prompt, chunk text, p
 - 대부분 dev split 또는 live-dev-subset 결과다.
 - locked test는 아직 최종 성능 주장에 쓰지 않았다.
 - Solar Pro 3 live 결과는 호출 수가 제한되어 통계적으로 강한 결론이 아니다.
-- HyDE는 live-dev-subset 비교까지 통과했지만 sample이 5개라 통계적으로 약하다.
+- HyDE는 larger readiness까지 통과했지만 40개 live 비교와 locked test 전까지 최종 개선으로 주장하면 안 된다.
 - classifier/router와 guard는 구현됐고 API에서 관찰 가능하지만 active route 적용은 아직 금지해야 한다.
