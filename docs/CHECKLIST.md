@@ -145,3 +145,17 @@
 - [ ] target resolvability required fail count 0
 - [ ] public raw payload leakage 0
 - [ ] ColBERT execution result claim forbidden
+
+## ColBERT Hard Subset Gate
+
+- [ ] selected query count 21
+- [ ] target query type count 3
+- [ ] target resolvability fail count 0
+- [ ] locked test execution count 0
+- [ ] Solar Pro 3 call count 0
+- [ ] CUDA memory peak recorded
+- [ ] `Recall@5`, `MRR`, `nDCG@5`, `latency_p95_ms` recorded
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] ColBERT default route adoption claim forbidden

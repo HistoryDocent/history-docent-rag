@@ -14,7 +14,7 @@
 | query type classifier/router | classifier baseline accuracy 0.957143, router는 `relationship` hybrid route, `no_answer` abstain-first, 나머지 dense voice rewrite, API는 dry-run/flag dry-run만 적용, active route는 아직 미적용 |
 | 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
 | 보류한 핵심 | BGE-M3 dense, BGE reranker |
-| 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route, HyDE 기본 retrieval route |
+| 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route, HyDE 기본 retrieval route, ColBERT-style late interaction 기본 route |
 | locked gate | paired comparison 실행 완료, relationship hybrid는 locked 개선 주장 보류, Solar 실행 0회 유지 |
 | 공개 경계 | 원본 PDF, 전체 parser JSON, 전체 chunk text, vector index, raw eval payload, secret은 public repo에 포함하지 않음 |
 
@@ -49,6 +49,7 @@
 | locked retrieval readiness | `HD-LOCKED-RETRIEVAL-002` | readiness-only | target_resolvability_fail_count | 0 | ready for execution approval |
 | locked retrieval execution approval | `HD-LOCKED-RETRIEVAL-003` | approval-only | planned_bootstrap_iteration_count | 10000 | ready for user approval |
 | locked retrieval paired comparison | `HD-LOCKED-RETRIEVAL-004` | locked test 35 | MRR delta | -0.100000 | keep shadow without improvement claim |
+| ColBERT-style late interaction | `colbert_style_late_interaction_top50_cuda` | dev hard subset 21 | MRR delta / nDCG@5 delta | +0.022222 / -0.021670 | reject default |
 
 금지 claim:
 
@@ -175,14 +176,14 @@ PDF
 -> submission ready audit
 -> ColBERT-style late interaction plan
 -> ColBERT-style hard subset execution approval
+-> ColBERT-style hard subset comparison
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-ColBERT style late interaction hard subset 실행
--> frontend/voice UI
+frontend/voice UI
 ```
 
 ## RAG 전략
@@ -499,6 +500,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [ColBERT-style Late Interaction Plan Report](evals/reports/colbert_late_interaction_plan_report.md) | HD-COLBERT-001A 정량/정성 plan-only readiness와 public-safe gate |
 | [ColBERT-style Late Interaction Execution Approval](docs/COLBERT_LATE_INTERACTION_EXECUTION_APPROVAL.md) | HD-COLBERT-001B dev hard subset 실행 전 scope, CUDA, locked/Solar 금지 gate |
 | [ColBERT-style Late Interaction Execution Approval Report](evals/reports/colbert_late_interaction_execution_approval_report.md) | HD-COLBERT-001B 정량/정성 실행 승인 리포트와 public-safe gate |
+| [ColBERT-style Late Interaction Hard Subset](docs/COLBERT_LATE_INTERACTION_HARD_SUBSET.md) | HD-COLBERT-001C CUDA 기반 dev hard subset 비교와 기본 route 기각 판단 |
+| [ColBERT-style Late Interaction Hard Subset Report](evals/reports/colbert_late_interaction_hard_subset_report.md) | HD-COLBERT-001C 정량/정성 비교 결과와 public-safe gate |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

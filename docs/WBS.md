@@ -97,6 +97,7 @@
 | 8.3 | final report | docs/notebook | query type별 최종 판단 | `docs: add final ablation report` |
 | 8.4 | ColBERT-style plan | docs/report/test | late interaction hard subset 실행 전 gate 고정 | `문서: ColBERT late interaction 실험 계획 추가` |
 | 8.5 | ColBERT-style execution approval | docs/report/test | dev hard subset 실행 전 scope, CUDA, locked/Solar 금지 gate 고정 | `문서: ColBERT hard subset 실행 승인 기준 추가` |
+| 8.6 | ColBERT-style hard subset | scorer/runner/docs/report/test | CUDA 기반 dev hard subset 비교와 기본 route 기각 판단 | `실험: ColBERT hard subset 비교 실행` |
 
 ## Phase 9. 제출 패키징
 
