@@ -34,6 +34,10 @@ class ChatApiContractSummary(ChatApiContractReportModel):
     abstained_count: int = Field(ge=0)
     citation_count: int = Field(ge=0)
     evidence_id_count: int = Field(ge=0)
+    classifier_dry_run_count: int = Field(ge=0)
+    classifier_route_policy_changed_count: int = Field(ge=0)
+    classifier_active_route_applied_count: int = Field(ge=0)
+    classifier_fallback_count: int = Field(ge=0)
     live_solar_call_count: int = Field(ge=0)
     latency_p95_ms: float = Field(ge=0.0)
 
@@ -78,6 +82,7 @@ def build_report(*, report_path: Path = DEFAULT_REPORT_PATH) -> ChatApiContractR
         f"success_count={report.summary.success_count} "
         f"validation_error_count={report.summary.validation_error_count} "
         f"provider_unavailable_count={report.summary.provider_unavailable_count} "
+        f"classifier_dry_run_count={report.summary.classifier_dry_run_count} "
         f"live_solar_call_count={report.summary.live_solar_call_count}"
     )
     return report
@@ -159,6 +164,10 @@ def collect_chat_api_contract_failures(report: ChatApiContractReport) -> list[st
         failures.append("citation_case_missing")
     if summary.live_solar_call_count:
         failures.append("live_solar_call_detected")
+    if summary.classifier_dry_run_count != summary.success_count:
+        failures.append("classifier_dry_run_missing")
+    if summary.classifier_active_route_applied_count:
+        failures.append("classifier_dry_run_changed_active_route")
     return failures
 
 
@@ -190,6 +199,10 @@ FastAPI `/api/v1/chat` 계약을 live Solar Pro 3 호출 없이 검증한다.
 | abstained_count | {summary.abstained_count} |
 | citation_count | {summary.citation_count} |
 | evidence_id_count | {summary.evidence_id_count} |
+| classifier_dry_run_count | {summary.classifier_dry_run_count} |
+| classifier_route_policy_changed_count | {summary.classifier_route_policy_changed_count} |
+| classifier_active_route_applied_count | {summary.classifier_active_route_applied_count} |
+| classifier_fallback_count | {summary.classifier_fallback_count} |
 | live_solar_call_count | {summary.live_solar_call_count} |
 | latency_p95_ms | {summary.latency_p95_ms:.6f} |
 
@@ -248,6 +261,22 @@ def _summarize_rows(rows: list[dict[str, Any]]) -> ChatApiContractSummary:
         evidence_id_count=sum(
             int(row.get("evidence_id_count") or 0) for row in success_rows
         ),
+        classifier_dry_run_count=sum(
+            1 for row in success_rows if row.get("classifier_dry_run_enabled") is True
+        ),
+        classifier_route_policy_changed_count=sum(
+            1
+            for row in success_rows
+            if row.get("classifier_route_policy_changed") is True
+        ),
+        classifier_active_route_applied_count=sum(
+            1
+            for row in success_rows
+            if row.get("classifier_active_route_applied") is True
+        ),
+        classifier_fallback_count=sum(
+            1 for row in success_rows if row.get("classifier_fallback_used") is True
+        ),
         live_solar_call_count=sum(
             int(row.get("solar_call_count") or 0) for row in success_rows
         ),
@@ -278,6 +307,9 @@ def _build_qualitative_assessment(
         "citation_boundary": (
             "answerable 응답은 recoverable citation과 evidence_id를 포함하고, no-answer 응답은 "
             "citation 없이 abstained=true를 반환한다."
+        ),
+        "classifier_router_boundary": (
+            "classifier/router 판단은 dry-run field로만 노출하고 active retrieval route에는 적용하지 않는다."
         ),
         "claim_boundary": (
             "이 리포트는 API 계약 검증이며 검색 또는 생성 품질 개선 주장이 아니다."

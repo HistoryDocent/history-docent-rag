@@ -37,6 +37,35 @@ def test_chat_endpoint_returns_citation_response_contract() -> None:
     assert body["citations"][0]["citation_recoverable"] is True
     assert body["evidence_ids"] == [body["citations"][0]["evidence_id"]]
     assert body["usage"]["solar_call_count"] == 0
+    dry_run = body["classifier_router_dry_run"]
+    assert dry_run["enabled"] is True
+    assert dry_run["active_query_type"] == "place_story"
+    assert dry_run["active_route_applied"] is False
+    assert dry_run["active_route_policy_id"] == body["usage"]["route_policy_id"]
+
+
+def test_chat_endpoint_exposes_classifier_router_dry_run_without_active_route_change() -> None:
+    response = _client().post(
+        "/api/v1/chat",
+        json={
+            "request_id": "api-test-router-dry-run",
+            "query": "경복궁과 창덕궁은 왕권 정통성과 어떤 관계로 연결돼?",
+            "query_type": "overview",
+            "language": "ko",
+            "place_context": ["gyeongbokgung", "changdeokgung"],
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    dry_run = body["classifier_router_dry_run"]
+    assert body["query_type"] == "overview"
+    assert body["usage"]["route_policy_id"] == "default_dense_voice_rewrite_v1"
+    assert dry_run["predicted_query_type"] == "relationship"
+    assert dry_run["predicted_route_policy_id"] == "relationship_hybrid_weighted_e5_v1"
+    assert dry_run["route_policy_changed"] is True
+    assert dry_run["active_route_applied"] is False
+    assert dry_run["active_route_policy_id"] == body["usage"]["route_policy_id"]
 
 
 def test_chat_endpoint_abstains_for_no_answer_contract() -> None:
@@ -109,6 +138,8 @@ def test_public_chat_response_row_excludes_raw_answer_text() -> None:
     assert "raw_text" not in row
     assert row["citation_count"] == 1
     assert row["solar_call_count"] == 0
+    assert row["classifier_dry_run_enabled"] is True
+    assert row["classifier_active_route_applied"] is False
 
 
 def test_chat_api_contract_report_gate_passes(tmp_path) -> None:
@@ -119,6 +150,8 @@ def test_chat_api_contract_report_gate_passes(tmp_path) -> None:
     assert report.summary.success_count == 2
     assert report.summary.validation_error_count == 1
     assert report.summary.provider_unavailable_count == 1
+    assert report.summary.classifier_dry_run_count == 2
+    assert report.summary.classifier_active_route_applied_count == 0
     assert report.summary.live_solar_call_count == 0
     assert report.output_quality.public_raw_text_leakage_count == 0
     assert report.output_quality.private_path_leakage_count == 0

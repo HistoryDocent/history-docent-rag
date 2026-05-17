@@ -19,6 +19,10 @@ from app.application.chat_retrieval import (
     ChatRetrievalOutcome,
     PrivateArtifactRetrievalBackend,
 )
+from app.application.query_type_classifier import (
+    DeterministicQueryTypeClassifier,
+    QueryTypeClassificationInput,
+)
 from app.application.query_type_router import QueryTypeRouter
 from app.domain.generation import AnswerProviderKind, CitationRagAnswer
 from app.domain.retrieval import (
@@ -31,6 +35,7 @@ from app.domain.retrieval import (
 CHAT_SERVICE_POLICY_ID = "chat-citation-rag-contract-v1"
 CHAT_SERVICE_MODEL_ID = "contract-only"
 CHAT_API_DEFAULT_PLACE_ID = "seoul-hanyang"
+CHAT_CLASSIFIER_ROUTER_DRY_RUN_POLICY_ID = "chat-classifier-router-dry-run-v1"
 
 ChatProviderMode = Literal["contract_only", "solar_pro_3"]
 
@@ -72,10 +77,32 @@ class ChatUsage(ChatServiceModel):
     estimated_cost: float = Field(default=0.0, ge=0.0)
 
 
+class ChatClassifierRouterDryRun(ChatServiceModel):
+    dry_run_policy_id: str = CHAT_CLASSIFIER_ROUTER_DRY_RUN_POLICY_ID
+    enabled: bool = True
+    classifier_id: str = Field(min_length=1)
+    predicted_query_type: QueryType
+    confidence: float = Field(ge=0.0, le=1.0)
+    fallback_used: bool
+    matched_rule_count: int = Field(ge=0)
+    predicted_route_policy_id: str = Field(min_length=1)
+    predicted_route_candidate_id: str = Field(min_length=1)
+    predicted_route_claim_boundary: str = Field(min_length=1)
+    predicted_should_retrieve: bool
+    active_query_type: QueryType
+    active_route_policy_id: str = Field(min_length=1)
+    active_route_candidate_id: str = Field(min_length=1)
+    active_route_claim_boundary: str = Field(min_length=1)
+    route_policy_changed: bool
+    active_route_applied: bool = False
+    latency_ms: float = Field(ge=0.0)
+
+
 class ChatServiceResult(ChatServiceModel):
     request_id: str = Field(min_length=1)
     answer: CitationRagAnswer
     usage: ChatUsage
+    classifier_router_dry_run: ChatClassifierRouterDryRun
     latency_ms: float = Field(ge=0.0)
 
 
@@ -93,6 +120,7 @@ class ChatContractService:
         self.provider = provider
         self.retrieval_backend = retrieval_backend or PrivateArtifactRetrievalBackend()
         self.router = QueryTypeRouter()
+        self.classifier = DeterministicQueryTypeClassifier()
         self.assembler = CitationRagAnswerAssembler(
             config=CitationRagAssemblerConfig(
                 answer_policy_id=CHAT_SERVICE_POLICY_ID,
@@ -109,6 +137,14 @@ class ChatContractService:
             )
         item = _build_eval_item(command)
         route_decision = self.router.route(command.query_type)
+        classifier_router_dry_run = _build_classifier_router_dry_run(
+            command=command,
+            classifier=self.classifier,
+            router=self.router,
+            active_route_policy_id=route_decision.route_policy_id,
+            active_route_candidate_id=route_decision.selected_candidate_id,
+            active_route_claim_boundary=route_decision.claim_boundary,
+        )
         if command.retrieval_mode == "retrieval_backed":
             retrieval = self.retrieval_backend.retrieve(command=command, item=item)
             evidence_pack = retrieval.evidence_pack
@@ -151,6 +187,7 @@ class ChatContractService:
                     else route_decision.claim_boundary
                 ),
             ),
+            classifier_router_dry_run=classifier_router_dry_run,
             latency_ms=latency_ms,
         )
 
@@ -332,6 +369,47 @@ def _build_usage(
         ),
         provider_call_count=0,
         solar_call_count=0,
+    )
+
+
+def _build_classifier_router_dry_run(
+    *,
+    command: ChatCommand,
+    classifier: DeterministicQueryTypeClassifier,
+    router: QueryTypeRouter,
+    active_route_policy_id: str,
+    active_route_candidate_id: str,
+    active_route_claim_boundary: str,
+) -> ChatClassifierRouterDryRun:
+    classification = classifier.classify(
+        QueryTypeClassificationInput(
+            query_text=command.query,
+            user_context=command.user_context,
+            place_ids=command.place_context,
+            has_dialog_context=bool(command.user_context) or command.voice_mode,
+        )
+    )
+    predicted_route = router.route(classification.predicted_query_type)
+    return ChatClassifierRouterDryRun(
+        classifier_id=classification.classifier_id,
+        predicted_query_type=classification.predicted_query_type,
+        confidence=classification.confidence,
+        fallback_used=classification.fallback_used,
+        matched_rule_count=len(classification.matched_rule_ids),
+        predicted_route_policy_id=predicted_route.route_policy_id,
+        predicted_route_candidate_id=predicted_route.selected_candidate_id,
+        predicted_route_claim_boundary=predicted_route.claim_boundary,
+        predicted_should_retrieve=predicted_route.should_retrieve,
+        active_query_type=command.query_type,
+        active_route_policy_id=active_route_policy_id,
+        active_route_candidate_id=active_route_candidate_id,
+        active_route_claim_boundary=active_route_claim_boundary,
+        route_policy_changed=(
+            predicted_route.route_policy_id != active_route_policy_id
+            or predicted_route.selected_candidate_id != active_route_candidate_id
+        ),
+        active_route_applied=False,
+        latency_ms=classification.latency_ms,
     )
 
 

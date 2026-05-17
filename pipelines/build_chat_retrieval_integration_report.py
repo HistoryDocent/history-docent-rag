@@ -36,6 +36,10 @@ class ChatRetrievalIntegrationSummary(ChatRetrievalIntegrationModel):
     citation_count: int = Field(ge=0)
     evidence_id_count: int = Field(ge=0)
     retrieval_candidate_count: int = Field(ge=0)
+    classifier_dry_run_count: int = Field(ge=0)
+    classifier_route_policy_changed_count: int = Field(ge=0)
+    classifier_active_route_applied_count: int = Field(ge=0)
+    classifier_fallback_count: int = Field(ge=0)
     live_solar_call_count: int = Field(ge=0)
     latency_p95_ms: float = Field(ge=0.0)
     retrieval_latency_p95_ms: float = Field(ge=0.0)
@@ -83,6 +87,7 @@ def build_report(
         f"request_count={report.summary.request_count} "
         f"retrieval_backed_request_count={report.summary.retrieval_backed_request_count} "
         f"retrieval_success_count={report.summary.retrieval_success_count} "
+        f"classifier_dry_run_count={report.summary.classifier_dry_run_count} "
         f"live_solar_call_count={report.summary.live_solar_call_count}"
     )
     return report
@@ -165,6 +170,10 @@ def collect_chat_retrieval_integration_failures(
         failures.append("citation_count_below_expected")
     if summary.live_solar_call_count:
         failures.append("live_solar_call_detected")
+    if summary.classifier_dry_run_count != summary.success_count:
+        failures.append("classifier_dry_run_missing")
+    if summary.classifier_active_route_applied_count:
+        failures.append("classifier_dry_run_changed_active_route")
     return failures
 
 
@@ -197,6 +206,10 @@ FastAPI `/api/v1/chat`의 `retrieval_backed` mode가 retrieval, evidence packing
 | citation_count | {summary.citation_count} |
 | evidence_id_count | {summary.evidence_id_count} |
 | retrieval_candidate_count | {summary.retrieval_candidate_count} |
+| classifier_dry_run_count | {summary.classifier_dry_run_count} |
+| classifier_route_policy_changed_count | {summary.classifier_route_policy_changed_count} |
+| classifier_active_route_applied_count | {summary.classifier_active_route_applied_count} |
+| classifier_fallback_count | {summary.classifier_fallback_count} |
 | live_solar_call_count | {summary.live_solar_call_count} |
 | latency_p95_ms | {summary.latency_p95_ms:.6f} |
 | retrieval_latency_p95_ms | {summary.retrieval_latency_p95_ms:.6f} |
@@ -271,6 +284,22 @@ def _summarize_rows(rows: list[dict[str, Any]]) -> ChatRetrievalIntegrationSumma
         retrieval_candidate_count=sum(
             int(row.get("retrieval_candidate_count") or 0) for row in retrieval_rows
         ),
+        classifier_dry_run_count=sum(
+            1 for row in success_rows if row.get("classifier_dry_run_enabled") is True
+        ),
+        classifier_route_policy_changed_count=sum(
+            1
+            for row in success_rows
+            if row.get("classifier_route_policy_changed") is True
+        ),
+        classifier_active_route_applied_count=sum(
+            1
+            for row in success_rows
+            if row.get("classifier_active_route_applied") is True
+        ),
+        classifier_fallback_count=sum(
+            1 for row in success_rows if row.get("classifier_fallback_used") is True
+        ),
         live_solar_call_count=sum(
             int(row.get("solar_call_count") or 0) for row in success_rows
         ),
@@ -305,6 +334,9 @@ def _build_qualitative_assessment(
         ),
         "provider_boundary": (
             "Solar Pro 3 live generation은 호출하지 않고, provider_call_count와 solar_call_count를 0으로 유지한다."
+        ),
+        "classifier_router_boundary": (
+            "classifier/router dry-run은 API 응답에 포함하지만 retrieval_backed route 선택에는 적용하지 않는다."
         ),
         "gate_status": "PASS" if not failures else f"FAIL: {', '.join(failures)}",
     }

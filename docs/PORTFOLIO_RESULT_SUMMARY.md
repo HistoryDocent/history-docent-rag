@@ -4,7 +4,7 @@
 
 이 프로젝트의 포트폴리오 메시지는 “최신 RAG 기법을 많이 붙였다”가 아니다.
 
-핵심은 한국사 도서 parser 결과를 citation 가능한 RAG corpus로 정리하고, 청킹, retrieval, reranker, query rewrite, evidence packing, generation, GraphRAG-lite, RAPTOR-lite, query type router를 같은 평가 원칙으로 비교해 채택과 기각을 분리했다는 점이다.
+핵심은 한국사 도서 parser 결과를 citation 가능한 RAG corpus로 정리하고, 청킹, retrieval, reranker, query rewrite, evidence packing, generation, GraphRAG-lite, RAPTOR-lite, query type router, API dry-run을 같은 평가 원칙으로 비교해 채택과 기각을 분리했다는 점이다.
 
 이 문서는 public-safe 요약이다. raw query, raw answer, raw evidence, prompt, chunk text, private path, secret은 기록하지 않는다.
 
@@ -19,7 +19,7 @@
 | evidence packing | `P0_rank_order` | citation recoverability 1.000000 |
 | generation | `solar-generation-baseline-v1` | repaired v2는 citation recall 하락으로 기본값 기각 |
 | API | FastAPI `/api/v1/chat` contract + retrieval-backed smoke | live service 품질 주장이 아니라 contract 검증 |
-| classifier/router | `deterministic_query_type_classifier_v1` + `query_type_router_v1` | classifier baseline 통과, production routing 주장은 아님 |
+| classifier/router | `deterministic_query_type_classifier_v1` + `query_type_router_v1` + API dry-run | classifier 판단은 응답에 노출하지만 production routing 주장은 아님 |
 
 ## 핵심 정량 결과
 
@@ -40,6 +40,7 @@
 | router skeleton | `query_type_router_v1` | contract-only | route_policy_count | 3 | implemented |
 | query type classifier | `deterministic_query_type_classifier_v1` | dev 70 | macro_f1 | 0.956818 | implemented baseline |
 | classifier failure analysis | `deterministic_query_type_classifier_v1` | dev 70 | route_risk_failure_count | 2 | dry-run before active route |
+| classifier/router dry-run | `chat-classifier-router-dry-run-v1` | API contract + fixture retrieval | active_route_applied_count | 0 | implemented dry-run |
 
 ## 채택, 보류, 기각
 
@@ -60,7 +61,7 @@
 ## 면접에서 말할 핵심 문장
 
 ```text
-도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router까지 단계별로 비교했습니다. 좋은 수치만 채택하지 않고 latency, citation recall, nDCG 하락, locked readiness 결과 때문에 후보를 기각한 과정을 포트폴리오 핵심으로 정리했습니다.
+도서 parser output을 citation 가능한 RAG corpus로 재구성하고, BM25부터 neural dense, hybrid, reranker, query rewrite, evidence packing, generation contract, GraphRAG-lite, RAPTOR-lite, query type classifier/router, API dry-run까지 단계별로 비교했습니다. 좋은 수치만 채택하지 않고 latency, citation recall, nDCG 하락, locked readiness 결과 때문에 후보를 기각한 과정을 포트폴리오 핵심으로 정리했습니다.
 ```
 
 ## Claim Boundary
@@ -75,6 +76,7 @@
 - API는 contract와 retrieval-backed smoke까지 검증했다.
 - query type classifier baseline은 dev 기준 macro F1 0.956818을 기록했다.
 - classifier failure analysis에서 no-answer 오분류는 0건이지만 false hybrid route 2건이 남았다.
+- `/chat` classifier/router dry-run은 연결됐지만 active route 적용은 0건이다.
 
 금지 표현:
 
@@ -91,9 +93,9 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-API-ROUTER-001` | `/chat`에 classifier/router dry-run field 연결 |
-| 2 | `HD-CLASSIFIER-005` | relationship false hybrid route guard 설계 |
-| 3 | `HD-HYDE-001` | Solar Pro 3 호출 비용과 hallucination guard를 포함한 HyDE subset 비교 |
+| 1 | `HD-CLASSIFIER-005` | relationship false hybrid route guard 설계 |
+| 2 | `HD-HYDE-001` | Solar Pro 3 호출 비용과 hallucination guard를 포함한 HyDE subset 비교 |
+| 3 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 |
 
 ## 외부 감사 결론
 

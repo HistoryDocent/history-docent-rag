@@ -18,8 +18,12 @@ FastAPI `/api/v1/chat` 계약을 live Solar Pro 3 호출 없이 검증한다.
 | abstained_count | 1 |
 | citation_count | 1 |
 | evidence_id_count | 1 |
+| classifier_dry_run_count | 2 |
+| classifier_route_policy_changed_count | 1 |
+| classifier_active_route_applied_count | 0 |
+| classifier_fallback_count | 0 |
 | live_solar_call_count | 0 |
-| latency_p95_ms | 0.199600 |
+| latency_p95_ms | 0.796700 |
 
 ## Public Output Gate
 
@@ -37,6 +41,7 @@ FastAPI `/api/v1/chat` 계약을 live Solar Pro 3 호출 없이 검증한다.
 - `validation_boundary`: blank query는 422 error envelope로 반환하고 request body 원문을 report에 남기지 않는다.
 - `provider_boundary`: provider_mode=solar_pro_3 요청은 503 provider_unavailable로 차단해 live 비용과 secret 노출을 방지한다.
 - `citation_boundary`: answerable 응답은 recoverable citation과 evidence_id를 포함하고, no-answer 응답은 citation 없이 abstained=true를 반환한다.
+- `classifier_router_boundary`: classifier/router 판단은 dry-run field로만 노출하고 active retrieval route에는 적용하지 않는다.
 - `claim_boundary`: 이 리포트는 API 계약 검증이며 검색 또는 생성 품질 개선 주장이 아니다.
 - `gate_status`: PASS
 

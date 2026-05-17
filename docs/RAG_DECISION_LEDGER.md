@@ -60,7 +60,8 @@
 | `query_type_router_skeleton` | `query_type_router_v1` | deterministic branch contract | query_type_count=7, route_policy_count=3, live_solar_call_count=0 | implemented | contract-only | `evals/reports/query_type_router_skeleton_report.md` |
 | `query_type_classifier` | `deterministic_query_type_classifier_v1` | dev 70 | accuracy=0.957143, macro_f1=0.956818, route_policy_accuracy=0.971429 | implemented_baseline | dev-only | `evals/reports/query_type_classifier_eval_report.md` |
 | `query_type_classifier_failure_analysis` | `deterministic_query_type_classifier_v1` | dev 70 failures | failure_count=3, route_risk_failure_count=2, false_hybrid_route_count=2 | analyzed | dev-only | `evals/reports/query_type_classifier_failure_analysis_report.md` |
-| `portfolio_summary` | `HD-PORTFOLIO-001` | public README/docs summary | summarized_stage_count=14, leakage_count=0 | implemented | public-safe-summary | `evals/reports/portfolio_result_summary_report.md` |
+| `chat_classifier_router_dry_run` | `chat-classifier-router-dry-run-v1` | API contract + fixture retrieval | classifier_dry_run_count=5, classifier_active_route_applied_count=0 | implemented_dry_run | contract-only | `evals/reports/chat_api_contract_report.md`, `evals/reports/chat_retrieval_integration_report.md` |
+| `portfolio_summary` | `HD-PORTFOLIO-001` | public README/docs summary | summarized_stage_count=16, leakage_count=0 | implemented | public-safe-summary | `evals/reports/portfolio_result_summary_report.md` |
 | `graphrag_lite` | `graphrag_lite_entity_path_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.002056 | reject_default | dev-input-only | `evals/reports/graphrag_lite_relationship_input_only_report.md` |
 | `graphrag_lite` | `graphrag_lite_community_hint_v1` | relationship dev 10 | Recall@5 delta=0.000000, nDCG@5 delta=-0.030337 | reject_default | dev-input-only | same report |
 | `raptor_lite` | `raptor_lite_parent_summary_v1` | overview/place_story dev 20 | Recall@5 delta=0.000000, nDCG@5 delta=-0.074957 | reject_default | dev-input-only | `evals/reports/raptor_lite_input_only_report.md` |
@@ -87,10 +88,9 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-API-ROUTER-001` | `/chat` classifier/router dry-run field 연결 | active routing 전 API contract에서 예측 label과 route decision을 관찰해야 한다. | 예 |
-| 2 | `HD-CLASSIFIER-005` | relationship route guard 설계 | 현재 남은 route-risk는 false hybrid route 2건이다. | 예 |
-| 3 | `HD-HYDE-001` | HyDE overview/relationship subset 비교 | LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard가 필요하다. | 예 |
-| 4 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 | 제출용 README 다음에는 실패 사례별 원인과 조치가 필요하다. | 예 |
+| 1 | `HD-CLASSIFIER-005` | relationship route guard 설계 | dry-run은 붙었지만 active routing 전 false hybrid route 2건을 줄여야 한다. | 예 |
+| 2 | `HD-HYDE-001` | HyDE overview/relationship subset 비교 | LLM 의존 실험이라 Solar Pro 3 호출 예산과 hallucination guard가 필요하다. | 예 |
+| 3 | `HD-PORTFOLIO-002` | failure analysis 10개 정리 | 제출용 README 다음에는 실패 사례별 원인과 조치가 필요하다. | 예 |
 
 ## Data Mart 설계
 
@@ -135,4 +135,4 @@
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline과 오분류 failure analysis도 통과했다. 다음에는 active routing이 아니라 `/chat` dry-run field로 classifier/router 판단을 노출해야 한다.
+README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결도 통과했다. 다음에는 active routing이 아니라 relationship guard를 먼저 설계해야 한다.

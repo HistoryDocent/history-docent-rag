@@ -151,10 +151,34 @@
 - `/chat`에 바로 active route로 연결하지 말고, 먼저 classifier/router dry-run field로 노출한다.
 - active routing은 relationship guard를 추가한 뒤 별도 gate로 판단한다.
 
+## API Dry-run 연결 결과
+
+`HD-API-ROUTER-001`에서 `/api/v1/chat` 응답에 `classifier_router_dry_run` field를 추가했다.
+
+근거 리포트:
+
+- `evals/reports/chat_api_contract_report.md`
+- `evals/reports/chat_retrieval_integration_report.md`
+
+| metric | chat contract | retrieval integration |
+| --- | ---: | ---: |
+| classifier_dry_run_count | 2 | 3 |
+| classifier_route_policy_changed_count | 1 | 1 |
+| classifier_active_route_applied_count | 0 | 0 |
+| classifier_fallback_count | 0 | 1 |
+| live_solar_call_count | 0 | 0 |
+| public_raw_text_leakage_count | 0 | 0 |
+
+해석:
+
+- classifier/router 판단은 API 응답에서 관찰 가능하다.
+- active retrieval route는 아직 바꾸지 않는다.
+- `route_policy_changed`는 운영 전 guard 설계를 위한 관찰 지표이지 성능 개선 지표가 아니다.
+- 다음 단계는 false hybrid route를 줄이기 위한 relationship route guard 설계다.
+
 ## 다음 작업 지시서
 
 | id | depends_on | scope | acceptance_tests | risk_level | rollback_plan |
 | --- | --- | --- | --- | --- | --- |
-| HD-API-ROUTER-001 | HD-CLASSIFIER-004 | `/chat`에 classifier + router dry-run field 연결 | contract test, retrieval regression 0, raw output leakage 0 | Medium | API field 제거 |
-| HD-CLASSIFIER-005 | HD-CLASSIFIER-004 | relationship route guard 설계 | false_hybrid_route 재평가, public report, active route 미적용 | Medium | guard module revert |
+| HD-CLASSIFIER-005 | HD-API-ROUTER-001 | relationship route guard 설계 | false_hybrid_route 재평가, public report, active route 미적용 | Medium | guard module revert |
 | HD-HYDE-001 | HD-ROUTER-003 | Solar Pro 3 기반 HyDE subset 비교 | 명시 승인, call budget, hallucination guard, public report | High | HyDE candidate 미채택 |

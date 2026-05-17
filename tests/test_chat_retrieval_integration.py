@@ -43,6 +43,11 @@ def test_chat_endpoint_retrieval_backed_mode_returns_packed_evidence() -> None:
     assert body["usage"]["retrieval_method"] == "fixture_retrieval"
     assert body["usage"]["retrieval_candidate_count"] == 1
     assert body["usage"]["solar_call_count"] == 0
+    assert body["classifier_router_dry_run"]["active_route_applied"] is False
+    assert (
+        body["classifier_router_dry_run"]["active_route_policy_id"]
+        == body["usage"]["route_policy_id"]
+    )
 
 
 def test_chat_endpoint_retrieval_backed_no_answer_abstains() -> None:
@@ -62,6 +67,7 @@ def test_chat_endpoint_retrieval_backed_no_answer_abstains() -> None:
     assert body["citations"] == []
     assert body["usage"]["retrieval_mode"] == "retrieval_backed"
     assert body["usage"]["retrieval_candidate_count"] == 0
+    assert body["classifier_router_dry_run"]["active_route_applied"] is False
 
 
 def test_chat_retrieval_integration_report_gate_passes(tmp_path) -> None:
@@ -71,6 +77,8 @@ def test_chat_retrieval_integration_report_gate_passes(tmp_path) -> None:
     assert report.summary.request_count == 3
     assert report.summary.retrieval_backed_request_count == 2
     assert report.summary.retrieval_success_count == 1
+    assert report.summary.classifier_dry_run_count == 3
+    assert report.summary.classifier_active_route_applied_count == 0
     assert report.summary.live_solar_call_count == 0
     assert report.output_quality.public_raw_text_leakage_count == 0
     assert report.output_quality.private_path_leakage_count == 0

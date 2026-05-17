@@ -117,7 +117,7 @@
 - [x] deterministic query-type router skeleton 구현
 - [x] deterministic query-type classifier baseline 평가
 - [x] query-type classifier 오분류 failure analysis
-- [ ] FastAPI `/chat` classifier/router dry-run field 연결
+- [x] FastAPI `/chat` classifier/router dry-run field 연결
 - [ ] relationship route guard 설계
 - [ ] HyDE overview/relationship subset 비교
 - [ ] ColBERT style late interaction hard subset 검토

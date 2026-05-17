@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.application.chat_service import (
+    ChatClassifierRouterDryRun,
     ChatCommand,
     ChatContractService,
     ChatProviderMode,
@@ -126,6 +127,7 @@ class ChatResponse(ChatApiModel):
     answer_policy_id: str = Field(min_length=1)
     latency_ms: float = Field(ge=0.0)
     usage: ChatUsage
+    classifier_router_dry_run: ChatClassifierRouterDryRun
     public_allowed: bool = True
 
     @classmethod
@@ -151,6 +153,7 @@ class ChatResponse(ChatApiModel):
             answer_policy_id=answer.answer_policy_id,
             latency_ms=result.latency_ms,
             usage=result.usage,
+            classifier_router_dry_run=result.classifier_router_dry_run,
         )
 
 
@@ -194,6 +197,11 @@ def chat(
 
 def public_chat_response_row(response: dict[str, Any]) -> dict[str, Any]:
     usage = response.get("usage") if isinstance(response.get("usage"), dict) else {}
+    dry_run = (
+        response.get("classifier_router_dry_run")
+        if isinstance(response.get("classifier_router_dry_run"), dict)
+        else {}
+    )
     citations = response.get("citations") if isinstance(response.get("citations"), list) else []
     return {
         "contract_version": response.get("contract_version"),
@@ -214,6 +222,24 @@ def public_chat_response_row(response: dict[str, Any]) -> dict[str, Any]:
         "retrieval_latency_ms": usage.get("retrieval_latency_ms"),
         "query_rewrite_changed": usage.get("query_rewrite_changed"),
         "query_rewrite_latency_ms": usage.get("query_rewrite_latency_ms"),
+        "classifier_dry_run_policy_id": dry_run.get("dry_run_policy_id"),
+        "classifier_dry_run_enabled": dry_run.get("enabled"),
+        "classifier_id": dry_run.get("classifier_id"),
+        "classifier_predicted_query_type": dry_run.get("predicted_query_type"),
+        "classifier_confidence": dry_run.get("confidence"),
+        "classifier_fallback_used": dry_run.get("fallback_used"),
+        "classifier_matched_rule_count": dry_run.get("matched_rule_count"),
+        "classifier_route_policy_id": dry_run.get("predicted_route_policy_id"),
+        "classifier_route_candidate_id": dry_run.get("predicted_route_candidate_id"),
+        "classifier_route_claim_boundary": dry_run.get("predicted_route_claim_boundary"),
+        "classifier_predicted_should_retrieve": dry_run.get("predicted_should_retrieve"),
+        "classifier_active_query_type": dry_run.get("active_query_type"),
+        "classifier_active_route_policy_id": dry_run.get("active_route_policy_id"),
+        "classifier_active_route_candidate_id": dry_run.get("active_route_candidate_id"),
+        "classifier_active_route_claim_boundary": dry_run.get("active_route_claim_boundary"),
+        "classifier_route_policy_changed": dry_run.get("route_policy_changed"),
+        "classifier_active_route_applied": dry_run.get("active_route_applied"),
+        "classifier_latency_ms": dry_run.get("latency_ms"),
         "citation_count": len(citations),
         "evidence_id_count": len(response.get("evidence_ids", [])),
         "place_id_count": len(response.get("place_ids", [])),
