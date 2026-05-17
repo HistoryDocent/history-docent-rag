@@ -130,10 +130,10 @@ Active routing은 아직 기본 활성화하지 않는다. shadow evaluation과 
 | qualitative assessment | PASS | 후보별 채택, 보류, 기각 사유 작성 |
 | claim boundary | PASS | 허용/금지 표현 분리 |
 | public safety | PASS | raw query, raw answer, raw evidence, prompt, chunk text, private path, secret 미기록 |
-| next work clarity | PASS | 다음 단계는 API response sample |
+| next work clarity | PASS | 다음 단계는 portfolio QA |
 
 ## 다음 작업
 
-다음 작업은 `HD-API-SAMPLE-001`이다.
+`HD-API-SAMPLE-001`은 완료됐다. 다음 작업은 `HD-PORTFOLIO-QA-001`이다.
 
-목표는 `/api/v1/chat`의 public-safe 응답 예시를 작성하는 것이다. 이때 실제 private chunk 원문, private query, raw answer를 노출하지 않고 fixture 또는 sanitized sample만 사용한다.
+이력서 한 줄 설명, 면접 답변, README 제출 문구를 final ablation report와 API response sample 기준으로 정리한다.

@@ -169,13 +169,15 @@ PDF
 -> locked retrieval paired comparison
 -> query type router skeleton
 -> retrieval evaluation harness
+-> final ablation report
+-> API response sample
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-API response sample 작성
+portfolio QA 작성
 -> frontend/voice UI
 ```
 
@@ -483,6 +485,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Relationship Route Guard Eval Report](evals/reports/relationship_route_guard_eval_report.md) | HD-CLASSIFIER-005 false hybrid route guard 평가와 active route 미적용 gate 결과 |
 | [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md) | HD-FINAL-ABLATION-001 최종 RAG stack, 채택/보류/기각 판단, locked claim boundary |
 | [Final Ablation Report Artifact](evals/reports/final_ablation_report.md) | HD-FINAL-ABLATION-001 정량/정성 최종 ablation 리포트와 public-safe gate |
+| [API Response Sample](docs/API_RESPONSE_SAMPLE.md) | HD-API-SAMPLE-001 `/api/v1/chat` answer, spoken answer, citation, dry-run route 응답 예시 |
+| [API Response Sample Report](evals/reports/api_response_sample_report.md) | HD-API-SAMPLE-001 정량/정성 sample gate와 public-safe 검증 |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

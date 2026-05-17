@@ -103,7 +103,7 @@
 
 | priority | work_id | 작업 | 이유 | 승인 필요 |
 | ---: | --- | --- | --- | --- |
-| 1 | `HD-API-SAMPLE-001` | API response sample 작성 | 포트폴리오에서 실제 백엔드 계약을 보여준다. | 예 |
+| 1 | `HD-PORTFOLIO-QA-001` | 이력서/면접용 문구 정리 | final ablation과 API sample을 제출용 메시지로 압축한다. | 예 |
 | 2 | `HD-COLBERT-001` | ColBERT style late interaction hard subset 검토 | reranker latency 대안으로만 검토하고 기본 route 후보로 바로 올리지 않는다. | 예 |
 
 ## Data Mart 설계
@@ -155,4 +155,4 @@
 
 현재 흐름은 취업 포트폴리오 관점에서 타당하다.
 
-README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner, locked retrieval execution approval, locked retrieval paired comparison, final ablation report도 통과했다. 다음에는 API response sample을 정리한다.
+README 결과 표와 포트폴리오 메시지 정리는 완료했다. query type classifier baseline, 오분류 failure analysis, `/chat` dry-run field 연결, relationship guard 평가, guarded route 후보 dry-run 노출, failure analysis 10개 정리, `place_story` targeted chunk audit, HyDE subset readiness, HyDE live paired retrieval comparison, HyDE larger dev subset readiness, HyDE larger live paired retrieval comparison, active routing 적용 판단 계획, active route shadow evaluation, API active route flag dry-run contract, locked retrieval 검증 승인 계획, locked retrieval readiness dry-run runner, locked retrieval execution approval, locked retrieval paired comparison, final ablation report, API response sample도 통과했다. 다음에는 이력서/면접용 문구를 정리한다.
