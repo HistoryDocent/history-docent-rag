@@ -187,3 +187,18 @@
 - [ ] public private path leakage 0
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
+
+## Voice UI Contract Smoke Gate
+
+- [ ] Vite `/api` proxy configured
+- [ ] frontend backend mode configured
+- [ ] same-origin `/api/v1/chat` endpoint resolution test 통과
+- [ ] explicit backend base URL endpoint resolution test 통과
+- [ ] FastAPI answerable contract-only smoke HTTP 200
+- [ ] FastAPI no-answer contract-only smoke HTTP 200
+- [ ] backend active route applied count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] retrieval execution count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0

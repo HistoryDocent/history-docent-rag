@@ -52,6 +52,7 @@
 | ColBERT-style late interaction | `colbert_style_late_interaction_top50_cuda` | dev hard subset 21 | MRR delta / nDCG@5 delta | +0.022222 / -0.021670 | reject default |
 | voice UI MVP plan | `HD-VOICE-UI-001` | plan-only | frontend_implementation_count | 0 | ready for skeleton |
 | voice UI skeleton | `HD-VOICE-UI-002` | frontend fixture UI | ui_state_test_count | 5 | implemented skeleton |
+| voice UI contract smoke | `HD-VOICE-UI-003` | frontend/backend contract | backend_contract_smoke_request_count | 2 | ready for visual QA |
 
 금지 claim:
 
@@ -181,13 +182,13 @@ PDF
 -> ColBERT-style hard subset comparison
 -> voice UI MVP plan
 -> voice UI skeleton
+-> voice UI contract smoke
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-frontend/backend contract smoke
 real browser voice fallback QA
 ```
 
@@ -512,6 +513,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice UI MVP Plan Report](evals/reports/voice_ui_mvp_plan_report.md) | HD-VOICE-UI-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice UI Skeleton](docs/VOICE_UI_SKELETON.md) | HD-VOICE-UI-002 Vite React 기반 browser voice-ready skeleton 구현 범위 |
 | [Voice UI Skeleton Report](evals/reports/voice_ui_skeleton_report.md) | HD-VOICE-UI-002 정량/정성 UI state test와 public-safe gate |
+| [Voice UI Contract Smoke](docs/VOICE_UI_CONTRACT_SMOKE.md) | HD-VOICE-UI-003 frontend backend mode, Vite proxy, FastAPI contract-only smoke |
+| [Voice UI Contract Smoke Report](evals/reports/voice_ui_contract_smoke_report.md) | HD-VOICE-UI-003 정량/정성 contract smoke와 public-safe gate |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

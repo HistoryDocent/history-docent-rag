@@ -148,4 +148,5 @@
 - [x] 포트폴리오 제출 전 최종 감사 작성
 - [x] voice UI MVP 계획 작성
 - [x] frontend/voice UI skeleton 구현
-- [ ] frontend/backend contract smoke 검증
+- [x] frontend/backend contract smoke 검증
+- [ ] real browser voice UI visual QA

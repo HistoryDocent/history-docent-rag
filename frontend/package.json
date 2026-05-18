@@ -7,6 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
+    "smoke:contract": "node scripts/contractSmoke.mjs",
     "check": "npm run test && npm run build"
   },
   "dependencies": {
