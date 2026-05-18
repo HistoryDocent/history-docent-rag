@@ -51,6 +51,7 @@
 | locked retrieval paired comparison | `HD-LOCKED-RETRIEVAL-004` | locked test 35 | MRR delta | -0.100000 | keep shadow without improvement claim |
 | ColBERT-style late interaction | `colbert_style_late_interaction_top50_cuda` | dev hard subset 21 | MRR delta / nDCG@5 delta | +0.022222 / -0.021670 | reject default |
 | voice UI MVP plan | `HD-VOICE-UI-001` | plan-only | frontend_implementation_count | 0 | ready for skeleton |
+| voice UI skeleton | `HD-VOICE-UI-002` | frontend fixture UI | ui_state_test_count | 5 | implemented skeleton |
 
 금지 claim:
 
@@ -179,13 +180,15 @@ PDF
 -> ColBERT-style hard subset execution approval
 -> ColBERT-style hard subset comparison
 -> voice UI MVP plan
+-> voice UI skeleton
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-frontend/voice UI skeleton
+frontend/backend contract smoke
+real browser voice fallback QA
 ```
 
 ## RAG 전략
@@ -507,6 +510,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice UI MVP Plan](docs/VOICE_UI_MVP_PLAN.md) | HD-VOICE-UI-001 browser voice-ready 관광 도슨트 UI 범위, non-goal, 보안 경계 |
 | [Voice UI API Contract](docs/VOICE_UI_API_CONTRACT.md) | HD-VOICE-UI-001 `/api/v1/chat` request/response field의 UI mapping |
 | [Voice UI MVP Plan Report](evals/reports/voice_ui_mvp_plan_report.md) | HD-VOICE-UI-001 정량/정성 plan-only gate와 public-safe 검증 |
+| [Voice UI Skeleton](docs/VOICE_UI_SKELETON.md) | HD-VOICE-UI-002 Vite React 기반 browser voice-ready skeleton 구현 범위 |
+| [Voice UI Skeleton Report](evals/reports/voice_ui_skeleton_report.md) | HD-VOICE-UI-002 정량/정성 UI state test와 public-safe gate |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

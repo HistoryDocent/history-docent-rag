@@ -172,3 +172,18 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] voice UI skeleton next gate 분리
+
+## Voice UI Skeleton Gate
+
+- [ ] Vite React TypeScript frontend package 1개 존재
+- [ ] answerable fixture UI test 통과
+- [ ] no-answer fixture UI test 통과
+- [ ] sanitized API error UI test 통과
+- [ ] microphone unsupported fallback test 통과
+- [ ] speaker unsupported fallback test 통과
+- [ ] frontend build 통과
+- [ ] backend endpoint added count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0

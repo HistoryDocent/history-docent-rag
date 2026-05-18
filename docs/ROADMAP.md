@@ -68,6 +68,7 @@
 ## Phase 9. Voice Demo
 
 - voice UI MVP 계획과 API field mapping 고정
+- browser voice-ready frontend skeleton 구현
 - backend validation 이후 STT/TTS demo 추가
 - 짧은 답변과 citation display 동작 보존
 - 규모가 커지면 voice UI를 RAG backend와 분리
