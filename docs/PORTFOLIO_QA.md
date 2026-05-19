@@ -97,6 +97,6 @@ active route를 바로 켜지 않은 결정입니다. dev shadow에서는 relati
 
 ## 다음 작업
 
-다음 작업은 `HD-SUBMISSION-REFRESH-001`이다.
+다음 작업은 `HD-PORTFOLIO-REHEARSAL-001`이다.
 
-`HD-PORTFOLIO-DEMO-001`은 완료됐다. 다음 작업은 제출 직전 public repository audit refresh이며, README 링크, demo runbook, screenshot artifact, 금지 claim, public-safe scan을 다시 확인한다.
+`HD-PORTFOLIO-DEMO-001`과 `HD-SUBMISSION-REFRESH-001`은 완료됐다. 다음 작업은 제출용 설명 리허설이며, 3분 설명, 기각 후보 설명, 금지 claim 회피를 확인한다.

@@ -66,7 +66,7 @@
 | production STT/TTS 미구현 | 실제 음성 입출력 품질을 주장할 수 없음 | browser voice-ready UI와 `spoken_answer` contract까지만 설명 |
 | locked retrieval에서 relationship hybrid 개선 주장 실패 | active route 성능 개선 claim 불가 | shadow 후보로만 유지하고 기본 적용 금지 |
 | private corpus 비공개 | 외부인이 전체 재현 불가 | public sample, aggregate metric, test harness, claim boundary 공개 |
-| public repository audit refresh 미실행 | 제출 직전 링크, screenshot artifact, 금지 claim 상태가 최신인지 다시 확인해야 함 | 별도 work_id로 public-safe scan과 README 링크를 재검증 |
+| portfolio submission rehearsal 미진행 | 면접에서 과장 claim을 말할 위험이 남음 | 별도 work_id로 3분 설명과 금지 claim 회피를 리허설 |
 
 ## 최종 제출 판단
 
@@ -76,6 +76,6 @@
 
 ## 다음 작업
 
-다음 작업 후보는 `HD-SUBMISSION-REFRESH-001`이다.
+다음 작업 후보는 `HD-PORTFOLIO-REHEARSAL-001`이다.
 
-`HD-PORTFOLIO-DEMO-001`은 완료됐다. 다음 작업은 제출 직전 public repository audit refresh이며, README 링크, runbook, screenshot artifact, 금지 claim, public-safe scan을 다시 확인한다.
+`HD-PORTFOLIO-DEMO-001`과 `HD-SUBMISSION-REFRESH-001`은 완료됐다. 다음 작업은 제출용 설명 리허설이며, 3분 설명, 기각 후보 설명, 금지 claim 회피를 확인한다.

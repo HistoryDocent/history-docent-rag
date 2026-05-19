@@ -151,4 +151,5 @@
 - [x] frontend/backend contract smoke 검증
 - [x] real browser voice UI visual QA
 - [x] portfolio demo runbook 정리
-- [ ] public repository audit refresh
+- [x] public repository audit refresh
+- [ ] portfolio submission rehearsal

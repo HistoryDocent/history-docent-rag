@@ -55,6 +55,7 @@
 | voice UI contract smoke | `HD-VOICE-UI-003` | frontend/backend contract | backend_contract_smoke_request_count | 2 | ready for visual QA |
 | voice UI visual QA | `HD-VOICE-UI-004` | browser local fixture UI | screenshot_artifact_count | 3 | visual QA completed |
 | portfolio demo runbook | `HD-PORTFOLIO-DEMO-001` | public-safe local demo | demo_step_count | 6 | demo path documented |
+| submission refresh audit | `HD-SUBMISSION-REFRESH-001` | public repository audit | required_demo_artifact_count | 3 | submission refresh passed |
 
 금지 claim:
 
@@ -187,13 +188,14 @@ PDF
 -> voice UI contract smoke
 -> voice UI visual QA
 -> portfolio demo runbook
+-> submission refresh audit
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-public repository audit refresh
+portfolio submission rehearsal
 ```
 
 ## RAG 전략
@@ -523,6 +525,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice UI Visual QA Report](evals/reports/voice_ui_visual_qa_report.md) | HD-VOICE-UI-004 정량/정성 visual QA와 public-safe gate |
 | [Portfolio Demo Runbook](docs/PORTFOLIO_DEMO_RUNBOOK.md) | HD-PORTFOLIO-DEMO-001 backend/frontend local demo 순서와 금지 claim |
 | [Portfolio Demo Runbook Report](evals/reports/portfolio_demo_runbook_report.md) | HD-PORTFOLIO-DEMO-001 정량/정성 demo runbook gate와 public-safe 검증 |
+| [Submission Refresh Audit](docs/SUBMISSION_REFRESH_AUDIT.md) | HD-SUBMISSION-REFRESH-001 제출 직전 README, demo runbook, screenshot artifact, 금지 claim, public-safe scan 재검증 |
+| [Submission Refresh Audit Report](evals/reports/submission_refresh_audit_report.md) | HD-SUBMISSION-REFRESH-001 정량/정성 public repository audit refresh 결과 |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

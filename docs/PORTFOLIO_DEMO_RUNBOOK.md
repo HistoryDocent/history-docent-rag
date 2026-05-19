@@ -202,6 +202,6 @@ npm run smoke:contract
 
 ## 다음 작업
 
-다음 작업은 최종 제출 직전 public repository audit refresh다.
+다음 작업은 portfolio submission rehearsal이다.
 
-새 기능 추가가 아니라 README 링크, runbook, screenshot artifact, 금지 claim, public-safe scan을 마지막으로 재검증한다.
+public repository audit refresh는 완료됐다. 후속 작업에서는 README 기반 3분 설명, 기각 후보 설명, 금지 claim 회피를 확인한다.

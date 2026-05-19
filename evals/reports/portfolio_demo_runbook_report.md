@@ -77,13 +77,13 @@
 
 ## 다음 Gate
 
-다음 작업은 public repository audit refresh다.
+다음 작업은 portfolio submission rehearsal이다.
 
 권장 작업 단위:
 
-- `id`: `HD-SUBMISSION-REFRESH-001`
+- `id`: `HD-PORTFOLIO-REHEARSAL-001`
 - `depends_on`: `HD-PORTFOLIO-DEMO-001`
-- `scope`: README 링크, demo runbook, screenshot artifact, 금지 claim, public-safe scan 최종 재검증
-- `acceptance_tests`: pytest, ruff, frontend check, npm audit, leak scan, markdown link check, git status clean
+- `scope`: README 기반 3분 설명, RAG 의사결정 질문 답변, 금지 claim 확인
+- `acceptance_tests`: 금지 claim 0, 핵심 stack 설명 가능, 기각 후보 3개 이상 설명 가능
 - `risk_level`: low
-- `rollback_plan`: audit refresh docs/report만 revert
+- `rollback_plan`: rehearsal 문서만 revert

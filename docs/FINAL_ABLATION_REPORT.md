@@ -130,10 +130,10 @@ Active routing은 아직 기본 활성화하지 않는다. shadow evaluation과 
 | qualitative assessment | PASS | 후보별 채택, 보류, 기각 사유 작성 |
 | claim boundary | PASS | 허용/금지 표현 분리 |
 | public safety | PASS | raw query, raw answer, raw evidence, prompt, chunk text, private path, secret 미기록 |
-| next work clarity | PASS | portfolio QA, voice UI visual QA, portfolio demo runbook 완료 후 다음 단계는 public repository audit refresh |
+| next work clarity | PASS | portfolio QA, voice UI visual QA, portfolio demo runbook, public repository audit refresh 완료 후 다음 단계는 portfolio submission rehearsal |
 
 ## 다음 작업
 
-`HD-API-SAMPLE-001`, `HD-PORTFOLIO-QA-001`, ColBERT hard subset, voice UI visual QA, portfolio demo runbook은 완료됐다. 다음 작업은 `HD-SUBMISSION-REFRESH-001`이다.
+`HD-API-SAMPLE-001`, `HD-PORTFOLIO-QA-001`, ColBERT hard subset, voice UI visual QA, portfolio demo runbook, public repository audit refresh는 완료됐다. 다음 작업은 `HD-PORTFOLIO-REHEARSAL-001`이다.
 
-다음 작업은 새 성능 실험이 아니라 제출 직전 public repository audit refresh다. README 링크, demo runbook, screenshot artifact, 금지 claim, public-safe scan을 다시 확인한다.
+다음 작업은 새 성능 실험이 아니라 제출용 설명 리허설이다. README 기반 3분 설명, 기각 후보 설명, 금지 claim 회피를 확인한다.

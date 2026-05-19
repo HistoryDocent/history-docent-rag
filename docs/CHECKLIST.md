@@ -236,3 +236,21 @@
 - [ ] public private path leakage 0
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
+
+## Submission Refresh Audit Gate
+
+- [ ] submission refresh audit document count 1
+- [ ] submission refresh report count 1
+- [ ] required README link count 2
+- [ ] required demo artifact count 3
+- [ ] forbidden claim count 8
+- [ ] verification command count 8
+- [ ] markdown link missing count 0
+- [ ] screenshot artifact missing count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public env assignment leakage 0
+- [ ] public raw payload leakage 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] retrieval execution count 0
+- [ ] private corpus required count 0

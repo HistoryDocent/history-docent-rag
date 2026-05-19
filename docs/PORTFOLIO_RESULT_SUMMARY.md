@@ -144,10 +144,10 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-SUBMISSION-REFRESH-001` | 제출 직전 README 링크, demo runbook, screenshot artifact, 금지 claim, public-safe scan 재검증 |
+| 1 | `HD-PORTFOLIO-REHEARSAL-001` | 제출 전 3분 설명, 기각 후보 설명, 금지 claim 회피 리허설 |
 
 ## 외부 감사 결론
 
 현재 포트폴리오 메시지는 타당하다.
 
-다만 “성능 개선”보다 “평가 기반 의사결정”을 강조해야 한다. HyDE도 40개 확대 live 비교에서 기본값으로 기각했고 active routing도 shadow 평가 후 바로 켜지 않았으며 locked retrieval paired comparison에서도 relationship hybrid 개선 주장을 보류했다. 최종 제출 문구에서는 좋은 수치보다 채택하지 않은 이유를 같이 써야 한다. `HD-PORTFOLIO-DEMO-001`은 완료됐으므로 다음 단계는 public repository audit refresh다.
+다만 “성능 개선”보다 “평가 기반 의사결정”을 강조해야 한다. HyDE도 40개 확대 live 비교에서 기본값으로 기각했고 active routing도 shadow 평가 후 바로 켜지 않았으며 locked retrieval paired comparison에서도 relationship hybrid 개선 주장을 보류했다. 최종 제출 문구에서는 좋은 수치보다 채택하지 않은 이유를 같이 써야 한다. `HD-PORTFOLIO-DEMO-001`과 `HD-SUBMISSION-REFRESH-001`은 완료됐으므로 다음 단계는 portfolio submission rehearsal이다.

@@ -50,6 +50,6 @@
 
 ## 다음 작업
 
-다음 단계는 public repository audit refresh다.
+다음 단계는 portfolio submission rehearsal이다.
 
-포트폴리오 demo runbook은 완료됐다. 후속 작업에서는 제출 직전 README 링크, screenshot artifact, 금지 claim, public-safe scan을 다시 확인한다.
+포트폴리오 demo runbook과 public repository audit refresh는 완료됐다. 후속 작업에서는 제출 전 3분 설명, 기각 후보 설명, 금지 claim 회피를 확인한다.
