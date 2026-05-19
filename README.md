@@ -75,6 +75,7 @@
 | voice STT/TTS Azure smoke execution | `HD-VOICE-STT-TTS-AZURE-SMOKE-EXECUTION-001` | execution-gate | azure_smoke_execution_approved / managed_provider_api_call_count / external_audio_transmission_count | false / 0 / 0 | blocked missing Azure credentials |
 | voice STT/TTS Azure credential ready smoke approval | `HD-VOICE-STT-TTS-AZURE-CREDENTIAL-READY-AND-SMOKE-APPROVAL-001` | approval-gate | azure_credential_ready / azure_smoke_execution_approved / managed_provider_api_call_count | false / false / 0 | blocked missing Azure credentials |
 | voice provider local-first decision | `HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001` | decision-only | managed_provider_default_count / default_external_audio_transmission_count | 0 / 0 | local-first, managed optional only |
+| voice STT/TTS local TTS smoke | `HD-VOICE-STT-TTS-LOCAL-TTS-SMOKE-001` | local-tts-smoke-gate | resolved_device / melotts_runtime_available_count / external_provider_call_count | cuda / 0 / 0 | blocked missing MeloTTS runtime |
 
 금지 claim:
 
@@ -226,13 +227,14 @@ PDF
 -> voice STT/TTS Azure smoke execution
 -> voice STT/TTS Azure credential ready smoke approval
 -> voice provider local-first decision
+-> voice STT/TTS local TTS smoke
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-local TTS smoke execution
+local MeloTTS runtime install and retry smoke execution
 optional paid managed provider smoke execution
 ```
 
@@ -569,6 +571,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Portfolio Rehearsal Report](evals/reports/portfolio_rehearsal_report.md) | HD-PORTFOLIO-REHEARSAL-001 정량/정성 설명 리허설 gate와 외부 감사 |
 | [Voice Provider Decision](docs/VOICE_PROVIDER_DECISION.md) | HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001 무료 로컬 STT/TTS 우선 전략과 managed optional paid comparison 경계 |
 | [Voice Provider Decision Report](evals/reports/voice_provider_decision_report.md) | HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001 정량/정성 decision gate와 zero external call 검증 |
+| [Voice STT/TTS Local TTS Smoke](docs/VOICE_STT_TTS_LOCAL_TTS_SMOKE.md) | HD-VOICE-STT-TTS-LOCAL-TTS-SMOKE-001 MeloTTS Korean 로컬 smoke runner, CUDA device 기록, public-safe output gate |
+| [Voice STT/TTS Local TTS Smoke Report](evals/reports/voice_stt_tts_local_tts_smoke_report.md) | HD-VOICE-STT-TTS-LOCAL-TTS-SMOKE-001 정량/정성 local TTS smoke gate와 zero external provider call 검증 |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |

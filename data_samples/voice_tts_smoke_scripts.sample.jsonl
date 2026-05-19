@@ -1,0 +1,5 @@
+{"script_id":"tts-smoke-docent-001","language":"ko","text_role":"spoken_answer","script_text":"경복궁은 조선의 중심 궁궐로, 왕의 권위와 한양의 도시 질서를 함께 보여주는 장소입니다.","place_ids":["gyeongbokgung"],"public_allowed":true}
+{"script_id":"tts-smoke-docent-002","language":"ko","text_role":"spoken_answer","script_text":"광화문은 궁궐의 정문을 넘어, 한양의 중심 축과 국가 의례를 상징하는 공간으로 볼 수 있습니다.","place_ids":["gwanghwamun"],"public_allowed":true}
+{"script_id":"tts-smoke-docent-003","language":"ko","text_role":"spoken_answer","script_text":"창덕궁은 자연 지형을 살린 궁궐이라는 점에서, 질서와 풍경을 함께 느낄 수 있는 장소입니다.","place_ids":["changdeokgung"],"public_allowed":true}
+{"script_id":"tts-smoke-docent-004","language":"ko","text_role":"spoken_answer","script_text":"종로는 한양의 큰길과 상업, 사람들의 이동이 만나는 곳이라 도시의 일상을 설명하기 좋습니다.","place_ids":["jongno"],"public_allowed":true}
+{"script_id":"tts-smoke-docent-005","language":"ko","text_role":"spoken_answer","script_text":"한양도성은 산과 성곽, 문을 따라 도시의 경계를 보여주며 한양을 입체적으로 이해하게 해줍니다.","place_ids":["hanyangdoseong"],"public_allowed":true}

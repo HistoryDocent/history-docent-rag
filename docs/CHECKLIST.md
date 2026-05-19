@@ -466,6 +466,32 @@
 - [ ] public raw payload leakage 0
 - [ ] local TTS smoke next gate 분리
 
+## Voice STT/TTS Local TTS Smoke Gate
+
+- [ ] voice STT/TTS local TTS smoke runner count 1
+- [ ] voice STT/TTS local TTS smoke document count 1
+- [ ] voice STT/TTS local TTS smoke report count 1
+- [ ] primary local TTS candidate count 1
+- [ ] selected public-safe script count 5
+- [ ] resolved device cuda when CUDA available
+- [ ] MeloTTS runtime availability recorded
+- [ ] local TTS execution count recorded
+- [ ] TTS latency p50/p95 recorded
+- [ ] audio duration and file size recorded
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] client secret exposure count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] runtime missing이면 completed claim 금지
+- [ ] local MeloTTS runtime install/retry next gate 분리
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1
