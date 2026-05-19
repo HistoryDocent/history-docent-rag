@@ -202,3 +202,20 @@
 - [ ] public private path leakage 0
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
+
+## Voice UI Visual QA Gate
+
+- [ ] browser visual scenario count 3
+- [ ] viewport class count 2
+- [ ] screenshot artifact count 3
+- [ ] desktop answerable citation item count 1
+- [ ] mobile no-answer single-column layout 확인
+- [ ] mobile no-answer citation item count 0
+- [ ] sanitized error visible
+- [ ] raw error leakage false
+- [ ] voice control visible count 2
+- [ ] live Solar Pro 3 call count 0
+- [ ] retrieval execution count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0

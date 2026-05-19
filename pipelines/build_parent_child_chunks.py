@@ -360,12 +360,14 @@ def _collect_public_candidate_files(repo_root: Path) -> list[Path]:
 
 def _is_ignored_public_scan_path(relative_path: str) -> bool:
     normalized = relative_path.replace("\\", "/")
+    suffix = Path(normalized).suffix.lower()
     return (
         normalized.startswith("private_data/")
         or normalized.startswith(".mypy_cache/")
         or normalized.startswith(".pytest_cache/")
         or normalized.startswith(".ruff_cache/")
         or "__pycache__/" in normalized
+        or suffix in {".gif", ".jpg", ".jpeg", ".png", ".webp"}
     )
 
 

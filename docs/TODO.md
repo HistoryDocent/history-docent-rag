@@ -149,4 +149,5 @@
 - [x] voice UI MVP 계획 작성
 - [x] frontend/voice UI skeleton 구현
 - [x] frontend/backend contract smoke 검증
-- [ ] real browser voice UI visual QA
+- [x] real browser voice UI visual QA
+- [ ] portfolio demo runbook 정리

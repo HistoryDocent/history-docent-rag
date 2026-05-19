@@ -61,10 +61,10 @@
 
 강점은 "모든 기법을 적용했다"가 아니라 "동일 gate로 비교하고, latency와 citation risk 때문에 후보를 기각했다"는 점이다.
 
-남은 리스크는 frontend/voice UI 미구현과 private corpus 비공개다. 이 리스크는 README와 면접 답변에서 1차 산출물을 RAG API와 평가 체계로 제한해 설명하면 된다.
+남은 리스크는 production STT/TTS 미구현과 private corpus 비공개다. 이 리스크는 README와 면접 답변에서 1차 산출물을 RAG API, `spoken_answer` contract, browser voice-ready UI로 제한해 설명하면 된다.
 
 ## 다음 Gate
 
-다음 gate는 `HD-COLBERT-001`이다.
+다음 gate는 `HD-PORTFOLIO-DEMO-001`이다.
 
-단, 이 gate는 제출 이후 후순위 실험이다. 실행 전에는 hard subset, CUDA 사용 여부, candidate_k, latency/cost gate, locked split 사용 금지 여부를 별도로 고정해야 한다.
+이 gate는 제출 직전 demo runbook 정리다. 실행 전에는 backend/frontend command, 금지 claim, 공개 가능 screenshot 경계를 별도로 고정해야 한다.

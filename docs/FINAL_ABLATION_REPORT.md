@@ -134,6 +134,6 @@ Active routing은 아직 기본 활성화하지 않는다. shadow evaluation과 
 
 ## 다음 작업
 
-`HD-API-SAMPLE-001`과 `HD-PORTFOLIO-QA-001`은 완료됐다. 다음 작업은 `HD-COLBERT-001`이다.
+`HD-API-SAMPLE-001`, `HD-PORTFOLIO-QA-001`, ColBERT hard subset, voice UI visual QA는 완료됐다. 다음 작업은 `HD-PORTFOLIO-DEMO-001`이다.
 
 다만 이 작업은 제출 패키징 이후의 후순위 실험이다. 실행 전에는 hard subset, 비교 기준, latency/cost gate, claim boundary를 별도로 승인받아야 한다.

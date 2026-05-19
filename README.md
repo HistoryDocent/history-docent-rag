@@ -53,6 +53,7 @@
 | voice UI MVP plan | `HD-VOICE-UI-001` | plan-only | frontend_implementation_count | 0 | ready for skeleton |
 | voice UI skeleton | `HD-VOICE-UI-002` | frontend fixture UI | ui_state_test_count | 5 | implemented skeleton |
 | voice UI contract smoke | `HD-VOICE-UI-003` | frontend/backend contract | backend_contract_smoke_request_count | 2 | ready for visual QA |
+| voice UI visual QA | `HD-VOICE-UI-004` | browser local fixture UI | screenshot_artifact_count | 3 | visual QA completed |
 
 금지 claim:
 
@@ -129,8 +130,8 @@
 - 전체 chunk text
 - 전체 vector database
 - 전체 raw evaluation CSV
-- frontend service
-- voice UI
+- production frontend service
+- production STT/TTS voice service
 - 기본 pipeline으로서의 GraphRAG
 - 기본 pipeline으로서의 RAPTOR/RAPTOR-lite
 
@@ -183,13 +184,14 @@ PDF
 -> voice UI MVP plan
 -> voice UI skeleton
 -> voice UI contract smoke
+-> voice UI visual QA
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-real browser voice fallback QA
+portfolio demo runbook
 ```
 
 ## RAG 전략
@@ -515,6 +517,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice UI Skeleton Report](evals/reports/voice_ui_skeleton_report.md) | HD-VOICE-UI-002 정량/정성 UI state test와 public-safe gate |
 | [Voice UI Contract Smoke](docs/VOICE_UI_CONTRACT_SMOKE.md) | HD-VOICE-UI-003 frontend backend mode, Vite proxy, FastAPI contract-only smoke |
 | [Voice UI Contract Smoke Report](evals/reports/voice_ui_contract_smoke_report.md) | HD-VOICE-UI-003 정량/정성 contract smoke와 public-safe gate |
+| [Voice UI Visual QA](docs/VOICE_UI_VISUAL_QA.md) | HD-VOICE-UI-004 실제 browser desktop/mobile/error visual QA와 screenshot artifact |
+| [Voice UI Visual QA Report](evals/reports/voice_ui_visual_qa_report.md) | HD-VOICE-UI-004 정량/정성 visual QA와 public-safe gate |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

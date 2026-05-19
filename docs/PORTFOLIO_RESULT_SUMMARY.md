@@ -144,7 +144,7 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-COLBERT-001` | late interaction hard subset 검토 |
+| 1 | `HD-PORTFOLIO-DEMO-001` | backend/frontend demo runbook 정리 |
 
 ## 외부 감사 결론
 

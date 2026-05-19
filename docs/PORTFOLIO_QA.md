@@ -97,6 +97,6 @@ active route를 바로 켜지 않은 결정입니다. dev shadow에서는 relati
 
 ## 다음 작업
 
-다음 작업은 `HD-COLBERT-001`이다.
+다음 작업은 `HD-PORTFOLIO-DEMO-001`이다.
 
 다만 이 작업은 제출 패키징 이후의 후순위 실험이다. 실행 전에는 hard subset, 비교 기준, latency/cost gate, claim boundary를 별도로 승인받아야 한다.

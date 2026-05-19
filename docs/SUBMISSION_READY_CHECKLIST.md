@@ -63,10 +63,10 @@
 
 | risk | 영향 | 대응 |
 | --- | --- | --- |
-| frontend/voice UI 미구현 | 사용자가 직접 앱 화면을 체험할 수 없음 | 백엔드 API와 `spoken_answer` contract를 1차 산출물로 명확히 설명 |
+| production STT/TTS 미구현 | 실제 음성 입출력 품질을 주장할 수 없음 | browser voice-ready UI와 `spoken_answer` contract까지만 설명 |
 | locked retrieval에서 relationship hybrid 개선 주장 실패 | active route 성능 개선 claim 불가 | shadow 후보로만 유지하고 기본 적용 금지 |
 | private corpus 비공개 | 외부인이 전체 재현 불가 | public sample, aggregate metric, test harness, claim boundary 공개 |
-| ColBERT 미실험 | reranker latency 대안 검증 미완료 | 제출 이후 별도 work_id로 hard subset 검토 |
+| portfolio demo runbook 미정리 | clone 후 실행 순서가 흩어져 보일 수 있음 | 별도 work_id로 backend/frontend demo 절차 정리 |
 
 ## 최종 제출 판단
 
@@ -76,6 +76,6 @@
 
 ## 다음 작업
 
-다음 작업 후보는 `HD-COLBERT-001`이다.
+다음 작업 후보는 `HD-PORTFOLIO-DEMO-001`이다.
 
-이 작업은 제출 패키징 이후의 후순위 실험이며, 실행 전 hard subset, 비교 기준, latency/cost gate, claim boundary를 별도로 승인받아야 한다.
+이 작업은 제출 직전 demo runbook 정리이며, 실행 전 backend/frontend command, 금지 claim, 공개 가능 screenshot 경계를 별도로 승인받아야 한다.
