@@ -40,7 +40,7 @@
 | Evaluation readiness | PASS | STT/TTS 품질이 아니라 contract-only 상태와 zero-call metric을 검증한다. |
 | Frontend regression | PASS | adapter unit test 2개와 UI voice contract test 1개가 추가됐다. |
 | Data mart | PASS | `fact_voice_stt_tts_contract` grain을 `work_id + adapter_surface + ui_state + claim_boundary`로 고정했다. |
-| External audit | PASS | 실제 음성 서비스 구현 claim 없이 다음 provider benchmark plan으로 넘길 수 있다. |
+| External audit | PASS | 실제 음성 서비스 구현 claim 없이 provider benchmark plan을 완료했고 다음은 readiness gate다. |
 
 ## Claim Boundary
 

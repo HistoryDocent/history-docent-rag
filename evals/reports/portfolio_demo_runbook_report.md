@@ -77,13 +77,13 @@
 
 ## 다음 Gate
 
-다음 작업 후보는 optional voice STT/TTS provider benchmark plan이다.
+다음 작업 후보는 optional voice STT/TTS provider benchmark readiness다.
 
 권장 작업 단위:
 
-- `id`: `HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001`
+- `id`: `HD-VOICE-STT-TTS-PROVIDER-BENCH-READINESS-001`
 - `depends_on`: `HD-PORTFOLIO-REHEARSAL-001`
-- `scope`: 실제 음성 입출력 demo 범위, 비용, 개인정보 처리, 실패 대응 계획
-- `acceptance_tests`: 공식 문서 확인, 비용 gate, 개인정보 gate, live call budget, CUDA local 후보 범위 고정
+- `scope`: 실제 provider 호출 전 public-safe fixture, config skeleton, CUDA runtime preflight, pricing/privacy source recheck field 검증
+- `acceptance_tests`: fixture script, provider config skeleton, live call 0, CUDA runtime preflight, public leakage 0
 - `risk_level`: low
 - `rollback_plan`: voice planning 문서만 revert

@@ -59,6 +59,7 @@
 | portfolio rehearsal | `HD-PORTFOLIO-REHEARSAL-001` | submission explanation | interview_answer_count | 12 | required portfolio gates completed |
 | voice STT/TTS plan | `HD-VOICE-STT-TTS-PLAN-001` | plan-only | live_stt_call_count / live_tts_call_count | 0 / 0 | ready for contract skeleton |
 | voice STT/TTS contract skeleton | `HD-VOICE-STT-TTS-CONTRACT-001` | frontend contract-only | live_stt_call_count / live_tts_call_count | 0 / 0 | ready for provider benchmark plan |
+| voice STT/TTS provider benchmark plan | `HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001` | plan-only | live_stt_call_count / live_tts_call_count | 0 / 0 | ready for benchmark readiness |
 
 금지 claim:
 
@@ -69,7 +70,7 @@
 - 음성 관광 앱 완성
 - 전체 도서 데이터 공개
 
-상세 요약은 [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md), [Final Ablation Report Artifact](evals/reports/final_ablation_report.md), [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md), [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md), [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md), [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md), [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md), [Voice STT/TTS Contract Report](evals/reports/voice_stt_tts_contract_report.md)를 기준으로 한다.
+상세 요약은 [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md), [Final Ablation Report Artifact](evals/reports/final_ablation_report.md), [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md), [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md), [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md), [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md), [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md), [Voice STT/TTS Contract Report](evals/reports/voice_stt_tts_contract_report.md), [Voice STT/TTS Provider Benchmark Plan](docs/VOICE_STT_TTS_PROVIDER_BENCH_PLAN.md), [Voice STT/TTS Provider Benchmark Plan Report](evals/reports/voice_stt_tts_provider_bench_plan_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -195,13 +196,14 @@ PDF
 -> portfolio rehearsal
 -> voice STT/TTS planning gate
 -> voice STT/TTS contract skeleton
+-> voice STT/TTS provider benchmark plan
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-optional voice STT/TTS provider benchmark plan
+optional voice STT/TTS provider benchmark readiness
 ```
 
 ## RAG 전략
@@ -539,6 +541,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |
 | [Voice STT/TTS Contract Report](evals/reports/voice_stt_tts_contract_report.md) | HD-VOICE-STT-TTS-CONTRACT-001 정량/정성 contract-only gate와 public-safe 검증 |
+| [Voice STT/TTS Provider Benchmark Plan](docs/VOICE_STT_TTS_PROVIDER_BENCH_PLAN.md) | HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001 공식 문서, 비용/개인정보 source, CUDA local 후보, live call budget |
+| [Voice STT/TTS Provider Benchmark Plan Report](evals/reports/voice_stt_tts_provider_bench_plan_report.md) | HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

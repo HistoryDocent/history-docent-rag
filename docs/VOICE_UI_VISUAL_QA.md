@@ -50,6 +50,6 @@
 
 ## 다음 작업
 
-다음 단계 후보는 optional voice STT/TTS provider benchmark plan이다.
+다음 단계 후보는 optional voice STT/TTS provider benchmark readiness다.
 
-포트폴리오 demo runbook, public repository audit refresh, portfolio submission rehearsal은 완료됐다. 후속 제품 개발을 이어간다면 실제 음성 입출력 demo 범위, 비용, 개인정보 처리, 실패 대응을 별도 계획으로 분리한다.
+포트폴리오 demo runbook, public repository audit refresh, portfolio submission rehearsal, voice STT/TTS planning, contract skeleton, provider benchmark plan은 완료됐다. 후속 제품 개발을 이어간다면 실제 provider 호출 전 public-safe fixture와 no-live-call readiness를 먼저 검증한다.

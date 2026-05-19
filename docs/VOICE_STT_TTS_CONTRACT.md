@@ -114,7 +114,9 @@
 
 ## 다음 작업
 
-다음 후보는 `HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001`이다.
+`HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001`은 완료됐다.
+
+다음 후보는 `HD-VOICE-STT-TTS-PROVIDER-BENCH-READINESS-001`이다.
 
 provider benchmark를 하려면 먼저 browser/native, local CUDA STT, external API 후보의 공식 문서, 비용, 데이터 처리 조건, evaluation subset, live call budget을 별도 계획으로 고정해야 한다.
 

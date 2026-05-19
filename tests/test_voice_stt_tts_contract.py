@@ -64,8 +64,9 @@ def test_voice_stt_tts_contract_readme_todo_and_ledger_are_registered() -> None:
         assert Path(link).exists()
 
     assert "- [x] optional voice STT/TTS contract skeleton" in todo
-    assert "- [ ] optional voice STT/TTS provider benchmark plan" in todo
-    assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001" in ledger
+    assert "- [x] optional voice STT/TTS provider benchmark plan" in todo
+    assert "- [ ] optional voice STT/TTS provider benchmark readiness" in todo
+    assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-READINESS-001" in ledger
 
 
 def test_voice_adapter_contract_blocks_provider_calls() -> None:

@@ -67,4 +67,4 @@
 - API sample은 schema와 public boundary 설명용이며, locked 성능 개선 근거가 아니다.
 - active route는 여전히 기본 활성화하지 않는다.
 
-다음 gate는 `HD-PORTFOLIO-QA-001`이다.
+다음 gate는 `HD-VOICE-STT-TTS-PROVIDER-BENCH-READINESS-001`이다.

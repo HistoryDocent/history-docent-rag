@@ -155,4 +155,5 @@
 - [x] portfolio submission rehearsal
 - [x] optional voice STT/TTS planning
 - [x] optional voice STT/TTS contract skeleton
-- [ ] optional voice STT/TTS provider benchmark plan
+- [x] optional voice STT/TTS provider benchmark plan
+- [ ] optional voice STT/TTS provider benchmark readiness

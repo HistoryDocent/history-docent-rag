@@ -85,7 +85,7 @@ def test_api_response_sample_report_records_public_gate() -> None:
     assert "error_envelope_sample_count | 2" in report
     assert "public_raw_text_leakage_count | 0" in report
     assert "active_route_applied_count | 0" in report
-    assert "`HD-PORTFOLIO-QA-001`" in report
+    assert "`HD-VOICE-STT-TTS-PROVIDER-BENCH-READINESS-001`" in report
 
 
 def _json_blocks(text: str) -> list[str]:
