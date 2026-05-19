@@ -82,6 +82,7 @@
 - provider benchmark local smoke execution에서 CUDA Whisper 후보 5건을 external provider call 없이 검증
 - local STT model ablation에서 tiny, base, small 후보를 같은 private wav fixture로 비교
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
+- managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke execution은 별도 승인 후 provider별 call cap 안에서 진행
 - 짧은 답변과 citation display 동작 보존
 - 규모가 커지면 voice UI를 RAG backend와 분리

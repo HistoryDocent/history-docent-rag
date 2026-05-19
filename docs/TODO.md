@@ -161,4 +161,5 @@
 - [x] optional voice STT/TTS provider benchmark smoke execution
 - [x] optional voice STT/TTS local model ablation
 - [x] optional voice STT/TTS managed provider smoke approval
+- [x] optional voice STT/TTS managed provider smoke execution harness
 - [ ] optional voice STT/TTS managed provider smoke execution
