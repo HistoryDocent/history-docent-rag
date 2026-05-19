@@ -11,6 +11,7 @@ import {
   Volume2,
 } from "lucide-react";
 import { sendChat } from "../lib/chatClient";
+import { createVoiceContractAdapter } from "../lib/voiceAdapters";
 import type { ChatRequest, ChatResponse, LanguageCode } from "../types/chat";
 
 const places = [
@@ -34,11 +35,7 @@ export function DocentApp() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [citationsOpen, setCitationsOpen] = useState(true);
 
-  const speechInputSupported = useMemo(
-    () => "SpeechRecognition" in window || "webkitSpeechRecognition" in window,
-    [],
-  );
-  const speechOutputSupported = useMemo(() => "speechSynthesis" in window, []);
+  const voiceAdapter = useMemo(() => createVoiceContractAdapter(), []);
 
   const submit = async () => {
     if (!query.trim()) {
@@ -80,15 +77,6 @@ export function DocentApp() {
       }
       return [...current, placeId];
     });
-  };
-
-  const speak = () => {
-    if (!speechOutputSupported || !response?.spoken_answer) {
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(new SpeechSynthesisUtterance(response.spoken_answer));
   };
 
   return (
@@ -156,9 +144,9 @@ export function DocentApp() {
             <button
               className="icon-button"
               type="button"
-              disabled={!speechInputSupported}
-              title={speechInputSupported ? "음성 입력" : "음성 입력 미지원"}
-              aria-label={speechInputSupported ? "음성 입력" : "음성 입력 미지원"}
+              disabled
+              title={voiceAdapter.stt.title}
+              aria-label={voiceAdapter.stt.ariaLabel}
             >
               <Mic size={19} aria-hidden="true" />
             </button>
@@ -188,7 +176,7 @@ export function DocentApp() {
 
         <section className="answer-panel" aria-live="polite">
           {status === "idle" && (
-            <InitialState onStart={submit} speechOutputSupported={speechOutputSupported} />
+            <InitialState onStart={submit} voiceMode={voiceAdapter.mode} />
           )}
 
           {status === "loading" && <p className="status-text">근거를 확인하는 중입니다.</p>}
@@ -212,10 +200,9 @@ export function DocentApp() {
                 <button
                   className="icon-button"
                   type="button"
-                  onClick={speak}
-                  disabled={!speechOutputSupported}
-                  title={speechOutputSupported ? "답변 듣기" : "음성 재생 미지원"}
-                  aria-label={speechOutputSupported ? "답변 듣기" : "음성 재생 미지원"}
+                  disabled
+                  title={voiceAdapter.tts.title}
+                  aria-label={voiceAdapter.tts.ariaLabel}
                 >
                   <Volume2 size={19} aria-hidden="true" />
                 </button>
@@ -225,6 +212,10 @@ export function DocentApp() {
                 <span>{response.abstained ? "abstained" : "answerable"}</span>
                 <span>risk: {response.unsupported_claim_risk}</span>
                 <span>solar calls: {response.usage.solar_call_count}</span>
+                <span>
+                  voice calls: {voiceAdapter.metrics.liveSttCallCount}/
+                  {voiceAdapter.metrics.liveTtsCallCount}
+                </span>
                 <span>
                   active route:{" "}
                   {response.classifier_router_dry_run.active_route_applied ? "on" : "off"}
@@ -272,10 +263,10 @@ export function DocentApp() {
 
 function InitialState({
   onStart,
-  speechOutputSupported,
+  voiceMode,
 }: {
   onStart: () => void;
-  speechOutputSupported: boolean;
+  voiceMode: string;
 }) {
   return (
     <div className="empty-state">
@@ -283,8 +274,8 @@ function InitialState({
       <h2>경복궁과 한양의 맥락을 바로 확인합니다.</h2>
       <div className="status-strip">
         <span>contract fixture</span>
-        <span>{speechOutputSupported ? "speaker ready" : "speaker fallback"}</span>
-        <span>live calls: 0</span>
+        <span>voice {voiceMode}</span>
+        <span>voice live calls: 0</span>
       </div>
       <button className="primary-button" type="button" onClick={onStart}>
         <Send size={18} aria-hidden="true" />

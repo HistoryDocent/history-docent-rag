@@ -202,6 +202,6 @@ npm run smoke:contract
 
 ## 다음 작업
 
-다음 작업 후보는 optional voice STT/TTS contract skeleton이다.
+다음 작업 후보는 optional voice STT/TTS provider benchmark plan이다.
 
-public repository audit refresh, portfolio submission rehearsal, voice STT/TTS planning은 완료됐다. 후속 제품 개발을 이어간다면 provider 호출 없는 adapter/interface skeleton과 fallback contract를 먼저 검증한다.
+public repository audit refresh, portfolio submission rehearsal, voice STT/TTS planning, voice STT/TTS contract skeleton은 완료됐다. 후속 제품 개발을 이어간다면 provider benchmark 전 공식 문서, 비용, 개인정보, live call budget, CUDA local 후보를 먼저 계획한다.

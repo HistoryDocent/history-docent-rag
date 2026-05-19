@@ -76,5 +76,6 @@
 - portfolio submission rehearsal
 - 실제 STT/TTS demo 전 provider, 개인정보, 비용, failure mode, eval gate 계획
 - provider 호출 없는 STT/TTS contract skeleton
+- provider benchmark 계획과 CUDA local STT 후보 검토
 - 짧은 답변과 citation display 동작 보존
 - 규모가 커지면 voice UI를 RAG backend와 분리

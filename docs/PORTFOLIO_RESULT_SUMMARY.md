@@ -144,10 +144,10 @@
 
 | priority | work_id | 이유 |
 | ---: | --- | --- |
-| 1 | `HD-VOICE-STT-TTS-CONTRACT-001` | 후속 제품 개발 시 provider 호출 없는 STT/TTS adapter/interface skeleton과 fallback contract 검증 |
+| 1 | `HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001` | 후속 제품 개발 시 provider benchmark 전 공식 문서, 비용, 개인정보, live call budget, CUDA local 후보 계획 |
 
 ## 외부 감사 결론
 
 현재 포트폴리오 메시지는 타당하다.
 
-다만 “성능 개선”보다 “평가 기반 의사결정”을 강조해야 한다. HyDE도 40개 확대 live 비교에서 기본값으로 기각했고 active routing도 shadow 평가 후 바로 켜지 않았으며 locked retrieval paired comparison에서도 relationship hybrid 개선 주장을 보류했다. 최종 제출 문구에서는 좋은 수치보다 채택하지 않은 이유를 같이 써야 한다. 필수 포트폴리오 제출 gate와 선택적 STT/TTS 제품 계획은 완료됐고, 다음 단계는 provider 호출 없는 STT/TTS contract skeleton이다.
+다만 “성능 개선”보다 “평가 기반 의사결정”을 강조해야 한다. HyDE도 40개 확대 live 비교에서 기본값으로 기각했고 active routing도 shadow 평가 후 바로 켜지 않았으며 locked retrieval paired comparison에서도 relationship hybrid 개선 주장을 보류했다. 최종 제출 문구에서는 좋은 수치보다 채택하지 않은 이유를 같이 써야 한다. 필수 포트폴리오 제출 gate, 선택적 STT/TTS 제품 계획, contract skeleton은 완료됐고, 다음 단계는 provider benchmark plan이다.

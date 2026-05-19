@@ -76,6 +76,6 @@
 
 ## 다음 작업
 
-다음 작업 후보는 `HD-VOICE-STT-TTS-CONTRACT-001`이다.
+다음 작업 후보는 `HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001`이다.
 
-필수 포트폴리오 제출 gate와 voice STT/TTS planning은 완료됐다. 후속 제품 개발을 이어간다면 provider 호출 없는 STT/TTS adapter/interface skeleton과 fallback contract를 먼저 검증한다.
+필수 포트폴리오 제출 gate, voice STT/TTS planning, voice STT/TTS contract skeleton은 완료됐다. 후속 제품 개발을 이어간다면 provider benchmark 전 공식 문서, 비용, 개인정보, live call budget, CUDA local 후보를 먼저 계획한다.

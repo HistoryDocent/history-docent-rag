@@ -293,3 +293,24 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] voice STT/TTS contract skeleton next gate 분리
+
+## Voice STT/TTS Contract Gate
+
+- [ ] voice STT/TTS contract document count 1
+- [ ] voice STT/TTS contract report count 1
+- [ ] frontend adapter module count 1
+- [ ] frontend adapter unit test count 2
+- [ ] frontend UI voice contract test count 1
+- [ ] provider finalized count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] private audio saved count 0
+- [ ] raw transcript public artifact count 0
+- [ ] client secret exposure count 0
+- [ ] mic capture implemented count 0
+- [ ] browser TTS playback call count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] voice STT/TTS provider benchmark plan next gate 분리

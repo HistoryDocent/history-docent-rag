@@ -4,14 +4,17 @@ import re
 from pathlib import Path
 
 
-DOC_PATH = Path("docs/VOICE_STT_TTS_PLAN.md")
-REPORT_PATH = Path("evals/reports/voice_stt_tts_plan_report.md")
+DOC_PATH = Path("docs/VOICE_STT_TTS_CONTRACT.md")
+REPORT_PATH = Path("evals/reports/voice_stt_tts_contract_report.md")
 README_PATH = Path("README.md")
 TODO_PATH = Path("docs/TODO.md")
 LEDGER_PATH = Path("docs/RAG_DECISION_LEDGER.md")
+ADAPTER_PATH = Path("frontend/src/lib/voiceAdapters.ts")
+ADAPTER_TEST_PATH = Path("frontend/src/lib/voiceAdapters.test.ts")
+APP_TEST_PATH = Path("frontend/src/App.test.tsx")
 REQUIRED_LINKS = (
-    "docs/VOICE_STT_TTS_PLAN.md",
-    "evals/reports/voice_stt_tts_plan_report.md",
+    "docs/VOICE_STT_TTS_CONTRACT.md",
+    "evals/reports/voice_stt_tts_contract_report.md",
 )
 PUBLIC_SCAN_PATHS = (
     README_PATH,
@@ -36,9 +39,11 @@ FORBIDDEN_CLAIMS = (
 )
 
 
-def test_voice_stt_tts_plan_docs_exist_and_are_sanitized() -> None:
+def test_voice_stt_tts_contract_docs_exist_and_are_sanitized() -> None:
     assert DOC_PATH.exists()
     assert REPORT_PATH.exists()
+    assert ADAPTER_PATH.exists()
+    assert ADAPTER_TEST_PATH.exists()
 
     for path in PUBLIC_SCAN_PATHS:
         text = path.read_text(encoding="utf-8")
@@ -49,7 +54,7 @@ def test_voice_stt_tts_plan_docs_exist_and_are_sanitized() -> None:
         assert "private_data/" not in text
 
 
-def test_voice_stt_tts_plan_readme_and_todo_are_registered() -> None:
+def test_voice_stt_tts_contract_readme_todo_and_ledger_are_registered() -> None:
     readme = README_PATH.read_text(encoding="utf-8")
     todo = TODO_PATH.read_text(encoding="utf-8")
     ledger = LEDGER_PATH.read_text(encoding="utf-8")
@@ -58,29 +63,29 @@ def test_voice_stt_tts_plan_readme_and_todo_are_registered() -> None:
         assert link in readme
         assert Path(link).exists()
 
-    assert "- [x] optional voice STT/TTS planning" in todo
     assert "- [x] optional voice STT/TTS contract skeleton" in todo
     assert "- [ ] optional voice STT/TTS provider benchmark plan" in todo
     assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001" in ledger
 
 
-def test_voice_stt_tts_plan_records_scope_and_boundaries() -> None:
-    doc = DOC_PATH.read_text(encoding="utf-8")
+def test_voice_adapter_contract_blocks_provider_calls() -> None:
+    adapter = ADAPTER_PATH.read_text(encoding="utf-8")
+    app_test = APP_TEST_PATH.read_text(encoding="utf-8")
 
-    assert "## 범위" in doc
-    assert "## 목표 사용자 흐름" in doc
-    assert "## Architecture Boundary" in doc
-    assert "## Provider 선택 기준" in doc
-    assert "## 개인정보와 보안 정책" in doc
-    assert "## 평가 기준" in doc
-    assert "## Failure Mode" in doc
-    assert "HD-VOICE-STT-TTS-CONTRACT-001" in doc
-    assert "provider는 아직 확정하지 않는다" in doc
-    assert "`/api/v1/chat`는 음성 binary를 직접 받지 않는다" in doc
-    assert "fact_voice_stt_tts_plan" in doc
+    assert "mode: VoiceAdapterMode" in adapter
+    assert "disabled_by_contract" in adapter
+    assert "liveSttCallCount: 0" in adapter
+    assert "liveTtsCallCount: 0" in adapter
+    assert "providerFinalizedCount: 0" in adapter
+    assert "privateAudioSavedCount: 0" in adapter
+    assert "rawTranscriptPublicArtifactCount: 0" in adapter
+    assert "speechSynthesis.speak" not in adapter
+    assert "new SpeechSynthesisUtterance" not in adapter
+    assert "음성 입력 contract only" in app_test
+    assert "voice calls: 0/0" in app_test
 
 
-def test_voice_stt_tts_plan_keeps_forbidden_claims_as_forbidden() -> None:
+def test_voice_stt_tts_contract_keeps_forbidden_claims_as_forbidden() -> None:
     doc = DOC_PATH.read_text(encoding="utf-8")
     forbidden_section = doc.split("## 금지 Claim", maxsplit=1)[1]
 
@@ -88,25 +93,26 @@ def test_voice_stt_tts_plan_keeps_forbidden_claims_as_forbidden() -> None:
         assert claim in forbidden_section
 
 
-def test_voice_stt_tts_plan_report_records_quantitative_gates() -> None:
+def test_voice_stt_tts_contract_report_records_gates() -> None:
     report = REPORT_PATH.read_text(encoding="utf-8")
 
-    assert "voice_stt_tts_plan_document_count | 1" in report
-    assert "voice_stt_tts_plan_report_count | 1" in report
-    assert "planned_voice_flow_count | 7" in report
-    assert "provider_candidate_group_count | 3" in report
-    assert "privacy_control_count | 9" in report
-    assert "privacy_risk_count | 8" in report
-    assert "failure_mode_count | 12" in report
-    assert "eval_metric_count | 12" in report
+    assert "voice_stt_tts_contract_document_count | 1" in report
+    assert "voice_stt_tts_contract_report_count | 1" in report
+    assert "frontend_adapter_module_count | 1" in report
+    assert "frontend_adapter_unit_test_count | 2" in report
+    assert "frontend_ui_voice_contract_test_count | 1" in report
+    assert "frontend_total_voice_contract_test_count | 3" in report
     assert "provider_finalized_count | 0" in report
     assert "live_stt_call_count | 0" in report
     assert "live_tts_call_count | 0" in report
     assert "live_solar_call_count | 0" in report
     assert "private_audio_saved_count | 0" in report
-    assert "retrieval_execution_count | 0" in report
+    assert "raw_transcript_public_artifact_count | 0" in report
+    assert "client_secret_exposure_count | 0" in report
+    assert "mic_capture_implemented_count | 0" in report
+    assert "browser_tts_playback_call_count | 0" in report
     assert "public_private_path_leakage_count | 0" in report
     assert "public_secret_like_leakage_count | 0" in report
     assert "public_raw_payload_leakage_count | 0" in report
     assert "External audit | PASS" in report
-    assert "fact_voice_stt_tts_plan" in report
+    assert "fact_voice_stt_tts_contract" in report

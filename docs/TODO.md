@@ -154,4 +154,5 @@
 - [x] public repository audit refresh
 - [x] portfolio submission rehearsal
 - [x] optional voice STT/TTS planning
-- [ ] optional voice STT/TTS contract skeleton
+- [x] optional voice STT/TTS contract skeleton
+- [ ] optional voice STT/TTS provider benchmark plan

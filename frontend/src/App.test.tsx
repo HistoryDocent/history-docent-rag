@@ -49,13 +49,16 @@ describe("History Docent voice UI skeleton", () => {
     expect(screen.queryByText("fixture_api_error")).not.toBeInTheDocument();
   });
 
-  test("renders voice fallback controls in jsdom", async () => {
+  test("renders voice fallback controls without provider calls", async () => {
     render(<App />);
 
-    expect(screen.getByRole("button", { name: "음성 입력 미지원" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "음성 입력 contract only" })).toBeDisabled();
+    expect(screen.getByText("voice contract_only")).toBeInTheDocument();
+    expect(screen.getByText("voice live calls: 0")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "시작" }));
 
-    expect(await screen.findByRole("button", { name: "음성 재생 미지원" })).toBeDisabled();
+    expect(await screen.findByRole("button", { name: "음성 재생 contract only" })).toBeDisabled();
+    expect(screen.getByText("voice calls: 0/0")).toBeInTheDocument();
     expect(screen.getByText(/경복궁은 조선이 한양을 수도로 삼은 뒤/)).toBeInTheDocument();
   });
 });

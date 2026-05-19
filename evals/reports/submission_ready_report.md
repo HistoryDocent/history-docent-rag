@@ -30,7 +30,7 @@
 | portfolio defensibility | PASS | 채택뿐 아니라 기각 사유를 면접 답변으로 설명할 수 있다. |
 | public safety | PASS | raw query, raw answer, raw evidence, prompt, chunk text, private path, secret을 기록하지 않는다. |
 | notebook structure | PASS | numbered notebook skeleton이 `00`부터 `13`까지 존재한다. |
-| next work control | PASS | portfolio demo runbook, public repository audit refresh, portfolio rehearsal, voice STT/TTS planning은 완료됐고, 후속 제품 개발은 optional voice STT/TTS contract skeleton으로 분리됐다. |
+| next work control | PASS | portfolio demo runbook, public repository audit refresh, portfolio rehearsal, voice STT/TTS planning, voice STT/TTS contract skeleton은 완료됐고, 후속 제품 개발은 optional voice STT/TTS provider benchmark plan으로 분리됐다. |
 
 ## Data Mart Grain
 
@@ -65,6 +65,6 @@
 
 ## 다음 Gate
 
-다음 gate는 `HD-VOICE-STT-TTS-CONTRACT-001`이다.
+다음 gate는 `HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001`이다.
 
-필수 포트폴리오 제출 gate와 voice STT/TTS planning은 완료됐다. 다음 gate는 후속 제품 개발을 이어갈 때만 필요한 provider 호출 없는 STT/TTS contract skeleton이다.
+필수 포트폴리오 제출 gate, voice STT/TTS planning, voice STT/TTS contract skeleton은 완료됐다. 다음 gate는 후속 제품 개발을 이어갈 때만 필요한 provider benchmark plan이다.
