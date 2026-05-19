@@ -549,3 +549,27 @@
 - [ ] raw audio/transcript/payload public artifact count 0
 - [ ] public private path/secret-like/raw payload leakage 0
 - [ ] managed provider smoke execution next gate 유지
+
+## Voice STT/TTS Azure Credential Preflight Gate
+
+- [ ] voice STT/TTS Azure credential preflight runner count 1
+- [ ] voice STT/TTS Azure credential preflight document count 1
+- [ ] voice STT/TTS Azure credential preflight report count 1
+- [ ] provider candidate count 1
+- [ ] first provider candidate Azure
+- [ ] planned script count 3
+- [ ] planned STT/TTS call count 3 이하
+- [ ] azure credential ready 기록
+- [ ] credential env var name count 2
+- [ ] credential present/missing count 기록
+- [ ] credential value public exposure count 0
+- [ ] managed provider API call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT/TTS/Solar call count 0
+- [ ] official source reference count 5
+- [ ] source recheck required before execution count 5
+- [ ] source recheck completed for execution count 0
+- [ ] region/retention/cost confirmation required count 1
+- [ ] raw audio/transcript/payload public artifact count 0
+- [ ] public private path/secret-like/raw payload leakage 0
+- [ ] managed provider smoke execution next gate 유지
