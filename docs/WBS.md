@@ -130,4 +130,5 @@
 | 9.25 | voice STT/TTS managed provider smoke execution gate | execution runner, `docs/VOICE_STT_TTS_MANAGED_PROVIDER_SMOKE_EXECUTION.md`, report, test | selected Azure managed provider smoke 실행 조건 미충족 시 zero-call 차단 리포트와 public-safe gate 검증 | `실험: Azure managed STT TTS smoke 실행 gate 추가` |
 | 9.26 | voice STT/TTS local-first strategy decision | `docs/VOICE_PROVIDER_DECISION.md`, report | 무료 로컬 STT/TTS를 기본 전략으로 지정하고 Azure/Google/AWS는 optional paid comparison으로 격하 | `문서: 무료 로컬 STT TTS 우선 전략으로 변경` |
 | 9.27 | voice STT/TTS local TTS smoke | local TTS smoke runner, docs/report/test | `MeloTTS Korean` 후보를 public-safe script 5개로 점검, 현재 runtime missing 차단 기록, external provider call 0 | `실험: 로컬 TTS smoke 추가` |
-| 9.28 | voice STT/TTS local MeloTTS runtime retry | local runtime setup evidence, rerun report | Python/Windows 호환 dependency를 분리해 실제 private wav 생성 재시도 | `점검: MeloTTS runtime 재실행 기록 추가` |
+| 9.28 | voice local runtime matrix | local runtime matrix runner, docs/report/test | 무료 로컬 STT/TTS 후보 5개 import/runtime/CUDA preflight, 설치/다운로드/외부 호출 0 | `문서: 무료 로컬 음성 런타임 후보 매트릭스 추가` |
+| 9.29 | voice STT/TTS local MeloTTS runtime retry | local runtime setup evidence, rerun report | Python/Windows 호환 dependency를 분리해 실제 private wav 생성 재시도 | `점검: MeloTTS runtime 재실행 기록 추가` |

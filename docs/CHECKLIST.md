@@ -492,6 +492,35 @@
 - [ ] runtime missing이면 completed claim 금지
 - [ ] local MeloTTS runtime install/retry next gate 분리
 
+## Voice Local Runtime Matrix Gate
+
+- [ ] voice local runtime matrix runner count 1
+- [ ] voice local runtime matrix document count 1
+- [ ] voice local runtime matrix report count 1
+- [ ] runtime candidate count 5
+- [ ] primary local STT candidate count 1
+- [ ] existing local STT fallback count 1
+- [ ] primary local TTS candidate count 1
+- [ ] import available candidate count recorded
+- [ ] missing runtime candidate count recorded
+- [ ] TTS runtime available count recorded
+- [ ] resolved device cuda when CUDA available
+- [ ] package install attempted count 0
+- [ ] model download attempted count 0
+- [ ] model load attempted count 0
+- [ ] local STT execution count 0
+- [ ] local TTS execution count 0
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] client secret exposure count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] runtime matrix는 provider final selection claim 금지
+- [ ] TTS 후보 미설치면 actual wav smoke 완료 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1
