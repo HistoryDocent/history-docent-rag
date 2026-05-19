@@ -446,6 +446,26 @@
 - [ ] public raw payload leakage 0
 - [ ] managed provider smoke approval next gate 유지
 
+## Voice STT/TTS Local-first Provider Decision Gate
+
+- [ ] voice provider decision document count 1
+- [ ] voice provider decision report count 1
+- [ ] primary local STT candidate count 1
+- [ ] primary local TTS candidate count 1
+- [ ] managed provider default count 0
+- [ ] optional paid managed provider count 3
+- [ ] default external audio transmission count 0
+- [ ] secret required for default voice count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] managed provider API call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] local TTS smoke next gate 분리
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

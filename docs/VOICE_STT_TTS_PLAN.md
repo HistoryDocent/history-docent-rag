@@ -2,7 +2,7 @@
 
 ## 결론
 
-`HD-VOICE-STT-TTS-PLAN-001`의 결론은 실제 STT/TTS를 바로 구현하지 않는 것이다.
+`HD-VOICE-STT-TTS-PLAN-001`의 결론은 실제 STT/TTS를 바로 구현하지 않는 것이다. 이후 `HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001`에서 기본 전략은 무료 로컬 STT/TTS 우선으로 변경했다.
 
 현재 portfolio 제출 기준은 이미 `spoken_answer`를 포함한 RAG API, browser voice-ready UI skeleton, contract smoke, visual QA까지 완료했다. 다음 제품 개발은 실제 음성 입출력을 붙이기 전에 provider, 개인정보, 비용, failure mode, 평가 metric을 별도 gate로 고정해야 한다.
 
@@ -74,13 +74,13 @@ browser mic
 
 ## Provider 선택 기준
 
-provider는 아직 확정하지 않는다. 실제 구현 전에 공식 문서, SDK, pricing, browser 지원, 데이터 처리 조건을 다시 확인한다.
+provider는 아직 확정하지 않는다. 이 문서 작성 시점에는 provider를 확정하지 않았고, 이후 provider decision에서는 `faster-whisper` local CUDA STT와 `MeloTTS Korean` local TTS를 기본 후보로 두고, external API는 optional paid comparison으로만 남겼다.
 
 | 후보군 | 장점 | 리스크 | 선택 조건 |
 | --- | --- | --- | --- |
-| Browser/native STT/TTS | demo 구현이 빠르고 client secret이 필요 없다. | browser별 지원 차이와 한국어 인식 편차가 있다. | 포트폴리오 demo가 최우선이고 저장/전송 리스크를 줄일 때 |
-| Local STT/TTS | private audio 외부 전송을 줄일 수 있다. CUDA 실험이 가능하다. | 모델 다운로드, GPU memory, latency, packaging 부담이 있다. | local GPU에서 p95 latency와 품질이 gate를 통과할 때 |
-| External API STT/TTS | 품질과 운영 안정성이 높을 수 있다. | 비용, quota, 외부 전송, secret 관리가 필요하다. | 개인정보 고지와 비용 cap, retry/timeout 정책이 준비될 때 |
+| Browser/native STT/TTS | demo 구현이 빠르고 client secret이 필요 없다. | browser별 지원 차이와 한국어 인식 편차가 있다. | fallback 또는 비교 후보 |
+| Local STT/TTS | private audio 외부 전송을 줄일 수 있다. CUDA 실험이 가능하다. | 모델 다운로드, GPU memory, latency, packaging 부담이 있다. | 기본 전략. STT는 `faster-whisper`, TTS는 `MeloTTS Korean`부터 검증 |
+| External API STT/TTS | 품질과 운영 안정성이 높을 수 있다. | 비용, quota, 외부 전송, secret 관리가 필요하다. | optional paid comparison. 별도 승인 없이는 실행하지 않음 |
 
 Solar Pro 3는 RAG generation이 필요한 순간에만 사용한다. STT/TTS provider와 Solar Pro 3 generation provider는 같은 계층으로 묶지 않는다.
 

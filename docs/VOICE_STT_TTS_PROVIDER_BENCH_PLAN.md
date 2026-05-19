@@ -2,7 +2,7 @@
 
 ## 결론
 
-`HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001`은 provider benchmark 실행 전 계획 gate다.
+`HD-VOICE-STT-TTS-PROVIDER-BENCH-PLAN-001`은 provider benchmark 실행 전 계획 gate다. 이후 `HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001`에서 무료 로컬 STT/TTS 우선 전략으로 변경했으며, 이 문서의 external managed 후보는 optional paid comparison으로만 유지한다.
 
 이번 단계에서 provider를 확정하지 않는다. STT/TTS 실제 호출, Solar Pro 3 호출, raw audio 저장, raw transcript 공개 artifact 생성도 하지 않는다. 목표는 다음 실행 단계에서 비용과 개인정보 리스크를 통제하면서 비교할 후보, 평가 지표, 중단 조건을 고정하는 것이다.
 
@@ -12,7 +12,7 @@
 
 - browser native Web Speech 후보 검토
 - local CUDA STT 후보 검토
-- Google Cloud, Azure AI Speech, AWS Transcribe/Polly 외부 API 후보 검토
+- Google Cloud, Azure AI Speech, AWS Transcribe/Polly 외부 API 후보 검토. 단, 기본 구현 경로가 아니라 optional paid comparison 후보로 제한
 - 공식 문서, 가격 문서, 데이터 처리 문서 링크 고정
 - STT/TTS benchmark metric과 public-safe report grain 고정
 - live call budget과 중단 조건 고정
@@ -30,7 +30,7 @@
 | 담당 관점 | 판단 |
 | --- | --- |
 | 제품 | 서울/한양 관광 도슨트는 짧은 음성 질문과 짧은 spoken answer가 중요하다. browser native는 demo 접근성이 좋지만 지원 편차가 크다. |
-| 음성 엔지니어링 | STT는 local CUDA 후보를 반드시 포함한다. TTS는 browser native와 external managed TTS를 먼저 비교하고, local TTS는 별도 모델 검증 전까지 후보로 확정하지 않는다. |
+| 음성 엔지니어링 | STT는 local CUDA 후보를 반드시 포함한다. 이후 전략 변경으로 TTS도 `MeloTTS Korean` local smoke를 먼저 검증하고, browser/managed TTS는 비교 후보로 둔다. |
 | RAG 아키텍처 | 음성 provider 비교는 retrieval 성능 개선 주장이 아니다. `/api/v1/chat` contract와 `spoken_answer` 품질 보존 여부만 연결한다. |
 | Evaluation | STT/TTS는 WER/CER만으로 부족하다. place name accuracy, round-trip latency, cost, privacy metric을 같이 봐야 한다. |
 | Data warehouse | grain은 `work_id + provider_candidate_id + modality + metric_family + claim_boundary`로 둔다. raw audio/transcript는 금지 필드다. |
@@ -44,9 +44,9 @@
 | --- | --- | --- | --- | --- | --- |
 | `browser_native_web_speech` | STT/TTS | Web Speech API | backend secret 불필요, local demo 접근성 높음, browser TTS 사용 가능 | browser 지원 편차, STT 처리 위치와 품질 편차, 모바일 제약 | benchmark 후보 유지 |
 | `local_cuda_whisper` | STT | OpenAI Whisper, faster-whisper | audio 외부 전송 없음, RTX 4080 SUPER CUDA 활용 가능, 비용 예측 쉬움 | model download, GPU dependency, realtime latency 검증 필요, TTS 별도 필요 | STT 후보 유지 |
-| `external_google_cloud` | STT/TTS | Google Cloud Speech-to-Text, Text-to-Speech | managed STT/TTS, 한국어 지원 확인 가능, pricing/data logging 문서 명확 | billing, quota, audio/transcript 외부 전송 | benchmark 후보 유지 |
-| `external_azure_speech` | STT/TTS | Azure AI Speech | speech-to-text/text-to-speech 통합, data privacy 문서 확인 가능 | region/price 변동, 외부 전송, Azure resource 설정 필요 | benchmark 후보 유지 |
-| `external_aws_transcribe_polly` | STT/TTS | Amazon Transcribe + Amazon Polly | STT/TTS managed 조합, pricing/data protection 문서 확인 가능 | STT/TTS 서비스가 분리됨, 한국어 품질 별도 검증 필요, 비용/region 관리 필요 | benchmark 후보 유지 |
+| `external_google_cloud` | STT/TTS | Google Cloud Speech-to-Text, Text-to-Speech | managed STT/TTS, 한국어 지원 확인 가능, pricing/data logging 문서 명확 | billing, quota, audio/transcript 외부 전송 | optional paid comparison |
+| `external_azure_speech` | STT/TTS | Azure AI Speech | speech-to-text/text-to-speech 통합, data privacy 문서 확인 가능 | region/price 변동, 외부 전송, Azure resource 설정 필요 | optional paid comparison |
+| `external_aws_transcribe_polly` | STT/TTS | Amazon Transcribe + Amazon Polly | STT/TTS managed 조합, pricing/data protection 문서 확인 가능 | STT/TTS 서비스가 분리됨, 한국어 품질 별도 검증 필요, 비용/region 관리 필요 | optional paid comparison |
 
 ## 공식 문서 확인
 

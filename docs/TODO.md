@@ -169,4 +169,6 @@
 - [x] optional voice STT/TTS Azure smoke execution approval
 - [x] optional voice STT/TTS Azure smoke execution
 - [x] optional voice STT/TTS Azure credential ready smoke approval
-- [ ] optional voice STT/TTS managed provider smoke execution
+- [x] voice STT/TTS local-first provider strategy decision
+- [ ] local voice TTS smoke execution
+- [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
