@@ -521,6 +521,38 @@
 - [ ] runtime matrix는 provider final selection claim 금지
 - [ ] TTS 후보 미설치면 actual wav smoke 완료 claim 금지
 
+## Voice Local TTS Runtime Install Retry Gate
+
+- [ ] voice local TTS runtime install retry runner count 1
+- [ ] voice local TTS runtime install retry document count 1
+- [ ] voice local TTS runtime install retry report count 1
+- [ ] isolated Python 3.11 venv used
+- [ ] runtime install attempt count recorded
+- [ ] package install attempted count recorded
+- [ ] package install success count recorded
+- [ ] package install blocked count recorded
+- [ ] CUDA torch wheel install success recorded
+- [ ] isolated CUDA torch available recorded
+- [ ] MeloTTS import success recorded
+- [ ] MeloTTS model load success recorded
+- [ ] MeloTTS Korean synthesis success count recorded
+- [ ] MeloTTS blocker reason recorded
+- [ ] Windows SAPI Korean fallback voice detected
+- [ ] local TTS execution count 5
+- [ ] private audio generated count 5
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] MeloTTS final provider 확정 claim 금지
+- [ ] local STT/TTS adapter integration next gate 분리
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

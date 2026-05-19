@@ -12,7 +12,7 @@
 | --- | --- |
 | 현재 stack | `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1` |
 | query type classifier/router | classifier baseline accuracy 0.957143, router는 `relationship` hybrid route, `no_answer` abstain-first, 나머지 dense voice rewrite, API는 dry-run/flag dry-run만 적용, active route는 아직 미적용 |
-| voice provider 전략 | 무료 로컬 STT/TTS 우선. 현재 `openai-whisper` fallback만 import 가능, `faster-whisper`/`MeloTTS`/`sherpa-onnx`/`piper`는 runtime 미설치. Azure/Google/AWS는 optional paid comparison only |
+| voice provider 전략 | 무료 로컬 STT/TTS 우선. MeloTTS는 설치/CUDA/import/model load까지 통과했지만 Windows `eunjeon` build dependency로 Korean synthesis가 차단됐다. TTS smoke는 Windows SAPI Korean fallback으로 private wav 5개 생성. Azure/Google/AWS는 optional paid comparison only |
 | 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
 | 보류한 핵심 | BGE-M3 dense, BGE reranker |
 | 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route, HyDE 기본 retrieval route, ColBERT-style late interaction 기본 route |
@@ -77,6 +77,7 @@
 | voice provider local-first decision | `HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001` | decision-only | managed_provider_default_count / default_external_audio_transmission_count | 0 / 0 | local-first, managed optional only |
 | voice STT/TTS local TTS smoke | `HD-VOICE-STT-TTS-LOCAL-TTS-SMOKE-001` | local-tts-smoke-gate | resolved_device / melotts_runtime_available_count / external_provider_call_count | cuda / 0 / 0 | blocked missing MeloTTS runtime |
 | voice local runtime matrix | `HD-VOICE-STT-TTS-LOCAL-RUNTIME-MATRIX-001` | runtime-preflight-only | runtime_candidate_count / import_available_candidate_count / tts_runtime_available_count | 5 / 1 / 0 | local STT fallback only, TTS blocked |
+| voice local TTS runtime install retry | `HD-VOICE-STT-TTS-LOCAL-TTS-RUNTIME-INSTALL-001` | local-tts-runtime-install-retry | runtime_install_attempt_count / melotts_synthesis_success_count / local_tts_execution_count / external_provider_call_count | 11 / 0 / 5 / 0 | completed local SAPI TTS fallback |
 
 금지 claim:
 
@@ -230,14 +231,15 @@ PDF
 -> voice provider local-first decision
 -> voice STT/TTS local TTS smoke
 -> voice local runtime matrix
+-> voice local TTS runtime install retry
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-local TTS runtime candidate install/retry from matrix
-local MeloTTS runtime install and retry smoke execution
+voice STT/TTS local adapter integration with selected local fallback
+optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
 ```
 
@@ -578,6 +580,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice STT/TTS Local TTS Smoke Report](evals/reports/voice_stt_tts_local_tts_smoke_report.md) | HD-VOICE-STT-TTS-LOCAL-TTS-SMOKE-001 정량/정성 local TTS smoke gate와 zero external provider call 검증 |
 | [Voice Local Runtime Matrix](docs/VOICE_LOCAL_RUNTIME_MATRIX.md) | HD-VOICE-STT-TTS-LOCAL-RUNTIME-MATRIX-001 무료 로컬 STT/TTS 후보별 import/runtime/CUDA preflight |
 | [Voice Local Runtime Matrix Report](evals/reports/voice_local_runtime_matrix_report.md) | HD-VOICE-STT-TTS-LOCAL-RUNTIME-MATRIX-001 정량/정성 runtime matrix와 zero external call 검증 |
+| [Voice Local TTS Runtime Install Retry](docs/VOICE_LOCAL_TTS_RUNTIME_INSTALL_RETRY.md) | HD-VOICE-STT-TTS-LOCAL-TTS-RUNTIME-INSTALL-001 MeloTTS 설치/실행 재시도와 Windows SAPI Korean fallback private wav smoke |
+| [Voice Local TTS Runtime Install Retry Report](evals/reports/voice_local_tts_runtime_install_retry_report.md) | HD-VOICE-STT-TTS-LOCAL-TTS-RUNTIME-INSTALL-001 정량/정성 install retry, blocker, local wav 생성, zero external call 검증 |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |
