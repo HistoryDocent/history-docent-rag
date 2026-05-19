@@ -152,4 +152,5 @@
 - [x] real browser voice UI visual QA
 - [x] portfolio demo runbook 정리
 - [x] public repository audit refresh
-- [ ] portfolio submission rehearsal
+- [x] portfolio submission rehearsal
+- [ ] optional voice STT/TTS planning

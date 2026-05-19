@@ -254,3 +254,22 @@
 - [ ] live Solar Pro 3 call count 0
 - [ ] retrieval execution count 0
 - [ ] private corpus required count 0
+
+## Portfolio Rehearsal Gate
+
+- [ ] portfolio rehearsal document count 1
+- [ ] portfolio rehearsal report count 1
+- [ ] thirty second script count 1
+- [ ] three minute section count 6
+- [ ] interview answer count 12
+- [ ] rejected candidate explained count 8
+- [ ] demo step count 5
+- [ ] allowed claim count 8
+- [ ] forbidden claim count 8
+- [ ] rehearsal rubric check count 5
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] retrieval execution count 0
+- [ ] private corpus required count 0

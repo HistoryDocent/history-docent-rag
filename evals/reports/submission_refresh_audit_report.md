@@ -78,13 +78,13 @@
 
 ## 다음 Gate
 
-다음 단계는 새 구현이 아니라 제출용 설명 리허설이다.
+필수 포트폴리오 제출 gate는 설명 리허설까지 완료됐다.
 
-권장 작업 단위:
+후속 개발 권장 작업 단위:
 
-- `id`: `HD-PORTFOLIO-REHEARSAL-001`
-- `depends_on`: `HD-SUBMISSION-REFRESH-001`
-- `scope`: README 기반 3분 설명, RAG 의사결정 질문 답변, 금지 claim 확인
-- `acceptance_tests`: 금지 claim 0, 핵심 stack 설명 가능, 기각 후보 3개 이상 설명 가능
+- `id`: `HD-VOICE-STT-TTS-PLAN-001`
+- `depends_on`: `HD-PORTFOLIO-REHEARSAL-001`
+- `scope`: 실제 음성 입출력 demo 범위, 비용, 개인정보 처리, 실패 대응 계획
+- `acceptance_tests`: STT/TTS non-goal 분리, 개인정보 처리 기준, 비용 gate, failure mode 문서화
 - `risk_level`: low
-- `rollback_plan`: rehearsal 문서만 revert
+- `rollback_plan`: voice planning 문서만 revert

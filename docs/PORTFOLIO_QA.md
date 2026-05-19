@@ -97,6 +97,6 @@ active route를 바로 켜지 않은 결정입니다. dev shadow에서는 relati
 
 ## 다음 작업
 
-다음 작업은 `HD-PORTFOLIO-REHEARSAL-001`이다.
+다음 작업 후보는 `HD-VOICE-STT-TTS-PLAN-001`이다.
 
-`HD-PORTFOLIO-DEMO-001`과 `HD-SUBMISSION-REFRESH-001`은 완료됐다. 다음 작업은 제출용 설명 리허설이며, 3분 설명, 기각 후보 설명, 금지 claim 회피를 확인한다.
+필수 포트폴리오 제출 gate는 `HD-PORTFOLIO-REHEARSAL-001`까지 완료됐다. 후속 제품 개발을 이어간다면 실제 음성 입출력 demo 범위, 비용, 개인정보 처리, 실패 대응을 별도 계획으로 분리한다.

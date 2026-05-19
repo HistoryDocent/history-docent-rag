@@ -73,6 +73,7 @@
 - 실제 browser desktop/mobile visual QA
 - 포트폴리오 local demo runbook 정리
 - public repository audit refresh
+- portfolio submission rehearsal
 - backend validation 이후 STT/TTS demo 추가
 - 짧은 답변과 citation display 동작 보존
 - 규모가 커지면 voice UI를 RAG backend와 분리

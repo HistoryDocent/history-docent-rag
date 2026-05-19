@@ -30,7 +30,7 @@
 | portfolio defensibility | PASS | 채택뿐 아니라 기각 사유를 면접 답변으로 설명할 수 있다. |
 | public safety | PASS | raw query, raw answer, raw evidence, prompt, chunk text, private path, secret을 기록하지 않는다. |
 | notebook structure | PASS | numbered notebook skeleton이 `00`부터 `13`까지 존재한다. |
-| next work control | PASS | portfolio demo runbook과 public repository audit refresh는 완료됐고, 다음 gate는 제출용 설명 리허설로 분리됐다. |
+| next work control | PASS | portfolio demo runbook, public repository audit refresh, portfolio rehearsal은 완료됐고, 후속 제품 개발은 optional voice STT/TTS planning으로 분리됐다. |
 
 ## Data Mart Grain
 
@@ -65,6 +65,6 @@
 
 ## 다음 Gate
 
-다음 gate는 `HD-PORTFOLIO-REHEARSAL-001`이다.
+다음 gate는 `HD-VOICE-STT-TTS-PLAN-001`이다.
 
-`HD-PORTFOLIO-DEMO-001`과 `HD-SUBMISSION-REFRESH-001`은 완료됐다. 다음 gate는 README 기반 3분 설명, 기각 후보 설명, 금지 claim 회피를 확인하는 제출용 설명 리허설이다.
+필수 포트폴리오 제출 gate는 `HD-PORTFOLIO-REHEARSAL-001`까지 완료됐다. 다음 gate는 후속 제품 개발을 이어갈 때만 필요한 실제 STT/TTS demo 계획이다.

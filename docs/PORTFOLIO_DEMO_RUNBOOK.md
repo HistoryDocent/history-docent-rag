@@ -202,6 +202,6 @@ npm run smoke:contract
 
 ## 다음 작업
 
-다음 작업은 portfolio submission rehearsal이다.
+다음 작업 후보는 optional voice STT/TTS planning이다.
 
-public repository audit refresh는 완료됐다. 후속 작업에서는 README 기반 3분 설명, 기각 후보 설명, 금지 claim 회피를 확인한다.
+public repository audit refresh와 portfolio submission rehearsal은 완료됐다. 후속 제품 개발을 이어간다면 실제 음성 입출력 demo 범위, 비용, 개인정보 처리, 실패 대응을 별도 계획으로 분리한다.

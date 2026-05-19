@@ -111,3 +111,4 @@
 | 9.6 | real browser visual QA | screenshot/checklist report | desktop/mobile layout, no-answer, citation drawer, voice fallback visual 검증 | `테스트: voice UI visual QA 추가` |
 | 9.7 | portfolio demo runbook | `docs/PORTFOLIO_DEMO_RUNBOOK.md`, report | backend/frontend local demo 순서, 금지 claim, public-safe gate 정리 | `문서: 포트폴리오 데모 런북 추가` |
 | 9.8 | public repository audit refresh | `docs/SUBMISSION_REFRESH_AUDIT.md`, report, test | README 링크, demo runbook, screenshot artifact, 금지 claim, public-safe scan 재검증 | `감사: 공개 저장소 제출 전 재검증 추가` |
+| 9.9 | portfolio submission rehearsal | `docs/PORTFOLIO_REHEARSAL.md`, report, test | 30초 요약, 3분 설명, 면접 답변, 기각 후보 설명, 금지 claim 회피 고정 | `문서: 포트폴리오 설명 리허설 추가` |
