@@ -422,3 +422,26 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] managed provider smoke approval next gate 분리
+
+## Voice STT/TTS Local Model Ablation Gate
+
+- [ ] voice STT/TTS local model ablation document count 1
+- [ ] voice STT/TTS local model ablation report count 1
+- [ ] model candidate count 3
+- [ ] selected public-safe script count 5
+- [ ] total local CUDA Whisper STT execution count 15
+- [ ] resolved device cuda
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw transcript public artifact count 0
+- [ ] raw audio public artifact count 0
+- [ ] model별 WER, CER, place name accuracy, STT latency p95, model load time 기록
+- [ ] best CER model and best place name accuracy model 기록
+- [ ] private fact grain and public summary grain 분리
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] managed provider smoke approval next gate 유지

@@ -63,6 +63,7 @@
 | voice STT/TTS provider benchmark readiness | `HD-VOICE-STT-TTS-PROVIDER-BENCH-READINESS-001` | readiness-only | provider_benchmark_execution_count / live_stt_call_count / live_tts_call_count | 0 / 0 / 0 | ready for execution approval |
 | voice STT/TTS provider benchmark execution approval | `HD-VOICE-STT-TTS-PROVIDER-BENCH-EXECUTION-APPROVAL-001` | approval-only | provider_benchmark_execution_approved / live_stt_call_count / live_tts_call_count | false / 0 / 0 | ready for user-approved smoke |
 | voice STT/TTS provider benchmark local smoke | `HD-VOICE-STT-TTS-PROVIDER-BENCH-SMOKE-LOCAL-001` | local-cuda-smoke-only | resolved_device / local_stt_execution_count / external_provider_call_count | cuda / 5 / 0 | ready for managed provider smoke approval |
+| voice STT/TTS local model ablation | `HD-VOICE-STT-TTS-LOCAL-MODEL-ABLATION-001` | local-cuda-smoke-only | best_cer_model / total_local_stt_execution_count / external_provider_call_count | small / 15 / 0 | keep small as local STT quality candidate |
 
 금지 claim:
 
@@ -73,7 +74,7 @@
 - 음성 관광 앱 완성
 - 전체 도서 데이터 공개
 
-상세 요약은 [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md), [Final Ablation Report Artifact](evals/reports/final_ablation_report.md), [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md), [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md), [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md), [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md), [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md), [Voice STT/TTS Contract Report](evals/reports/voice_stt_tts_contract_report.md), [Voice STT/TTS Provider Benchmark Plan](docs/VOICE_STT_TTS_PROVIDER_BENCH_PLAN.md), [Voice STT/TTS Provider Benchmark Plan Report](evals/reports/voice_stt_tts_provider_bench_plan_report.md), [Voice STT/TTS Provider Benchmark Readiness](docs/VOICE_STT_TTS_PROVIDER_BENCH_READINESS.md), [Voice STT/TTS Provider Benchmark Readiness Report](evals/reports/voice_stt_tts_provider_bench_readiness_report.md), [Voice STT/TTS Provider Benchmark Execution Approval](docs/VOICE_STT_TTS_PROVIDER_BENCH_EXECUTION_APPROVAL.md), [Voice STT/TTS Provider Benchmark Execution Approval Report](evals/reports/voice_stt_tts_provider_bench_execution_approval_report.md), [Voice STT/TTS Provider Benchmark Local Smoke](docs/VOICE_STT_TTS_PROVIDER_BENCH_SMOKE_LOCAL.md), [Voice STT/TTS Provider Benchmark Local Smoke Report](evals/reports/voice_stt_tts_provider_bench_smoke_local_report.md)를 기준으로 한다.
+상세 요약은 [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md), [Final Ablation Report Artifact](evals/reports/final_ablation_report.md), [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md), [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md), [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md), [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md), [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md), [Voice STT/TTS Contract Report](evals/reports/voice_stt_tts_contract_report.md), [Voice STT/TTS Provider Benchmark Plan](docs/VOICE_STT_TTS_PROVIDER_BENCH_PLAN.md), [Voice STT/TTS Provider Benchmark Plan Report](evals/reports/voice_stt_tts_provider_bench_plan_report.md), [Voice STT/TTS Provider Benchmark Readiness](docs/VOICE_STT_TTS_PROVIDER_BENCH_READINESS.md), [Voice STT/TTS Provider Benchmark Readiness Report](evals/reports/voice_stt_tts_provider_bench_readiness_report.md), [Voice STT/TTS Provider Benchmark Execution Approval](docs/VOICE_STT_TTS_PROVIDER_BENCH_EXECUTION_APPROVAL.md), [Voice STT/TTS Provider Benchmark Execution Approval Report](evals/reports/voice_stt_tts_provider_bench_execution_approval_report.md), [Voice STT/TTS Provider Benchmark Local Smoke](docs/VOICE_STT_TTS_PROVIDER_BENCH_SMOKE_LOCAL.md), [Voice STT/TTS Provider Benchmark Local Smoke Report](evals/reports/voice_stt_tts_provider_bench_smoke_local_report.md), [Voice STT/TTS Local Model Ablation](docs/VOICE_STT_TTS_LOCAL_MODEL_ABLATION.md), [Voice STT/TTS Local Model Ablation Report](evals/reports/voice_stt_tts_local_model_ablation_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -203,6 +204,7 @@ PDF
 -> voice STT/TTS provider benchmark readiness
 -> voice STT/TTS provider benchmark execution approval
 -> voice STT/TTS provider benchmark local smoke
+-> voice STT/TTS local model ablation
 -> public-safe aggregate reports
 ```
 
