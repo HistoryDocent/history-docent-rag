@@ -88,6 +88,7 @@
 - Azure credential preflight에서 `.env`/환경 변수의 Azure credential 존재 여부만 자동 점검하고 실제 호출은 0회로 유지
 - Azure smoke execution approval에서 credential missing 상태를 반영해 실행 승인 false, source/region/retention/cost 재확인 gate를 고정
 - Azure smoke execution에서 실행 runner를 추가하되 credential/source/user approval 미충족 상태를 반영해 실제 호출은 0회로 차단
+- Azure credential ready smoke approval에서 credential/source/region/retention/cost/user approval 충족 여부를 zero-call로 재판정
 - managed provider smoke execution은 별도 승인 후 provider별 call cap 안에서 진행
 - 짧은 답변과 citation display 동작 보존
 - 규모가 커지면 voice UI를 RAG backend와 분리

@@ -167,4 +167,5 @@
 - [x] optional voice STT/TTS Azure credential preflight
 - [x] optional voice STT/TTS Azure smoke execution approval
 - [x] optional voice STT/TTS Azure smoke execution
+- [x] optional voice STT/TTS Azure credential ready smoke approval
 - [ ] optional voice STT/TTS managed provider smoke execution
