@@ -370,3 +370,32 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] provider benchmark execution approval next gate 분리
+
+## Voice STT/TTS Provider Benchmark Execution Approval Gate
+
+- [ ] voice STT/TTS provider benchmark execution approval document count 1
+- [ ] voice STT/TTS provider benchmark execution approval report count 1
+- [ ] provider candidate group count 5
+- [ ] public-safe script fixture count 30
+- [ ] planned smoke script count per low-risk provider 5
+- [ ] planned smoke script count per external provider 3
+- [ ] planned full benchmark script count 30
+- [ ] pricing recheck required count 5
+- [ ] privacy recheck required count 5
+- [ ] region recheck required count 5
+- [ ] provider benchmark execution approved false
+- [ ] provider benchmark execution count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] private audio saved count 0
+- [ ] raw transcript public artifact count 0
+- [ ] client secret exposure count 0
+- [ ] STT/TTS metric plan includes WER, CER, place name accuracy
+- [ ] TTS metric plan includes playback success and latency p95
+- [ ] E2E metric plan includes voice round trip latency and RAG answer contract preservation
+- [ ] private fact grain and public summary grain 분리
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] provider benchmark smoke execution next gate 분리

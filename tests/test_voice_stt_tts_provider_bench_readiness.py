@@ -130,8 +130,9 @@ def test_voice_provider_readiness_docs_are_registered_and_sanitized() -> None:
         assert Path(link).exists()
 
     assert "- [x] optional voice STT/TTS provider benchmark readiness" in todo
-    assert "- [ ] optional voice STT/TTS provider benchmark execution approval" in todo
-    assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-EXECUTION-APPROVAL-001" in ledger
+    assert "- [x] optional voice STT/TTS provider benchmark execution approval" in todo
+    assert "- [ ] optional voice STT/TTS provider benchmark smoke execution" in todo
+    assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-SMOKE-EXECUTION-001" in ledger
 
     for path in PUBLIC_SCAN_PATHS:
         text = path.read_text(encoding="utf-8")

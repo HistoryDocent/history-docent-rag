@@ -157,4 +157,5 @@
 - [x] optional voice STT/TTS contract skeleton
 - [x] optional voice STT/TTS provider benchmark plan
 - [x] optional voice STT/TTS provider benchmark readiness
-- [ ] optional voice STT/TTS provider benchmark execution approval
+- [x] optional voice STT/TTS provider benchmark execution approval
+- [ ] optional voice STT/TTS provider benchmark smoke execution
