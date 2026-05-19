@@ -163,4 +163,5 @@
 - [x] optional voice STT/TTS managed provider smoke approval
 - [x] optional voice STT/TTS managed provider smoke execution harness
 - [x] optional voice STT/TTS managed provider smoke preflight
+- [x] optional voice STT/TTS Azure managed smoke readiness
 - [ ] optional voice STT/TTS managed provider smoke execution

@@ -529,3 +529,23 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] managed provider smoke execution next gate 유지
+
+## Voice STT/TTS Azure Managed Smoke Readiness Gate
+
+- [ ] voice STT/TTS Azure managed smoke readiness document count 1
+- [ ] voice STT/TTS Azure managed smoke readiness report count 1
+- [ ] first provider candidate Azure
+- [ ] planned script count 3
+- [ ] planned STT/TTS call count 3 이하
+- [ ] managed provider API call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT/TTS/Solar call count 0
+- [ ] credential env var name count 2
+- [ ] credential value public exposure count 0
+- [ ] official source reference count 5
+- [ ] source recheck required before execution count 5
+- [ ] source recheck completed for execution count 0
+- [ ] region/retention/cost confirmation required count 1
+- [ ] raw audio/transcript/payload public artifact count 0
+- [ ] public private path/secret-like/raw payload leakage 0
+- [ ] managed provider smoke execution next gate 유지
