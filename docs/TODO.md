@@ -162,4 +162,5 @@
 - [x] optional voice STT/TTS local model ablation
 - [x] optional voice STT/TTS managed provider smoke approval
 - [x] optional voice STT/TTS managed provider smoke execution harness
+- [x] optional voice STT/TTS managed provider smoke preflight
 - [ ] optional voice STT/TTS managed provider smoke execution

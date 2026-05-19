@@ -498,3 +498,34 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] managed provider smoke execution next gate 유지
+
+## Voice STT/TTS Managed Provider Smoke Preflight Gate
+
+- [ ] voice STT/TTS managed provider smoke preflight document count 1
+- [ ] voice STT/TTS managed provider smoke preflight report count 1
+- [ ] provider candidate count 3
+- [ ] selected script count 3
+- [ ] planned max STT calls per provider 3 이하
+- [ ] planned max TTS calls per provider 3 이하
+- [ ] call cap enforced true
+- [ ] executable provider candidate count 기록
+- [ ] recommended first provider count 1 이하
+- [ ] managed provider execution requested count 0
+- [ ] managed provider API call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] source recheck required count 기록
+- [ ] source recheck completed count 0
+- [ ] region recheck required count 3
+- [ ] retention recheck required count 3
+- [ ] cost confirmation required count 3
+- [ ] credential value public exposure count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] raw payload public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] managed provider smoke execution next gate 유지
