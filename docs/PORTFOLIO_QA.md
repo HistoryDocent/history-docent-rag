@@ -97,6 +97,6 @@ active route를 바로 켜지 않은 결정입니다. dev shadow에서는 relati
 
 ## 다음 작업
 
-다음 작업은 `HD-PORTFOLIO-DEMO-001`이다.
+다음 작업은 `HD-SUBMISSION-REFRESH-001`이다.
 
-다만 이 작업은 제출 패키징 이후의 후순위 실험이다. 실행 전에는 hard subset, 비교 기준, latency/cost gate, claim boundary를 별도로 승인받아야 한다.
+`HD-PORTFOLIO-DEMO-001`은 완료됐다. 다음 작업은 제출 직전 public repository audit refresh이며, README 링크, demo runbook, screenshot artifact, 금지 claim, public-safe scan을 다시 확인한다.

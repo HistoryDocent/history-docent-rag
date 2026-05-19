@@ -71,6 +71,7 @@
 - browser voice-ready frontend skeleton 구현
 - FastAPI contract-only 응답과 frontend backend mode 연결 smoke
 - 실제 browser desktop/mobile visual QA
+- 포트폴리오 local demo runbook 정리
 - backend validation 이후 STT/TTS demo 추가
 - 짧은 답변과 citation display 동작 보존
 - 규모가 커지면 voice UI를 RAG backend와 분리

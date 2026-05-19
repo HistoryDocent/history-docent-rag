@@ -50,6 +50,6 @@
 
 ## 다음 작업
 
-다음 단계는 포트폴리오 demo runbook 정리다.
+다음 단계는 public repository audit refresh다.
 
-후속 작업에서는 사용자가 clone 후 어떤 순서로 backend/frontend를 실행하고 어떤 claim을 말하면 되는지 정리한다.
+포트폴리오 demo runbook은 완료됐다. 후속 작업에서는 제출 직전 README 링크, screenshot artifact, 금지 claim, public-safe scan을 다시 확인한다.

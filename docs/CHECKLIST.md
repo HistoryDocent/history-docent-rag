@@ -219,3 +219,20 @@
 - [ ] public private path leakage 0
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
+
+## Portfolio Demo Runbook Gate
+
+- [ ] demo runbook document count 1
+- [ ] demo step count 6
+- [ ] runbook command block count 8
+- [ ] required artifact link count 3
+- [ ] forbidden claim count 8
+- [ ] troubleshooting case count 5
+- [ ] contract-only demo count 2
+- [ ] fixture demo count 1
+- [ ] live Solar Pro 3 call count 0
+- [ ] retrieval execution count 0
+- [ ] private corpus required count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0

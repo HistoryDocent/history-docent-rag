@@ -30,7 +30,7 @@
 | portfolio defensibility | PASS | 채택뿐 아니라 기각 사유를 면접 답변으로 설명할 수 있다. |
 | public safety | PASS | raw query, raw answer, raw evidence, prompt, chunk text, private path, secret을 기록하지 않는다. |
 | notebook structure | PASS | numbered notebook skeleton이 `00`부터 `13`까지 존재한다. |
-| next work control | PASS | ColBERT는 후순위 실험으로 분리되어 있으며 즉시 기본 route 후보로 올리지 않는다. |
+| next work control | PASS | portfolio demo runbook은 완료됐고, 다음 gate는 제출 직전 public repository audit refresh로 분리됐다. |
 
 ## Data Mart Grain
 
@@ -65,6 +65,6 @@
 
 ## 다음 Gate
 
-다음 gate는 `HD-PORTFOLIO-DEMO-001`이다.
+다음 gate는 `HD-SUBMISSION-REFRESH-001`이다.
 
-이 gate는 제출 직전 demo runbook 정리다. 실행 전에는 backend/frontend command, 금지 claim, 공개 가능 screenshot 경계를 별도로 고정해야 한다.
+`HD-PORTFOLIO-DEMO-001`은 완료됐다. 다음 gate는 README 링크, runbook, screenshot artifact, 금지 claim, public-safe scan을 제출 직전에 다시 확인하는 audit refresh다.

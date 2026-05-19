@@ -99,13 +99,13 @@
 
 ## 다음 Gate
 
-다음 작업은 portfolio demo runbook 정리다.
+다음 작업은 public repository audit refresh다.
 
 권장 작업 단위:
 
-- `id`: `HD-PORTFOLIO-DEMO-001`
-- `depends_on`: `HD-VOICE-UI-004`
-- `scope`: local demo 실행 순서, backend/frontend command, 금지 claim, 면접 demo script 정리
-- `acceptance_tests`: README demo link, runbook command, no secret/path leakage, test command 기록
+- `id`: `HD-SUBMISSION-REFRESH-001`
+- `depends_on`: `HD-PORTFOLIO-DEMO-001`
+- `scope`: README 링크, demo runbook, screenshot artifact, 금지 claim, public-safe scan 재검증
+- `acceptance_tests`: README demo/report link, no secret/path leakage, 금지 claim 0, 검증 명령 기록
 - `risk_level`: low
-- `rollback_plan`: demo runbook docs/report만 revert
+- `rollback_plan`: audit refresh docs/report/test만 revert

@@ -150,4 +150,5 @@
 - [x] frontend/voice UI skeleton 구현
 - [x] frontend/backend contract smoke 검증
 - [x] real browser voice UI visual QA
-- [ ] portfolio demo runbook 정리
+- [x] portfolio demo runbook 정리
+- [ ] public repository audit refresh

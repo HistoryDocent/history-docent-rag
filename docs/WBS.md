@@ -109,3 +109,4 @@
 | 9.4 | frontend/voice UI skeleton | frontend skeleton, UI test | `spoken_answer`, `answer`, `citations`, no-answer, voice fallback state 렌더링 | `기능: voice UI skeleton 추가` |
 | 9.5 | frontend/backend contract smoke | dev server smoke, UI smoke report | FastAPI contract-only response가 frontend에 표시됨, live provider 호출 0 | `테스트: voice UI contract smoke 추가` |
 | 9.6 | real browser visual QA | screenshot/checklist report | desktop/mobile layout, no-answer, citation drawer, voice fallback visual 검증 | `테스트: voice UI visual QA 추가` |
+| 9.7 | portfolio demo runbook | `docs/PORTFOLIO_DEMO_RUNBOOK.md`, report | backend/frontend local demo 순서, 금지 claim, public-safe gate 정리 | `문서: 포트폴리오 데모 런북 추가` |
