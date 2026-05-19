@@ -550,6 +550,28 @@
 - [ ] public private path/secret-like/raw payload leakage 0
 - [ ] managed provider smoke execution next gate 유지
 
+## Voice STT/TTS Azure Smoke Execution Approval Gate
+
+- [ ] voice STT/TTS Azure smoke execution approval document count 1
+- [ ] voice STT/TTS Azure smoke execution approval report count 1
+- [ ] provider candidate count 1
+- [ ] first provider candidate Azure
+- [ ] planned script count 3
+- [ ] planned STT/TTS call count 3 이하
+- [ ] azure credential ready false current state 기록
+- [ ] azure smoke execution approved false
+- [ ] user execution approval recorded false
+- [ ] source recheck required before execution count 5
+- [ ] source recheck completed for execution count 0
+- [ ] region/retention/cost confirmation required count 1
+- [ ] managed provider API call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT/TTS/Solar call count 0
+- [ ] credential value public exposure count 0
+- [ ] raw audio/transcript/payload public artifact count 0
+- [ ] public private path/secret-like/raw payload leakage 0
+- [ ] managed provider smoke execution next gate 유지
+
 ## Voice STT/TTS Azure Credential Preflight Gate
 
 - [ ] voice STT/TTS Azure credential preflight runner count 1
