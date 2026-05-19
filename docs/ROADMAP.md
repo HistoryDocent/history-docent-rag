@@ -79,6 +79,7 @@
 - provider benchmark 계획과 CUDA local STT 후보 검토
 - provider benchmark readiness에서 public-safe fixture, config skeleton, no-live-call preflight 검증
 - provider benchmark execution approval에서 call cap, 비용, region, privacy boundary 재확인
-- provider benchmark smoke execution에서 별도 승인 후 low-risk/local 후보부터 최소 call cap으로 검증
+- provider benchmark local smoke execution에서 CUDA Whisper 후보 5건을 external provider call 없이 검증
+- managed provider smoke는 비용, region, retention, raw audio 전송 재승인 후 진행
 - 짧은 답변과 citation display 동작 보존
 - 규모가 커지면 voice UI를 RAG backend와 분리

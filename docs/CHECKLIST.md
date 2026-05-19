@@ -399,3 +399,26 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] provider benchmark smoke execution next gate 분리
+
+## Voice STT/TTS Provider Benchmark Local Smoke Gate
+
+- [ ] voice STT/TTS provider benchmark local smoke document count 1
+- [ ] voice STT/TTS provider benchmark local smoke report count 1
+- [ ] local provider candidate count 1
+- [ ] selected public-safe script count 5
+- [ ] local TTS private wav generation count 5
+- [ ] local CUDA Whisper STT execution count 5
+- [ ] resolved device cuda
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw transcript public artifact count 0
+- [ ] raw audio public artifact count 0
+- [ ] WER, CER, place name accuracy, STT latency p95 기록
+- [ ] private fact grain and public summary grain 분리
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] managed provider smoke approval next gate 분리

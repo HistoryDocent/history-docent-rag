@@ -158,4 +158,5 @@
 - [x] optional voice STT/TTS provider benchmark plan
 - [x] optional voice STT/TTS provider benchmark readiness
 - [x] optional voice STT/TTS provider benchmark execution approval
-- [ ] optional voice STT/TTS provider benchmark smoke execution
+- [x] optional voice STT/TTS provider benchmark smoke execution
+- [ ] optional voice STT/TTS managed provider smoke approval

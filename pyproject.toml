@@ -27,6 +27,9 @@ neural = [
   "sentence-transformers>=3.0.0",
   "transformers>=4.41.0",
 ]
+voice = [
+  "openai-whisper>=20250625",
+]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]

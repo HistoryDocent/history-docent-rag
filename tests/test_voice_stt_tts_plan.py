@@ -63,9 +63,10 @@ def test_voice_stt_tts_plan_readme_and_todo_are_registered() -> None:
     assert "- [x] optional voice STT/TTS provider benchmark plan" in todo
     assert "- [x] optional voice STT/TTS provider benchmark readiness" in todo
     assert "- [x] optional voice STT/TTS provider benchmark execution approval" in todo
-    assert "- [ ] optional voice STT/TTS provider benchmark smoke execution" in todo
+    assert "- [x] optional voice STT/TTS provider benchmark smoke execution" in todo
+    assert "- [ ] optional voice STT/TTS managed provider smoke approval" in todo
     assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-READINESS-001" in ledger
-    assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-SMOKE-EXECUTION-001" in ledger
+    assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-SMOKE-LOCAL-001" in ledger
 
 
 def test_voice_stt_tts_plan_records_scope_and_boundaries() -> None:
