@@ -84,6 +84,7 @@
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증
+- managed provider smoke execution gate에서 selected Azure provider의 실행 조건 미충족 상태를 zero-call로 차단
 - Azure managed smoke readiness에서 first managed provider 후보를 Azure로 제한하고 env key 이름, source/region/retention/cost 재확인, zero-call gate를 고정
 - Azure credential preflight에서 `.env`/환경 변수의 Azure credential 존재 여부만 자동 점검하고 실제 호출은 0회로 유지
 - Azure smoke execution approval에서 credential missing 상태를 반영해 실행 승인 false, source/region/retention/cost 재확인 gate를 고정
