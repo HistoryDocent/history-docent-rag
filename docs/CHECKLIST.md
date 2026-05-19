@@ -273,3 +273,23 @@
 - [ ] live Solar Pro 3 call count 0
 - [ ] retrieval execution count 0
 - [ ] private corpus required count 0
+
+## Voice STT/TTS Plan Gate
+
+- [ ] voice STT/TTS plan document count 1
+- [ ] voice STT/TTS plan report count 1
+- [ ] planned voice flow count 7
+- [ ] provider candidate group count 3
+- [ ] privacy control count 9
+- [ ] failure mode count 12
+- [ ] eval metric count 12
+- [ ] provider finalized count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] private audio saved count 0
+- [ ] retrieval execution count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] voice STT/TTS contract skeleton next gate 분리

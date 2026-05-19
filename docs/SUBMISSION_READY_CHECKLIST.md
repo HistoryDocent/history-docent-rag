@@ -66,7 +66,7 @@
 | production STT/TTS 미구현 | 실제 음성 입출력 품질을 주장할 수 없음 | browser voice-ready UI와 `spoken_answer` contract까지만 설명 |
 | locked retrieval에서 relationship hybrid 개선 주장 실패 | active route 성능 개선 claim 불가 | shadow 후보로만 유지하고 기본 적용 금지 |
 | private corpus 비공개 | 외부인이 전체 재현 불가 | public sample, aggregate metric, test harness, claim boundary 공개 |
-| optional STT/TTS planning 미진행 | 실제 음성 입출력 품질을 아직 주장할 수 없음 | 후속 제품 개발 시 별도 work_id로 비용, 개인정보, 실패 대응 계획 작성 |
+| STT/TTS contract skeleton 미구현 | 실제 음성 입출력 품질을 아직 주장할 수 없음 | 후속 제품 개발 시 provider 호출 없는 adapter/interface skeleton부터 검증 |
 
 ## 최종 제출 판단
 
@@ -76,6 +76,6 @@
 
 ## 다음 작업
 
-다음 작업 후보는 `HD-VOICE-STT-TTS-PLAN-001`이다.
+다음 작업 후보는 `HD-VOICE-STT-TTS-CONTRACT-001`이다.
 
-필수 포트폴리오 제출 gate는 `HD-PORTFOLIO-REHEARSAL-001`까지 완료됐다. 후속 제품 개발을 이어간다면 실제 음성 입출력 demo 범위, 비용, 개인정보 처리, 실패 대응을 별도 계획으로 분리한다.
+필수 포트폴리오 제출 gate와 voice STT/TTS planning은 완료됐다. 후속 제품 개발을 이어간다면 provider 호출 없는 STT/TTS adapter/interface skeleton과 fallback contract를 먼저 검증한다.

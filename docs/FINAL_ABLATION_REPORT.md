@@ -130,10 +130,10 @@ Active routing은 아직 기본 활성화하지 않는다. shadow evaluation과 
 | qualitative assessment | PASS | 후보별 채택, 보류, 기각 사유 작성 |
 | claim boundary | PASS | 허용/금지 표현 분리 |
 | public safety | PASS | raw query, raw answer, raw evidence, prompt, chunk text, private path, secret 미기록 |
-| next work clarity | PASS | portfolio QA, voice UI visual QA, portfolio demo runbook, public repository audit refresh, portfolio rehearsal 완료 후 다음 단계는 optional voice STT/TTS planning |
+| next work clarity | PASS | portfolio QA, voice UI visual QA, portfolio demo runbook, public repository audit refresh, portfolio rehearsal, voice STT/TTS planning 완료 후 다음 단계는 optional voice STT/TTS contract skeleton |
 
 ## 다음 작업
 
-`HD-API-SAMPLE-001`, `HD-PORTFOLIO-QA-001`, ColBERT hard subset, voice UI visual QA, portfolio demo runbook, public repository audit refresh, portfolio rehearsal은 완료됐다. 다음 작업 후보는 `HD-VOICE-STT-TTS-PLAN-001`이다.
+`HD-API-SAMPLE-001`, `HD-PORTFOLIO-QA-001`, ColBERT hard subset, voice UI visual QA, portfolio demo runbook, public repository audit refresh, portfolio rehearsal, voice STT/TTS planning은 완료됐다. 다음 작업 후보는 `HD-VOICE-STT-TTS-CONTRACT-001`이다.
 
 필수 포트폴리오 제출 gate는 완료됐다. 후속 제품 개발을 이어간다면 실제 음성 입출력 demo 범위, 비용, 개인정보 처리, 실패 대응을 별도 계획으로 분리한다.

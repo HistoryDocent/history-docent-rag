@@ -57,6 +57,7 @@
 | portfolio demo runbook | `HD-PORTFOLIO-DEMO-001` | public-safe local demo | demo_step_count | 6 | demo path documented |
 | submission refresh audit | `HD-SUBMISSION-REFRESH-001` | public repository audit | required_demo_artifact_count | 3 | submission refresh passed |
 | portfolio rehearsal | `HD-PORTFOLIO-REHEARSAL-001` | submission explanation | interview_answer_count | 12 | required portfolio gates completed |
+| voice STT/TTS plan | `HD-VOICE-STT-TTS-PLAN-001` | plan-only | live_stt_call_count / live_tts_call_count | 0 / 0 | ready for contract skeleton |
 
 금지 claim:
 
@@ -67,7 +68,7 @@
 - 음성 관광 앱 완성
 - 전체 도서 데이터 공개
 
-상세 요약은 [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md), [Final Ablation Report Artifact](evals/reports/final_ablation_report.md), [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md), [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md)를 기준으로 한다.
+상세 요약은 [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md), [Final Ablation Report Artifact](evals/reports/final_ablation_report.md), [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md), [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md), [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md), [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -191,13 +192,14 @@ PDF
 -> portfolio demo runbook
 -> submission refresh audit
 -> portfolio rehearsal
+-> voice STT/TTS planning gate
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-optional voice STT/TTS planning
+optional voice STT/TTS contract skeleton
 ```
 
 ## RAG 전략
@@ -531,6 +533,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Submission Refresh Audit Report](evals/reports/submission_refresh_audit_report.md) | HD-SUBMISSION-REFRESH-001 정량/정성 public repository audit refresh 결과 |
 | [Portfolio Rehearsal](docs/PORTFOLIO_REHEARSAL.md) | HD-PORTFOLIO-REHEARSAL-001 30초 요약, 3분 설명, 면접 답변, demo 순서, 금지 claim |
 | [Portfolio Rehearsal Report](evals/reports/portfolio_rehearsal_report.md) | HD-PORTFOLIO-REHEARSAL-001 정량/정성 설명 리허설 gate와 외부 감사 |
+| [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
+| [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md) | HD-PORTFOLIO-001 제출용 현재 stack, 핵심 수치, 채택/기각 판단, claim boundary |
 | [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md) | HD-PORTFOLIO-001 정량/정성 포트폴리오 요약과 public-safe gate 결과 |
 | [Portfolio Failure Analysis](docs/PORTFOLIO_FAILURE_ANALYSIS.md) | HD-PORTFOLIO-002 실패 사례 10개 public-safe 분류와 다음 실험 경계 |

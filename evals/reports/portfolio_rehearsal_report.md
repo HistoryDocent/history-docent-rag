@@ -82,4 +82,4 @@
 
 필수 포트폴리오 제출 gate는 여기서 완료다.
 
-후속 개발을 이어간다면 별도 승인 후 `HD-VOICE-STT-TTS-PLAN-001`에서 실제 음성 입출력 demo 범위, 비용, 개인정보 처리, 실패 대응을 계획한다.
+후속 개발을 이어간다면 별도 승인 후 `HD-VOICE-STT-TTS-CONTRACT-001`에서 provider 호출 없는 STT/TTS adapter/interface skeleton과 fallback contract를 검증한다.

@@ -153,4 +153,5 @@
 - [x] portfolio demo runbook 정리
 - [x] public repository audit refresh
 - [x] portfolio submission rehearsal
-- [ ] optional voice STT/TTS planning
+- [x] optional voice STT/TTS planning
+- [ ] optional voice STT/TTS contract skeleton

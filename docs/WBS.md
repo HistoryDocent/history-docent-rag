@@ -112,3 +112,4 @@
 | 9.7 | portfolio demo runbook | `docs/PORTFOLIO_DEMO_RUNBOOK.md`, report | backend/frontend local demo 순서, 금지 claim, public-safe gate 정리 | `문서: 포트폴리오 데모 런북 추가` |
 | 9.8 | public repository audit refresh | `docs/SUBMISSION_REFRESH_AUDIT.md`, report, test | README 링크, demo runbook, screenshot artifact, 금지 claim, public-safe scan 재검증 | `감사: 공개 저장소 제출 전 재검증 추가` |
 | 9.9 | portfolio submission rehearsal | `docs/PORTFOLIO_REHEARSAL.md`, report, test | 30초 요약, 3분 설명, 면접 답변, 기각 후보 설명, 금지 claim 회피 고정 | `문서: 포트폴리오 설명 리허설 추가` |
+| 9.10 | voice STT/TTS planning | `docs/VOICE_STT_TTS_PLAN.md`, report, test | 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate 고정 | `문서: 음성 STT TTS 계획 추가` |

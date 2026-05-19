@@ -172,4 +172,4 @@ Solar Pro 3는 generation이 필요한 순간에만 사용했다. provider contr
 
 필수 포트폴리오 제출 gate는 여기서 완료다.
 
-후속 개발을 이어간다면 `HD-VOICE-STT-TTS-PLAN-001`로 실제 STT/TTS demo 범위, 비용, 개인정보 처리, 실패 대응을 별도 계획으로 분리한다.
+후속 개발을 이어간다면 `HD-VOICE-STT-TTS-CONTRACT-001`로 provider 호출 없는 STT/TTS adapter/interface skeleton과 fallback contract를 먼저 검증한다.
