@@ -156,4 +156,5 @@
 - [x] optional voice STT/TTS planning
 - [x] optional voice STT/TTS contract skeleton
 - [x] optional voice STT/TTS provider benchmark plan
-- [ ] optional voice STT/TTS provider benchmark readiness
+- [x] optional voice STT/TTS provider benchmark readiness
+- [ ] optional voice STT/TTS provider benchmark execution approval

@@ -78,5 +78,6 @@
 - provider 호출 없는 STT/TTS contract skeleton
 - provider benchmark 계획과 CUDA local STT 후보 검토
 - provider benchmark readiness에서 public-safe fixture, config skeleton, no-live-call preflight 검증
+- provider benchmark execution approval에서 call cap, 비용, region, privacy boundary 재확인
 - 짧은 답변과 citation display 동작 보존
 - 규모가 커지면 voice UI를 RAG backend와 분리

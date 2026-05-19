@@ -1,0 +1,151 @@
+config_version: voice-provider-candidates/v1
+work_id: HD-VOICE-STT-TTS-PROVIDER-BENCH-READINESS-001
+source_policy:
+  source_checked_at: "2026-05-19"
+  pricing_recheck_required: true
+  privacy_recheck_required: true
+  region_recheck_required: true
+  price_value_fixed_in_public_repo: false
+  live_execution_enabled: false
+  benchmark_execution_enabled: false
+provider_candidates:
+  - provider_candidate_id: browser_native_web_speech
+    provider_family: browser_native
+    modality: stt_tts
+    execution_surface: browser
+    requires_server_credential: false
+    external_audio_transmission: browser_dependent
+    model_download_required: false
+    planned_max_stt_calls: 10
+    planned_max_tts_calls: 10
+    readiness_status: keep_candidate
+    decision_reason_code: demo_accessibility_with_browser_variance
+    source_ids:
+      - web_speech_spec
+      - mdn_web_speech
+  - provider_candidate_id: local_cuda_whisper
+    provider_family: local_cuda
+    modality: stt
+    execution_surface: local_gpu
+    requires_server_credential: false
+    external_audio_transmission: none
+    model_download_required: true
+    planned_max_stt_calls: 30
+    planned_max_tts_calls: 0
+    readiness_status: keep_candidate
+    decision_reason_code: privacy_first_stt_with_cuda_dependency
+    source_ids:
+      - openai_whisper_readme
+      - faster_whisper_readme
+  - provider_candidate_id: external_google_cloud
+    provider_family: managed_cloud
+    modality: stt_tts
+    execution_surface: server_provider_api
+    requires_server_credential: true
+    external_audio_transmission: managed_provider
+    model_download_required: false
+    planned_max_stt_calls: 20
+    planned_max_tts_calls: 20
+    readiness_status: keep_candidate
+    decision_reason_code: managed_korean_stt_tts_with_billing_privacy_check
+    source_ids:
+      - google_stt_pricing
+      - google_stt_data_logging
+      - google_tts_pricing
+  - provider_candidate_id: external_azure_speech
+    provider_family: managed_cloud
+    modality: stt_tts
+    execution_surface: server_provider_api
+    requires_server_credential: true
+    external_audio_transmission: managed_provider
+    model_download_required: false
+    planned_max_stt_calls: 20
+    planned_max_tts_calls: 20
+    readiness_status: keep_candidate
+    decision_reason_code: managed_speech_suite_with_region_recheck
+    source_ids:
+      - azure_speech_pricing
+      - azure_stt_privacy
+      - azure_tts_overview
+  - provider_candidate_id: external_aws_transcribe_polly
+    provider_family: managed_cloud
+    modality: stt_tts
+    execution_surface: server_provider_api
+    requires_server_credential: true
+    external_audio_transmission: managed_provider
+    model_download_required: false
+    planned_max_stt_calls: 20
+    planned_max_tts_calls: 20
+    readiness_status: keep_candidate
+    decision_reason_code: managed_stt_tts_split_service_with_cost_cap
+    source_ids:
+      - aws_transcribe_pricing
+      - aws_transcribe_data
+      - aws_polly_pricing
+      - aws_polly_data
+official_sources:
+  - source_id: web_speech_spec
+    provider_candidate_id: browser_native_web_speech
+    source_kind: technical
+    url: https://webaudio.github.io/web-speech-api/
+  - source_id: mdn_web_speech
+    provider_candidate_id: browser_native_web_speech
+    source_kind: technical
+    url: https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API
+  - source_id: openai_whisper_readme
+    provider_candidate_id: local_cuda_whisper
+    source_kind: technical
+    url: https://github.com/openai/whisper/blob/main/README.md
+  - source_id: faster_whisper_readme
+    provider_candidate_id: local_cuda_whisper
+    source_kind: technical
+    url: https://github.com/SYSTRAN/faster-whisper
+  - source_id: google_stt_pricing
+    provider_candidate_id: external_google_cloud
+    source_kind: pricing
+    url: https://cloud.google.com/speech-to-text/pricing
+  - source_id: google_stt_data_logging
+    provider_candidate_id: external_google_cloud
+    source_kind: privacy
+    url: https://cloud.google.com/speech-to-text/docs/data-logging
+  - source_id: google_tts_pricing
+    provider_candidate_id: external_google_cloud
+    source_kind: pricing
+    url: https://cloud.google.com/text-to-speech/pricing
+  - source_id: azure_speech_pricing
+    provider_candidate_id: external_azure_speech
+    source_kind: pricing
+    url: https://azure.microsoft.com/en-us/pricing/details/speech/
+  - source_id: azure_stt_privacy
+    provider_candidate_id: external_azure_speech
+    source_kind: privacy
+    url: https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/speech-service/speech-to-text/data-privacy-security
+  - source_id: azure_tts_overview
+    provider_candidate_id: external_azure_speech
+    source_kind: technical
+    url: https://learn.microsoft.com/en-us/azure/ai-services/Speech-Service/text-to-speech
+  - source_id: aws_transcribe_pricing
+    provider_candidate_id: external_aws_transcribe_polly
+    source_kind: pricing
+    url: https://aws.amazon.com/transcribe/pricing/
+  - source_id: aws_transcribe_data
+    provider_candidate_id: external_aws_transcribe_polly
+    source_kind: privacy
+    url: https://docs.aws.amazon.com/transcribe/latest/dg/data-protection.html
+  - source_id: aws_polly_pricing
+    provider_candidate_id: external_aws_transcribe_polly
+    source_kind: pricing
+    url: https://aws.amazon.com/polly/pricing/
+  - source_id: aws_polly_data
+    provider_candidate_id: external_aws_transcribe_polly
+    source_kind: privacy
+    url: https://docs.aws.amazon.com/polly/latest/dg/data-protection.html
+forbidden_public_fields:
+  - raw_audio
+  - raw_transcript
+  - raw_answer
+  - raw_evidence
+  - raw_prompt
+  - raw_chunk_text
+  - private_file_path
+  - secret

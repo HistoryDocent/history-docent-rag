@@ -341,3 +341,32 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] voice STT/TTS provider benchmark readiness next gate 분리
+
+## Voice STT/TTS Provider Benchmark Readiness Gate
+
+- [ ] voice STT/TTS provider benchmark readiness document count 1
+- [ ] voice STT/TTS provider benchmark readiness report count 1
+- [ ] provider candidate config count 1
+- [ ] public-safe script fixture count 30
+- [ ] provider candidate group count 5
+- [ ] official source checked count 14
+- [ ] pricing source link count 5
+- [ ] privacy source link count 4
+- [ ] benchmark query type count 6
+- [ ] script per query type min count 5
+- [ ] local CUDA available count 1
+- [ ] CUDA device count 1
+- [ ] provider finalized count 0
+- [ ] provider benchmark execution count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] private audio saved count 0
+- [ ] raw transcript public artifact count 0
+- [ ] client secret exposure count 0
+- [ ] pricing claim without source count 0
+- [ ] privacy policy unknown count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] provider benchmark execution approval next gate 분리

@@ -115,3 +115,4 @@
 | 9.10 | voice STT/TTS planning | `docs/VOICE_STT_TTS_PLAN.md`, report, test | 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate 고정 | `문서: 음성 STT TTS 계획 추가` |
 | 9.11 | voice STT/TTS contract skeleton | frontend adapter, `docs/VOICE_STT_TTS_CONTRACT.md`, report, test | provider 호출 없는 adapter/interface, disabled voice control, zero-call metric 검증 | `기능: 음성 STT TTS contract skeleton 추가` |
 | 9.12 | voice STT/TTS provider benchmark plan | `docs/VOICE_STT_TTS_PROVIDER_BENCH_PLAN.md`, report, test | 공식 문서, 비용/개인정보 source, CUDA local 후보, live call budget, no-live-call gate 고정 | `문서: 음성 STT TTS provider benchmark 계획 추가` |
+| 9.13 | voice STT/TTS provider benchmark readiness | config, sample script, runner, docs/report/test | provider 후보 5개, script 30개, CUDA preflight, live call 0, public-safe gate 통과 | `기능: 음성 STT TTS provider benchmark readiness 추가` |
