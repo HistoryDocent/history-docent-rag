@@ -445,3 +445,31 @@
 - [ ] public secret-like leakage 0
 - [ ] public raw payload leakage 0
 - [ ] managed provider smoke approval next gate 유지
+
+## Voice STT/TTS Managed Provider Smoke Approval Gate
+
+- [ ] voice STT/TTS managed provider smoke approval document count 1
+- [ ] voice STT/TTS managed provider smoke approval report count 1
+- [ ] planned provider count 3
+- [ ] planned max STT calls per provider 3 이하
+- [ ] planned max TTS calls per provider 3 이하
+- [ ] official source count 9
+- [ ] pricing source recheck required count 4
+- [ ] privacy source recheck required count 5
+- [ ] region recheck required count 3
+- [ ] retention recheck required count 3
+- [ ] managed provider execution approved false
+- [ ] managed provider API call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] raw payload public artifact count 0
+- [ ] client secret exposure count 0
+- [ ] private fact grain and public summary grain 분리
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] managed provider smoke execution next gate 분리

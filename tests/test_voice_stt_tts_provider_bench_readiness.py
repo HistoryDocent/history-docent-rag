@@ -132,7 +132,8 @@ def test_voice_provider_readiness_docs_are_registered_and_sanitized() -> None:
     assert "- [x] optional voice STT/TTS provider benchmark readiness" in todo
     assert "- [x] optional voice STT/TTS provider benchmark execution approval" in todo
     assert "- [x] optional voice STT/TTS provider benchmark smoke execution" in todo
-    assert "- [ ] optional voice STT/TTS managed provider smoke approval" in todo
+    assert "- [x] optional voice STT/TTS managed provider smoke approval" in todo
+    assert "- [ ] optional voice STT/TTS managed provider smoke execution" in todo
     assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-SMOKE-LOCAL-001" in ledger
 
     for path in PUBLIC_SCAN_PATHS:

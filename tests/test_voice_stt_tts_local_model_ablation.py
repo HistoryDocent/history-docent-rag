@@ -125,7 +125,8 @@ def test_local_model_ablation_is_registered_and_public_safe() -> None:
         assert Path(link).exists()
 
     assert "- [x] optional voice STT/TTS local model ablation" in todo
-    assert "- [ ] optional voice STT/TTS managed provider smoke approval" in todo
+    assert "- [x] optional voice STT/TTS managed provider smoke approval" in todo
+    assert "- [ ] optional voice STT/TTS managed provider smoke execution" in todo
     assert "HD-VOICE-STT-TTS-LOCAL-MODEL-ABLATION-001" in ledger
     assert "HD-VOICE-STT-TTS-PROVIDER-BENCH-MANAGED-SMOKE-APPROVAL-001" in ledger
 
