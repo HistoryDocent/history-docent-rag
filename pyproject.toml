@@ -31,6 +31,7 @@ voice = [
   "openai-whisper>=20250625",
   "faster-whisper>=1.2.0",
   "piper-tts>=1.4.2",
+  "sherpa-onnx>=1.13.2",
   "pyttsx3>=2.99; platform_system == 'Windows'",
 ]
 

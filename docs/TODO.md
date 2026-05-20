@@ -181,6 +181,7 @@
 - [x] local faster-whisper STT comparison
 - [x] local Piper TTS smoke
 - [x] optional Korean TTS alternative review
-- [ ] optional sherpa-onnx Supertonic 3 Korean TTS smoke
+- [x] optional sherpa-onnx Supertonic 3 Korean TTS smoke
+- [ ] optional TTS quality listening review
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)

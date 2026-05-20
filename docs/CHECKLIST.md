@@ -756,6 +756,34 @@
 - [ ] production voice app 완성 claim 금지
 - [ ] 실제 관광객 음성 품질 검증 claim 금지
 
+## Voice Local Sherpa-ONNX Supertonic 3 Korean TTS Smoke Gate
+
+- [ ] voice local sherpa-onnx Supertonic 3 Korean TTS smoke runner count 1
+- [ ] voice local sherpa-onnx Supertonic 3 Korean TTS smoke document count 1
+- [ ] voice local sherpa-onnx Supertonic 3 Korean TTS smoke report count 1
+- [ ] package install attempted count 1
+- [ ] package install success count 1
+- [ ] sherpa runtime available count 1
+- [ ] model download attempted count 1
+- [ ] model download success count 1
+- [ ] model file available count 7
+- [ ] model license recorded count 1
+- [ ] selected script count 5
+- [ ] local TTS execution count 5
+- [ ] local CUDA TTS call count 0
+- [ ] private audio generated count 5
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] 무료 로컬 TTS 최종 provider 확정 claim 금지
+- [ ] Supertonic 3 음성 품질 우수 검증 완료 claim 금지
+- [ ] production voice app 완성 claim 금지
+- [ ] CUDA TTS acceleration 검증 완료 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

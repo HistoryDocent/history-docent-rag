@@ -92,6 +92,7 @@
 - local faster-whisper STT comparison에서 openai-whisper small CUDA baseline과 faster-whisper small CUDA를 같은 5개 fixture로 비교하고 external provider call 0을 기록
 - local Piper TTS smoke에서 `piper-tts` runtime은 설치됐지만 공식 voice manifest 기준 Korean voice 0개로 확인되어 한국어 TTS 기본 후보에서 차단
 - local Korean TTS alternative review에서 무료 로컬 한국어 TTS 후보 7개를 source 기반으로 검토하고 `sherpa-onnx + Supertonic 3 Korean`을 다음 smoke 후보로 선정
+- local sherpa-onnx Supertonic 3 Korean TTS smoke에서 runtime 설치, private model 확인, 5개 public-safe script private wav 합성을 external provider call 0으로 기록
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

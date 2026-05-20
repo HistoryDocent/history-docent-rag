@@ -133,7 +133,7 @@ def test_korean_tts_alternative_review_registered_and_public_safe() -> None:
         assert Path(link).exists()
 
     assert "- [x] optional Korean TTS alternative review" in todo
-    assert "- [ ] optional sherpa-onnx Supertonic 3 Korean TTS smoke" in todo
+    assert "- [x] optional sherpa-onnx Supertonic 3 Korean TTS smoke" in todo
     assert tts_review.WORK_ID in ledger
 
     for path in PUBLIC_SCAN_PATHS:
