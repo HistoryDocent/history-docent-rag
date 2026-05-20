@@ -12,7 +12,7 @@
 | --- | --- |
 | 현재 stack | `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1` |
 | query type classifier/router | classifier baseline accuracy 0.957143, router는 `relationship` hybrid route, `no_answer` abstain-first, 나머지 dense voice rewrite, API는 dry-run/flag dry-run만 적용, active route는 아직 미적용 |
-| voice provider 전략 | 무료 로컬 STT/TTS 우선. MeloTTS는 설치/CUDA/import/model load까지 통과했지만 Windows `eunjeon` build dependency로 Korean synthesis가 차단됐다. Windows SAPI fallback으로 30개 local voice E2E regression과 local-only runtime contract를 실행했고 Azure/Google/AWS는 optional paid comparison only |
+| voice provider 전략 | 무료 로컬 STT/TTS 우선. STT는 `faster-whisper` CUDA 후보까지 비교했고, TTS는 MeloTTS Windows `eunjeon` blocker와 Piper Korean voice 부재를 기록했다. Windows SAPI fallback으로 30개 local voice E2E regression과 local-only runtime contract를 실행했고 Azure/Google/AWS는 optional paid comparison only |
 | 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
 | 보류한 핵심 | BGE-M3 dense, BGE reranker |
 | 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route, HyDE 기본 retrieval route, ColBERT-style late interaction 기본 route |
@@ -83,6 +83,7 @@
 | voice local runtime contract | `HD-VOICE-LOCAL-RUNTIME-CONTRACT-001` | local-only runtime contract | accepted_audio_input_count / validation_reject_pass_count / chat_contract_execution_count / external_provider_call_count | 5 / 3 / 5 / 0 | completed local voice runtime contract |
 | voice local free STT/TTS bench v2 | `HD-VOICE-LOCAL-FREE-STT-TTS-BENCH-V2-001` | local-free voice candidate decision | candidate_count / current_stt_benchmarked_count / current_tts_benchmarked_count / external_provider_call_count | 6 / 1 / 1 / 0 | current baseline ready, next targets pending |
 | voice local faster-whisper STT comparison | `HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001` | local STT candidate comparison | baseline_execution_count / faster_whisper_execution_count / external_provider_call_count | 5 / 5 / 0 | faster-whisper recommended as current evidence candidate |
+| voice local Piper TTS smoke | `HD-VOICE-LOCAL-PIPER-TTS-SMOKE-001` | local TTS Korean voice gate | piper_runtime_available_count / korean_voice_available_count / external_provider_call_count | 1 / 0 / 0 | blocked missing Korean voice |
 
 금지 claim:
 
@@ -104,6 +105,8 @@
 무료 로컬 STT/TTS 후보 분리 결과는 [Voice Local Free STT/TTS Bench v2](docs/VOICE_LOCAL_FREE_STT_TTS_BENCH_V2.md), [Voice Local Free STT/TTS Bench v2 Report](evals/reports/voice_local_free_stt_tts_bench_v2_report.md)를 기준으로 한다.
 
 무료 로컬 STT 후보 비교 결과는 [Voice Local Faster Whisper STT Comparison](docs/VOICE_LOCAL_FASTER_WHISPER_STT_COMPARISON.md), [Voice Local Faster Whisper STT Comparison Report](evals/reports/voice_local_faster_whisper_stt_comparison_report.md)를 기준으로 한다.
+
+무료 로컬 Piper TTS smoke 결과는 [Voice Local Piper TTS Smoke](docs/VOICE_LOCAL_PIPER_TTS_SMOKE.md), [Voice Local Piper TTS Smoke Report](evals/reports/voice_local_piper_tts_smoke_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -252,13 +255,14 @@ PDF
 -> voice local runtime contract
 -> voice local free STT/TTS bench v2
 -> voice local faster-whisper STT comparison
+-> voice local Piper TTS smoke
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-optional Piper local TTS smoke
+optional Korean TTS alternative review
 optional whisper.cpp deployment smoke
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
@@ -611,6 +615,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local Free STT/TTS Bench v2 Report](evals/reports/voice_local_free_stt_tts_bench_v2_report.md) | HD-VOICE-LOCAL-FREE-STT-TTS-BENCH-V2-001 정량/정성 후보 decision gate와 zero external call 검증 |
 | [Voice Local Faster Whisper STT Comparison](docs/VOICE_LOCAL_FASTER_WHISPER_STT_COMPARISON.md) | HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001 openai-whisper small CUDA baseline과 faster-whisper small CUDA 후보 비교 |
 | [Voice Local Faster Whisper STT Comparison Report](evals/reports/voice_local_faster_whisper_stt_comparison_report.md) | HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001 정량/정성 local STT 비교와 zero external call 검증 |
+| [Voice Local Piper TTS Smoke](docs/VOICE_LOCAL_PIPER_TTS_SMOKE.md) | HD-VOICE-LOCAL-PIPER-TTS-SMOKE-001 Piper runtime과 공식 voice manifest의 Korean voice availability 점검 |
+| [Voice Local Piper TTS Smoke Report](evals/reports/voice_local_piper_tts_smoke_report.md) | HD-VOICE-LOCAL-PIPER-TTS-SMOKE-001 정량/정성 Piper TTS smoke blocker와 zero external call 검증 |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |

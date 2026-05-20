@@ -698,6 +698,37 @@
 - [ ] STT/TTS 품질 최종 검증 claim 금지
 - [ ] 실제 관광객 음성 품질 검증 claim 금지
 
+## Voice Local Piper TTS Smoke Gate
+
+- [ ] voice local Piper TTS smoke runner count 1
+- [ ] voice local Piper TTS smoke document count 1
+- [ ] voice local Piper TTS smoke report count 1
+- [ ] selected script count 5
+- [ ] piper runtime available count 1
+- [ ] piper distribution installed count 1
+- [ ] package install attempted count 1
+- [ ] voice manifest checked count 1
+- [ ] manifest voice count 161
+- [ ] manifest language count 49
+- [ ] Korean voice available count 0
+- [ ] model download attempted count 0
+- [ ] local TTS execution count 0
+- [ ] private audio generated count 0
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] Piper Korean provider adoption claim 금지
+- [ ] Piper Korean quality validation claim 금지
+- [ ] production voice app 완성 claim 금지
+- [ ] 실제 관광객 음성 품질 검증 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

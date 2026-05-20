@@ -137,3 +137,4 @@
 | 9.32 | voice local runtime contract | local-only runtime service, disabled API route, docs/report/test | private wav 입력 검증 5건, validation reject 3건, `/api/v1/chat` 연결 5건, local TTS 5건, external provider call 0 기록 | `기능: 로컬 음성 런타임 계약 추가` |
 | 9.33 | voice local free STT/TTS bench v2 | local-free candidate decision runner, docs/report/test | current STT/TTS baseline과 faster-whisper/Piper next target 분리, external provider call 0 기록 | `평가: 무료 로컬 음성 후보 기준선 정리` |
 | 9.34 | voice local faster-whisper STT comparison | faster-whisper comparison runner, docs/report/test | openai-whisper small CUDA baseline과 faster-whisper small CUDA를 같은 5개 fixture로 비교, external provider call 0 기록 | `평가: 로컬 faster-whisper STT 비교` |
+| 9.35 | voice local Piper TTS smoke | Piper TTS smoke runner, docs/report/test | `piper-tts` runtime과 공식 voice manifest Korean voice availability를 검증하고 external provider call 0 기록 | `평가: 로컬 Piper TTS smoke 추가` |

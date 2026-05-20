@@ -179,5 +179,7 @@
 - [x] local voice runtime contract
 - [x] local free STT/TTS bench v2
 - [x] local faster-whisper STT comparison
+- [x] local Piper TTS smoke
+- [ ] optional Korean TTS alternative review
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
