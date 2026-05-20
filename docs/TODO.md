@@ -183,6 +183,7 @@
 - [x] optional Korean TTS alternative review
 - [x] optional sherpa-onnx Supertonic 3 Korean TTS smoke
 - [x] optional TTS quality listening review
-- [ ] optional human TTS listening score fill
+- [x] optional human TTS listening score fill framework
+- [ ] optional human TTS listening score collection
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
