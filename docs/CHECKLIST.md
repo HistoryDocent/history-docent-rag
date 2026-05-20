@@ -729,6 +729,33 @@
 - [ ] production voice app 완성 claim 금지
 - [ ] 실제 관광객 음성 품질 검증 claim 금지
 
+## Voice Local Korean TTS Alternative Review Gate
+
+- [ ] voice local Korean TTS alternative review runner count 1
+- [ ] voice local Korean TTS alternative review document count 1
+- [ ] voice local Korean TTS alternative review report count 1
+- [ ] candidate count 7
+- [ ] source reference count 10
+- [ ] source checked candidate count 7
+- [ ] Korean support candidate count 5 이상
+- [ ] selected next smoke candidate count 1
+- [ ] selected next smoke candidate `local_sherpa_onnx_supertonic3_ko`
+- [ ] package install attempted count 0
+- [ ] model download attempted count 0
+- [ ] local TTS execution count 0
+- [ ] live TTS call count 0
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] Supertonic/sherpa-onnx Korean quality validation claim 금지
+- [ ] 무료 로컬 TTS 최종 provider 확정 claim 금지
+- [ ] production voice app 완성 claim 금지
+- [ ] 실제 관광객 음성 품질 검증 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

@@ -84,6 +84,7 @@
 | voice local free STT/TTS bench v2 | `HD-VOICE-LOCAL-FREE-STT-TTS-BENCH-V2-001` | local-free voice candidate decision | candidate_count / current_stt_benchmarked_count / current_tts_benchmarked_count / external_provider_call_count | 6 / 1 / 1 / 0 | current baseline ready, next targets pending |
 | voice local faster-whisper STT comparison | `HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001` | local STT candidate comparison | baseline_execution_count / faster_whisper_execution_count / external_provider_call_count | 5 / 5 / 0 | faster-whisper recommended as current evidence candidate |
 | voice local Piper TTS smoke | `HD-VOICE-LOCAL-PIPER-TTS-SMOKE-001` | local TTS Korean voice gate | piper_runtime_available_count / korean_voice_available_count / external_provider_call_count | 1 / 0 / 0 | blocked missing Korean voice |
+| voice local Korean TTS alternative review | `HD-VOICE-LOCAL-KOREAN-TTS-ALTERNATIVE-REVIEW-001` | local Korean TTS next-target review | candidate_count / korean_support_candidate_count / selected_next_smoke_candidate_count / external_provider_call_count | 7 / 5 / 1 / 0 | select sherpa-onnx Supertonic 3 smoke |
 
 금지 claim:
 
@@ -107,6 +108,8 @@
 무료 로컬 STT 후보 비교 결과는 [Voice Local Faster Whisper STT Comparison](docs/VOICE_LOCAL_FASTER_WHISPER_STT_COMPARISON.md), [Voice Local Faster Whisper STT Comparison Report](evals/reports/voice_local_faster_whisper_stt_comparison_report.md)를 기준으로 한다.
 
 무료 로컬 Piper TTS smoke 결과는 [Voice Local Piper TTS Smoke](docs/VOICE_LOCAL_PIPER_TTS_SMOKE.md), [Voice Local Piper TTS Smoke Report](evals/reports/voice_local_piper_tts_smoke_report.md)를 기준으로 한다.
+
+무료 로컬 한국어 TTS 대안 검토 결과는 [Voice Local Korean TTS Alternative Review](docs/VOICE_LOCAL_KOREAN_TTS_ALTERNATIVE_REVIEW.md), [Voice Local Korean TTS Alternative Review Report](evals/reports/voice_local_korean_tts_alternative_review_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -256,13 +259,14 @@ PDF
 -> voice local free STT/TTS bench v2
 -> voice local faster-whisper STT comparison
 -> voice local Piper TTS smoke
+-> voice local Korean TTS alternative review
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-optional Korean TTS alternative review
+optional sherpa-onnx Supertonic 3 Korean TTS smoke
 optional whisper.cpp deployment smoke
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
@@ -617,6 +621,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local Faster Whisper STT Comparison Report](evals/reports/voice_local_faster_whisper_stt_comparison_report.md) | HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001 정량/정성 local STT 비교와 zero external call 검증 |
 | [Voice Local Piper TTS Smoke](docs/VOICE_LOCAL_PIPER_TTS_SMOKE.md) | HD-VOICE-LOCAL-PIPER-TTS-SMOKE-001 Piper runtime과 공식 voice manifest의 Korean voice availability 점검 |
 | [Voice Local Piper TTS Smoke Report](evals/reports/voice_local_piper_tts_smoke_report.md) | HD-VOICE-LOCAL-PIPER-TTS-SMOKE-001 정량/정성 Piper TTS smoke blocker와 zero external call 검증 |
+| [Voice Local Korean TTS Alternative Review](docs/VOICE_LOCAL_KOREAN_TTS_ALTERNATIVE_REVIEW.md) | HD-VOICE-LOCAL-KOREAN-TTS-ALTERNATIVE-REVIEW-001 무료 로컬 한국어 TTS 다음 smoke 후보 선정 |
+| [Voice Local Korean TTS Alternative Review Report](evals/reports/voice_local_korean_tts_alternative_review_report.md) | HD-VOICE-LOCAL-KOREAN-TTS-ALTERNATIVE-REVIEW-001 정량/정성 후보 검토와 zero external call 검증 |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |
