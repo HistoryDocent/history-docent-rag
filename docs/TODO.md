@@ -182,6 +182,7 @@
 - [x] local Piper TTS smoke
 - [x] optional Korean TTS alternative review
 - [x] optional sherpa-onnx Supertonic 3 Korean TTS smoke
-- [ ] optional TTS quality listening review
+- [x] optional TTS quality listening review
+- [ ] optional human TTS listening score fill
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)

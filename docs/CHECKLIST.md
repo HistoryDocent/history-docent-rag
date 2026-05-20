@@ -784,6 +784,29 @@
 - [ ] production voice app 완성 claim 금지
 - [ ] CUDA TTS acceleration 검증 완료 claim 금지
 
+## Voice Local TTS Quality Listening Review Gate
+
+- [ ] voice local TTS quality review runner count 1
+- [ ] voice local TTS quality review document count 1
+- [ ] voice local TTS quality review report count 1
+- [ ] selected audio count 5
+- [ ] audio file available count 5
+- [ ] automated metric pass count 5
+- [ ] human listening rubric criterion count 6
+- [ ] human listening required count 5
+- [ ] human listening completed count 0
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] 무료 로컬 TTS 최종 provider 확정 claim 금지
+- [ ] Supertonic 3 음성 품질 우수 검증 완료 claim 금지
+- [ ] 실제 관광객 음성 품질 검증 claim 금지
+- [ ] production voice app 완성 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

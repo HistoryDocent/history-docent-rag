@@ -86,6 +86,7 @@
 | voice local Piper TTS smoke | `HD-VOICE-LOCAL-PIPER-TTS-SMOKE-001` | local TTS Korean voice gate | piper_runtime_available_count / korean_voice_available_count / external_provider_call_count | 1 / 0 / 0 | blocked missing Korean voice |
 | voice local Korean TTS alternative review | `HD-VOICE-LOCAL-KOREAN-TTS-ALTERNATIVE-REVIEW-001` | local Korean TTS next-target review | candidate_count / korean_support_candidate_count / selected_next_smoke_candidate_count / external_provider_call_count | 7 / 5 / 1 / 0 | select sherpa-onnx Supertonic 3 smoke |
 | voice local sherpa-onnx Supertonic 3 Korean TTS smoke | `HD-VOICE-LOCAL-SHERPA-ONNX-SUPERTONIC3-KO-SMOKE-001` | local Korean TTS execution smoke | package_install_attempted_count / model_download_success_count / local_tts_execution_count / external_provider_call_count | 1 / 1 / 5 / 0 | completed local Korean TTS smoke |
+| voice local TTS quality listening review | `HD-VOICE-LOCAL-TTS-QUALITY-LISTENING-REVIEW-001` | local TTS quality review harness | audio_file_available_count / automated_metric_pass_count / human_listening_completed_count / external_provider_call_count | 5 / 5 / 0 / 0 | automated sanity passed, human listening pending |
 
 금지 claim:
 
@@ -113,6 +114,8 @@
 무료 로컬 한국어 TTS 대안 검토 결과는 [Voice Local Korean TTS Alternative Review](docs/VOICE_LOCAL_KOREAN_TTS_ALTERNATIVE_REVIEW.md), [Voice Local Korean TTS Alternative Review Report](evals/reports/voice_local_korean_tts_alternative_review_report.md)를 기준으로 한다.
 
 무료 로컬 sherpa-onnx Supertonic 3 Korean TTS smoke 결과는 [Voice Local Sherpa-ONNX Supertonic 3 Korean TTS Smoke](docs/VOICE_LOCAL_SHERPA_ONNX_SUPERTONIC3_KO_SMOKE.md), [Voice Local Sherpa-ONNX Supertonic 3 Korean TTS Smoke Report](evals/reports/voice_local_sherpa_onnx_supertonic3_ko_smoke_report.md)를 기준으로 한다.
+
+무료 로컬 TTS 청취 품질 평가 기준은 [Voice Local TTS Quality Listening Review](docs/VOICE_LOCAL_TTS_QUALITY_LISTENING_REVIEW.md), [Voice Local TTS Quality Listening Review Report](evals/reports/voice_local_tts_quality_listening_review_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -264,13 +267,14 @@ PDF
 -> voice local Piper TTS smoke
 -> voice local Korean TTS alternative review
 -> voice local sherpa-onnx Supertonic 3 Korean TTS smoke
+-> voice local TTS quality listening review
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-optional TTS quality listening review
+optional human TTS listening score fill
 optional whisper.cpp deployment smoke
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
@@ -629,6 +633,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local Korean TTS Alternative Review Report](evals/reports/voice_local_korean_tts_alternative_review_report.md) | HD-VOICE-LOCAL-KOREAN-TTS-ALTERNATIVE-REVIEW-001 정량/정성 후보 검토와 zero external call 검증 |
 | [Voice Local Sherpa-ONNX Supertonic 3 Korean TTS Smoke](docs/VOICE_LOCAL_SHERPA_ONNX_SUPERTONIC3_KO_SMOKE.md) | HD-VOICE-LOCAL-SHERPA-ONNX-SUPERTONIC3-KO-SMOKE-001 sherpa-onnx Supertonic 3 Korean local TTS private wav smoke |
 | [Voice Local Sherpa-ONNX Supertonic 3 Korean TTS Smoke Report](evals/reports/voice_local_sherpa_onnx_supertonic3_ko_smoke_report.md) | HD-VOICE-LOCAL-SHERPA-ONNX-SUPERTONIC3-KO-SMOKE-001 정량/정성 local Korean TTS smoke와 zero external call 검증 |
+| [Voice Local TTS Quality Listening Review](docs/VOICE_LOCAL_TTS_QUALITY_LISTENING_REVIEW.md) | HD-VOICE-LOCAL-TTS-QUALITY-LISTENING-REVIEW-001 sherpa-onnx private wav 5개 자동 metric과 사람 청취 rubric |
+| [Voice Local TTS Quality Listening Review Report](evals/reports/voice_local_tts_quality_listening_review_report.md) | HD-VOICE-LOCAL-TTS-QUALITY-LISTENING-REVIEW-001 정량/정성 local TTS quality review harness와 pending human review |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |
