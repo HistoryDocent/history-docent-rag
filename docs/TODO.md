@@ -177,5 +177,6 @@
 - [x] voice STT/TTS local adapter integration with selected local fallback
 - [x] local voice E2E regression evaluation
 - [x] local voice runtime contract
+- [x] local free STT/TTS bench v2
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)

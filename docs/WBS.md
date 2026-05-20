@@ -135,3 +135,4 @@
 | 9.30 | voice STT/TTS local adapter integration | local adapter module, docs/report/test | local Whisper STT 5건, `/api/v1/chat` contract 5건, SAPI TTS fallback 5건, external provider call 0 | `구현: 로컬 STT TTS 어댑터 연결` |
 | 9.31 | voice local E2E eval | local voice E2E runner, docs/report/test | 30개 public-safe script에서 input TTS, CUDA Whisper STT, `/api/v1/chat`, output TTS를 실행하고 external provider call 0 기록 | `평가: 로컬 음성 E2E 검증 리포트 추가` |
 | 9.32 | voice local runtime contract | local-only runtime service, disabled API route, docs/report/test | private wav 입력 검증 5건, validation reject 3건, `/api/v1/chat` 연결 5건, local TTS 5건, external provider call 0 기록 | `기능: 로컬 음성 런타임 계약 추가` |
+| 9.33 | voice local free STT/TTS bench v2 | local-free candidate decision runner, docs/report/test | current STT/TTS baseline과 faster-whisper/Piper next target 분리, external provider call 0 기록 | `평가: 무료 로컬 음성 후보 기준선 정리` |

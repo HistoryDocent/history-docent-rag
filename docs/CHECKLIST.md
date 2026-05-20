@@ -641,6 +641,34 @@
 - [ ] 실제 관광객 음성 품질 검증 claim 금지
 - [ ] STT/TTS provider 최종 확정 claim 금지
 
+## Voice Local Free STT/TTS Bench v2 Gate
+
+- [ ] voice local free STT/TTS bench v2 runner count 1
+- [ ] voice local free STT/TTS bench v2 document count 1
+- [ ] voice local free STT/TTS bench v2 report count 1
+- [ ] candidate count 6
+- [ ] STT candidate count 3
+- [ ] TTS candidate count 3
+- [ ] current STT benchmarked count 1
+- [ ] current TTS benchmarked count 1
+- [ ] next STT candidate id `local_faster_whisper_cuda_target`
+- [ ] next TTS candidate id `local_piper_tts_target`
+- [ ] package install attempted count 0
+- [ ] model download attempted count 0
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] faster-whisper 품질 우위 claim 금지
+- [ ] Piper 최종 provider claim 금지
+- [ ] Windows SAPI production 품질 provider claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1
