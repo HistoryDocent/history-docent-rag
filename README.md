@@ -88,6 +88,7 @@
 | voice local sherpa-onnx Supertonic 3 Korean TTS smoke | `HD-VOICE-LOCAL-SHERPA-ONNX-SUPERTONIC3-KO-SMOKE-001` | local Korean TTS execution smoke | package_install_attempted_count / model_download_success_count / local_tts_execution_count / external_provider_call_count | 1 / 1 / 5 / 0 | completed local Korean TTS smoke |
 | voice local TTS quality listening review | `HD-VOICE-LOCAL-TTS-QUALITY-LISTENING-REVIEW-001` | local TTS quality review harness | audio_file_available_count / automated_metric_pass_count / human_listening_completed_count / external_provider_call_count | 5 / 5 / 0 / 0 | automated sanity passed, human listening pending |
 | voice local TTS human score fill | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-FILL-001` | private human score template + public aggregate | private_template_row_count / completed_score_row_count / aggregate_public_row_count / external_provider_call_count | 30 / 0 / 6 / 0 | pending private human scores |
+| voice local TTS human score collection | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-COLLECTION-001` | private listening manifest + public aggregate gate | private_audio_available_count / private_listening_manifest_row_count / completed_score_row_count / external_provider_call_count | 5 / 5 / 0 / 0 | ready for private human collection |
 
 금지 claim:
 
@@ -119,6 +120,8 @@
 무료 로컬 TTS 청취 품질 평가 기준은 [Voice Local TTS Quality Listening Review](docs/VOICE_LOCAL_TTS_QUALITY_LISTENING_REVIEW.md), [Voice Local TTS Quality Listening Review Report](evals/reports/voice_local_tts_quality_listening_review_report.md)를 기준으로 한다.
 
 무료 로컬 TTS 사람 청취 점수 입력 기준은 [Voice Local TTS Human Score Fill](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_FILL.md), [Voice Local TTS Human Score Fill Report](evals/reports/voice_local_tts_human_score_fill_report.md)를 기준으로 한다.
+
+무료 로컬 TTS 사람 청취 점수 수집 절차는 [Voice Local TTS Human Score Collection](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_COLLECTION.md), [Voice Local TTS Human Score Collection Report](evals/reports/voice_local_tts_human_score_collection_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -272,13 +275,14 @@ PDF
 -> voice local sherpa-onnx Supertonic 3 Korean TTS smoke
 -> voice local TTS quality listening review
 -> voice local TTS human score fill
+-> voice local TTS human score collection
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-optional human TTS listening score collection
+optional human TTS listening score entry
 optional whisper.cpp deployment smoke
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
@@ -641,6 +645,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local TTS Quality Listening Review Report](evals/reports/voice_local_tts_quality_listening_review_report.md) | HD-VOICE-LOCAL-TTS-QUALITY-LISTENING-REVIEW-001 정량/정성 local TTS quality review harness와 pending human review |
 | [Voice Local TTS Human Score Fill](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_FILL.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-FILL-001 private 사람 청취 점수 template과 public aggregate 기준 |
 | [Voice Local TTS Human Score Fill Report](evals/reports/voice_local_tts_human_score_fill_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-FILL-001 정량/정성 human score fill gate와 pending private scores |
+| [Voice Local TTS Human Score Collection](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_COLLECTION.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-COLLECTION-001 private listening manifest와 guide 기반 사람 청취 점수 수집 절차 |
+| [Voice Local TTS Human Score Collection Report](evals/reports/voice_local_tts_human_score_collection_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-COLLECTION-001 정량/정성 collection-ready gate와 pending private scores |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |

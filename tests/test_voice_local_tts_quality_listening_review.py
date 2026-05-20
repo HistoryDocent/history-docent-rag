@@ -169,7 +169,8 @@ def test_tts_quality_listening_review_registered_and_public_safe() -> None:
 
     assert "- [x] optional TTS quality listening review" in todo
     assert "- [x] optional human TTS listening score fill framework" in todo
-    assert "- [ ] optional human TTS listening score collection" in todo
+    assert "- [x] optional human TTS listening score collection workflow" in todo
+    assert "- [ ] optional human TTS listening score entry" in todo
     assert tts_quality.WORK_ID in ledger
     assert "voice_local_tts_quality_listening_review" in ledger
 

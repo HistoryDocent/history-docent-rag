@@ -197,7 +197,8 @@ def test_sherpa_onnx_smoke_registered_and_public_safe() -> None:
     assert "- [x] optional sherpa-onnx Supertonic 3 Korean TTS smoke" in todo
     assert "- [x] optional TTS quality listening review" in todo
     assert "- [x] optional human TTS listening score fill framework" in todo
-    assert "- [ ] optional human TTS listening score collection" in todo
+    assert "- [x] optional human TTS listening score collection workflow" in todo
+    assert "- [ ] optional human TTS listening score entry" in todo
     assert sherpa_smoke.WORK_ID in ledger
     assert "voice_local_sherpa_onnx_supertonic3_ko_smoke" in ledger
 
