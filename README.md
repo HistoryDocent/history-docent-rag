@@ -82,6 +82,7 @@
 | voice local E2E eval | `HD-VOICE-LOCAL-E2E-EVAL-001` | local-voice-e2e-regression | local_stt_execution_count / input_tts_generation_count / output_tts_generation_count / external_provider_call_count | 30 / 30 / 30 / 0 | completed local voice E2E regression |
 | voice local runtime contract | `HD-VOICE-LOCAL-RUNTIME-CONTRACT-001` | local-only runtime contract | accepted_audio_input_count / validation_reject_pass_count / chat_contract_execution_count / external_provider_call_count | 5 / 3 / 5 / 0 | completed local voice runtime contract |
 | voice local free STT/TTS bench v2 | `HD-VOICE-LOCAL-FREE-STT-TTS-BENCH-V2-001` | local-free voice candidate decision | candidate_count / current_stt_benchmarked_count / current_tts_benchmarked_count / external_provider_call_count | 6 / 1 / 1 / 0 | current baseline ready, next targets pending |
+| voice local faster-whisper STT comparison | `HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001` | local STT candidate comparison | baseline_execution_count / faster_whisper_execution_count / external_provider_call_count | 5 / 5 / 0 | faster-whisper recommended as current evidence candidate |
 
 금지 claim:
 
@@ -101,6 +102,8 @@
 음성 local-only runtime 계약 결과는 [Voice Local Runtime Contract](docs/VOICE_LOCAL_RUNTIME_CONTRACT.md), [Voice Local Runtime Contract Report](evals/reports/voice_local_runtime_contract_report.md)를 기준으로 한다.
 
 무료 로컬 STT/TTS 후보 분리 결과는 [Voice Local Free STT/TTS Bench v2](docs/VOICE_LOCAL_FREE_STT_TTS_BENCH_V2.md), [Voice Local Free STT/TTS Bench v2 Report](evals/reports/voice_local_free_stt_tts_bench_v2_report.md)를 기준으로 한다.
+
+무료 로컬 STT 후보 비교 결과는 [Voice Local Faster Whisper STT Comparison](docs/VOICE_LOCAL_FASTER_WHISPER_STT_COMPARISON.md), [Voice Local Faster Whisper STT Comparison Report](evals/reports/voice_local_faster_whisper_stt_comparison_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -248,12 +251,15 @@ PDF
 -> voice local E2E eval
 -> voice local runtime contract
 -> voice local free STT/TTS bench v2
+-> voice local faster-whisper STT comparison
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
+optional Piper local TTS smoke
+optional whisper.cpp deployment smoke
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
 ```
@@ -603,6 +609,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local E2E Eval Report](evals/reports/voice_local_e2e_eval_report.md) | HD-VOICE-LOCAL-E2E-EVAL-001 정량/정성 local STT/TTS/chat E2E regression, zero external call 검증 |
 | [Voice Local Free STT/TTS Bench v2](docs/VOICE_LOCAL_FREE_STT_TTS_BENCH_V2.md) | HD-VOICE-LOCAL-FREE-STT-TTS-BENCH-V2-001 무료 로컬 STT/TTS current baseline과 next target 후보 분리 |
 | [Voice Local Free STT/TTS Bench v2 Report](evals/reports/voice_local_free_stt_tts_bench_v2_report.md) | HD-VOICE-LOCAL-FREE-STT-TTS-BENCH-V2-001 정량/정성 후보 decision gate와 zero external call 검증 |
+| [Voice Local Faster Whisper STT Comparison](docs/VOICE_LOCAL_FASTER_WHISPER_STT_COMPARISON.md) | HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001 openai-whisper small CUDA baseline과 faster-whisper small CUDA 후보 비교 |
+| [Voice Local Faster Whisper STT Comparison Report](evals/reports/voice_local_faster_whisper_stt_comparison_report.md) | HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001 정량/정성 local STT 비교와 zero external call 검증 |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |

@@ -669,6 +669,35 @@
 - [ ] Piper 최종 provider claim 금지
 - [ ] Windows SAPI production 품질 provider claim 금지
 
+## Voice Local Faster Whisper STT Comparison Gate
+
+- [ ] voice local faster-whisper STT comparison runner count 1
+- [ ] voice local faster-whisper STT comparison document count 1
+- [ ] voice local faster-whisper STT comparison report count 1
+- [ ] selected script count 5
+- [ ] baseline execution count 5
+- [ ] faster-whisper execution count 5
+- [ ] paired script count 5
+- [ ] resolved device cuda
+- [ ] compute type float16
+- [ ] package install attempted count 1
+- [ ] model download attempted count 1
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] CER, WER, place name accuracy, latency p95 기록
+- [ ] private fact grain and public provider summary grain 분리
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] faster-whisper production 최종 provider claim 금지
+- [ ] STT/TTS 품질 최종 검증 claim 금지
+- [ ] 실제 관광객 음성 품질 검증 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

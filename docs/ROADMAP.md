@@ -89,6 +89,7 @@
 - local voice E2E eval에서 30개 public-safe script를 input TTS, CUDA Whisper STT, `/api/v1/chat`, output TTS 흐름으로 실행하고 external provider call 0을 기록
 - local voice runtime contract에서 private wav 입력 검증, 기본 비활성화 API route, `/api/v1/chat` bridge, local TTS private artifact 경계를 고정
 - local free STT/TTS bench v2에서 현재 실행 baseline과 `faster-whisper`/`Piper` next target을 분리하고 external provider call 0을 기록
+- local faster-whisper STT comparison에서 openai-whisper small CUDA baseline과 faster-whisper small CUDA를 같은 5개 fixture로 비교하고 external provider call 0을 기록
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증
