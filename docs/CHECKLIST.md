@@ -616,6 +616,31 @@
 - [ ] STT/TTS 품질 최종 검증 claim 금지
 - [ ] 실제 관광객 음성 품질 검증 claim 금지
 
+## Voice Local Runtime Contract Gate
+
+- [ ] voice local runtime contract service count 1
+- [ ] voice local runtime API route count 1
+- [ ] local voice runtime API route disabled by default
+- [ ] selected public-safe script count 5
+- [ ] private wav input accepted count 5
+- [ ] validation reject case count 3
+- [ ] validation reject pass count 3
+- [ ] chat contract execution count 5
+- [ ] local TTS execution count recorded
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] production voice app 완성 claim 금지
+- [ ] 실제 관광객 음성 품질 검증 claim 금지
+- [ ] STT/TTS provider 최종 확정 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

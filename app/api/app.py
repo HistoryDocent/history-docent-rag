@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from app.api.errors import install_exception_handlers
 from app.api.v1.chat import router as chat_router
+from app.api.v1.voice import router as voice_router
 
 
 def create_app() -> FastAPI:
@@ -14,4 +15,5 @@ def create_app() -> FastAPI:
     )
     install_exception_handlers(app)
     app.include_router(chat_router)
+    app.include_router(voice_router)
     return app

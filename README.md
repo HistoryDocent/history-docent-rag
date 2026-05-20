@@ -12,7 +12,7 @@
 | --- | --- |
 | 현재 stack | `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1` |
 | query type classifier/router | classifier baseline accuracy 0.957143, router는 `relationship` hybrid route, `no_answer` abstain-first, 나머지 dense voice rewrite, API는 dry-run/flag dry-run만 적용, active route는 아직 미적용 |
-| voice provider 전략 | 무료 로컬 STT/TTS 우선. MeloTTS는 설치/CUDA/import/model load까지 통과했지만 Windows `eunjeon` build dependency로 Korean synthesis가 차단됐다. Windows SAPI fallback으로 30개 local voice E2E regression을 실행했고 Azure/Google/AWS는 optional paid comparison only |
+| voice provider 전략 | 무료 로컬 STT/TTS 우선. MeloTTS는 설치/CUDA/import/model load까지 통과했지만 Windows `eunjeon` build dependency로 Korean synthesis가 차단됐다. Windows SAPI fallback으로 30개 local voice E2E regression과 local-only runtime contract를 실행했고 Azure/Google/AWS는 optional paid comparison only |
 | 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
 | 보류한 핵심 | BGE-M3 dense, BGE reranker |
 | 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route, HyDE 기본 retrieval route, ColBERT-style late interaction 기본 route |
@@ -80,6 +80,7 @@
 | voice local TTS runtime install retry | `HD-VOICE-STT-TTS-LOCAL-TTS-RUNTIME-INSTALL-001` | local-tts-runtime-install-retry | runtime_install_attempt_count / melotts_synthesis_success_count / local_tts_execution_count / external_provider_call_count | 11 / 0 / 5 / 0 | completed local SAPI TTS fallback |
 | voice STT/TTS local adapter integration | `HD-VOICE-STT-TTS-LOCAL-ADAPTER-INTEGRATION-001` | local-voice-adapter-smoke | local_stt_execution_count / local_tts_execution_count / chat_contract_execution_count / external_provider_call_count | 5 / 5 / 5 / 0 | completed local voice adapter smoke |
 | voice local E2E eval | `HD-VOICE-LOCAL-E2E-EVAL-001` | local-voice-e2e-regression | local_stt_execution_count / input_tts_generation_count / output_tts_generation_count / external_provider_call_count | 30 / 30 / 30 / 0 | completed local voice E2E regression |
+| voice local runtime contract | `HD-VOICE-LOCAL-RUNTIME-CONTRACT-001` | local-only runtime contract | accepted_audio_input_count / validation_reject_pass_count / chat_contract_execution_count / external_provider_call_count | 5 / 3 / 5 / 0 | completed local voice runtime contract |
 
 금지 claim:
 
@@ -95,6 +96,8 @@
 음성 adapter 연결 결과는 [Voice STT/TTS Local Adapter Integration](docs/VOICE_STT_TTS_LOCAL_ADAPTER_INTEGRATION.md), [Voice STT/TTS Local Adapter Integration Report](evals/reports/voice_stt_tts_local_adapter_integration_report.md)를 기준으로 한다.
 
 음성 30개 local regression 결과는 [Voice Local E2E Eval](docs/VOICE_LOCAL_E2E_EVAL.md), [Voice Local E2E Eval Report](evals/reports/voice_local_e2e_eval_report.md)를 기준으로 한다.
+
+음성 local-only runtime 계약 결과는 [Voice Local Runtime Contract](docs/VOICE_LOCAL_RUNTIME_CONTRACT.md), [Voice Local Runtime Contract Report](evals/reports/voice_local_runtime_contract_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -240,6 +243,7 @@ PDF
 -> voice local TTS runtime install retry
 -> voice STT/TTS local adapter integration
 -> voice local E2E eval
+-> voice local runtime contract
 -> public-safe aggregate reports
 ```
 
