@@ -133,3 +133,4 @@
 | 9.28 | voice local runtime matrix | local runtime matrix runner, docs/report/test | 무료 로컬 STT/TTS 후보 5개 import/runtime/CUDA preflight, 설치/다운로드/외부 호출 0 | `문서: 무료 로컬 음성 런타임 후보 매트릭스 추가` |
 | 9.29 | voice STT/TTS local TTS runtime install retry | local runtime setup evidence, rerun report | MeloTTS 설치/CUDA/import/model load 통과, Korean synthesis Windows `eunjeon` blocker 기록, SAPI Korean fallback private wav 5개 생성 | `점검: 로컬 TTS 런타임 설치 재시도` |
 | 9.30 | voice STT/TTS local adapter integration | local adapter module, docs/report/test | local Whisper STT 5건, `/api/v1/chat` contract 5건, SAPI TTS fallback 5건, external provider call 0 | `구현: 로컬 STT TTS 어댑터 연결` |
+| 9.31 | voice local E2E eval | local voice E2E runner, docs/report/test | 30개 public-safe script에서 input TTS, CUDA Whisper STT, `/api/v1/chat`, output TTS를 실행하고 external provider call 0 기록 | `평가: 로컬 음성 E2E 검증 리포트 추가` |

@@ -175,5 +175,6 @@
 - [x] local TTS runtime candidate install/retry from matrix
 - [x] local MeloTTS runtime install and retry smoke execution
 - [x] voice STT/TTS local adapter integration with selected local fallback
+- [x] local voice E2E regression evaluation
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)

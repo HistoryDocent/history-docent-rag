@@ -86,6 +86,7 @@
 - local runtime matrix에서 무료 로컬 STT/TTS 후보 5개의 import/runtime/CUDA 가능성을 zero-call로 기록
 - local TTS runtime install retry에서 MeloTTS 설치/CUDA/import/model load와 Windows `eunjeon` blocker를 기록하고, Windows SAPI Korean fallback으로 private wav 5개를 생성
 - local STT/TTS adapter integration에서 local Whisper STT 후보, `/api/v1/chat` contract, Windows SAPI TTS fallback을 5개 script로 연결
+- local voice E2E eval에서 30개 public-safe script를 input TTS, CUDA Whisper STT, `/api/v1/chat`, output TTS 흐름으로 실행하고 external provider call 0을 기록
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

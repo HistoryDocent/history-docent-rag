@@ -585,6 +585,37 @@
 - [ ] optional MeloTTS Windows dependency fix next gate 분리
 - [ ] optional managed provider smoke는 paid comparison으로만 유지
 
+## Voice Local E2E Eval Gate
+
+- [ ] voice local E2E eval runner count 1
+- [ ] voice local E2E eval document count 1
+- [ ] voice local E2E eval report count 1
+- [ ] selected public-safe script count 30
+- [ ] query type count 6
+- [ ] minimum script per query type count 5
+- [ ] input TTS generation count 30
+- [ ] local CUDA Whisper STT execution count 30
+- [ ] local CUDA Whisper call count 30
+- [ ] chat contract execution count 30
+- [ ] expected behavior pass count 30
+- [ ] output TTS generation count 30
+- [ ] private input audio generated count 30
+- [ ] private output audio generated count 30
+- [ ] WER, CER, place name accuracy, STT/chat/TTS/round-trip latency p95 기록
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] production voice app 완성 claim 금지
+- [ ] STT/TTS 품질 최종 검증 claim 금지
+- [ ] 실제 관광객 음성 품질 검증 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1
