@@ -553,6 +553,38 @@
 - [ ] MeloTTS final provider 확정 claim 금지
 - [ ] local STT/TTS adapter integration next gate 분리
 
+## Voice STT/TTS Local Adapter Integration Gate
+
+- [ ] voice STT/TTS local adapter module count 1
+- [ ] voice STT/TTS local adapter document count 1
+- [ ] voice STT/TTS local adapter report count 1
+- [ ] selected public-safe script count 5
+- [ ] local STT provider candidate count 1
+- [ ] local TTS provider candidate count 1
+- [ ] resolved device cuda when CUDA available
+- [ ] local STT runtime available count 1
+- [ ] local CUDA Whisper STT execution count 5
+- [ ] local CUDA Whisper call count 5
+- [ ] chat contract execution count 5
+- [ ] citation response count 5
+- [ ] local SAPI TTS execution count 5
+- [ ] private TTS audio generated count 5
+- [ ] WER, CER, place name accuracy, STT/chat/TTS/round-trip latency p95 기록
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] live STT call count 0
+- [ ] live TTS call count 0
+- [ ] live Solar Pro 3 call count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] production voice app 완성 claim 금지
+- [ ] STT/TTS 품질 최종 검증 claim 금지
+- [ ] optional MeloTTS Windows dependency fix next gate 분리
+- [ ] optional managed provider smoke는 paid comparison으로만 유지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

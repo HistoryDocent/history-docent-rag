@@ -78,6 +78,7 @@
 | voice STT/TTS local TTS smoke | `HD-VOICE-STT-TTS-LOCAL-TTS-SMOKE-001` | local-tts-smoke-gate | resolved_device / melotts_runtime_available_count / external_provider_call_count | cuda / 0 / 0 | blocked missing MeloTTS runtime |
 | voice local runtime matrix | `HD-VOICE-STT-TTS-LOCAL-RUNTIME-MATRIX-001` | runtime-preflight-only | runtime_candidate_count / import_available_candidate_count / tts_runtime_available_count | 5 / 1 / 0 | local STT fallback only, TTS blocked |
 | voice local TTS runtime install retry | `HD-VOICE-STT-TTS-LOCAL-TTS-RUNTIME-INSTALL-001` | local-tts-runtime-install-retry | runtime_install_attempt_count / melotts_synthesis_success_count / local_tts_execution_count / external_provider_call_count | 11 / 0 / 5 / 0 | completed local SAPI TTS fallback |
+| voice STT/TTS local adapter integration | `HD-VOICE-STT-TTS-LOCAL-ADAPTER-INTEGRATION-001` | local-voice-adapter-smoke | local_stt_execution_count / local_tts_execution_count / chat_contract_execution_count / external_provider_call_count | 5 / 5 / 5 / 0 | completed local voice adapter smoke |
 
 금지 claim:
 
@@ -89,6 +90,8 @@
 - 전체 도서 데이터 공개
 
 상세 요약은 [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md), [Final Ablation Report Artifact](evals/reports/final_ablation_report.md), [Portfolio Result Summary](docs/PORTFOLIO_RESULT_SUMMARY.md), [Portfolio Result Summary Report](evals/reports/portfolio_result_summary_report.md), [Voice Provider Decision](docs/VOICE_PROVIDER_DECISION.md), [Voice Provider Decision Report](evals/reports/voice_provider_decision_report.md), [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md), [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md), [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md), [Voice STT/TTS Contract Report](evals/reports/voice_stt_tts_contract_report.md), [Voice STT/TTS Provider Benchmark Plan](docs/VOICE_STT_TTS_PROVIDER_BENCH_PLAN.md), [Voice STT/TTS Provider Benchmark Plan Report](evals/reports/voice_stt_tts_provider_bench_plan_report.md), [Voice STT/TTS Provider Benchmark Readiness](docs/VOICE_STT_TTS_PROVIDER_BENCH_READINESS.md), [Voice STT/TTS Provider Benchmark Readiness Report](evals/reports/voice_stt_tts_provider_bench_readiness_report.md), [Voice STT/TTS Provider Benchmark Execution Approval](docs/VOICE_STT_TTS_PROVIDER_BENCH_EXECUTION_APPROVAL.md), [Voice STT/TTS Provider Benchmark Execution Approval Report](evals/reports/voice_stt_tts_provider_bench_execution_approval_report.md), [Voice STT/TTS Provider Benchmark Local Smoke](docs/VOICE_STT_TTS_PROVIDER_BENCH_SMOKE_LOCAL.md), [Voice STT/TTS Provider Benchmark Local Smoke Report](evals/reports/voice_stt_tts_provider_bench_smoke_local_report.md), [Voice STT/TTS Local Model Ablation](docs/VOICE_STT_TTS_LOCAL_MODEL_ABLATION.md), [Voice STT/TTS Local Model Ablation Report](evals/reports/voice_stt_tts_local_model_ablation_report.md), [Voice STT/TTS Managed Provider Smoke Approval](docs/VOICE_STT_TTS_MANAGED_PROVIDER_SMOKE_APPROVAL.md), [Voice STT/TTS Managed Provider Smoke Approval Report](evals/reports/voice_stt_tts_managed_provider_smoke_approval_report.md), [Voice STT/TTS Managed Provider Smoke Execution Harness](docs/VOICE_STT_TTS_MANAGED_PROVIDER_SMOKE_EXECUTION_HARNESS.md), [Voice STT/TTS Managed Provider Smoke Execution Harness Report](evals/reports/voice_stt_tts_managed_provider_smoke_execution_harness_report.md), [Voice STT/TTS Managed Provider Smoke Preflight](docs/VOICE_STT_TTS_MANAGED_PROVIDER_SMOKE_PREFLIGHT.md), [Voice STT/TTS Managed Provider Smoke Preflight Report](evals/reports/voice_stt_tts_managed_provider_smoke_preflight_report.md), [Voice STT/TTS Managed Provider Smoke Execution](docs/VOICE_STT_TTS_MANAGED_PROVIDER_SMOKE_EXECUTION.md), [Voice STT/TTS Managed Provider Smoke Execution Report](evals/reports/voice_stt_tts_managed_provider_smoke_execution_report.md), [Voice STT/TTS Azure Managed Smoke Readiness](docs/VOICE_STT_TTS_AZURE_MANAGED_SMOKE_READINESS.md), [Voice STT/TTS Azure Managed Smoke Readiness Report](evals/reports/voice_stt_tts_azure_managed_smoke_readiness_report.md), [Voice STT/TTS Azure Credential Preflight](docs/VOICE_STT_TTS_AZURE_CREDENTIAL_PREFLIGHT.md), [Voice STT/TTS Azure Credential Preflight Report](evals/reports/voice_stt_tts_azure_credential_preflight_report.md), [Voice STT/TTS Azure Smoke Execution Approval](docs/VOICE_STT_TTS_AZURE_SMOKE_EXECUTION_APPROVAL.md), [Voice STT/TTS Azure Smoke Execution Approval Report](evals/reports/voice_stt_tts_azure_smoke_execution_approval_report.md), [Voice STT/TTS Azure Smoke Execution](docs/VOICE_STT_TTS_AZURE_SMOKE_EXECUTION.md), [Voice STT/TTS Azure Smoke Execution Report](evals/reports/voice_stt_tts_azure_smoke_execution_report.md), [Voice STT/TTS Azure Credential Ready Smoke Approval](docs/VOICE_STT_TTS_AZURE_CREDENTIAL_READY_AND_SMOKE_APPROVAL.md), [Voice STT/TTS Azure Credential Ready Smoke Approval Report](evals/reports/voice_stt_tts_azure_credential_ready_and_smoke_approval_report.md)를 기준으로 한다.
+
+음성 adapter 연결 결과는 [Voice STT/TTS Local Adapter Integration](docs/VOICE_STT_TTS_LOCAL_ADAPTER_INTEGRATION.md), [Voice STT/TTS Local Adapter Integration Report](evals/reports/voice_stt_tts_local_adapter_integration_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -232,13 +235,13 @@ PDF
 -> voice STT/TTS local TTS smoke
 -> voice local runtime matrix
 -> voice local TTS runtime install retry
+-> voice STT/TTS local adapter integration
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-voice STT/TTS local adapter integration with selected local fallback
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
 ```
@@ -582,6 +585,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local Runtime Matrix Report](evals/reports/voice_local_runtime_matrix_report.md) | HD-VOICE-STT-TTS-LOCAL-RUNTIME-MATRIX-001 정량/정성 runtime matrix와 zero external call 검증 |
 | [Voice Local TTS Runtime Install Retry](docs/VOICE_LOCAL_TTS_RUNTIME_INSTALL_RETRY.md) | HD-VOICE-STT-TTS-LOCAL-TTS-RUNTIME-INSTALL-001 MeloTTS 설치/실행 재시도와 Windows SAPI Korean fallback private wav smoke |
 | [Voice Local TTS Runtime Install Retry Report](evals/reports/voice_local_tts_runtime_install_retry_report.md) | HD-VOICE-STT-TTS-LOCAL-TTS-RUNTIME-INSTALL-001 정량/정성 install retry, blocker, local wav 생성, zero external call 검증 |
+| [Voice STT/TTS Local Adapter Integration](docs/VOICE_STT_TTS_LOCAL_ADAPTER_INTEGRATION.md) | HD-VOICE-STT-TTS-LOCAL-ADAPTER-INTEGRATION-001 local Whisper STT 후보, `/api/v1/chat`, Windows SAPI TTS fallback adapter smoke |
+| [Voice STT/TTS Local Adapter Integration Report](evals/reports/voice_stt_tts_local_adapter_integration_report.md) | HD-VOICE-STT-TTS-LOCAL-ADAPTER-INTEGRATION-001 정량/정성 adapter smoke, STT/TTS/chat 연결, zero external call 검증 |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |
