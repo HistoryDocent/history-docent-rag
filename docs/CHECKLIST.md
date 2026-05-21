@@ -895,6 +895,37 @@
 - [ ] 실제 관광객 음성 품질 검증 claim 금지
 - [ ] production voice app 완성 claim 금지
 
+## Voice Local TTS Human Score Entry Completion Gate
+
+- [ ] voice local TTS human score entry completion runner count 1
+- [ ] voice local TTS human score entry completion document count 1
+- [ ] voice local TTS human score entry completion report count 1
+- [ ] selected script count 5
+- [ ] rubric criterion count 6
+- [ ] expected private score row count 30
+- [ ] private audio expected count 5
+- [ ] private audio available count 5
+- [ ] private audio missing count 0
+- [ ] private score input available count 기록
+- [ ] completed score row count 기록
+- [ ] pending score row count 기록
+- [ ] missing human score input은 blocker로 기록
+- [ ] 완료 fixture에서는 completed score row count 30 검증
+- [ ] aggregate public row count 6
+- [ ] human score public detail row count 0
+- [ ] raw audio public artifact count 0
+- [ ] raw transcript public artifact count 0
+- [ ] raw script public artifact count 0
+- [ ] external provider call count 0
+- [ ] external audio transmission count 0
+- [ ] public private path leakage 0
+- [ ] public secret-like leakage 0
+- [ ] public raw payload leakage 0
+- [ ] 무료 로컬 TTS 최종 provider 확정 claim 금지
+- [ ] Supertonic 3 음성 품질 우수 검증 완료 claim 금지
+- [ ] 실제 관광객 음성 품질 검증 claim 금지
+- [ ] production voice app 완성 claim 금지
+
 ## Voice STT/TTS Managed Provider Smoke Approval Gate
 
 - [ ] voice STT/TTS managed provider smoke approval document count 1

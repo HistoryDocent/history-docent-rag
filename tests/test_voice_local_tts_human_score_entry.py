@@ -224,7 +224,8 @@ def test_human_score_entry_registered_and_public_safe() -> None:
         assert Path(link).exists()
 
     assert "- [x] optional human TTS listening score entry tool" in todo
-    assert "- [ ] optional human TTS listening score entry completion" in todo
+    assert "- [x] optional human TTS listening score entry completion verification" in todo
+    assert "- [ ] optional human TTS listening score manual scoring" in todo
     assert entry.WORK_ID in ledger
     assert "voice_local_tts_human_score_entry" in ledger
 
