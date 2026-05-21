@@ -185,6 +185,7 @@
 - [x] optional TTS quality listening review
 - [x] optional human TTS listening score fill framework
 - [x] optional human TTS listening score collection workflow
-- [ ] optional human TTS listening score entry
+- [x] optional human TTS listening score entry tool
+- [ ] optional human TTS listening score entry completion
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
