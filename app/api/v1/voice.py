@@ -73,7 +73,12 @@ class LocalVoiceRuntimeApiResponse(VoiceApiModel):
     request_id: str
     resolved_device: str
     stt_provider_candidate_id: str
+    stt_runtime_family: str
     tts_provider_candidate_id: str
+    tts_runtime_family: str
+    tts_provider_role: str
+    tts_provider_status: str
+    tts_final_provider: bool
     input_audio_artifact_id: str
     input_audio_artifact_private: bool
     input_audio_duration_ms: float
@@ -103,7 +108,12 @@ class LocalVoiceRuntimeApiResponse(VoiceApiModel):
             request_id=result.request_id,
             resolved_device=result.resolved_device,
             stt_provider_candidate_id=result.stt_provider_candidate_id,
+            stt_runtime_family=result.stt_runtime_family,
             tts_provider_candidate_id=result.tts_provider_candidate_id,
+            tts_runtime_family=result.tts_runtime_family,
+            tts_provider_role=result.tts_provider_role,
+            tts_provider_status=result.tts_provider_status,
+            tts_final_provider=result.tts_final_provider,
             input_audio_artifact_id=result.input_audio.artifact_id,
             input_audio_artifact_private=result.input_audio.artifact_private,
             input_audio_duration_ms=result.input_audio.duration_ms,

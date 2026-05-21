@@ -193,6 +193,7 @@
 - [x] optional human TTS listening score manual scoring runbook
 - [x] optional TTS automated proxy evaluation
 - [x] optional local free voice stack lock
+- [x] optional local voice runtime stack alignment
 - [ ] optional human TTS listening score manual scoring
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix

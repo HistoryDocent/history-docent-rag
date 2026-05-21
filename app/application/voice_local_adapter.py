@@ -17,12 +17,16 @@ from app.domain.retrieval import LanguageCode, QueryType
 
 LOCAL_VOICE_ADAPTER_CONTRACT_VERSION = "local-voice-adapter/v1"
 LOCAL_VOICE_ADAPTER_ID = "local_voice_adapter_v1"
-LOCAL_STT_PROVIDER_CANDIDATE_ID = "local_cuda_whisper_small"
+LOCAL_STT_PROVIDER_CANDIDATE_ID = "local_faster_whisper_small_cuda"
+LOCAL_STT_RUNTIME_FAMILY = "faster-whisper via CTranslate2"
 LOCAL_TTS_PROVIDER_CANDIDATE_ID = "local_windows_sapi_pyttsx3_korean_fallback"
 LOCAL_STT_MODEL_ID = "small"
 LOCAL_TTS_RUNTIME_FAMILY = "Windows SAPI via pyttsx3"
+LOCAL_TTS_PROVIDER_ROLE = "fallback"
+LOCAL_TTS_PROVIDER_STATUS = "fallback_not_quality_candidate"
+LOCAL_TTS_FINAL_PROVIDER = False
 
-TranscriptSource = Literal["public_safe_fixture", "local_whisper"]
+TranscriptSource = Literal["public_safe_fixture", "local_faster_whisper", "local_whisper"]
 TtsExecutionStatus = Literal[
     "executed",
     "blocked_no_korean_sapi_voice",
@@ -41,9 +45,13 @@ class LocalVoiceAdapterConfig(LocalVoiceAdapterBase):
     adapter_id: str = LOCAL_VOICE_ADAPTER_ID
     contract_version: str = LOCAL_VOICE_ADAPTER_CONTRACT_VERSION
     stt_provider_candidate_id: str = LOCAL_STT_PROVIDER_CANDIDATE_ID
+    stt_runtime_family: str = LOCAL_STT_RUNTIME_FAMILY
     stt_model_id: str = LOCAL_STT_MODEL_ID
     tts_provider_candidate_id: str = LOCAL_TTS_PROVIDER_CANDIDATE_ID
     tts_runtime_family: str = LOCAL_TTS_RUNTIME_FAMILY
+    tts_provider_role: str = LOCAL_TTS_PROVIDER_ROLE
+    tts_provider_status: str = LOCAL_TTS_PROVIDER_STATUS
+    tts_final_provider: bool = LOCAL_TTS_FINAL_PROVIDER
     claim_boundary: str = "local-smoke-only"
 
 
@@ -65,6 +73,7 @@ class LocalVoiceChatBridge(LocalVoiceAdapterBase):
     transcript_hash: str = Field(min_length=8)
     transcript_char_count: int = Field(ge=0)
     stt_provider_candidate_id: str = LOCAL_STT_PROVIDER_CANDIDATE_ID
+    stt_runtime_family: str = LOCAL_STT_RUNTIME_FAMILY
     stt_model_id: str = LOCAL_STT_MODEL_ID
     voice_mode: bool = True
     retrieval_mode: ChatRetrievalMode
@@ -89,6 +98,9 @@ class LocalVoiceTtsResult(LocalVoiceAdapterBase):
     request_id: str = Field(min_length=1)
     provider_candidate_id: str = LOCAL_TTS_PROVIDER_CANDIDATE_ID
     runtime_family: str = LOCAL_TTS_RUNTIME_FAMILY
+    provider_role: str = LOCAL_TTS_PROVIDER_ROLE
+    provider_status: str = LOCAL_TTS_PROVIDER_STATUS
+    final_provider: bool = LOCAL_TTS_FINAL_PROVIDER
     synthesis_status: TtsExecutionStatus
     latency_ms: float = Field(ge=0.0)
     audio_duration_ms: float = Field(ge=0.0)
@@ -128,6 +140,7 @@ class LocalVoiceAdapter:
             transcript_hash=stable_digest(transcript_input.transcript_text),
             transcript_char_count=len(transcript_input.transcript_text),
             stt_provider_candidate_id=self.config.stt_provider_candidate_id,
+            stt_runtime_family=self.config.stt_runtime_family,
             stt_model_id=self.config.stt_model_id,
             retrieval_mode=transcript_input.retrieval_mode,
             provider_mode=transcript_input.provider_mode,

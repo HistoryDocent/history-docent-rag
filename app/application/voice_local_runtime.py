@@ -18,7 +18,12 @@ from app.application.chat_retrieval import ChatRetrievalMode
 from app.application.voice_local_adapter import (
     LOCAL_STT_MODEL_ID,
     LOCAL_STT_PROVIDER_CANDIDATE_ID,
+    LOCAL_STT_RUNTIME_FAMILY,
+    LOCAL_TTS_FINAL_PROVIDER,
     LOCAL_TTS_PROVIDER_CANDIDATE_ID,
+    LOCAL_TTS_PROVIDER_ROLE,
+    LOCAL_TTS_PROVIDER_STATUS,
+    LOCAL_TTS_RUNTIME_FAMILY,
     LOCAL_VOICE_ADAPTER_ID,
     LocalSapiVoiceProbe,
     LocalVoiceAdapter,
@@ -107,8 +112,13 @@ class LocalVoiceRuntimeResult(LocalVoiceRuntimeModel):
     request_id: str = Field(min_length=1)
     resolved_device: str = Field(min_length=1)
     stt_provider_candidate_id: str = LOCAL_STT_PROVIDER_CANDIDATE_ID
+    stt_runtime_family: str = LOCAL_STT_RUNTIME_FAMILY
     stt_model_id: str = LOCAL_STT_MODEL_ID
     tts_provider_candidate_id: str = LOCAL_TTS_PROVIDER_CANDIDATE_ID
+    tts_runtime_family: str = LOCAL_TTS_RUNTIME_FAMILY
+    tts_provider_role: str = LOCAL_TTS_PROVIDER_ROLE
+    tts_provider_status: str = LOCAL_TTS_PROVIDER_STATUS
+    tts_final_provider: bool = LOCAL_TTS_FINAL_PROVIDER
     input_audio: LocalVoiceAudioInput
     transcript: LocalVoiceTranscriptRuntime
     chat_contract_status: str = Field(min_length=1)
@@ -153,11 +163,11 @@ class LocalVoiceTranscriber(Protocol):
         ...
 
 
-class WhisperSmallTranscriber:
+class FasterWhisperSmallTranscriber:
     def __init__(self, *, model_id: str = LOCAL_STT_MODEL_ID) -> None:
         self.model_id = model_id
         self._model = None
-        self._model_device = ""
+        self._model_runtime_key = ""
 
     def transcribe(
         self,
@@ -166,24 +176,31 @@ class WhisperSmallTranscriber:
         language: LanguageCode,
         resolved_device: str,
     ) -> str:
-        if importlib.util.find_spec("whisper") is None:
-            raise LocalVoiceRuntimeValidationError("local_whisper_runtime_missing")
+        if importlib.util.find_spec("faster_whisper") is None:
+            raise LocalVoiceRuntimeValidationError("local_faster_whisper_runtime_missing")
         model = self._load_model(resolved_device)
-        result = model.transcribe(
+        segments, _info = model.transcribe(
             str(audio_path),
             language="ko" if language in {"ko", "mixed"} else "en",
-            fp16=resolved_device == "cuda",
-            verbose=False,
         )
-        return str(result.get("text", "")).strip()
+        return " ".join(segment.text.strip() for segment in segments).strip()
 
     def _load_model(self, resolved_device: str):
-        if self._model is None or self._model_device != resolved_device:
-            import whisper
+        compute_type = "float16" if resolved_device == "cuda" else "int8"
+        runtime_key = f"{resolved_device}:{compute_type}"
+        if self._model is None or self._model_runtime_key != runtime_key:
+            from faster_whisper import WhisperModel
 
-            self._model = whisper.load_model(self.model_id, device=resolved_device)
-            self._model_device = resolved_device
+            self._model = WhisperModel(
+                self.model_id,
+                device=resolved_device,
+                compute_type=compute_type,
+            )
+            self._model_runtime_key = runtime_key
         return self._model
+
+
+WhisperSmallTranscriber = FasterWhisperSmallTranscriber
 
 
 class LocalVoiceRuntimeService:
@@ -204,7 +221,7 @@ class LocalVoiceRuntimeService:
             sapi_text_synthesizer=sapi_text_synthesizer,
         )
         self.chat_service = chat_service or ChatContractService()
-        self.transcriber = transcriber or WhisperSmallTranscriber()
+        self.transcriber = transcriber or FasterWhisperSmallTranscriber()
         self.resolved_device = resolved_device or resolve_torch_device("cuda_if_available")
 
     def handle(self, request: LocalVoiceRuntimeRequest) -> LocalVoiceRuntimeResult:
@@ -250,6 +267,11 @@ class LocalVoiceRuntimeService:
         return LocalVoiceRuntimeResult(
             request_id=request.request_id,
             resolved_device=self.resolved_device,
+            stt_runtime_family=self.adapter.config.stt_runtime_family,
+            tts_runtime_family=self.adapter.config.tts_runtime_family,
+            tts_provider_role=self.adapter.config.tts_provider_role,
+            tts_provider_status=self.adapter.config.tts_provider_status,
+            tts_final_provider=self.adapter.config.tts_final_provider,
             input_audio=audio,
             transcript=transcript,
             chat_contract_status="executed_contract_chat",
@@ -316,11 +338,11 @@ class LocalVoiceRuntimeService:
                 stt_latency_ms=0.0,
                 transcript_hash=stable_digest_text(request.fallback_transcript_text),
                 transcript_char_count=len(request.fallback_transcript_text),
-                error_code="local_whisper_transcribe_error",
+                error_code="local_faster_whisper_transcribe_error",
             )
         transcript_text = transcript_text or request.fallback_transcript_text
         return transcript_text, LocalVoiceTranscriptRuntime(
-            transcript_source="local_whisper",
+            transcript_source="local_faster_whisper",
             stt_execution_status="executed",
             stt_latency_ms=latency_ms,
             transcript_hash=stable_digest_text(transcript_text),
@@ -379,8 +401,13 @@ def public_voice_runtime_row(result: LocalVoiceRuntimeResult) -> dict[str, objec
         "request_id": result.request_id,
         "resolved_device": result.resolved_device,
         "stt_provider_candidate_id": result.stt_provider_candidate_id,
+        "stt_runtime_family": result.stt_runtime_family,
         "stt_model_id": result.stt_model_id,
         "tts_provider_candidate_id": result.tts_provider_candidate_id,
+        "tts_runtime_family": result.tts_runtime_family,
+        "tts_provider_role": result.tts_provider_role,
+        "tts_provider_status": result.tts_provider_status,
+        "tts_final_provider": result.tts_final_provider,
         "input_audio_artifact_id": result.input_audio.artifact_id,
         "input_audio_artifact_private": result.input_audio.artifact_private,
         "input_audio_file_size_bytes": result.input_audio.file_size_bytes,

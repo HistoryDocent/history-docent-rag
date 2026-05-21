@@ -68,6 +68,11 @@ def test_local_voice_runtime_service_accepts_private_wav_and_returns_public_safe
     )
 
     assert result.contract_version == LOCAL_VOICE_RUNTIME_CONTRACT_VERSION
+    assert result.stt_provider_candidate_id == "local_faster_whisper_small_cuda"
+    assert result.stt_runtime_family == "faster-whisper via CTranslate2"
+    assert result.tts_provider_role == "fallback"
+    assert result.tts_provider_status == "fallback_not_quality_candidate"
+    assert result.tts_final_provider is False
     assert result.input_audio.artifact_private is True
     assert result.transcript.stt_execution_status == "skipped_by_flag"
     assert result.transcript.transcript_source == "public_safe_fixture"
@@ -85,6 +90,8 @@ def test_local_voice_runtime_service_accepts_private_wav_and_returns_public_safe
     assert "fallback_transcript_text" not in public_row
     assert "input_audio_path" not in public_row
     assert public_row["input_audio_artifact_private"] is True
+    assert public_row["tts_final_provider"] is False
+    assert public_row["tts_provider_status"] == "fallback_not_quality_candidate"
 
 
 def test_local_voice_runtime_audio_validation_rejects_unsafe_inputs() -> None:
@@ -148,6 +155,11 @@ def test_local_voice_runtime_api_executes_when_explicitly_enabled(monkeypatch) -
     body = response.json()
     assert body["contract_version"] == LOCAL_VOICE_RUNTIME_CONTRACT_VERSION
     assert body["request_id"] == "voice-api-enabled"
+    assert body["stt_provider_candidate_id"] == "local_faster_whisper_small_cuda"
+    assert body["stt_runtime_family"] == "faster-whisper via CTranslate2"
+    assert body["tts_provider_role"] == "fallback"
+    assert body["tts_provider_status"] == "fallback_not_quality_candidate"
+    assert body["tts_final_provider"] is False
     assert body["input_audio_artifact_private"] is True
     assert body["stt_execution_status"] == "skipped_by_flag"
     assert body["chat_contract_status"] == "executed_contract_chat"

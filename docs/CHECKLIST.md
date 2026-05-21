@@ -1310,3 +1310,21 @@
 - [x] raw audio/transcript/script public artifact count 0
 - [x] public private path/secret-like/raw payload leakage 0
 - [x] TTS final provider로 표현하지 않음
+
+## Voice Local Runtime Stack Alignment Gate
+
+- [x] voice local runtime stack alignment runner count 1
+- [x] voice local runtime stack alignment document count 1
+- [x] voice local runtime stack alignment report count 1
+- [x] provider id mismatch count 0
+- [x] primary local STT candidate count 1
+- [x] primary local TTS candidate count 0
+- [x] TTS fallback candidate count 1
+- [x] TTS final provider count 0
+- [x] runtime default faster-whisper transcriber count 1
+- [x] API provider status field count 5
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] raw audio/transcript public artifact count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] TTS fallback을 final provider로 표현하지 않음

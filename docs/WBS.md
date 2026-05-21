@@ -151,3 +151,4 @@
 | 9.46 | voice local TTS human score manual scoring runbook | manual scoring runbook runner, docs/report/test | score sheet/audio 존재와 score 입력 대기 상태를 public-safe하게 기록, external provider call 0 | `문서: 로컬 TTS 사람 청취 평가 실행 절차 정리` |
 | 9.47 | voice local TTS automated proxy eval | local STT round-trip proxy runner, docs/report/test | sherpa-onnx TTS wav 5개를 faster-whisper CUDA로 전사해 CER/문자 F1/장소명 복원률을 기록하고, 사람 점수 대체 금지와 external provider call 0을 검증 | `평가: 로컬 TTS 자동 대체 평가 추가` |
 | 9.48 | voice local free stack lock | local-free voice stack lock runner, docs/report/test | `faster-whisper small CUDA`를 primary STT로 고정하고, TTS final provider 0, managed default 0, external provider call 0을 검증 | `문서: 무료 로컬 음성 스택 기준 고정` |
+| 9.49 | voice local runtime stack alignment | runtime/provider alignment, docs/report/test | stack lock의 `local_faster_whisper_small_cuda`와 runtime/API provider status를 정렬하고, TTS final provider 0, external provider call 0을 검증 | `구현: 로컬 음성 런타임 스택 기준 정렬` |

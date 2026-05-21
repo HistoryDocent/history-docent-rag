@@ -97,6 +97,7 @@
 | voice local TTS human score manual scoring runbook | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-RUNBOOK-001` | manual scoring execution runbook | private_manual_score_sheet_available_count / completed_score_row_count / user_action_required_count / external_provider_call_count | 1 / 0 / 1 / 0 | ready for manual score input |
 | voice local TTS automated proxy eval | `HD-VOICE-LOCAL-TTS-AUTOMATED-PROXY-EVAL-001` | local STT round-trip proxy | local_stt_execution_count / proxy_metric_pass_count / human_listening_completed_count / external_provider_call_count | 5 / 4 / 0 / 0 | proxy threshold failed, human scores still required |
 | voice local free stack lock | `HD-VOICE-LOCAL-FREE-STACK-LOCK-001` | local-free voice contract decision | primary_local_stt_candidate_count / primary_local_tts_candidate_count / external_provider_call_count | 1 / 0 / 0 | STT locked, TTS blocked |
+| voice local runtime stack alignment | `HD-VOICE-LOCAL-RUNTIME-STACK-ALIGN-001` | runtime/API provider status alignment | provider_id_mismatch_count / tts_final_provider_count / external_provider_call_count | 0 / 0 / 0 | runtime aligned, TTS still blocked |
 
 금지 claim:
 
@@ -146,6 +147,8 @@
 무료 로컬 TTS 자동 대체 평가는 [Voice Local TTS Automated Proxy Eval](docs/VOICE_LOCAL_TTS_AUTOMATED_PROXY_EVAL.md), [Voice Local TTS Automated Proxy Eval Report](evals/reports/voice_local_tts_automated_proxy_eval_report.md)를 기준으로 한다.
 
 무료 로컬 음성 스택 기준은 [Voice Local Free Stack Lock](docs/VOICE_LOCAL_FREE_STACK_LOCK.md), [Voice Local Free Stack Lock Report](evals/reports/voice_local_free_stack_lock_report.md)를 기준으로 한다.
+
+무료 로컬 음성 런타임 정렬 결과는 [Voice Local Runtime Stack Alignment](docs/VOICE_LOCAL_RUNTIME_STACK_ALIGNMENT.md), [Voice Local Runtime Stack Alignment Report](evals/reports/voice_local_runtime_stack_alignment_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -688,6 +691,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local TTS Human Score Manual Scoring Report](evals/reports/voice_local_tts_human_score_manual_scoring_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-001 정량/정성 manual scoring workspace gate와 pending human scores |
 | [Voice Local TTS Human Score Manual Scoring Runbook](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_MANUAL_SCORING_RUNBOOK.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-RUNBOOK-001 사람 청취 수동 채점 실행 절차와 입력 대기 gate |
 | [Voice Local TTS Human Score Manual Scoring Runbook Report](evals/reports/voice_local_tts_human_score_manual_scoring_runbook_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-RUNBOOK-001 정량/정성 runbook readiness와 zero external call 검증 |
+| [Voice Local Runtime Stack Alignment](docs/VOICE_LOCAL_RUNTIME_STACK_ALIGNMENT.md) | HD-VOICE-LOCAL-RUNTIME-STACK-ALIGN-001 stack lock provider id와 local runtime/API 공개 필드 정렬 |
+| [Voice Local Runtime Stack Alignment Report](evals/reports/voice_local_runtime_stack_alignment_report.md) | HD-VOICE-LOCAL-RUNTIME-STACK-ALIGN-001 정량/정성 runtime alignment gate와 zero external call 검증 |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |
