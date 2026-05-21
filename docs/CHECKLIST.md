@@ -1189,3 +1189,23 @@
 - [ ] raw audio/transcript/payload public artifact count 0
 - [ ] public private path/secret-like/raw payload leakage 0
 - [ ] managed provider smoke execution next gate 유지
+
+## Voice Local whisper.cpp Deployment Smoke Gate
+
+- [x] voice local whisper.cpp deployment smoke runner count 1
+- [x] voice local whisper.cpp deployment smoke document count 1
+- [x] voice local whisper.cpp deployment smoke report count 1
+- [x] selected script count 5
+- [x] CUDA preflight resolved_device 기록
+- [x] whisper_cpp_runtime_available_count 기록
+- [x] whisper_cpp_model_file_available_count 기록
+- [x] local_stt_execution_count 기록
+- [x] wer_avg, cer_avg, place_name_accuracy_avg 기록
+- [x] stt_latency_p95_ms 기록
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] live STT/TTS/Solar call count 0
+- [x] raw audio/transcript public artifact count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] runtime/model 부재 시 blocker evidence로 기록
+- [x] 기본 STT 후보를 성급하게 whisper.cpp로 변경하지 않음

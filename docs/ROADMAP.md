@@ -90,6 +90,7 @@
 - local voice runtime contract에서 private wav 입력 검증, 기본 비활성화 API route, `/api/v1/chat` bridge, local TTS private artifact 경계를 고정
 - local free STT/TTS bench v2에서 현재 실행 baseline과 `faster-whisper`/`Piper` next target을 분리하고 external provider call 0을 기록
 - local faster-whisper STT comparison에서 openai-whisper small CUDA baseline과 faster-whisper small CUDA를 같은 5개 fixture로 비교하고 external provider call 0을 기록
+- local whisper.cpp deployment smoke에서 CUDA preflight는 통과했지만 `whisper-cli` runtime과 `ggml` model file 부재를 blocker로 기록하고 기본 STT 후보는 faster-whisper로 유지
 - local Piper TTS smoke에서 `piper-tts` runtime은 설치됐지만 공식 voice manifest 기준 Korean voice 0개로 확인되어 한국어 TTS 기본 후보에서 차단
 - local Korean TTS alternative review에서 무료 로컬 한국어 TTS 후보 7개를 source 기반으로 검토하고 `sherpa-onnx + Supertonic 3 Korean`을 다음 smoke 후보로 선정
 - local sherpa-onnx Supertonic 3 Korean TTS smoke에서 runtime 설치, private model 확인, 5개 public-safe script private wav 합성을 external provider call 0으로 기록

@@ -179,6 +179,7 @@
 - [x] local voice runtime contract
 - [x] local free STT/TTS bench v2
 - [x] local faster-whisper STT comparison
+- [x] optional whisper.cpp local STT deployment smoke
 - [x] local Piper TTS smoke
 - [x] optional Korean TTS alternative review
 - [x] optional sherpa-onnx Supertonic 3 Korean TTS smoke
@@ -189,5 +190,6 @@
 - [x] optional human TTS listening score entry completion verification
 - [x] optional human TTS listening score manual scoring workspace
 - [ ] optional human TTS listening score manual scoring
+- [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
