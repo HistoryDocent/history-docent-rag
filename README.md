@@ -91,6 +91,7 @@
 | voice local TTS human score collection | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-COLLECTION-001` | private listening manifest + public aggregate gate | private_audio_available_count / private_listening_manifest_row_count / completed_score_row_count / external_provider_call_count | 5 / 5 / 0 / 0 | ready for private human collection |
 | voice local TTS human score entry | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-ENTRY-001` | private score entry tool + public aggregate gate | private_score_entry_draft_row_count / completed_score_row_count / aggregate_public_row_count / external_provider_call_count | 30 / 0 / 6 / 0 | pending manual score entry |
 | voice local TTS human score entry completion | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-ENTRY-COMPLETION-001` | private score completion verification + public aggregate gate | completed_score_row_count / pending_score_row_count / aggregate_public_row_count / external_provider_call_count | 0 / 30 / 6 / 0 | blocked missing human scores |
+| voice local TTS human score manual scoring workspace | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-001` | private HTML score sheet + public aggregate gate | private_manual_score_sheet_created_count / completed_score_row_count / pending_score_row_count / external_provider_call_count | 1 / 0 / 30 / 0 | ready for human manual scoring |
 
 금지 claim:
 
@@ -128,6 +129,8 @@
 무료 로컬 TTS 사람 청취 점수 입력 도구는 [Voice Local TTS Human Score Entry](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_ENTRY.md), [Voice Local TTS Human Score Entry Report](evals/reports/voice_local_tts_human_score_entry_report.md)를 기준으로 한다.
 
 무료 로컬 TTS 사람 청취 점수 입력 완료 검증은 [Voice Local TTS Human Score Entry Completion](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_ENTRY_COMPLETION.md), [Voice Local TTS Human Score Entry Completion Report](evals/reports/voice_local_tts_human_score_entry_completion_report.md)를 기준으로 한다.
+
+무료 로컬 TTS 사람 청취 수동 채점 workspace는 [Voice Local TTS Human Score Manual Scoring](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_MANUAL_SCORING.md), [Voice Local TTS Human Score Manual Scoring Report](evals/reports/voice_local_tts_human_score_manual_scoring_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -284,6 +287,7 @@ PDF
 -> voice local TTS human score collection
 -> voice local TTS human score entry
 -> voice local TTS human score entry completion verification
+-> voice local TTS human manual scoring workspace
 -> public-safe aggregate reports
 ```
 
@@ -659,6 +663,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local TTS Human Score Entry Report](evals/reports/voice_local_tts_human_score_entry_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-ENTRY-001 정량/정성 entry gate와 pending manual scores |
 | [Voice Local TTS Human Score Entry Completion](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_ENTRY_COMPLETION.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-ENTRY-COMPLETION-001 private score 입력 완료 여부 검증 |
 | [Voice Local TTS Human Score Entry Completion Report](evals/reports/voice_local_tts_human_score_entry_completion_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-ENTRY-COMPLETION-001 정량/정성 completion gate와 missing human scores blocker |
+| [Voice Local TTS Human Score Manual Scoring](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_MANUAL_SCORING.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-001 private HTML score sheet 기반 사람 청취 수동 채점 workspace |
+| [Voice Local TTS Human Score Manual Scoring Report](evals/reports/voice_local_tts_human_score_manual_scoring_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-001 정량/정성 manual scoring workspace gate와 pending human scores |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |
