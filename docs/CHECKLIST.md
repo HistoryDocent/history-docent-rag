@@ -1289,3 +1289,24 @@
 - [x] raw audio/transcript/script public artifact count 0
 - [x] public private path/secret-like/raw payload leakage 0
 - [x] 자동 proxy를 사람 청취 점수로 표현하지 않음
+
+## Voice Local Free Stack Lock Gate
+
+- [x] voice local free stack lock runner count 1
+- [x] voice local free stack lock document count 1
+- [x] voice local free stack lock report count 1
+- [x] primary local STT candidate count 1
+- [x] primary local TTS candidate count 0
+- [x] experimental local TTS candidate count 1
+- [x] fallback local TTS candidate count 1
+- [x] optional paid provider candidate count 3
+- [x] managed provider default count 0
+- [x] default external audio transmission count 0
+- [x] secret required for default voice count 0
+- [x] TTS final provider claim count 0
+- [x] TTS automated proxy pass/fail count 기록
+- [x] human listening completed count 0 유지
+- [x] external provider call count 0
+- [x] raw audio/transcript/script public artifact count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] TTS final provider로 표현하지 않음

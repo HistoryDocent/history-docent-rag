@@ -74,7 +74,7 @@ browser mic
 
 ## Provider 선택 기준
 
-provider는 아직 확정하지 않는다. 이 문서 작성 시점에는 provider를 확정하지 않았고, 이후 provider decision에서는 `faster-whisper` local CUDA STT와 `MeloTTS Korean` local TTS를 기본 후보로 두고, external API는 optional paid comparison으로만 남겼다.
+provider는 아직 확정하지 않는다. 이 문서 작성 시점에는 provider를 확정하지 않았고, 이후 provider decision에서는 `faster-whisper small CUDA`를 현재 demo evidence 기준 primary STT 후보로 두되 TTS final provider는 0건으로 유지한다. external API는 optional paid comparison으로만 남겼다.
 
 | 후보군 | 장점 | 리스크 | 선택 조건 |
 | --- | --- | --- | --- |

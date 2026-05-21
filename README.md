@@ -12,7 +12,7 @@
 | --- | --- |
 | 현재 stack | `C0 parent-child chunking + dense_multilingual_e5_small_voice_rewrite + P0_rank_order + Solar Pro 3 generation v1` |
 | query type classifier/router | classifier baseline accuracy 0.957143, router는 `relationship` hybrid route, `no_answer` abstain-first, 나머지 dense voice rewrite, API는 dry-run/flag dry-run만 적용, active route는 아직 미적용 |
-| voice provider 전략 | 무료 로컬 STT/TTS 우선. STT는 `faster-whisper` CUDA 후보까지 비교했고, `whisper.cpp`는 현재 runtime/model 부재 blocker를 기록했다. TTS는 MeloTTS Windows `eunjeon` blocker와 Piper Korean voice 부재를 기록했고, `sherpa-onnx` Supertonic 3 Korean smoke는 자동 proxy 5건 중 4건만 threshold를 통과했으며 사람 청취 점수 0/30이라 provider decision gate에서 채택 차단 상태다. Azure/Google/AWS는 optional paid comparison only |
+| voice provider 전략 | 무료 로컬 STT/TTS 우선. STT는 `faster-whisper small CUDA`를 현재 demo evidence 기준 primary 후보로 고정했다. TTS는 MeloTTS Windows `eunjeon` blocker, Piper Korean voice 부재, `sherpa-onnx` Supertonic 3 Korean 자동 proxy 4/5 통과, 사람 청취 점수 0/30 때문에 final provider 없이 차단한다. Azure/Google/AWS는 optional paid comparison only |
 | 채택한 핵심 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
 | 보류한 핵심 | BGE-M3 dense, BGE reranker |
 | 기각한 핵심 | GraphRAG-lite 기본값, RAPTOR-lite 기본값, Solar Pro 3 repaired v2 기본값, place_story guarded boost production route, HyDE 기본 retrieval route, ColBERT-style late interaction 기본 route |
@@ -96,6 +96,7 @@
 | voice local TTS human score decision | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-DECISION-001` | human score provider decision gate | completed_score_row_count / provider_decision / external_provider_call_count | 0 / blocked_missing_human_scores / 0 | block TTS adoption until human scores |
 | voice local TTS human score manual scoring runbook | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-RUNBOOK-001` | manual scoring execution runbook | private_manual_score_sheet_available_count / completed_score_row_count / user_action_required_count / external_provider_call_count | 1 / 0 / 1 / 0 | ready for manual score input |
 | voice local TTS automated proxy eval | `HD-VOICE-LOCAL-TTS-AUTOMATED-PROXY-EVAL-001` | local STT round-trip proxy | local_stt_execution_count / proxy_metric_pass_count / human_listening_completed_count / external_provider_call_count | 5 / 4 / 0 / 0 | proxy threshold failed, human scores still required |
+| voice local free stack lock | `HD-VOICE-LOCAL-FREE-STACK-LOCK-001` | local-free voice contract decision | primary_local_stt_candidate_count / primary_local_tts_candidate_count / external_provider_call_count | 1 / 0 / 0 | STT locked, TTS blocked |
 
 금지 claim:
 
@@ -143,6 +144,8 @@
 무료 로컬 TTS 사람 청취 실행 절차는 [Voice Local TTS Human Score Manual Scoring Runbook](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_MANUAL_SCORING_RUNBOOK.md), [Voice Local TTS Human Score Manual Scoring Runbook Report](evals/reports/voice_local_tts_human_score_manual_scoring_runbook_report.md)를 기준으로 한다.
 
 무료 로컬 TTS 자동 대체 평가는 [Voice Local TTS Automated Proxy Eval](docs/VOICE_LOCAL_TTS_AUTOMATED_PROXY_EVAL.md), [Voice Local TTS Automated Proxy Eval Report](evals/reports/voice_local_tts_automated_proxy_eval_report.md)를 기준으로 한다.
+
+무료 로컬 음성 스택 기준은 [Voice Local Free Stack Lock](docs/VOICE_LOCAL_FREE_STACK_LOCK.md), [Voice Local Free Stack Lock Report](evals/reports/voice_local_free_stack_lock_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
