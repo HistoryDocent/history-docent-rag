@@ -268,3 +268,20 @@ README 결과 표와 포트폴리오 메시지 정리는 완료했다. query typ
 | `pipeline` | `pipelines/voice_local_whispercpp_deployment_smoke.py` |
 
 결론: 현재 환경은 CUDA를 감지했지만 `whisper-cli` runtime과 `ggml` model file이 없어 `whisper.cpp` STT 실행은 0건이다. 기본 STT evidence 후보는 `local_faster_whisper_small_cuda`로 유지한다.
+
+## Voice Local TTS Human Score Decision
+
+| field | value |
+| --- | --- |
+| `decision_id` | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-DECISION-001` |
+| `stage_id` | `voice_local_tts_human_evaluation` |
+| `candidate_id` | `local_sherpa_onnx_supertonic3_ko` |
+| `split_scope` | `local-private-fixture-smoke` |
+| `metric_family` | `tts_human_score_quality_safety` |
+| `primary_metric_value` | `completed_score_row_count=0, pending_score_row_count=30, provider_decision=blocked_missing_human_scores, external_provider_call_count=0` |
+| `decision` | `blocked_missing_human_scores` |
+| `claim_boundary` | `human-score-decision-blocker-only` |
+| `evidence_artifact` | `docs/VOICE_LOCAL_TTS_HUMAN_SCORE_DECISION.md`, `evals/reports/voice_local_tts_human_score_decision_report.md` |
+| `pipeline` | `pipelines/voice_local_tts_human_score_decision.py` |
+
+결론: `sherpa-onnx` Supertonic 3 Korean TTS는 private wav smoke와 자동 audio sanity까지는 통과했지만 사람 청취 점수 30개가 아직 입력되지 않았다. 따라서 최종 TTS provider로 채택하지 않고 `blocked_missing_human_scores`로 남긴다.

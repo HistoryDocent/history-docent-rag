@@ -1209,3 +1209,24 @@
 - [x] public private path/secret-like/raw payload leakage 0
 - [x] runtime/model 부재 시 blocker evidence로 기록
 - [x] 기본 STT 후보를 성급하게 whisper.cpp로 변경하지 않음
+
+## Voice Local TTS Human Score Decision Gate
+
+- [x] voice local TTS human score decision runner count 1
+- [x] voice local TTS human score decision document count 1
+- [x] voice local TTS human score decision report count 1
+- [x] selected script count 5
+- [x] rubric criterion count 6
+- [x] expected private score row count 30
+- [x] completed score row count 기록
+- [x] pending score row count 기록
+- [x] provider decision threshold 기록
+- [x] score 미입력 시 `blocked_missing_human_scores` 기록
+- [x] completed fixture에서 demo review 채택 threshold 검증
+- [x] low score fixture에서 reject threshold 검증
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] raw audio/transcript public artifact count 0
+- [x] human score public detail row count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] 사람 점수를 임의 생성하지 않음

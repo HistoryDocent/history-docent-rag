@@ -189,6 +189,7 @@
 - [x] optional human TTS listening score entry tool
 - [x] optional human TTS listening score entry completion verification
 - [x] optional human TTS listening score manual scoring workspace
+- [x] optional human TTS listening score provider decision gate
 - [ ] optional human TTS listening score manual scoring
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
