@@ -1264,3 +1264,28 @@
 - [x] human score public detail row count 0
 - [x] public private path/secret-like/raw payload leakage 0
 - [x] 사람 점수를 임의 생성하지 않음
+
+## Voice Local TTS Automated Proxy Eval Gate
+
+- [x] voice local TTS automated proxy eval runner count 1
+- [x] voice local TTS automated proxy eval document count 1
+- [x] voice local TTS automated proxy eval report count 1
+- [x] selected script count 5
+- [x] audio file available count 5
+- [x] automated audio sanity pass count 5
+- [x] local STT runtime available count 1
+- [x] local STT execution requested count 5
+- [x] local STT execution count 5
+- [x] local CUDA STT call count 5
+- [x] CER average 기록
+- [x] char F1 average 기록
+- [x] sequence similarity average 기록
+- [x] place name accuracy average 기록
+- [x] proxy metric pass/fail count 기록
+- [x] proxy threshold 실패 시 TTS 채택 차단 유지
+- [x] human listening completed count 0 유지
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] raw audio/transcript/script public artifact count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] 자동 proxy를 사람 청취 점수로 표현하지 않음

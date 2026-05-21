@@ -191,6 +191,7 @@
 - [x] optional human TTS listening score manual scoring workspace
 - [x] optional human TTS listening score provider decision gate
 - [x] optional human TTS listening score manual scoring runbook
+- [x] optional TTS automated proxy evaluation
 - [ ] optional human TTS listening score manual scoring
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
