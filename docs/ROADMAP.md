@@ -101,6 +101,7 @@
 - local TTS human score entry completion에서 private score 입력 완료 여부를 검증하고, 현재 실제 score 미입력 상태를 missing human scores blocker로 남김
 - local TTS human score manual scoring workspace에서 private HTML score sheet와 draft를 만들고, 실제 score 미입력 상태는 ready_for_human_manual_scoring으로 남김
 - local TTS human score provider decision gate에서 score 30행 미완료 상태를 `blocked_missing_human_scores`로 기록하고, TTS 후보 채택을 차단함
+- local TTS human score manual scoring runbook에서 private score sheet와 5개 wav 준비 상태, score 입력 대기 상태, 외부 호출 0을 기록하고 사람이 직접 채점해야 함을 명확히 함
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

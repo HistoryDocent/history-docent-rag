@@ -94,6 +94,7 @@
 | voice local TTS human score entry completion | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-ENTRY-COMPLETION-001` | private score completion verification + public aggregate gate | completed_score_row_count / pending_score_row_count / aggregate_public_row_count / external_provider_call_count | 0 / 30 / 6 / 0 | blocked missing human scores |
 | voice local TTS human score manual scoring workspace | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-001` | private HTML score sheet + public aggregate gate | private_manual_score_sheet_created_count / completed_score_row_count / pending_score_row_count / external_provider_call_count | 1 / 0 / 30 / 0 | ready for human manual scoring |
 | voice local TTS human score decision | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-DECISION-001` | human score provider decision gate | completed_score_row_count / provider_decision / external_provider_call_count | 0 / blocked_missing_human_scores / 0 | block TTS adoption until human scores |
+| voice local TTS human score manual scoring runbook | `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-RUNBOOK-001` | manual scoring execution runbook | private_manual_score_sheet_available_count / completed_score_row_count / user_action_required_count / external_provider_call_count | 1 / 0 / 1 / 0 | ready for manual score input |
 
 금지 claim:
 
@@ -137,6 +138,8 @@
 무료 로컬 TTS 사람 청취 수동 채점 workspace는 [Voice Local TTS Human Score Manual Scoring](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_MANUAL_SCORING.md), [Voice Local TTS Human Score Manual Scoring Report](evals/reports/voice_local_tts_human_score_manual_scoring_report.md)를 기준으로 한다.
 
 무료 로컬 TTS 사람 청취 provider decision gate는 [Voice Local TTS Human Score Decision](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_DECISION.md), [Voice Local TTS Human Score Decision Report](evals/reports/voice_local_tts_human_score_decision_report.md)를 기준으로 한다.
+
+무료 로컬 TTS 사람 청취 실행 절차는 [Voice Local TTS Human Score Manual Scoring Runbook](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_MANUAL_SCORING_RUNBOOK.md), [Voice Local TTS Human Score Manual Scoring Runbook Report](evals/reports/voice_local_tts_human_score_manual_scoring_runbook_report.md)를 기준으로 한다.
 
 ## 프로젝트 정체성
 
@@ -295,6 +298,8 @@ PDF
 -> voice local TTS human score entry
 -> voice local TTS human score entry completion verification
 -> voice local TTS human manual scoring workspace
+-> voice local TTS human score provider decision
+-> voice local TTS human score manual scoring runbook
 -> public-safe aggregate reports
 ```
 
@@ -674,6 +679,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Local TTS Human Score Entry Completion Report](evals/reports/voice_local_tts_human_score_entry_completion_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-ENTRY-COMPLETION-001 정량/정성 completion gate와 missing human scores blocker |
 | [Voice Local TTS Human Score Manual Scoring](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_MANUAL_SCORING.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-001 private HTML score sheet 기반 사람 청취 수동 채점 workspace |
 | [Voice Local TTS Human Score Manual Scoring Report](evals/reports/voice_local_tts_human_score_manual_scoring_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-001 정량/정성 manual scoring workspace gate와 pending human scores |
+| [Voice Local TTS Human Score Manual Scoring Runbook](docs/VOICE_LOCAL_TTS_HUMAN_SCORE_MANUAL_SCORING_RUNBOOK.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-RUNBOOK-001 사람 청취 수동 채점 실행 절차와 입력 대기 gate |
+| [Voice Local TTS Human Score Manual Scoring Runbook Report](evals/reports/voice_local_tts_human_score_manual_scoring_runbook_report.md) | HD-VOICE-LOCAL-TTS-HUMAN-SCORE-MANUAL-SCORING-RUNBOOK-001 정량/정성 runbook readiness와 zero external call 검증 |
 | [Voice STT/TTS Plan](docs/VOICE_STT_TTS_PLAN.md) | HD-VOICE-STT-TTS-PLAN-001 실제 음성 입출력 구현 전 provider, 개인정보, 비용, failure mode, eval gate |
 | [Voice STT/TTS Plan Report](evals/reports/voice_stt_tts_plan_report.md) | HD-VOICE-STT-TTS-PLAN-001 정량/정성 plan-only gate와 public-safe 검증 |
 | [Voice STT/TTS Contract](docs/VOICE_STT_TTS_CONTRACT.md) | HD-VOICE-STT-TTS-CONTRACT-001 provider 호출 없는 voice adapter/interface skeleton과 zero-call UI contract |
