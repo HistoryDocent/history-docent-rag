@@ -34,7 +34,6 @@ PUBLIC_SCAN_PATHS = (
     VOICE_DECISION_PATH,
 )
 FORBIDDEN_CLAIMS = (
-    "사람 청취 점수 입력 완료",
     "무료 로컬 TTS 최종 provider 확정",
     "Supertonic 3 음성 품질 우수 검증 완료",
     "실제 관광객 음성 품질 검증 완료",
@@ -173,7 +172,7 @@ def test_manual_scoring_runbook_accepts_completed_scores(tmp_path: Path) -> None
     assert report.summary.runbook_decision == "completed_scores_ready_for_decision"
 
 
-def test_manual_scoring_runbook_docs_record_current_ready_state() -> None:
+def test_manual_scoring_runbook_docs_record_current_completed_state() -> None:
     assert DOC_PATH.exists()
     assert REPORT_PATH.exists()
 
@@ -184,17 +183,18 @@ def test_manual_scoring_runbook_docs_record_current_ready_state() -> None:
     assert runbook.WORK_ID in report
     assert "private_audio_available_count | 5" in report
     assert "private_manual_score_sheet_available_count | 1" in report
-    assert "private_score_input_available_count | 0" in report
-    assert "completed_score_row_count | 0" in report
-    assert "pending_score_row_count | 30" in report
-    assert "user_action_required_count | 1" in report
+    assert "private_score_input_available_count | 1" in report
+    assert "completed_score_row_count | 30" in report
+    assert "pending_score_row_count | 0" in report
+    assert "user_action_required_count | 0" in report
+    assert "overall_score_avg | 5.000000" in report
     assert "external_provider_call_count | 0" in report
     assert "external_audio_transmission_count | 0" in report
     assert "human_score_public_detail_row_count | 0" in report
-    assert "runbook_decision | `ready_for_manual_score_input`" in report
-    assert "tts_manual_scoring_runbook_blockers=[" in report
+    assert "runbook_decision | `completed_scores_ready_for_decision`" in report
+    assert "tts_manual_scoring_runbook_blockers=[]" in report
     assert "External audit | PASS" in report
-    assert "score 미입력 상태에서는 사람 action required로 남긴다" in doc
+    assert "provider decision gate로 넘길 수 있다" in doc
 
 
 def test_manual_scoring_runbook_registered_and_public_safe() -> None:
@@ -207,7 +207,7 @@ def test_manual_scoring_runbook_registered_and_public_safe() -> None:
         assert Path(link).exists()
 
     assert "- [x] optional human TTS listening score manual scoring runbook" in todo
-    assert "- [ ] optional human TTS listening score manual scoring" in todo
+    assert "- [x] optional human TTS listening score manual scoring" in todo
     assert runbook.WORK_ID in ledger
     assert "voice_local_tts_human_score_manual_scoring_runbook" in ledger
 

@@ -516,13 +516,20 @@ def build_public_rows(
 
 def build_doc(report: TtsHumanScoreDecisionReport) -> str:
     summary = report.summary
+    decision_status_sentence = (
+        "demo review 후보로는 수락됐지만 최종 provider 확정이나 production 품질 보증으로 보지는 않는다."
+        if summary.provider_decision == "candidate_accepted_for_demo_review"
+        else "30건이 모두 채워지기 전에는 provider 후보를 채택하지 않는다."
+        if summary.pending_score_row_count
+        else "최종 provider 확정이나 production 품질 보증은 별도 gate다."
+    )
     return f"""# Voice Local TTS Human Score Decision
 
 ## 결론
 
 `{WORK_ID}`는 무료 로컬 TTS 후보를 사람 청취 점수로 채택, 보류, 탈락, 차단 중 하나로 판정하는 gate다.
 
-현재 decision은 `{summary.provider_decision}`이다. completed score가 `{summary.completed_score_row_count}`건이므로 30건이 모두 채워지기 전에는 최종 provider 확정으로 보지 않는다.
+현재 decision은 `{summary.provider_decision}`이다. completed score는 `{summary.completed_score_row_count}`건이다. {decision_status_sentence}
 
 ## Scope
 
@@ -607,13 +614,20 @@ def build_markdown(report: TtsHumanScoreDecisionReport) -> str:
     )
     failures = collect_decision_failures(report)
     blockers = collect_decision_blockers(report)
+    decision_status_sentence = (
+        "demo review 후보로는 수락됐지만 최종 provider 확정이나 production 품질 보증으로 보지는 않는다."
+        if summary.provider_decision == "candidate_accepted_for_demo_review"
+        else "30건이 모두 채워지기 전에는 provider 후보를 채택하지 않는다."
+        if summary.pending_score_row_count
+        else "최종 provider 확정이나 production 품질 보증은 별도 gate다."
+    )
     return f"""# Voice Local TTS Human Score Decision Report
 
 ## 결론
 
 `{WORK_ID}`는 무료 로컬 TTS 후보를 사람 청취 점수 기반으로 판정하는 gate다.
 
-현재 decision은 `{summary.provider_decision}`이다. completed score는 `{summary.completed_score_row_count}`건이므로 실제 음질 검증 완료나 최종 provider 확정을 주장하지 않는다.
+현재 decision은 `{summary.provider_decision}`이다. completed score는 `{summary.completed_score_row_count}`건이다. {decision_status_sentence}
 
 ## 실행 정보
 

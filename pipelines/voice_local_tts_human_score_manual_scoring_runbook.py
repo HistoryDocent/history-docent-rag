@@ -487,13 +487,18 @@ def build_public_rows(
 
 def build_doc(report: ManualScoringRunbookReport) -> str:
     summary = report.summary
+    runbook_status_sentence = (
+        "사람 청취 점수 입력이 완료되어 provider decision gate로 넘길 수 있다."
+        if summary.pending_score_row_count == 0
+        else "score 미입력 상태에서는 사람 action required로 남긴다."
+    )
     return f"""# Voice Local TTS Human Score Manual Scoring Runbook
 
 ## 결론
 
 `{WORK_ID}`는 무료 로컬 TTS 사람 청취 평가를 실제로 실행하기 위한 절차와 gate를 고정한다.
 
-현재 runbook decision은 `{summary.runbook_decision}`이다. 수동 채점 sheet와 private wav는 준비됐지만 completed score는 `{summary.completed_score_row_count}`건이다.
+현재 runbook decision은 `{summary.runbook_decision}`이다. completed score는 `{summary.completed_score_row_count}`건이다. {runbook_status_sentence}
 
 ## 실행 절차
 
@@ -556,8 +561,8 @@ def build_doc(report: ManualScoringRunbookReport) -> str:
 | --- | --- |
 | allowed | 수동 청취 평가 실행 절차와 gate를 고정했다. |
 | allowed | score 미입력 상태에서는 사람 action required로 남긴다. |
+| allowed | score 완료 시 completed_scores_ready_for_decision을 기록한다. |
 | allowed | public에는 aggregate와 runbook decision만 공개한다. |
-| forbidden | 사람 청취 점수 입력 완료 |
 | forbidden | 무료 로컬 TTS 최종 provider 확정 |
 | forbidden | Supertonic 3 음성 품질 우수 검증 완료 |
 | forbidden | 실제 관광객 음성 품질 검증 완료 |

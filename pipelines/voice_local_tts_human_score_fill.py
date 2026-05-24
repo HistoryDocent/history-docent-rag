@@ -570,13 +570,18 @@ def build_public_rows(
 
 def build_doc(report: TtsHumanScoreFillReport) -> str:
     summary = report.summary
+    score_status_sentence = (
+        "사람 청취 점수 입력이 완료되어 public aggregate가 생성됐다. 최종 provider 확정과 production 품질 보증은 별도 gate다."
+        if summary.pending_score_row_count == 0
+        else "실제 사람 청취 점수가 없으면 품질 검증 완료로 보지 않는다."
+    )
     return f"""# Voice Local TTS Human Score Fill
 
 ## 결론
 
 `{WORK_ID}`는 무료 로컬 TTS 청취 점수 입력과 public-safe 집계 기준을 만든다.
 
-실제 사람 청취 점수가 없으면 품질 검증 완료로 보지 않는다.
+{score_status_sentence}
 
 ## Scope
 
@@ -626,6 +631,7 @@ def build_doc(report: TtsHumanScoreFillReport) -> str:
 | allowed | 사람 청취 점수 입력 template과 schema를 만들었다. |
 | allowed | public에는 criterion aggregate만 공개한다. |
 | allowed | 점수 미입력 상태는 pending으로 기록한다. |
+| allowed | 점수 완료 시 aggregate를 provider decision gate 입력으로 사용한다. |
 | forbidden | 무료 로컬 TTS 최종 provider 확정 |
 | forbidden | Supertonic 3 음성 품질 우수 검증 완료 |
 | forbidden | 실제 관광객 음성 품질 검증 완료 |
@@ -641,13 +647,18 @@ def build_markdown(report: TtsHumanScoreFillReport) -> str:
         f"| {key} | {value} |" for key, value in report.qualitative_assessment.items()
     )
     failures = collect_score_fill_failures(report)
+    score_status_sentence = (
+        "사람 청취 점수 입력은 완료됐지만 최종 provider 확정과 production 품질 보증은 별도 gate다."
+        if summary.pending_score_row_count == 0
+        else "현재 public report는 실제 청취 점수 완료를 주장하지 않는다."
+    )
     return f"""# Voice Local TTS Human Score Fill Report
 
 ## 결론
 
 `{WORK_ID}`는 human listening score를 private에 입력하고 public aggregate만 공개하는 gate다.
 
-현재 public report는 실제 청취 점수 완료를 주장하지 않는다.
+{score_status_sentence}
 
 ## 실행 정보
 
@@ -744,16 +755,24 @@ tts_human_score_fill_failures={failures}
 
 def build_qualitative(report: TtsHumanScoreFillReport) -> dict[str, str]:
     summary = report.summary
+    score_status = (
+        "사람 청취 점수 30건이 입력됐고 aggregate는 provider decision gate 입력으로 사용할 수 있다."
+        if summary.pending_score_row_count == 0
+        else "점수가 모두 입력되기 전에는 TTS 품질 검증 완료로 표현하지 않는다."
+    )
+    external_audit = (
+        "사람 점수 완료 후에도 최종 provider 확정 claim을 분리한 판단은 타당하다."
+        if summary.pending_score_row_count == 0
+        else "human score 없이 최종 provider 확정을 금지한 판단은 타당하다."
+    )
     return {
         "scope": "사람 청취 점수 입력과 public aggregate 구조를 만들었다.",
-        "score_status": (
-            "점수가 모두 입력되기 전에는 TTS 품질 검증 완료로 표현하지 않는다."
-        ),
+        "score_status": score_status,
         "privacy": "개별 reviewer score, raw audio, raw script text, private path를 public에 내보내지 않는다.",
         "cost": "외부 STT/TTS provider 호출과 외부 음성 전송은 0이다.",
         "data_mart": "private detail grain과 public aggregate grain을 분리했다.",
         "portfolio": "무료 로컬 TTS 후보를 감각 평가까지 연결할 준비 evidence로 사용한다.",
-        "external_audit": "human score 없이 최종 provider 확정을 금지한 판단은 타당하다.",
+        "external_audit": external_audit,
         "decision": summary.score_fill_decision,
     }
 

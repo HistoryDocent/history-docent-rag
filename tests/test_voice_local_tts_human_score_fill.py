@@ -158,7 +158,7 @@ def test_human_score_fill_runner_aggregates_completed_private_scores(tmp_path: P
     assert all(row.score_avg == 4.0 for row in report.aggregates)
 
 
-def test_human_score_fill_docs_record_pending_state() -> None:
+def test_human_score_fill_docs_record_completed_state() -> None:
     assert DOC_PATH.exists()
     assert REPORT_PATH.exists()
 
@@ -170,9 +170,10 @@ def test_human_score_fill_docs_record_pending_state() -> None:
     assert "expected_private_score_row_count | 30" in report
     assert "private_template_created_count | 1" in report
     assert "private_template_row_count | 30" in report
-    assert "private_score_input_available_count | 0" in report
-    assert "completed_score_row_count | 0" in report
-    assert "pending_score_row_count | 30" in report
+    assert "private_score_input_available_count | 1" in report
+    assert "completed_score_row_count | 30" in report
+    assert "pending_score_row_count | 0" in report
+    assert "overall_score_avg | 5.000000" in report
     assert "aggregate_public_row_count | 6" in report
     assert "external_provider_call_count | 0" in report
     assert "raw_audio_public_artifact_count | 0" in report
@@ -180,9 +181,12 @@ def test_human_score_fill_docs_record_pending_state() -> None:
     assert "raw_script_public_artifact_count | 0" in report
     assert "human_score_public_detail_row_count | 0" in report
     assert "public_private_path_leakage_count | 0" in report
-    assert "score_fill_decision | `pending_private_human_scores`" in report
+    assert (
+        "score_fill_decision | "
+        "`human_scores_aggregated_pending_provider_decision`"
+    ) in report
     assert "External audit | PASS" in report
-    assert "실제 사람 청취 점수가 없으면 품질 검증 완료로 보지 않는다" in doc
+    assert "provider decision gate 입력" in doc
 
 
 def test_human_score_fill_registered_and_public_safe() -> None:
@@ -198,7 +202,7 @@ def test_human_score_fill_registered_and_public_safe() -> None:
     assert "- [x] optional human TTS listening score collection workflow" in todo
     assert "- [x] optional human TTS listening score entry tool" in todo
     assert "- [x] optional human TTS listening score entry completion verification" in todo
-    assert "- [ ] optional human TTS listening score manual scoring" in todo
+    assert "- [x] optional human TTS listening score manual scoring" in todo
     assert score_fill.WORK_ID in ledger
     assert "voice_local_tts_human_score_fill" in ledger
 

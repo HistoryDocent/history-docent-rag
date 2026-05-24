@@ -629,13 +629,18 @@ def build_public_rows(
 
 def build_doc(report: TtsHumanManualScoringReport) -> str:
     summary = report.summary
+    score_status_sentence = (
+        "사람 청취 점수 30건이 입력됐고 provider decision gate로 넘길 수 있다."
+        if summary.pending_score_row_count == 0
+        else "사람이 실제로 듣고 30건을 채우기 전에는 품질 검증 완료로 보지 않는다."
+    )
     return f"""# Voice Local TTS Human Score Manual Scoring
 
 ## 결론
 
 `{WORK_ID}`는 무료 로컬 TTS 사람 청취 점수 수동 입력을 위한 private score sheet와 검증 gate를 만든다.
 
-현재 completed score는 `{summary.completed_score_row_count}`건이다. 사람이 실제로 듣고 30건을 채우기 전에는 품질 검증 완료로 보지 않는다.
+현재 completed score는 `{summary.completed_score_row_count}`건이다. {score_status_sentence}
 
 ## Scope
 
@@ -707,13 +712,18 @@ def build_markdown(report: TtsHumanManualScoringReport) -> str:
     )
     failures = collect_manual_scoring_failures(report)
     blockers = collect_manual_scoring_blockers(report)
+    score_status_sentence = (
+        "사람 청취 점수 입력은 완료됐지만 최종 provider 확정과 production 품질 보증은 별도 gate다."
+        if summary.pending_score_row_count == 0
+        else "실제 점수 입력 전이므로 TTS 품질 검증 완료로 표현하지 않는다."
+    )
     return f"""# Voice Local TTS Human Score Manual Scoring Report
 
 ## 결론
 
 `{WORK_ID}`는 human listening score를 직접 입력하기 위한 private scoring workspace gate다.
 
-현재 completed score가 `{summary.completed_score_row_count}`건이므로 실제 음질 검증 완료를 주장하지 않는다.
+현재 completed score가 `{summary.completed_score_row_count}`건이다. {score_status_sentence}
 
 ## 실행 정보
 

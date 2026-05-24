@@ -178,7 +178,7 @@ def test_human_score_decision_rejects_low_scores(tmp_path: Path) -> None:
     assert report.summary.provider_decision == "candidate_rejected_by_human_scores"
 
 
-def test_human_score_decision_docs_record_current_blocked_state() -> None:
+def test_human_score_decision_docs_record_current_accepted_state() -> None:
     assert DOC_PATH.exists()
     assert REPORT_PATH.exists()
 
@@ -188,18 +188,19 @@ def test_human_score_decision_docs_record_current_blocked_state() -> None:
     assert decision.WORK_ID in doc
     assert decision.WORK_ID in report
     assert "private_audio_available_count | 5" in report
-    assert "private_score_input_available_count | 0" in report
-    assert "completed_score_row_count | 0" in report
-    assert "pending_score_row_count | 30" in report
+    assert "private_score_input_available_count | 1" in report
+    assert "completed_score_row_count | 30" in report
+    assert "pending_score_row_count | 0" in report
+    assert "overall_score_avg | 5.000000" in report
     assert "aggregate_public_row_count | 6" in report
     assert "provider_decision_public_row_count | 1" in report
     assert "external_provider_call_count | 0" in report
     assert "external_audio_transmission_count | 0" in report
     assert "human_score_public_detail_row_count | 0" in report
-    assert "provider_decision | `blocked_missing_human_scores`" in report
-    assert "tts_human_score_decision_blockers=[" in report
+    assert "provider_decision | `candidate_accepted_for_demo_review`" in report
+    assert "tts_human_score_decision_blockers=[]" in report
     assert "External audit | PASS" in report
-    assert "최종 provider 확정으로 보지 않는다" in doc
+    assert "demo review 후보로는 수락" in doc
 
 
 def test_human_score_decision_registered_and_public_safe() -> None:
@@ -212,7 +213,7 @@ def test_human_score_decision_registered_and_public_safe() -> None:
         assert Path(link).exists()
 
     assert "- [x] optional human TTS listening score provider decision gate" in todo
-    assert "- [ ] optional human TTS listening score manual scoring" in todo
+    assert "- [x] optional human TTS listening score manual scoring" in todo
     assert decision.WORK_ID in ledger
     assert "voice_local_tts_human_score_decision" in ledger
 

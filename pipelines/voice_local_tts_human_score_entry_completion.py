@@ -444,13 +444,18 @@ def build_public_rows(
 
 def build_doc(report: TtsHumanScoreEntryCompletionReport) -> str:
     summary = report.summary
+    completion_status_sentence = (
+        "사람 청취 점수 30건이 모두 채워졌고 provider decision gate로 넘길 수 있다."
+        if summary.pending_score_row_count == 0
+        else "30건이 모두 채워지기 전에는 품질 검증 완료로 보지 않는다."
+    )
     return f"""# Voice Local TTS Human Score Entry Completion
 
 ## 결론
 
 `{WORK_ID}`는 무료 로컬 TTS 사람 청취 점수 입력 완료 여부를 검증한다.
 
-현재 completed score는 `{summary.completed_score_row_count}`건이다. 30건이 모두 채워지기 전에는 품질 검증 완료로 보지 않는다.
+현재 completed score는 `{summary.completed_score_row_count}`건이다. {completion_status_sentence}
 
 ## Scope
 
@@ -521,13 +526,18 @@ def build_markdown(report: TtsHumanScoreEntryCompletionReport) -> str:
     )
     failures = collect_completion_failures(report)
     blockers = collect_completion_blockers(report)
+    completion_status_sentence = (
+        "사람 청취 점수 입력은 완료됐지만 최종 provider 확정과 production 품질 보증은 별도 gate다."
+        if summary.pending_score_row_count == 0
+        else "30건이 모두 채워지기 전에는 품질 검증 완료로 보지 않는다."
+    )
     return f"""# Voice Local TTS Human Score Entry Completion Report
 
 ## 결론
 
 `{WORK_ID}`는 human listening score 입력 완료 여부를 검증하는 gate다.
 
-현재 completed score가 `{summary.completed_score_row_count}`건이므로 실제 음질 검증 완료를 주장하지 않는다.
+현재 completed score가 `{summary.completed_score_row_count}`건이다. {completion_status_sentence}
 
 ## 실행 정보
 

@@ -4,7 +4,7 @@
 
 `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-ENTRY-COMPLETION-001`는 무료 로컬 TTS 사람 청취 점수 입력 완료 여부를 검증한다.
 
-현재 completed score는 `0`건이다. 30건이 모두 채워지기 전에는 품질 검증 완료로 보지 않는다.
+현재 completed score는 `30`건이다. 사람 청취 점수 30건이 모두 채워졌고 provider decision gate로 넘길 수 있다.
 
 ## Scope
 
@@ -28,22 +28,22 @@
 | private_audio_expected_count | 5 |
 | private_audio_available_count | 5 |
 | private_audio_missing_count | 0 |
-| private_score_input_available_count | 0 |
-| private_score_input_row_count | 0 |
-| valid_private_score_row_count | 0 |
+| private_score_input_available_count | 1 |
+| private_score_input_row_count | 30 |
+| valid_private_score_row_count | 30 |
 | invalid_private_score_row_count | 0 |
-| completed_score_row_count | 0 |
-| pending_score_row_count | 30 |
-| completed_script_count | 0 |
-| completed_script_rate | 0.000000 |
-| reviewer_count | 0 |
+| completed_score_row_count | 30 |
+| pending_score_row_count | 0 |
+| completed_script_count | 5 |
+| completed_script_rate | 1.000000 |
+| reviewer_count | 1 |
 | aggregate_public_row_count | 6 |
 | external_provider_call_count | 0 |
 | external_audio_transmission_count | 0 |
 | raw_audio_public_artifact_count | 0 |
 | raw_transcript_public_artifact_count | 0 |
 | raw_script_public_artifact_count | 0 |
-| score_completion_decision | `blocked_missing_human_scores` |
+| score_completion_decision | `completed_human_scores_ready_for_provider_decision` |
 
 ## Data Mart Grain
 

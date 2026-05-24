@@ -163,7 +163,7 @@ def test_manual_scoring_runner_accepts_completed_private_scores(
     assert all(row.score_avg == 4.0 for row in report.aggregates)
 
 
-def test_manual_scoring_docs_record_ready_state() -> None:
+def test_manual_scoring_docs_record_completed_state() -> None:
     assert DOC_PATH.exists()
     assert REPORT_PATH.exists()
 
@@ -175,17 +175,21 @@ def test_manual_scoring_docs_record_ready_state() -> None:
     assert "private_manual_score_sheet_created_count | 1" in report
     assert "private_manual_score_draft_created_count | 1" in report
     assert "private_manual_score_draft_row_count | 30" in report
-    assert "private_score_input_available_count | 0" in report
-    assert "completed_score_row_count | 0" in report
-    assert "pending_score_row_count | 30" in report
+    assert "private_score_input_available_count | 1" in report
+    assert "completed_score_row_count | 30" in report
+    assert "pending_score_row_count | 0" in report
+    assert "overall_score_avg | 5.000000" in report
     assert "aggregate_public_row_count | 6" in report
     assert "external_provider_call_count | 0" in report
     assert "external_audio_transmission_count | 0" in report
     assert "human_score_public_detail_row_count | 0" in report
-    assert "manual_scoring_decision | `ready_for_human_manual_scoring`" in report
-    assert "awaiting_human_manual_scoring" in report
+    assert (
+        "manual_scoring_decision | "
+        "`human_manual_scores_completed_pending_provider_decision`"
+    ) in report
+    assert "tts_human_manual_scoring_blockers=[]" in report
     assert "External audit | PASS" in report
-    assert "품질 검증 완료로 보지 않는다" in doc
+    assert "provider decision gate로 넘길 수 있다" in doc
 
 
 def test_manual_scoring_registered_and_public_safe() -> None:
@@ -198,7 +202,7 @@ def test_manual_scoring_registered_and_public_safe() -> None:
         assert Path(link).exists()
 
     assert "- [x] optional human TTS listening score manual scoring workspace" in todo
-    assert "- [ ] optional human TTS listening score manual scoring" in todo
+    assert "- [x] optional human TTS listening score manual scoring" in todo
     assert manual.WORK_ID in ledger
     assert "voice_local_tts_human_score_manual_scoring" in ledger
 

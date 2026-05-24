@@ -4,7 +4,7 @@
 
 `HD-VOICE-LOCAL-TTS-HUMAN-SCORE-DECISION-001`는 무료 로컬 TTS 후보를 사람 청취 점수로 채택, 보류, 탈락, 차단 중 하나로 판정하는 gate다.
 
-현재 decision은 `blocked_missing_human_scores`이다. completed score가 `0`건이므로 30건이 모두 채워지기 전에는 최종 provider 확정으로 보지 않는다.
+현재 decision은 `candidate_accepted_for_demo_review`이다. completed score는 `30`건이다. demo review 후보로는 수락됐지만 최종 provider 확정이나 production 품질 보증으로 보지는 않는다.
 
 ## Scope
 
@@ -28,18 +28,18 @@
 | private_audio_expected_count | 5 |
 | private_audio_available_count | 5 |
 | private_audio_missing_count | 0 |
-| private_score_input_available_count | 0 |
-| private_score_input_row_count | 0 |
-| valid_private_score_row_count | 0 |
+| private_score_input_available_count | 1 |
+| private_score_input_row_count | 30 |
+| valid_private_score_row_count | 30 |
 | invalid_private_score_row_count | 0 |
-| completed_score_row_count | 0 |
-| pending_score_row_count | 30 |
-| completed_script_count | 0 |
-| completed_script_rate | 0.000000 |
-| reviewer_count | 0 |
+| completed_score_row_count | 30 |
+| pending_score_row_count | 0 |
+| completed_script_count | 5 |
+| completed_script_rate | 1.000000 |
+| reviewer_count | 1 |
 | aggregate_public_row_count | 6 |
 | provider_decision_public_row_count | 1 |
-| overall_score_avg |  |
+| overall_score_avg | 5.000000 |
 | criterion_below_accept_threshold_count | 0 |
 | criterion_below_reject_threshold_count | 0 |
 | external_provider_call_count | 0 |
@@ -47,7 +47,7 @@
 | raw_audio_public_artifact_count | 0 |
 | raw_transcript_public_artifact_count | 0 |
 | human_score_public_detail_row_count | 0 |
-| provider_decision | `blocked_missing_human_scores` |
+| provider_decision | `candidate_accepted_for_demo_review` |
 
 ## Decision Threshold
 
