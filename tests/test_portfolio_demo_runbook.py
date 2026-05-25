@@ -51,6 +51,8 @@ def test_portfolio_demo_runbook_records_claim_boundary() -> None:
         "HyDE로 최종 검색 성능 개선",
         "Solar Pro 3 답변 품질 최종 개선",
         "음성 관광 앱 완성",
+        "STT/TTS production 품질 검증 완료",
+        "실제 관광객 음성 품질 검증 완료",
         "전체 도서 데이터 공개",
     ]
     for claim in forbidden_claims:
@@ -68,7 +70,7 @@ def test_portfolio_demo_runbook_report_records_gates() -> None:
     assert "demo_step_count | 6" in report
     assert "runbook_command_block_count | 8" in report
     assert "required_artifact_link_count | 3" in report
-    assert "forbidden_claim_count | 8" in report
+    assert "forbidden_claim_count | 10" in report
     assert "live_solar_call_count | 0" in report
     assert "retrieval_execution_count | 0" in report
     assert "private_corpus_required_count | 0" in report

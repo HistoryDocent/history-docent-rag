@@ -15,7 +15,8 @@
 | `/api/v1/chat` contract-only 응답 확인 | 전체 chunk text 공개 |
 | frontend fixture mode 확인 | private vector index 공개 |
 | frontend backend mode smoke 확인 | production 배포 claim |
-| voice UI visual QA screenshot 확인 | STT/TTS 품질 검증 claim |
+| voice UI visual QA screenshot 확인 | STT/TTS production 품질 검증 claim |
+| local voice demo stack decision 확인 | 실제 관광객 음성 품질 검증 claim |
 
 ## 준비 기준
 
@@ -149,9 +150,10 @@ npm run smoke:contract
 1. README 첫 화면에서 문제 정의와 현재 stack을 설명한다.
 2. `docs/FINAL_ABLATION_REPORT.md`에서 채택, 보류, 기각을 설명한다.
 3. `docs/API_RESPONSE_SAMPLE.md`에서 `/api/v1/chat` 응답 계약을 설명한다.
-4. contract-only API request 또는 `npm run smoke:contract`를 실행한다.
-5. voice UI 화면에서 `spoken_answer`, citation drawer, no-answer 상태를 보여준다.
-6. 마지막에 금지 claim을 먼저 말한다.
+4. `docs/VOICE_DEMO_STACK_DECISION.md`에서 무료 로컬 STT/TTS demo 후보와 production final 미확정 경계를 설명한다.
+5. contract-only API request 또는 `npm run smoke:contract`를 실행한다.
+6. voice UI 화면에서 `spoken_answer`, citation drawer, no-answer 상태를 보여준다.
+7. 마지막에 금지 claim을 먼저 말한다.
 
 면접에서 강조할 문장:
 
@@ -168,6 +170,8 @@ npm run smoke:contract
 - HyDE로 최종 검색 성능 개선
 - Solar Pro 3 답변 품질 최종 개선
 - 음성 관광 앱 완성
+- STT/TTS production 품질 검증 완료
+- 실제 관광객 음성 품질 검증 완료
 - 전체 도서 데이터 공개
 
 ## Troubleshooting
@@ -202,6 +206,6 @@ npm run smoke:contract
 
 ## 다음 작업
 
-다음 작업 후보는 optional voice STT/TTS provider benchmark readiness다.
+다음 작업 후보는 local voice demo playback smoke다.
 
-public repository audit refresh, portfolio submission rehearsal, voice STT/TTS planning, voice STT/TTS contract skeleton, provider benchmark plan은 완료됐다. 후속 제품 개발을 이어간다면 provider 실제 호출 전 public-safe fixture, config skeleton, CUDA runtime preflight, pricing/privacy source recheck field를 먼저 만든다.
+public repository audit refresh, portfolio submission rehearsal, voice STT/TTS planning, voice STT/TTS contract skeleton, provider benchmark plan, local voice demo stack decision은 완료됐다. 후속 제품 개발을 이어간다면 local STT/TTS demo 후보를 production claim 없이 한 번의 playback smoke로 검증한다.

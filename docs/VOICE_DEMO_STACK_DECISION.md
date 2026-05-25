@@ -1,0 +1,89 @@
+# Voice Demo Stack Decision
+
+## 결론
+
+`HD-VOICE-DEMO-STACK-DECISION-001`의 결론은 무료 로컬 음성 데모 스택을 다음처럼 정리하는 것이다.
+
+- STT demo 후보: `local_faster_whisper_small_cuda`
+- TTS demo review 후보: `local_sherpa_onnx_supertonic3_ko`
+- TTS production final provider: 아직 확정하지 않음
+- managed provider: Azure, Google, AWS는 optional paid comparison only
+
+근거는 `faster-whisper small CUDA`의 local STT 비교 결과와 `sherpa-onnx Supertonic 3 Korean`의 private wav smoke, 자동 proxy 4/5, 사용자 제공 사람 청취 점수 30/30 평균 5.0이다. 단, 이 결과는 1인 청취 기반 demo review 후보 수락이며 실제 관광객 검증, production 품질 보증, 최종 provider 확정이 아니다.
+
+## Decision
+
+| item | decision | 근거 | claim boundary |
+| --- | --- | --- | --- |
+| STT | `local_faster_whisper_small_cuda`를 demo primary 후보로 유지 | 같은 5개 private wav fixture에서 기존 local Whisper보다 현재 evidence가 좋음 | demo evidence only |
+| TTS | `local_sherpa_onnx_supertonic3_ko`를 demo review 후보로 수락 | private wav 5개, 자동 audio sanity 통과, 자동 proxy 4/5, 사람 청취 점수 30/30 평균 5.0 | demo review candidate only |
+| TTS final provider | 미확정 | 청취자는 1명이고 실제 관광객 환경 검증이 없음 | no production final claim |
+| Managed provider | optional paid comparison only | 비용, credential, 외부 음성 전송, retention 확인 필요 | explicit approval only |
+
+## 정량 요약
+
+| metric | value |
+| --- | ---: |
+| primary_local_stt_candidate_count | 1 |
+| tts_demo_candidate_count | 1 |
+| tts_final_provider_count | 0 |
+| managed_provider_default_count | 0 |
+| optional_paid_provider_candidate_count | 3 |
+| local_tts_private_audio_available_count | 5 |
+| tts_automated_proxy_pass_count | 4 |
+| tts_automated_proxy_total_count | 5 |
+| tts_human_score_completed_count | 30 |
+| tts_human_score_expected_count | 30 |
+| tts_human_score_overall_avg | 5.000000 |
+| tts_human_score_reviewer_count | 1 |
+| human_score_public_detail_row_count | 0 |
+| external_provider_call_count | 0 |
+| external_audio_transmission_count | 0 |
+| live_stt_call_count | 0 |
+| live_tts_call_count | 0 |
+| live_solar_call_count | 0 |
+| raw_audio_public_artifact_count | 0 |
+| raw_transcript_public_artifact_count | 0 |
+| public_private_path_leakage_count | 0 |
+| public_secret_like_leakage_count | 0 |
+
+## 담당 관점 회의 결과
+
+| 담당 관점 | 판단 |
+| --- | --- |
+| 제품 | 취업 포트폴리오 demo에서는 비용 없이 반복 실행 가능한 local-first 음성 스택이 적합하다. |
+| 음성 ML | `faster-whisper small CUDA`는 현재 STT 후보로 유지한다. TTS는 `sherpa-onnx Supertonic 3 Korean`을 데모 후보로 올리되 최종 provider로 확정하지 않는다. |
+| 아키텍처 | `/api/v1/chat`는 text-first RAG 계약을 유지하고, voice adapter가 STT transcript와 TTS playback을 감싼다. |
+| 보안 | 기본 경로의 외부 provider 호출과 외부 음성 전송은 0이어야 한다. private wav와 개별 점수는 공개하지 않는다. |
+| Evaluation | 1인 청취 점수는 강한 demo evidence지만 production 품질 검증은 아니다. 추후 다중 청취자 또는 실제 관광 소음 환경 평가가 필요하다. |
+| Data warehouse | public fact는 `work_id + provider_candidate_id + modality + metric_family + claim_boundary` grain으로 유지하고, private score detail은 public artifact에서 제외한다. |
+| 외부 감사 | 이전 `blocked_missing_human_scores`는 당시 기준으로 타당했고, 이번 판단은 사람 점수 입력 이후의 최신 decision layer로 분리한 점이 타당하다. |
+
+## Claim Boundary
+
+허용:
+
+- 무료 로컬 음성 demo stack 후보를 정리했다.
+- `local_faster_whisper_small_cuda`를 현재 demo evidence 기준 STT primary 후보로 유지한다.
+- `local_sherpa_onnx_supertonic3_ko`를 사람 청취 점수 기반 demo review 후보로 수락했다.
+- 외부 STT/TTS provider 호출과 외부 음성 전송은 0으로 유지했다.
+
+금지:
+
+- 무료 로컬 TTS 최종 provider 확정
+- Supertonic 3 음성 품질 우수 production 검증 완료
+- 실제 관광객 음성 품질 검증 완료
+- production 음성 관광 앱 완성
+- Azure/Google/AWS보다 local TTS가 품질 우수하다는 주장
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-DEMO-PLAYBACK-SMOKE-001` |
+| `depends_on` | `HD-VOICE-DEMO-STACK-DECISION-001` |
+| `scope` | local STT/TTS demo 후보를 실제 demo flow에서 한 번에 확인하는 playback smoke를 만든다. production provider 확정 없이 demo path만 검증한다. |
+| `acceptance_tests` | local STT candidate 1, TTS demo candidate 1, external provider call 0, external audio transmission 0, raw audio public artifact 0, human score detail public row 0, production claim 0 |
+| `risk_level` | Medium |
+| `rollback_plan` | demo stack/playback smoke 관련 docs, report, test만 revert한다. |
+

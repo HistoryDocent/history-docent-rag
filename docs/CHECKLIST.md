@@ -1328,3 +1328,24 @@
 - [x] raw audio/transcript public artifact count 0
 - [x] public private path/secret-like/raw payload leakage 0
 - [x] TTS fallback을 final provider로 표현하지 않음
+
+## Voice Demo Stack Decision Gate
+
+- [x] work id `HD-VOICE-DEMO-STACK-DECISION-001`
+- [x] voice demo stack decision document count 1
+- [x] voice demo stack decision report count 1
+- [x] voice demo stack decision test count 1
+- [x] primary local STT candidate count 1
+- [x] TTS demo candidate count 1
+- [x] TTS final provider count 0
+- [x] managed provider default count 0
+- [x] optional paid provider candidate count 3
+- [x] TTS human score completed count 30
+- [x] TTS human score overall average 5.000000
+- [x] human score public detail row count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] raw audio/transcript public artifact count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] production voice claim count 0
+- [x] TTS final provider로 표현하지 않음

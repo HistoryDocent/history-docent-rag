@@ -100,11 +100,12 @@
 - local TTS human score entry에서 private score 입력 guide와 30행 draft를 만들고, 실제 score 미입력 상태는 pending manual entry로 남김
 - local TTS human score entry completion에서 private score 입력 완료 여부를 검증하고, 현재 실제 score 미입력 상태를 missing human scores blocker로 남김
 - local TTS human score manual scoring workspace에서 private HTML score sheet와 draft를 만들고, 실제 score 미입력 상태는 ready_for_human_manual_scoring으로 남김
-- local TTS human score provider decision gate에서 score 30행 미완료 상태를 `blocked_missing_human_scores`로 기록하고, TTS 후보 채택을 차단함
+- local TTS human score provider decision gate에서 score 30행 완료와 `candidate_accepted_for_demo_review`를 기록하고, production final provider claim은 별도 gate로 분리함
 - local TTS human score manual scoring runbook에서 private score sheet와 5개 wav 준비 상태, score 입력 대기 상태, 외부 호출 0을 기록하고 사람이 직접 채점해야 함을 명확히 함
 - local TTS automated proxy evaluation에서 5개 private wav를 faster-whisper CUDA로 round-trip 전사했고, 자동 proxy threshold는 4/5 통과라서 사람 청취 점수 필요성을 유지함
 - local free voice stack lock에서 `faster-whisper small CUDA`는 primary STT 후보로 고정하고, TTS는 final provider 0 상태로 차단하며 managed provider는 optional paid comparison으로 유지함
 - local voice runtime stack alignment에서 stack lock의 `local_faster_whisper_small_cuda`를 실제 runtime/API provider id와 정렬하고, TTS fallback은 final provider가 아님을 명시함
+- local voice demo stack decision에서 사람 청취 30/30 평균 5.0을 반영해 `sherpa-onnx Supertonic 3 Korean`을 TTS demo review 후보로 수락하되, TTS final provider와 실제 관광객 음성 품질 검증은 아직 주장하지 않음
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

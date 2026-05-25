@@ -13,7 +13,11 @@ STT/TTS 기본 전략을 무료 로컬 provider 우선으로 변경했다. manag
 | `local_first_strategy_document_count` | 1 |
 | `local_first_strategy_report_count` | 1 |
 | `primary_local_stt_candidate_count` | 1 |
-| `primary_local_tts_candidate_count` | 1 |
+| `primary_local_tts_candidate_count` | 0 |
+| `tts_demo_candidate_count` | 1 |
+| `tts_human_score_completed_count` | 30 |
+| `tts_human_score_overall_avg` | 5.000000 |
+| `tts_human_score_provider_decision` | candidate_accepted_for_demo_review |
 | `secondary_local_candidate_count` | 1 |
 | `optional_local_license_review_candidate_count` | 1 |
 | `optional_paid_managed_provider_count` | 3 |
@@ -38,7 +42,7 @@ STT/TTS 기본 전략을 무료 로컬 provider 우선으로 변경했다. manag
 | 개인정보 | 기본 external audio transmission을 0으로 둘 수 있어 managed-first보다 안전하다. |
 | 포트폴리오 설명력 | RTX 4080 SUPER와 local CUDA 실험을 활용한 엔지니어링 메시지가 강하다. |
 | 비용 통제 | 기본 provider에 cloud billing과 credential이 필요하지 않다. |
-| 기술 리스크 | TTS 품질은 아직 검증되지 않았으므로 `MeloTTS Korean` smoke가 다음 gate다. |
+| 기술 리스크 | TTS demo review 후보는 수락됐지만 최종 provider와 production 품질은 아직 검증되지 않았다. |
 | 문서 정합성 | Azure 문서는 삭제하지 않고 optional paid comparison으로 격하해야 한다. |
 
 ## Data Mart Grain
@@ -68,4 +72,4 @@ STT/TTS 기본 전략을 무료 로컬 provider 우선으로 변경했다. manag
 
 PASS.
 
-이번 변경은 기존 실험 결과를 뒤집는 것이 아니라 다음 실행 우선순위를 정정하는 작업이다. Azure 관련 gate는 비용/외부 전송이 필요한 후보를 통제한 기록으로 보관하고, 기본 구현은 무료 로컬 STT/TTS로 진행하는 것이 맞다.
+이번 변경은 기존 실험 결과를 뒤집는 것이 아니라 다음 실행 우선순위를 정정하는 작업이다. Azure 관련 gate는 비용/외부 전송이 필요한 후보를 통제한 기록으로 보관하고, 기본 구현은 무료 로컬 STT/TTS로 진행하는 것이 맞다. 사람 청취 점수 30/30 평균 5.0은 `local_sherpa_onnx_supertonic3_ko`를 demo review 후보로 올리는 근거지만 production final provider 확정 근거는 아니다.
