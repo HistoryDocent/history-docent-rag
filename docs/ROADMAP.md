@@ -110,6 +110,7 @@
 - local voice API route smoke에서 `POST /api/v1/voice/local-runtime`의 기본 비활성화, 명시 local flag contract response, validation reject, external provider call 0을 검증함
 - portfolio demo runbook refresh에서 최신 local voice playback/route smoke를 제출용 demo 순서와 allowed/forbidden claim에 반영함
 - public repository audit refresh v2에서 최신 voice runbook 기준 README 링크, 산출물, 금지 claim, public-safe scan을 제출 직전 기준으로 재검증함
+- portfolio final package index에서 제출자가 열 문서, evidence map, 면접 설명 순서, 금지 claim을 한 화면에 정리함
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

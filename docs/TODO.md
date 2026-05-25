@@ -200,7 +200,8 @@
 - [x] optional local voice API route smoke
 - [x] optional local voice end-to-end demo runbook refresh
 - [x] optional public repository audit refresh v2 after voice runbook
-- [ ] optional portfolio final package index
+- [x] optional portfolio final package index
+- [ ] optional README landing polish
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)

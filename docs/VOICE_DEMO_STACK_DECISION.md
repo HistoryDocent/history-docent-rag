@@ -126,7 +126,18 @@
 | --- | --- |
 | `id` | `HD-PORTFOLIO-FINAL-PACKAGE-INDEX-001` |
 | `depends_on` | `HD-SUBMISSION-REFRESH-AUDIT-V2-001` |
-| `scope` | README, final ablation, demo runbook, voice evidence, forbidden claim을 한 화면에서 따라갈 수 있는 제출용 index를 정리한다. |
+| `status` | completed |
+| `scope` | README, final ablation, demo runbook, voice evidence, forbidden claim을 한 화면에서 따라갈 수 있는 제출용 index를 정리했다. |
 | `acceptance_tests` | final index document count 1, required link count, forbidden claim section exists, private path/secret/raw payload leakage 0, production success claim 0 |
+| `evidence` | `docs/PORTFOLIO_FINAL_PACKAGE_INDEX.md`, `evals/reports/portfolio_final_package_index_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-README-LANDING-POLISH-001` |
+| `depends_on` | `HD-PORTFOLIO-FINAL-PACKAGE-INDEX-001` |
+| `scope` | README 첫 화면을 채용 담당자가 60초 안에 읽을 수 있도록 더 짧게 재배치한다. |
+| `acceptance_tests` | top summary under 1 screen, final package index linked, forbidden claim unchanged, private path/secret leakage 0, production success claim 0 |
 | `risk_level` | Low |
-| `rollback_plan` | final package index 문서와 테스트만 revert한다. |
+| `rollback_plan` | README와 관련 테스트만 revert한다. |
