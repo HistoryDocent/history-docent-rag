@@ -196,3 +196,25 @@
 | `acceptance_tests` | explicit user approval, pre-push status clean, push execution success, post-push status clean, remote branch updated |
 | `risk_level` | Low |
 | `rollback_plan` | push 후 문제 발생 시 새 revert commit을 별도 승인 후 만든다. |
+
+## 후속 작업 결과
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-LOCAL-WHISPERCPP-DEPLOYMENT-RETRY-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-DEPLOYMENT-SMOKE-001` |
+| `status` | completed |
+| `scope` | `whisper.cpp` runtime/model/CUDA 상태를 재점검했고, runtime/model 부재 blocker를 유지했다. |
+| `acceptance_tests` | runtime available 0, model file available 0, local STT execution 0, install/download 0, external provider call 0, push execution 0 |
+| `evidence` | `docs/VOICE_LOCAL_WHISPERCPP_DEPLOYMENT_RETRY.md`, `evals/reports/voice_local_whispercpp_deployment_retry_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-APPROVAL-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-DEPLOYMENT-RETRY-001` |
+| `scope` | `whisper.cpp` runtime build와 `ggml` model 다운로드를 진행할지 승인 기준을 먼저 고정한다. |
+| `acceptance_tests` | install/build/download 승인 문구, 예상 디스크 사용량, source URL, checksum 또는 release provenance, CUDA build option, public repo binary/model 추적 0 |
+| `risk_level` | Medium |
+| `rollback_plan` | 생성된 runtime/model 파일과 임시 build artifact를 별도 승인 후 삭제한다. |

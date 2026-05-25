@@ -1591,3 +1591,25 @@
 - [x] public raw audio/transcript leakage count 0
 - [x] production success claim count 0
 - [x] production voice app claim count 0
+
+## Voice Local whisper.cpp Deployment Retry Gate
+
+- [x] work id `HD-VOICE-LOCAL-WHISPERCPP-DEPLOYMENT-RETRY-001`
+- [x] retry document count 1
+- [x] retry report count 1
+- [x] regression test file count 1
+- [x] prior smoke dependency pass count 1
+- [x] path runtime command probe count 2
+- [x] local runtime candidate path count 4
+- [x] whisper_cpp_runtime_available_count 0
+- [x] whisper_cpp_model_file_available_count 0
+- [x] local_cuda_available_count 1
+- [x] local_stt_execution_count 0
+- [x] package install attempted count 0
+- [x] model download attempted count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] push command execution count 0
+- [x] public private path leakage count 0
+- [x] public secret-like leakage count 0
+- [x] 기본 STT 후보를 `whisper.cpp`로 변경하지 않음

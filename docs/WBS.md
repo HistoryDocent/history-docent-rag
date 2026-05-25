@@ -163,3 +163,4 @@
 | 9.58 | demo recording checklist | `docs/DEMO_RECORDING_CHECKLIST.md`, report, test | `HD-DEMO-RECORDING-CHECKLIST-001`에서 실제 녹화 전 화면/터미널/claim/public-safe preflight를 고정 | `docs: 데모 녹화 체크리스트 추가` |
 | 9.59 | GitHub push readiness | `docs/GITHUB_PUSH_READINESS.md`, report, test | `HD-GITHUB-PUSH-READINESS-001`에서 push 전 remote, branch, commit 범위, secret/private/raw artifact 추적 여부를 점검하고 실제 push는 실행하지 않음 | `docs: GitHub push readiness 추가` |
 | 9.60 | GitHub push execution approval | `docs/GITHUB_PUSH_EXECUTION_APPROVAL.md`, report, test | `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`에서 실제 push 실행은 명시 승인 필요로 고정하고 push는 실행하지 않음 | `docs: GitHub push 실행 승인 gate 추가` |
+| 9.61 | voice local whisper.cpp deployment retry | `docs/VOICE_LOCAL_WHISPERCPP_DEPLOYMENT_RETRY.md`, report, test | `HD-VOICE-LOCAL-WHISPERCPP-DEPLOYMENT-RETRY-001`에서 runtime/model/CUDA 상태를 재점검하고 `whisper.cpp` blocker를 유지 | `docs: whisper.cpp 배포 재점검 gate 추가` |
