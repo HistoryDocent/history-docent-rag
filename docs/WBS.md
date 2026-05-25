@@ -161,3 +161,4 @@
 | 9.56 | README landing polish | `README.md`, `docs/README_LANDING_POLISH.md`, report, test | `HD-README-LANDING-POLISH-001`에서 README 첫 화면을 60초 요약, 바로 볼 문서, claim boundary 중심으로 재배치하고 상세 수치표를 보존 | `docs: README 첫 화면 정리` |
 | 9.57 | portfolio walkthrough script | `docs/PORTFOLIO_WALKTHROUGH_SCRIPT.md`, report, test | `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`에서 3분 설명 script와 demo click path를 고정하고 production claim을 추가하지 않음 | `docs: 포트폴리오 walkthrough 스크립트 추가` |
 | 9.58 | demo recording checklist | `docs/DEMO_RECORDING_CHECKLIST.md`, report, test | `HD-DEMO-RECORDING-CHECKLIST-001`에서 실제 녹화 전 화면/터미널/claim/public-safe preflight를 고정 | `docs: 데모 녹화 체크리스트 추가` |
+| 9.59 | GitHub push readiness | `docs/GITHUB_PUSH_READINESS.md`, report, test | `HD-GITHUB-PUSH-READINESS-001`에서 push 전 remote, branch, commit 범위, secret/private/raw artifact 추적 여부를 점검하고 실제 push는 실행하지 않음 | `docs: GitHub push readiness 추가` |

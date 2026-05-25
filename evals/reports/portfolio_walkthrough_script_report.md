@@ -62,4 +62,4 @@ README landing polish 이후 실제 면접/화면 녹화에서 따라갈 3분 wa
 
 ## 다음 Gate
 
-`HD-DEMO-RECORDING-CHECKLIST-001`은 완료됐다. 다음은 `HD-GITHUB-PUSH-READINESS-001`을 권장한다. push 자체가 아니라, public repo에 push하기 전 remote, branch, commit 범위, secret scan, private/large artifact 추적 여부를 재검증하는 readiness gate다.
+`HD-DEMO-RECORDING-CHECKLIST-001`과 `HD-GITHUB-PUSH-READINESS-001`은 완료됐다. 다음은 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`을 권장한다. 실제 push 여부를 사용자가 명시 승인하는 gate다.

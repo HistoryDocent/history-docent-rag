@@ -62,4 +62,4 @@
 
 ## 다음 Gate
 
-`HD-GITHUB-PUSH-READINESS-001`을 권장한다. 실제 push 전 remote, branch, commit 범위, secret scan, private/large artifact 추적 여부를 다시 확인하는 readiness gate다. push 자체는 별도 명시 승인 후에만 수행한다.
+`HD-GITHUB-PUSH-READINESS-001`은 완료됐다. 다음은 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`을 권장한다. 실제 push 여부를 사용자가 명시 승인하는 gate다. 승인 전 push는 실행하지 않는다.

@@ -59,4 +59,4 @@ README 첫 화면은 채용 담당자가 60초 안에 프로젝트 목적, evide
 
 ## 다음 Gate
 
-`HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`과 `HD-DEMO-RECORDING-CHECKLIST-001`은 완료됐다. 다음은 `HD-GITHUB-PUSH-READINESS-001`을 권장한다. push 자체가 아니라, public repo에 push하기 전 remote, branch, commit 범위, secret scan, private/large artifact 추적 여부를 재검증하는 것이 적절하다.
+`HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`, `HD-DEMO-RECORDING-CHECKLIST-001`, `HD-GITHUB-PUSH-READINESS-001`은 완료됐다. 다음은 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`을 권장한다. 실제 push 여부를 사용자가 명시 승인하는 것이 적절하다.

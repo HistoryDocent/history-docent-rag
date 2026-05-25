@@ -139,6 +139,7 @@
 | README landing polish | `HD-README-LANDING-POLISH-001` | 60-second README first screen | top_summary_table_row_count / first_open_link_count / production_success_claim_count | 6 / 5 / 0 | landing polished |
 | portfolio walkthrough script | `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001` | 3-minute submission walkthrough | walkthrough_segment_count / demo_click_path_step_count / production_success_claim_count | 7 / 8 / 0 | walkthrough script ready |
 | demo recording checklist | `HD-DEMO-RECORDING-CHECKLIST-001` | recording preflight | recording_screen_sequence_count / terminal_preflight_check_count / production_success_claim_count | 8 / 8 / 0 | recording checklist ready |
+| GitHub push readiness | `HD-GITHUB-PUSH-READINESS-001` | push preflight | expected_remote_count / current_branch_main_count / push_execution_count | 1 / 1 / 0 | push readiness checked, push not executed |
 
 금지 claim:
 
@@ -204,6 +205,8 @@ README 첫 화면 정리 결과는 [README Landing Polish](docs/README_LANDING_P
 포트폴리오 3분 walkthrough script는 [Portfolio Walkthrough Script](docs/PORTFOLIO_WALKTHROUGH_SCRIPT.md), [Portfolio Walkthrough Script Report](evals/reports/portfolio_walkthrough_script_report.md)를 기준으로 한다.
 
 포트폴리오 demo recording preflight는 [Demo Recording Checklist](docs/DEMO_RECORDING_CHECKLIST.md), [Demo Recording Checklist Report](evals/reports/demo_recording_checklist_report.md)를 기준으로 한다.
+
+GitHub push 전 readiness는 [GitHub Push Readiness](docs/GITHUB_PUSH_READINESS.md), [GitHub Push Readiness Report](evals/reports/github_push_readiness_report.md)를 기준으로 한다.
 
 무료 로컬 음성 스택 기준은 [Voice Local Free Stack Lock](docs/VOICE_LOCAL_FREE_STACK_LOCK.md), [Voice Local Free Stack Lock Report](evals/reports/voice_local_free_stack_lock_report.md)를 기준으로 한다.
 
@@ -381,7 +384,7 @@ PDF
 후속 구현 대상:
 
 ```text
-optional GitHub push readiness
+optional GitHub push execution approval
 optional whisper.cpp runtime/model install and rerun
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
@@ -727,6 +730,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Portfolio Walkthrough Script Report](evals/reports/portfolio_walkthrough_script_report.md) | HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001 정량/정성 walkthrough 검증 |
 | [Demo Recording Checklist](docs/DEMO_RECORDING_CHECKLIST.md) | HD-DEMO-RECORDING-CHECKLIST-001 실제 녹화 전 화면, 터미널, 금지 claim preflight |
 | [Demo Recording Checklist Report](evals/reports/demo_recording_checklist_report.md) | HD-DEMO-RECORDING-CHECKLIST-001 정량/정성 recording preflight 검증 |
+| [GitHub Push Readiness](docs/GITHUB_PUSH_READINESS.md) | HD-GITHUB-PUSH-READINESS-001 push 전 remote, branch, tracked artifact preflight |
+| [GitHub Push Readiness Report](evals/reports/github_push_readiness_report.md) | HD-GITHUB-PUSH-READINESS-001 정량/정성 push readiness 검증 |
 | [Portfolio Rehearsal](docs/PORTFOLIO_REHEARSAL.md) | HD-PORTFOLIO-REHEARSAL-001 30초 요약, 3분 설명, 면접 답변, demo 순서, 금지 claim |
 | [Portfolio Rehearsal Report](evals/reports/portfolio_rehearsal_report.md) | HD-PORTFOLIO-REHEARSAL-001 정량/정성 설명 리허설 gate와 외부 감사 |
 | [Voice Provider Decision](docs/VOICE_PROVIDER_DECISION.md) | HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001 무료 로컬 STT/TTS 우선 전략과 managed optional paid comparison 경계 |

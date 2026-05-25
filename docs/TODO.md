@@ -204,7 +204,8 @@
 - [x] optional README landing polish
 - [x] optional portfolio walkthrough script
 - [x] optional demo recording checklist
-- [ ] optional GitHub push readiness
+- [x] optional GitHub push readiness
+- [ ] optional GitHub push execution approval
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
