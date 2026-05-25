@@ -1636,3 +1636,29 @@
 - [x] public private path leakage count 0
 - [x] public secret-like leakage count 0
 - [x] production voice app claim count 0
+
+## Voice Local whisper.cpp Install Readiness Gate
+
+- [x] work id `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-READINESS-001`
+- [x] install readiness document count 1
+- [x] install readiness report count 1
+- [x] regression test file count 1
+- [x] prior install approval dependency pass count 1
+- [x] toolchain probe command count 7
+- [x] available tool command count 3
+- [x] missing build tool command count 4
+- [x] GPU probe available count 1
+- [x] CUDA GPU detected count 1
+- [x] CUDA compiler available count 0
+- [x] MSVC compiler available count 0
+- [x] CMake available count 0
+- [x] Ninja available count 0
+- [x] whisper_cpp runtime available count 0
+- [x] whisper_cpp model file available count 0
+- [x] runtime build attempted count 0
+- [x] model download attempted count 0
+- [x] local STT execution count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] readiness decision `blocked_source_build_toolchain_missing`
+- [x] next gate strategy decision count 1

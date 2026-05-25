@@ -118,6 +118,7 @@
 - GitHub push execution approval에서 실제 push는 명시 승인 전까지 실행하지 않는다는 gate를 고정함
 - whisper.cpp deployment retry에서 현재 환경의 runtime/model/CUDA 상태를 재점검했고, runtime/model 부재로 실행 0건 blocker를 유지함
 - whisper.cpp install approval에서 runtime build와 `ggml` model 다운로드는 명시 승인 후에만 실행하도록 승인 기준을 고정함
+- whisper.cpp install readiness에서 GPU는 확인됐지만 `cmake`, `ninja`, MSVC compiler, CUDA compiler가 PATH에서 확인되지 않아 source build blocker를 기록함
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

@@ -240,3 +240,25 @@
 | `acceptance_tests` | explicit install approval, runtime available 1, model file available 1, local STT execution 5, external provider call 0, public binary/model tracking 0 |
 | `risk_level` | Medium |
 | `rollback_plan` | build/model artifact를 별도 승인 후 삭제하고 문서는 blocker 또는 success evidence로 갱신한다. |
+
+## 후속 작업 결과
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-READINESS-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-APPROVAL-001` |
+| `status` | completed |
+| `scope` | `whisper.cpp` 설치 실행 전 toolchain/GPU/runtime/model 상태를 읽기 전용으로 점검했다. |
+| `acceptance_tests` | toolchain probe 7, available tool 3, missing build tool 4, CUDA GPU detected 1, runtime build 0, model download 0, local STT execution 0 |
+| `evidence` | `docs/VOICE_LOCAL_WHISPERCPP_INSTALL_READINESS.md`, `evals/reports/voice_local_whispercpp_install_readiness_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-STRATEGY-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-READINESS-001` |
+| `scope` | source build, prebuilt binary, skip/keep faster-whisper 중 하나를 선택하는 install strategy decision을 작성한다. |
+| `acceptance_tests` | strategy option count 3, selected strategy 1, source/provenance check required, install execution count 0, model download count 0 |
+| `risk_level` | Low |
+| `rollback_plan` | 문서 decision만 revert. 실제 설치나 다운로드는 별도 명시 승인 전까지 수행하지 않는다. |
