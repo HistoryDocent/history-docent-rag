@@ -218,3 +218,25 @@
 | `acceptance_tests` | install/build/download 승인 문구, 예상 디스크 사용량, source URL, checksum 또는 release provenance, CUDA build option, public repo binary/model 추적 0 |
 | `risk_level` | Medium |
 | `rollback_plan` | 생성된 runtime/model 파일과 임시 build artifact를 별도 승인 후 삭제한다. |
+
+## 후속 작업 결과
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-APPROVAL-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-DEPLOYMENT-RETRY-001` |
+| `status` | completed |
+| `scope` | `whisper.cpp` runtime build와 `ggml` model 다운로드 전 승인 기준을 고정했다. |
+| `acceptance_tests` | explicit install approval 0, runtime build attempted 0, model download attempted 0, local STT execution 0, external provider call 0, binary/model public tracking allowed 0 |
+| `evidence` | `docs/VOICE_LOCAL_WHISPERCPP_INSTALL_APPROVAL.md`, `evals/reports/voice_local_whispercpp_install_approval_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-EXECUTION-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-APPROVAL-001` |
+| `scope` | 명시 승인 후 `whisper.cpp` runtime build, `ggml-small.bin` model 확보, 5개 private wav STT smoke 실행 |
+| `acceptance_tests` | explicit install approval, runtime available 1, model file available 1, local STT execution 5, external provider call 0, public binary/model tracking 0 |
+| `risk_level` | Medium |
+| `rollback_plan` | build/model artifact를 별도 승인 후 삭제하고 문서는 blocker 또는 success evidence로 갱신한다. |

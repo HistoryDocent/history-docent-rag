@@ -120,6 +120,7 @@
 | voice local faster-whisper STT comparison | `HD-VOICE-LOCAL-FASTER-WHISPER-STT-COMPARISON-001` | local STT candidate comparison | baseline_execution_count / faster_whisper_execution_count / external_provider_call_count | 5 / 5 / 0 | faster-whisper recommended as current evidence candidate |
 | voice local whisper.cpp deployment smoke | `HD-VOICE-LOCAL-WHISPERCPP-DEPLOYMENT-SMOKE-001` | local STT deployment smoke | whisper_cpp_runtime_available_count / local_stt_execution_count / external_provider_call_count | 0 / 0 / 0 | blocked missing whisper.cpp runtime |
 | voice local whisper.cpp deployment retry | `HD-VOICE-LOCAL-WHISPERCPP-DEPLOYMENT-RETRY-001` | local STT deployment retry | whisper_cpp_runtime_available_count / whisper_cpp_model_file_available_count / local_stt_execution_count | 0 / 0 / 0 | still blocked missing whisper.cpp runtime |
+| voice local whisper.cpp install approval | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-APPROVAL-001` | local STT install approval | explicit_install_approval_count / runtime_build_attempted_count / model_download_attempted_count | 0 / 0 / 0 | approval required before install |
 | voice local Piper TTS smoke | `HD-VOICE-LOCAL-PIPER-TTS-SMOKE-001` | local TTS Korean voice gate | piper_runtime_available_count / korean_voice_available_count / external_provider_call_count | 1 / 0 / 0 | blocked missing Korean voice |
 | voice local Korean TTS alternative review | `HD-VOICE-LOCAL-KOREAN-TTS-ALTERNATIVE-REVIEW-001` | local Korean TTS next-target review | candidate_count / korean_support_candidate_count / selected_next_smoke_candidate_count / external_provider_call_count | 7 / 5 / 1 / 0 | select sherpa-onnx Supertonic 3 smoke |
 | voice local sherpa-onnx Supertonic 3 Korean TTS smoke | `HD-VOICE-LOCAL-SHERPA-ONNX-SUPERTONIC3-KO-SMOKE-001` | local Korean TTS execution smoke | package_install_attempted_count / model_download_success_count / local_tts_execution_count / external_provider_call_count | 1 / 1 / 5 / 0 | completed local Korean TTS smoke |
@@ -167,6 +168,8 @@
 무료 로컬 whisper.cpp 배포성 smoke 결과는 [Voice Local whisper.cpp Deployment Smoke](docs/VOICE_LOCAL_WHISPERCPP_DEPLOYMENT_SMOKE.md), [Voice Local whisper.cpp Deployment Smoke Report](evals/reports/voice_local_whispercpp_deployment_smoke_report.md)를 기준으로 한다.
 
 무료 로컬 whisper.cpp 배포성 재점검 결과는 [Voice Local whisper.cpp Deployment Retry](docs/VOICE_LOCAL_WHISPERCPP_DEPLOYMENT_RETRY.md), [Voice Local whisper.cpp Deployment Retry Report](evals/reports/voice_local_whispercpp_deployment_retry_report.md)를 기준으로 한다.
+
+무료 로컬 whisper.cpp 설치 승인 기준은 [Voice Local whisper.cpp Install Approval](docs/VOICE_LOCAL_WHISPERCPP_INSTALL_APPROVAL.md), [Voice Local whisper.cpp Install Approval Report](evals/reports/voice_local_whispercpp_install_approval_report.md)를 기준으로 한다.
 
 무료 로컬 Piper TTS smoke 결과는 [Voice Local Piper TTS Smoke](docs/VOICE_LOCAL_PIPER_TTS_SMOKE.md), [Voice Local Piper TTS Smoke Report](evals/reports/voice_local_piper_tts_smoke_report.md)를 기준으로 한다.
 

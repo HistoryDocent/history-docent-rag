@@ -1613,3 +1613,26 @@
 - [x] public private path leakage count 0
 - [x] public secret-like leakage count 0
 - [x] 기본 STT 후보를 `whisper.cpp`로 변경하지 않음
+
+## Voice Local whisper.cpp Install Approval Gate
+
+- [x] work id `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-APPROVAL-001`
+- [x] install approval document count 1
+- [x] install approval report count 1
+- [x] regression test file count 1
+- [x] prior retry dependency pass count 1
+- [x] official source URL count 2
+- [x] source recheck required count 1
+- [x] explicit install approval count 0
+- [x] runtime build attempted count 0
+- [x] model download attempted count 0
+- [x] local STT execution count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] binary/model public tracking allowed count 0
+- [x] push command execution count 0
+- [x] rollback plan documented count 1
+- [x] next gate install execution count 1
+- [x] public private path leakage count 0
+- [x] public secret-like leakage count 0
+- [x] production voice app claim count 0

@@ -181,6 +181,7 @@
 - [x] local faster-whisper STT comparison
 - [x] optional whisper.cpp local STT deployment smoke
 - [x] optional whisper.cpp local STT deployment retry
+- [x] optional whisper.cpp runtime/model install approval
 - [x] local Piper TTS smoke
 - [x] optional Korean TTS alternative review
 - [x] optional sherpa-onnx Supertonic 3 Korean TTS smoke
@@ -208,7 +209,7 @@
 - [x] optional GitHub push readiness
 - [x] optional GitHub push execution approval
 - [ ] optional GitHub push execution after explicit approval
-- [ ] optional whisper.cpp runtime/model install approval
+- [ ] optional whisper.cpp runtime/model install execution after explicit approval
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
