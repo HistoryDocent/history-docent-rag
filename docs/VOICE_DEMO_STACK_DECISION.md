@@ -76,14 +76,24 @@
 - production 음성 관광 앱 완성
 - Azure/Google/AWS보다 local TTS가 품질 우수하다는 주장
 
-## 다음 작업 지시서
+## 후속 작업 결과
 
 | field | value |
 | --- | --- |
 | `id` | `HD-VOICE-DEMO-PLAYBACK-SMOKE-001` |
 | `depends_on` | `HD-VOICE-DEMO-STACK-DECISION-001` |
-| `scope` | local STT/TTS demo 후보를 실제 demo flow에서 한 번에 확인하는 playback smoke를 만든다. production provider 확정 없이 demo path만 검증한다. |
-| `acceptance_tests` | local STT candidate 1, TTS demo candidate 1, external provider call 0, external audio transmission 0, raw audio public artifact 0, human score detail public row 0, production claim 0 |
-| `risk_level` | Medium |
-| `rollback_plan` | demo stack/playback smoke 관련 docs, report, test만 revert한다. |
+| `status` | completed |
+| `scope` | local STT/TTS demo 후보의 private wav 5개 playback-ready 상태를 검증했다. |
+| `acceptance_tests` | local STT candidate 1, TTS demo candidate 1, playback-ready 5, speaker 자동 재생 0, external provider call 0, raw audio public artifact 0, human score detail public row 0, production claim 0 |
+| `evidence` | `docs/VOICE_DEMO_PLAYBACK_SMOKE.md`, `evals/reports/voice_demo_playback_smoke_report.md` |
 
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001` |
+| `depends_on` | `HD-VOICE-DEMO-PLAYBACK-SMOKE-001` |
+| `scope` | local-only voice runtime API route를 기본 비활성화 상태에서 contract smoke로 검증한다. |
+| `acceptance_tests` | default disabled, explicit flag에서 contract response, external provider call 0, raw audio/transcript public artifact 0, secret leakage 0 |
+| `risk_level` | Medium |
+| `rollback_plan` | route smoke 관련 docs, report, test만 revert한다. |

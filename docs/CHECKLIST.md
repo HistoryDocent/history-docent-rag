@@ -1349,3 +1349,27 @@
 - [x] public private path/secret-like/raw payload leakage 0
 - [x] production voice claim count 0
 - [x] TTS final provider로 표현하지 않음
+
+## Voice Demo Playback Smoke Gate
+
+- [x] work id `HD-VOICE-DEMO-PLAYBACK-SMOKE-001`
+- [x] voice demo playback smoke runner count 1
+- [x] voice demo playback smoke document count 1
+- [x] voice demo playback smoke report count 1
+- [x] voice demo playback smoke test count 1
+- [x] primary local STT candidate count 1
+- [x] TTS demo candidate count 1
+- [x] TTS final provider count 0
+- [x] private audio expected count 5
+- [x] private audio available count 5
+- [x] accepted private wav count 5
+- [x] playback-ready count 5
+- [x] speaker device playback call count 0
+- [x] TTS human score completed count 30
+- [x] TTS human score overall average 5.000000
+- [x] human score public detail row count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] raw audio/transcript/script public artifact count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] production voice claim count 0
