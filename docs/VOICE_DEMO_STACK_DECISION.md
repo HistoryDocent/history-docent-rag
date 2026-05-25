@@ -284,3 +284,25 @@
 | `acceptance_tests` | explicit push approval, pre-push status clean, push execution success, post-push status clean, remote branch updated |
 | `risk_level` | Low |
 | `rollback_plan` | push 후 문제 발생 시 새 revert commit을 별도 승인 후 만든다. |
+
+## 후속 작업 결과
+
+| field | value |
+| --- | --- |
+| `id` | `HD-GITHUB-PUSH-READINESS-V2-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-STRATEGY-001`, `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001` |
+| `status` | completed |
+| `scope` | 최신 local commit 이후 remote, branch, worktree, recent commit scope, tracked artifact 경계를 재점검했다. |
+| `acceptance_tests` | expected remote 1, branch main 1, worktree clean 1, tracked forbidden artifact 0, push execution 0, external state change 0 |
+| `evidence` | `docs/GITHUB_PUSH_READINESS_V2.md`, `evals/reports/github_push_readiness_v2_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-GITHUB-PUSH-EXECUTION-001` |
+| `depends_on` | `HD-GITHUB-PUSH-READINESS-V2-001`, `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001` |
+| `scope` | 사용자가 `git push 실행 승인`이라고 명시하면 `origin main`에 push하고 push 전후 status를 확인한다. |
+| `acceptance_tests` | explicit push approval, pre-push status clean, push execution success, post-push status clean, remote branch updated |
+| `risk_level` | Low |
+| `rollback_plan` | push 후 문제 발생 시 새 revert commit을 별도 승인 후 만든다. |

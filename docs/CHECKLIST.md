@@ -1687,3 +1687,27 @@
 - [x] push command execution count 0
 - [x] selected strategy `defer_whispercpp_keep_faster_whisper_primary`
 - [x] production voice app claim count 0
+
+## GitHub Push Readiness V2 Gate
+
+- [x] work id `HD-GITHUB-PUSH-READINESS-V2-001`
+- [x] github push readiness v2 document count 1
+- [x] github push readiness v2 report count 1
+- [x] regression test file count 1
+- [x] prior strategy dependency pass count 1
+- [x] prior push approval dependency pass count 1
+- [x] expected remote count 1
+- [x] current branch main count 1
+- [x] worktree clean before readiness count 1
+- [x] local branch ahead origin main detected count 1
+- [x] recent commit checked count 5
+- [x] tracked candidate match count 4
+- [x] tracked allowed sample/example count 4
+- [x] tracked non-example env file count 0
+- [x] tracked forbidden artifact count 0
+- [x] push execution count 0
+- [x] external state change count 0
+- [x] public private path leakage count 0
+- [x] public secret-like leakage count 0
+- [x] production success claim count 0
+- [x] next explicit push gate required count 1

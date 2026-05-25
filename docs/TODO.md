@@ -209,6 +209,7 @@
 - [x] optional demo recording checklist
 - [x] optional GitHub push readiness
 - [x] optional GitHub push execution approval
+- [x] optional GitHub push readiness v2 after latest local commits
 - [ ] optional GitHub push execution after explicit approval
 - [x] optional whisper.cpp install strategy decision
 - [ ] optional whisper.cpp runtime/model install execution after explicit approval

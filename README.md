@@ -176,6 +176,8 @@
 
 무료 로컬 whisper.cpp 설치 전략 결정은 [Voice Local whisper.cpp Install Strategy](docs/VOICE_LOCAL_WHISPERCPP_INSTALL_STRATEGY.md), [Voice Local whisper.cpp Install Strategy Report](evals/reports/voice_local_whispercpp_install_strategy_report.md)를 기준으로 한다.
 
+최신 push readiness v2 결과는 [GitHub Push Readiness V2](docs/GITHUB_PUSH_READINESS_V2.md), [GitHub Push Readiness V2 Report](evals/reports/github_push_readiness_v2_report.md)를 기준으로 한다.
+
 무료 로컬 Piper TTS smoke 결과는 [Voice Local Piper TTS Smoke](docs/VOICE_LOCAL_PIPER_TTS_SMOKE.md), [Voice Local Piper TTS Smoke Report](evals/reports/voice_local_piper_tts_smoke_report.md)를 기준으로 한다.
 
 무료 로컬 한국어 TTS 대안 검토 결과는 [Voice Local Korean TTS Alternative Review](docs/VOICE_LOCAL_KOREAN_TTS_ALTERNATIVE_REVIEW.md), [Voice Local Korean TTS Alternative Review Report](evals/reports/voice_local_korean_tts_alternative_review_report.md)를 기준으로 한다.

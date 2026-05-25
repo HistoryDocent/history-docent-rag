@@ -120,6 +120,7 @@
 - whisper.cpp install approval에서 runtime build와 `ggml` model 다운로드는 명시 승인 후에만 실행하도록 승인 기준을 고정함
 - whisper.cpp install readiness에서 GPU는 확인됐지만 `cmake`, `ninja`, MSVC compiler, CUDA compiler가 PATH에서 확인되지 않아 source build blocker를 기록함
 - whisper.cpp install strategy에서 source build/prebuilt binary/keep faster-whisper 3개 선택지를 비교하고, 현재는 `faster-whisper small CUDA` primary 유지와 `whisper.cpp` 설치 보류를 선택함
+- GitHub push readiness v2에서 최신 local commit 이후 remote/branch/worktree/commit scope/tracked artifact를 재점검하고 실제 push는 실행하지 않음
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증
