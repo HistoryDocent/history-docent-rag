@@ -1373,3 +1373,33 @@
 - [x] raw audio/transcript/script public artifact count 0
 - [x] public private path/secret-like/raw payload leakage 0
 - [x] production voice claim count 0
+
+## Voice API Local Runtime Route Smoke Gate
+
+- [x] work id `HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001`
+- [x] voice API local runtime route smoke runner count 1
+- [x] voice API local runtime route smoke document count 1
+- [x] voice API local runtime route smoke report count 1
+- [x] voice API local runtime route smoke test count 1
+- [x] endpoint count 1
+- [x] total route request count 4
+- [x] default disabled pass count 1
+- [x] default disabled status code 403
+- [x] explicit flag contract pass count 1
+- [x] explicit flag status code 200
+- [x] validation request count 2
+- [x] validation reject pass count 2
+- [x] path traversal status code 422
+- [x] public audio status code 400
+- [x] accepted audio input count 1
+- [x] chat contract execution count 1
+- [x] local STT execution count 0
+- [x] local TTS execution count 0
+- [x] TTS final provider count 0
+- [x] response answer public row count 0
+- [x] response spoken answer public row count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] raw audio/transcript public artifact count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] production voice app claim count 0

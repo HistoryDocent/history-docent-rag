@@ -87,13 +87,24 @@
 | `acceptance_tests` | local STT candidate 1, TTS demo candidate 1, playback-ready 5, speaker 자동 재생 0, external provider call 0, raw audio public artifact 0, human score detail public row 0, production claim 0 |
 | `evidence` | `docs/VOICE_DEMO_PLAYBACK_SMOKE.md`, `evals/reports/voice_demo_playback_smoke_report.md` |
 
-## 다음 작업 지시서
+## 후속 작업 결과
 
 | field | value |
 | --- | --- |
 | `id` | `HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001` |
 | `depends_on` | `HD-VOICE-DEMO-PLAYBACK-SMOKE-001` |
-| `scope` | local-only voice runtime API route를 기본 비활성화 상태에서 contract smoke로 검증한다. |
-| `acceptance_tests` | default disabled, explicit flag에서 contract response, external provider call 0, raw audio/transcript public artifact 0, secret leakage 0 |
+| `status` | completed |
+| `scope` | local-only voice runtime API route를 기본 비활성화 상태와 explicit local flag 상태에서 contract smoke로 검증했다. |
+| `acceptance_tests` | default disabled 1, explicit flag contract response 1, validation reject 2, external provider call 0, raw audio/transcript public artifact 0, secret leakage 0 |
+| `evidence` | `docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md`, `evals/reports/voice_api_local_runtime_route_smoke_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-DEMO-RUNBOOK-REFRESH-001` |
+| `depends_on` | `HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001` |
+| `scope` | portfolio demo runbook에 최신 local voice API route smoke 결과를 반영하고, demo에서 말할 allowed/forbidden claim을 갱신한다. |
+| `acceptance_tests` | runbook link updated, voice API route smoke metric reflected, production voice app claim 0, raw audio/transcript public artifact 0, secret leakage 0 |
 | `risk_level` | Medium |
-| `rollback_plan` | route smoke 관련 docs, report, test만 revert한다. |
+| `rollback_plan` | runbook refresh 관련 docs, report, test만 revert한다. |

@@ -100,6 +100,7 @@
 | voice local runtime stack alignment | `HD-VOICE-LOCAL-RUNTIME-STACK-ALIGN-001` | runtime/API provider status alignment | provider_id_mismatch_count / tts_final_provider_count / external_provider_call_count | 0 / 0 / 0 | historical runtime alignment, TTS final provider remains unclaimed |
 | voice demo stack decision | `HD-VOICE-DEMO-STACK-DECISION-001` | local voice demo stack decision | primary_local_stt_candidate_count / tts_demo_candidate_count / tts_final_provider_count / external_provider_call_count | 1 / 1 / 0 / 0 | local STT and TTS demo candidate ready, production final not claimed |
 | voice demo playback smoke | `HD-VOICE-DEMO-PLAYBACK-SMOKE-001` | local voice demo playback smoke | private_audio_available_count / playback_ready_count / playback_device_call_count / external_provider_call_count | 5 / 5 / 0 / 0 | local demo playback-ready, automatic speaker playback not claimed |
+| voice API local runtime route smoke | `HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001` | disabled-by-default local route smoke | default_disabled_pass_count / explicit_flag_contract_pass_count / external_provider_call_count | 1 / 1 / 0 | local voice route contract verified, production voice app not claimed |
 
 금지 claim:
 
@@ -151,6 +152,8 @@
 무료 로컬 음성 데모 스택 최신 판단은 [Voice Demo Stack Decision](docs/VOICE_DEMO_STACK_DECISION.md), [Voice Demo Stack Decision Report](evals/reports/voice_demo_stack_decision_report.md)를 기준으로 한다.
 
 무료 로컬 음성 데모 playback smoke는 [Voice Demo Playback Smoke](docs/VOICE_DEMO_PLAYBACK_SMOKE.md), [Voice Demo Playback Smoke Report](evals/reports/voice_demo_playback_smoke_report.md)를 기준으로 한다.
+
+무료 로컬 음성 API route smoke는 [Voice API Local Runtime Route Smoke](docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md), [Voice API Local Runtime Route Smoke Report](evals/reports/voice_api_local_runtime_route_smoke_report.md)를 기준으로 한다.
 
 무료 로컬 음성 스택 기준은 [Voice Local Free Stack Lock](docs/VOICE_LOCAL_FREE_STACK_LOCK.md), [Voice Local Free Stack Lock Report](evals/reports/voice_local_free_stack_lock_report.md)를 기준으로 한다.
 
@@ -665,6 +668,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice Demo Stack Decision Report](evals/reports/voice_demo_stack_decision_report.md) | HD-VOICE-DEMO-STACK-DECISION-001 정량/정성 demo stack decision과 zero external call 검증 |
 | [Voice Demo Playback Smoke](docs/VOICE_DEMO_PLAYBACK_SMOKE.md) | HD-VOICE-DEMO-PLAYBACK-SMOKE-001 private wav 5개 playback-ready와 claim boundary |
 | [Voice Demo Playback Smoke Report](evals/reports/voice_demo_playback_smoke_report.md) | HD-VOICE-DEMO-PLAYBACK-SMOKE-001 정량/정성 playback smoke와 zero external call 검증 |
+| [Voice API Local Runtime Route Smoke](docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md) | HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001 local voice route disabled-by-default contract |
+| [Voice API Local Runtime Route Smoke Report](evals/reports/voice_api_local_runtime_route_smoke_report.md) | HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001 정량/정성 route smoke와 zero external call 검증 |
 | [Voice STT/TTS Local TTS Smoke](docs/VOICE_STT_TTS_LOCAL_TTS_SMOKE.md) | HD-VOICE-STT-TTS-LOCAL-TTS-SMOKE-001 MeloTTS Korean 로컬 smoke runner, CUDA device 기록, public-safe output gate |
 | [Voice STT/TTS Local TTS Smoke Report](evals/reports/voice_stt_tts_local_tts_smoke_report.md) | HD-VOICE-STT-TTS-LOCAL-TTS-SMOKE-001 정량/정성 local TTS smoke gate와 zero external provider call 검증 |
 | [Voice Local Runtime Matrix](docs/VOICE_LOCAL_RUNTIME_MATRIX.md) | HD-VOICE-STT-TTS-LOCAL-RUNTIME-MATRIX-001 무료 로컬 STT/TTS 후보별 import/runtime/CUDA preflight |

@@ -197,7 +197,8 @@
 - [x] optional human TTS listening score manual scoring
 - [x] optional local voice demo stack decision
 - [x] optional local voice demo playback smoke
-- [ ] optional local voice API route smoke
+- [x] optional local voice API route smoke
+- [ ] optional local voice end-to-end demo runbook refresh
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
