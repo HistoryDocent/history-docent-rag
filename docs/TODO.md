@@ -210,7 +210,7 @@
 - [x] optional GitHub push readiness
 - [x] optional GitHub push execution approval
 - [ ] optional GitHub push execution after explicit approval
-- [ ] optional whisper.cpp install strategy decision
+- [x] optional whisper.cpp install strategy decision
 - [ ] optional whisper.cpp runtime/model install execution after explicit approval
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix

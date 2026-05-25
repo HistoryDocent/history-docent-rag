@@ -262,3 +262,25 @@
 | `acceptance_tests` | strategy option count 3, selected strategy 1, source/provenance check required, install execution count 0, model download count 0 |
 | `risk_level` | Low |
 | `rollback_plan` | 문서 decision만 revert. 실제 설치나 다운로드는 별도 명시 승인 전까지 수행하지 않는다. |
+
+## 후속 작업 결과
+
+| field | value |
+| --- | --- |
+| `id` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-STRATEGY-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-READINESS-001` |
+| `status` | completed |
+| `scope` | source build, prebuilt binary, keep faster-whisper 3개 전략을 비교했고, 현재는 설치 보류와 `faster-whisper small CUDA` primary 유지를 선택했다. |
+| `acceptance_tests` | strategy option 3, selected strategy 1, runtime build 0, model download 0, local STT execution 0, external provider call 0 |
+| `evidence` | `docs/VOICE_LOCAL_WHISPERCPP_INSTALL_STRATEGY.md`, `evals/reports/voice_local_whispercpp_install_strategy_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-GITHUB-PUSH-EXECUTION-001` |
+| `depends_on` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-STRATEGY-001`, `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001` |
+| `scope` | 사용자가 `git push 실행 승인`이라고 명시하면 `origin main`에 push하고 push 전후 status를 확인한다. |
+| `acceptance_tests` | explicit push approval, pre-push status clean, push execution success, post-push status clean, remote branch updated |
+| `risk_level` | Low |
+| `rollback_plan` | push 후 문제 발생 시 새 revert commit을 별도 승인 후 만든다. |

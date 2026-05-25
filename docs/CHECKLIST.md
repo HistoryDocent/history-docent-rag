@@ -1662,3 +1662,28 @@
 - [x] external audio transmission count 0
 - [x] readiness decision `blocked_source_build_toolchain_missing`
 - [x] next gate strategy decision count 1
+
+## Voice Local whisper.cpp Install Strategy Gate
+
+- [x] work id `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-STRATEGY-001`
+- [x] install strategy document count 1
+- [x] install strategy report count 1
+- [x] regression test file count 1
+- [x] prior readiness dependency pass count 1
+- [x] strategy option count 3
+- [x] selected strategy count 1
+- [x] selected keep faster-whisper count 1
+- [x] selected source build count 0
+- [x] selected prebuilt binary count 0
+- [x] source provenance recheck required count 1
+- [x] binary provenance recheck required count 1
+- [x] model provenance recheck required count 1
+- [x] toolchain blocker retained count 1
+- [x] runtime build attempted count 0
+- [x] model download attempted count 0
+- [x] local STT execution count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] push command execution count 0
+- [x] selected strategy `defer_whispercpp_keep_faster_whisper_primary`
+- [x] production voice app claim count 0

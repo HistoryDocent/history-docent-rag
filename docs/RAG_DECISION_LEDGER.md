@@ -580,3 +580,19 @@ README 결과 표와 포트폴리오 메시지 정리는 완료했다. query typ
 | `evidence_artifact` | `docs/VOICE_LOCAL_WHISPERCPP_INSTALL_READINESS.md`, `evals/reports/voice_local_whispercpp_install_readiness_report.md` |
 
 결론: GPU는 확인됐지만 source build toolchain이 부족하다. 다음 단계는 source build, prebuilt binary, skip/keep faster-whisper 중 하나를 고르는 strategy decision이다.
+
+## Voice Local whisper.cpp Install Strategy
+
+| field | value |
+| --- | --- |
+| `decision_id` | `HD-VOICE-LOCAL-WHISPERCPP-INSTALL-STRATEGY-001` |
+| `stage_id` | `voice_local_stt_install_strategy` |
+| `candidate_id` | `local_whispercpp_optional_comparison` |
+| `split_scope` | `install-strategy-decision-only` |
+| `metric_family` | `strategy_provenance_execution_boundary` |
+| `primary_metric_value` | `strategy_option_count=3, selected_keep_faster_whisper_count=1, runtime_build_attempted_count=0` |
+| `decision` | `defer_whispercpp_keep_faster_whisper_primary` |
+| `claim_boundary` | `strategy-only-no-install` |
+| `evidence_artifact` | `docs/VOICE_LOCAL_WHISPERCPP_INSTALL_STRATEGY.md`, `evals/reports/voice_local_whispercpp_install_strategy_report.md` |
+
+결론: 현재 포트폴리오 기준에서는 `whisper.cpp`를 설치하지 않고 `faster-whisper small CUDA`를 STT primary demo 후보로 유지한다. `whisper.cpp`는 source/provenance 재확인 후 optional comparison으로만 남긴다.
