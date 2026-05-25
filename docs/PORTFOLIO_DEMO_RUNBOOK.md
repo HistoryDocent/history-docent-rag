@@ -2,9 +2,9 @@
 
 ## 결론
 
-`HD-PORTFOLIO-DEMO-001`은 통과다.
+`HD-PORTFOLIO-DEMO-001`은 통과이며, `HD-VOICE-DEMO-RUNBOOK-REFRESH-001` 기준으로 최신화했다.
 
-이 문서는 HistoryDocent를 취업 포트폴리오로 설명할 때 사용할 local demo 순서와 claim boundary를 고정한다. 목적은 “production 서비스 시연”이 아니라 “평가 기반 RAG 의사결정 구조, `/api/v1/chat` 계약, browser voice-ready UI를 안전하게 재현하는 방법”을 보여주는 것이다.
+이 문서는 HistoryDocent를 취업 포트폴리오로 설명할 때 사용할 local demo 순서와 claim boundary를 고정한다. 목적은 “production 서비스 시연”이 아니라 “평가 기반 RAG 의사결정 구조, `/api/v1/chat` 계약, browser voice-ready UI, 무료 로컬 음성 route smoke를 안전하게 재현하는 방법”을 보여주는 것이다.
 
 ## Demo 범위
 
@@ -17,6 +17,8 @@
 | frontend backend mode smoke 확인 | production 배포 claim |
 | voice UI visual QA screenshot 확인 | STT/TTS production 품질 검증 claim |
 | local voice demo stack decision 확인 | 실제 관광객 음성 품질 검증 claim |
+| local voice playback smoke 결과 확인 | microphone capture 구현 완료 claim |
+| local voice API route smoke 결과 확인 | speaker playback 구현 완료 claim |
 
 ## 준비 기준
 
@@ -27,6 +29,7 @@
 | Secret | contract-only demo에는 API key 불필요 |
 | Private data | demo runbook은 private corpus 경로를 요구하지 않음 |
 | Browser | local `127.0.0.1` 접근 가능 |
+| Voice route | 기본 비활성화 상태이며 explicit local flag에서만 contract smoke로 확인 |
 
 ## 1. 빠른 검증
 
@@ -35,6 +38,7 @@ repo root에서 다음 명령을 실행한다.
 ```powershell
 pytest -q
 ruff check .
+pytest tests/test_portfolio_demo_runbook.py tests/test_voice_demo_playback_smoke.py tests/test_voice_api_local_runtime_route_smoke.py -q
 ```
 
 frontend 검증:
@@ -133,7 +137,31 @@ npm run smoke:contract
 - live Solar Pro 3 호출은 0이다.
 - retrieval execution은 0이다.
 
-## 5. Visual Evidence 확인
+## 5. Local Voice Route Evidence 확인
+
+로컬 음성 API route smoke:
+
+```powershell
+python -m pipelines.voice_api_local_runtime_route_smoke
+```
+
+확인할 artifact:
+
+| artifact | 설명 |
+| --- | --- |
+| `docs/VOICE_DEMO_STACK_DECISION.md` | 무료 로컬 STT/TTS demo 후보와 production final 미확정 경계 |
+| `docs/VOICE_DEMO_PLAYBACK_SMOKE.md` | private wav 5개 playback-ready, speaker 자동 재생 0 |
+| `docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md` | `/api/v1/voice/local-runtime` 기본 비활성화와 explicit flag contract smoke |
+| `evals/reports/voice_api_local_runtime_route_smoke_report.md` | default disabled 1, explicit flag contract 1, external provider call 0 |
+
+확인할 포인트:
+
+- local voice route는 기본 비활성화 상태다.
+- explicit local flag에서만 contract-only 응답을 확인했다.
+- route smoke는 local STT/TTS 실제 실행 품질 검증이 아니다.
+- public artifact에는 raw audio, transcript, private path를 남기지 않는다.
+
+## 6. Visual Evidence 확인
 
 다음 artifact를 확인한다.
 
@@ -143,7 +171,7 @@ npm run smoke:contract
 | `evals/reports/assets/voice_ui_visual_qa_mobile_no_answer.jpg` | mobile no-answer, single-column layout |
 | `evals/reports/assets/voice_ui_visual_qa_desktop_error.jpg` | sanitized error |
 
-## 6. 면접 Demo Script
+## 7. 면접 Demo Script
 
 권장 순서:
 
@@ -151,15 +179,26 @@ npm run smoke:contract
 2. `docs/FINAL_ABLATION_REPORT.md`에서 채택, 보류, 기각을 설명한다.
 3. `docs/API_RESPONSE_SAMPLE.md`에서 `/api/v1/chat` 응답 계약을 설명한다.
 4. `docs/VOICE_DEMO_STACK_DECISION.md`에서 무료 로컬 STT/TTS demo 후보와 production final 미확정 경계를 설명한다.
-5. contract-only API request 또는 `npm run smoke:contract`를 실행한다.
-6. voice UI 화면에서 `spoken_answer`, citation drawer, no-answer 상태를 보여준다.
-7. 마지막에 금지 claim을 먼저 말한다.
+5. `docs/VOICE_DEMO_PLAYBACK_SMOKE.md`에서 playback-ready 5개와 자동 speaker playback 0을 설명한다.
+6. `docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md`에서 local voice route가 기본 비활성화이고 explicit flag에서만 contract smoke를 통과했음을 설명한다.
+7. contract-only API request 또는 `npm run smoke:contract`를 실행한다.
+8. voice UI 화면에서 `spoken_answer`, citation drawer, no-answer 상태를 보여준다.
+9. 마지막에 금지 claim을 먼저 말한다.
 
 면접에서 강조할 문장:
 
 ```text
 이 프로젝트의 핵심은 최신 RAG 기법을 모두 붙인 것이 아니라, 같은 평가 gate에서 비교하고 성능, latency, citation risk, locked 결과를 기준으로 채택과 기각을 분리한 점입니다.
 ```
+
+## 허용 Claim
+
+- 평가 기반 RAG 의사결정 구조를 구현했다.
+- `/api/v1/chat` contract-only demo와 frontend fixture/backend mode demo 절차를 정리했다.
+- 무료 로컬 STT/TTS demo 후보를 정리했다.
+- local voice playback smoke에서 private wav 5개가 playback-ready임을 확인했다.
+- local voice API route smoke에서 기본 비활성화와 explicit local flag contract를 확인했다.
+- 위 음성 demo evidence에서 external provider call과 external audio transmission은 0으로 유지했다.
 
 ## 금지 Claim
 
@@ -171,7 +210,10 @@ npm run smoke:contract
 - Solar Pro 3 답변 품질 최종 개선
 - 음성 관광 앱 완성
 - STT/TTS production 품질 검증 완료
+- STT/TTS provider 최종 확정
 - 실제 관광객 음성 품질 검증 완료
+- microphone capture 구현 완료
+- speaker playback 구현 완료
 - 전체 도서 데이터 공개
 
 ## Troubleshooting
@@ -191,7 +233,7 @@ npm run smoke:contract
 | field | 설명 |
 | --- | --- |
 | `work_id` | `HD-PORTFOLIO-DEMO-001` |
-| `demo_step_id` | quick_check, api_contract, frontend_fixture, frontend_backend, visual_evidence, interview_script |
+| `demo_step_id` | quick_check, api_contract, frontend_fixture, frontend_backend, local_voice_route_evidence, visual_evidence, interview_script |
 | `command_surface` | python, pytest, ruff, npm, browser, document |
 | `claim_boundary` | public-safe, contract-only, fixture-only, no-live-call |
 
@@ -206,6 +248,6 @@ npm run smoke:contract
 
 ## 다음 작업
 
-다음 작업 후보는 local voice demo playback smoke다.
+다음 작업 후보는 public repository audit refresh v2다.
 
-public repository audit refresh, portfolio submission rehearsal, voice STT/TTS planning, voice STT/TTS contract skeleton, provider benchmark plan, local voice demo stack decision은 완료됐다. 후속 제품 개발을 이어간다면 local STT/TTS demo 후보를 production claim 없이 한 번의 playback smoke로 검증한다.
+public repository audit refresh, portfolio submission rehearsal, voice STT/TTS planning, voice STT/TTS contract skeleton, provider benchmark plan, local voice demo stack decision, local voice playback smoke, local voice API route smoke, demo runbook refresh는 완료됐다. 후속 제출 준비를 이어간다면 갱신된 runbook과 README 링크 기준으로 public-safe scan을 한 번 더 실행한다.

@@ -98,13 +98,24 @@
 | `acceptance_tests` | default disabled 1, explicit flag contract response 1, validation reject 2, external provider call 0, raw audio/transcript public artifact 0, secret leakage 0 |
 | `evidence` | `docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md`, `evals/reports/voice_api_local_runtime_route_smoke_report.md` |
 
-## 다음 작업 지시서
+## 후속 작업 결과
 
 | field | value |
 | --- | --- |
 | `id` | `HD-VOICE-DEMO-RUNBOOK-REFRESH-001` |
 | `depends_on` | `HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001` |
-| `scope` | portfolio demo runbook에 최신 local voice API route smoke 결과를 반영하고, demo에서 말할 allowed/forbidden claim을 갱신한다. |
+| `status` | completed |
+| `scope` | portfolio demo runbook에 최신 local voice playback smoke와 local voice API route smoke 결과를 반영하고, demo에서 말할 allowed/forbidden claim을 갱신했다. |
 | `acceptance_tests` | runbook link updated, voice API route smoke metric reflected, production voice app claim 0, raw audio/transcript public artifact 0, secret leakage 0 |
-| `risk_level` | Medium |
-| `rollback_plan` | runbook refresh 관련 docs, report, test만 revert한다. |
+| `evidence` | `docs/PORTFOLIO_DEMO_RUNBOOK.md`, `evals/reports/portfolio_demo_runbook_refresh_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-SUBMISSION-REFRESH-AUDIT-V2-001` |
+| `depends_on` | `HD-VOICE-DEMO-RUNBOOK-REFRESH-001` |
+| `scope` | 갱신된 README, demo runbook, voice evidence link, 금지 claim, public-safe scan을 제출 직전 기준으로 재검증한다. |
+| `acceptance_tests` | README link current, runbook refresh reflected, forbidden claim only in boundary sections, private path/secret/raw audio public leakage 0, production voice app claim 0 |
+| `risk_level` | Low |
+| `rollback_plan` | audit v2 docs, report, test만 revert한다. |

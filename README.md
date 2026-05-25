@@ -56,6 +56,7 @@
 | voice UI contract smoke | `HD-VOICE-UI-003` | frontend/backend contract | backend_contract_smoke_request_count | 2 | ready for visual QA |
 | voice UI visual QA | `HD-VOICE-UI-004` | browser local fixture UI | screenshot_artifact_count | 3 | visual QA completed |
 | portfolio demo runbook | `HD-PORTFOLIO-DEMO-001` | public-safe local demo | demo_step_count | 6 | demo path documented |
+| portfolio demo runbook refresh | `HD-VOICE-DEMO-RUNBOOK-REFRESH-001` | public-safe voice demo flow refresh | demo_step_count / voice_route_smoke_artifact_count / production_voice_app_claim_count | 7 / 2 / 0 | current local voice demo flow documented |
 | submission refresh audit | `HD-SUBMISSION-REFRESH-001` | public repository audit | required_demo_artifact_count | 3 | submission refresh passed |
 | portfolio rehearsal | `HD-PORTFOLIO-REHEARSAL-001` | submission explanation | interview_answer_count | 12 | required portfolio gates completed |
 | voice STT/TTS plan | `HD-VOICE-STT-TTS-PLAN-001` | plan-only | live_stt_call_count / live_tts_call_count | 0 / 0 | ready for contract skeleton |
@@ -154,6 +155,8 @@
 무료 로컬 음성 데모 playback smoke는 [Voice Demo Playback Smoke](docs/VOICE_DEMO_PLAYBACK_SMOKE.md), [Voice Demo Playback Smoke Report](evals/reports/voice_demo_playback_smoke_report.md)를 기준으로 한다.
 
 무료 로컬 음성 API route smoke는 [Voice API Local Runtime Route Smoke](docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md), [Voice API Local Runtime Route Smoke Report](evals/reports/voice_api_local_runtime_route_smoke_report.md)를 기준으로 한다.
+
+포트폴리오 데모 runbook 최신화 결과는 [Portfolio Demo Runbook](docs/PORTFOLIO_DEMO_RUNBOOK.md), [Portfolio Demo Runbook Refresh Report](evals/reports/portfolio_demo_runbook_refresh_report.md)를 기준으로 한다.
 
 무료 로컬 음성 스택 기준은 [Voice Local Free Stack Lock](docs/VOICE_LOCAL_FREE_STACK_LOCK.md), [Voice Local Free Stack Lock Report](evals/reports/voice_local_free_stack_lock_report.md)를 기준으로 한다.
 
@@ -658,6 +661,7 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Voice UI Visual QA Report](evals/reports/voice_ui_visual_qa_report.md) | HD-VOICE-UI-004 정량/정성 visual QA와 public-safe gate |
 | [Portfolio Demo Runbook](docs/PORTFOLIO_DEMO_RUNBOOK.md) | HD-PORTFOLIO-DEMO-001 backend/frontend local demo 순서와 금지 claim |
 | [Portfolio Demo Runbook Report](evals/reports/portfolio_demo_runbook_report.md) | HD-PORTFOLIO-DEMO-001 정량/정성 demo runbook gate와 public-safe 검증 |
+| [Portfolio Demo Runbook Refresh Report](evals/reports/portfolio_demo_runbook_refresh_report.md) | HD-VOICE-DEMO-RUNBOOK-REFRESH-001 최신 local voice demo route smoke 반영과 claim boundary 검증 |
 | [Submission Refresh Audit](docs/SUBMISSION_REFRESH_AUDIT.md) | HD-SUBMISSION-REFRESH-001 제출 직전 README, demo runbook, screenshot artifact, 금지 claim, public-safe scan 재검증 |
 | [Submission Refresh Audit Report](evals/reports/submission_refresh_audit_report.md) | HD-SUBMISSION-REFRESH-001 정량/정성 public repository audit refresh 결과 |
 | [Portfolio Rehearsal](docs/PORTFOLIO_REHEARSAL.md) | HD-PORTFOLIO-REHEARSAL-001 30초 요약, 3분 설명, 면접 답변, demo 순서, 금지 claim |

@@ -108,6 +108,7 @@
 - local voice demo stack decision에서 사람 청취 30/30 평균 5.0을 반영해 `sherpa-onnx Supertonic 3 Korean`을 TTS demo review 후보로 수락하되, TTS final provider와 실제 관광객 음성 품질 검증은 아직 주장하지 않음
 - local voice demo playback smoke에서 private wav 5개 playback-ready, speaker 자동 재생 0, external provider call 0을 검증함
 - local voice API route smoke에서 `POST /api/v1/voice/local-runtime`의 기본 비활성화, 명시 local flag contract response, validation reject, external provider call 0을 검증함
+- portfolio demo runbook refresh에서 최신 local voice playback/route smoke를 제출용 demo 순서와 allowed/forbidden claim에 반영함
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

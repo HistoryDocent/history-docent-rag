@@ -1403,3 +1403,26 @@
 - [x] raw audio/transcript public artifact count 0
 - [x] public private path/secret-like/raw payload leakage 0
 - [x] production voice app claim count 0
+
+## Portfolio Demo Runbook Refresh Gate
+
+- [x] work id `HD-VOICE-DEMO-RUNBOOK-REFRESH-001`
+- [x] refreshed runbook document count 1
+- [x] refresh report count 1
+- [x] regression test file count 1
+- [x] demo step count 7
+- [x] voice demo stack decision artifact count 1
+- [x] voice playback smoke artifact count 2
+- [x] voice route smoke artifact count 2
+- [x] default disabled voice route count 1
+- [x] explicit flag voice route contract count 1
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] live Solar call count 0
+- [x] raw audio public artifact count 0
+- [x] raw transcript public artifact count 0
+- [x] public private path/secret-like/raw payload leakage 0
+- [x] production voice app claim count 0
+- [x] STT/TTS provider final claim count 0
+- [x] microphone capture completed claim count 0
+- [x] speaker playback completed claim count 0
