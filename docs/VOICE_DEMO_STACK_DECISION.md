@@ -115,7 +115,18 @@
 | --- | --- |
 | `id` | `HD-SUBMISSION-REFRESH-AUDIT-V2-001` |
 | `depends_on` | `HD-VOICE-DEMO-RUNBOOK-REFRESH-001` |
-| `scope` | 갱신된 README, demo runbook, voice evidence link, 금지 claim, public-safe scan을 제출 직전 기준으로 재검증한다. |
+| `status` | completed |
+| `scope` | 갱신된 README, demo runbook, voice evidence link, 금지 claim, public-safe scan을 제출 직전 기준으로 재검증했다. |
 | `acceptance_tests` | README link current, runbook refresh reflected, forbidden claim only in boundary sections, private path/secret/raw audio public leakage 0, production voice app claim 0 |
+| `evidence` | `docs/SUBMISSION_REFRESH_AUDIT_V2.md`, `evals/reports/submission_refresh_audit_v2_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-PORTFOLIO-FINAL-PACKAGE-INDEX-001` |
+| `depends_on` | `HD-SUBMISSION-REFRESH-AUDIT-V2-001` |
+| `scope` | README, final ablation, demo runbook, voice evidence, forbidden claim을 한 화면에서 따라갈 수 있는 제출용 index를 정리한다. |
+| `acceptance_tests` | final index document count 1, required link count, forbidden claim section exists, private path/secret/raw payload leakage 0, production success claim 0 |
 | `risk_level` | Low |
-| `rollback_plan` | audit v2 docs, report, test만 revert한다. |
+| `rollback_plan` | final package index 문서와 테스트만 revert한다. |

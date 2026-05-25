@@ -1426,3 +1426,30 @@
 - [x] STT/TTS provider final claim count 0
 - [x] microphone capture completed claim count 0
 - [x] speaker playback completed claim count 0
+
+## Submission Refresh Audit V2 Gate
+
+- [x] work id `HD-SUBMISSION-REFRESH-AUDIT-V2-001`
+- [x] submission refresh audit v2 document count 1
+- [x] submission refresh audit v2 report count 1
+- [x] regression test file count 1
+- [x] required README link count 4
+- [x] required demo artifact count 12
+- [x] required voice artifact count 4
+- [x] required screenshot artifact count 3
+- [x] forbidden claim count 13
+- [x] verification command count 9
+- [x] markdown link missing count 0
+- [x] demo artifact missing count 0
+- [x] screenshot artifact missing count 0
+- [x] public private path leakage count 0
+- [x] public secret-like leakage count 0
+- [x] public env assignment leakage count 0
+- [x] public raw payload leakage count 0
+- [x] public raw audio/transcript leakage count 0
+- [x] live Solar call count 0
+- [x] retrieval execution count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] private corpus required count 0
+- [x] production voice app claim count 0

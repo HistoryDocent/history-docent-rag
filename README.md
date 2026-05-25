@@ -58,6 +58,7 @@
 | portfolio demo runbook | `HD-PORTFOLIO-DEMO-001` | public-safe local demo | demo_step_count | 6 | demo path documented |
 | portfolio demo runbook refresh | `HD-VOICE-DEMO-RUNBOOK-REFRESH-001` | public-safe voice demo flow refresh | demo_step_count / voice_route_smoke_artifact_count / production_voice_app_claim_count | 7 / 2 / 0 | current local voice demo flow documented |
 | submission refresh audit | `HD-SUBMISSION-REFRESH-001` | public repository audit | required_demo_artifact_count | 3 | submission refresh passed |
+| submission refresh audit v2 | `HD-SUBMISSION-REFRESH-AUDIT-V2-001` | public repository audit after voice runbook refresh | required_demo_artifact_count / forbidden_claim_count / production_voice_app_claim_count | 12 / 13 / 0 | submission refresh v2 passed |
 | portfolio rehearsal | `HD-PORTFOLIO-REHEARSAL-001` | submission explanation | interview_answer_count | 12 | required portfolio gates completed |
 | voice STT/TTS plan | `HD-VOICE-STT-TTS-PLAN-001` | plan-only | live_stt_call_count / live_tts_call_count | 0 / 0 | ready for contract skeleton |
 | voice STT/TTS contract skeleton | `HD-VOICE-STT-TTS-CONTRACT-001` | frontend contract-only | live_stt_call_count / live_tts_call_count | 0 / 0 | ready for provider benchmark plan |
@@ -157,6 +158,8 @@
 무료 로컬 음성 API route smoke는 [Voice API Local Runtime Route Smoke](docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md), [Voice API Local Runtime Route Smoke Report](evals/reports/voice_api_local_runtime_route_smoke_report.md)를 기준으로 한다.
 
 포트폴리오 데모 runbook 최신화 결과는 [Portfolio Demo Runbook](docs/PORTFOLIO_DEMO_RUNBOOK.md), [Portfolio Demo Runbook Refresh Report](evals/reports/portfolio_demo_runbook_refresh_report.md)를 기준으로 한다.
+
+제출 전 공개 저장소 감사 v2 결과는 [Submission Refresh Audit V2](docs/SUBMISSION_REFRESH_AUDIT_V2.md), [Submission Refresh Audit V2 Report](evals/reports/submission_refresh_audit_v2_report.md)를 기준으로 한다.
 
 무료 로컬 음성 스택 기준은 [Voice Local Free Stack Lock](docs/VOICE_LOCAL_FREE_STACK_LOCK.md), [Voice Local Free Stack Lock Report](evals/reports/voice_local_free_stack_lock_report.md)를 기준으로 한다.
 
@@ -322,13 +325,18 @@ PDF
 -> voice local TTS human score provider decision
 -> voice local TTS human score manual scoring runbook
 -> voice local TTS automated proxy evaluation
+-> voice demo stack decision
+-> voice demo playback smoke
+-> voice API local runtime route smoke
+-> portfolio demo runbook refresh
+-> submission refresh audit v2
 -> public-safe aggregate reports
 ```
 
 후속 구현 대상:
 
 ```text
-optional human TTS listening score manual scoring
+optional portfolio final package index
 optional whisper.cpp runtime/model install and rerun
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
@@ -664,6 +672,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Portfolio Demo Runbook Refresh Report](evals/reports/portfolio_demo_runbook_refresh_report.md) | HD-VOICE-DEMO-RUNBOOK-REFRESH-001 최신 local voice demo route smoke 반영과 claim boundary 검증 |
 | [Submission Refresh Audit](docs/SUBMISSION_REFRESH_AUDIT.md) | HD-SUBMISSION-REFRESH-001 제출 직전 README, demo runbook, screenshot artifact, 금지 claim, public-safe scan 재검증 |
 | [Submission Refresh Audit Report](evals/reports/submission_refresh_audit_report.md) | HD-SUBMISSION-REFRESH-001 정량/정성 public repository audit refresh 결과 |
+| [Submission Refresh Audit V2](docs/SUBMISSION_REFRESH_AUDIT_V2.md) | HD-SUBMISSION-REFRESH-AUDIT-V2-001 최신 voice runbook 반영 후 제출 전 공개 저장소 감사 |
+| [Submission Refresh Audit V2 Report](evals/reports/submission_refresh_audit_v2_report.md) | HD-SUBMISSION-REFRESH-AUDIT-V2-001 정량/정성 public-safe 재검증 결과 |
 | [Portfolio Rehearsal](docs/PORTFOLIO_REHEARSAL.md) | HD-PORTFOLIO-REHEARSAL-001 30초 요약, 3분 설명, 면접 답변, demo 순서, 금지 claim |
 | [Portfolio Rehearsal Report](evals/reports/portfolio_rehearsal_report.md) | HD-PORTFOLIO-REHEARSAL-001 정량/정성 설명 리허설 gate와 외부 감사 |
 | [Voice Provider Decision](docs/VOICE_PROVIDER_DECISION.md) | HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001 무료 로컬 STT/TTS 우선 전략과 managed optional paid comparison 경계 |
