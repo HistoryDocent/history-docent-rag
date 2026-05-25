@@ -113,4 +113,4 @@
 
 이 walkthrough는 제출 운영 문서로 타당하다. 기존 evidence를 새로 해석하거나 성능 개선을 주장하지 않고, 이미 통과한 final package index와 audit v2를 따라가는 설명 순서만 고정했다.
 
-다음 gate는 `HD-DEMO-RECORDING-CHECKLIST-001`이다. 목적은 실제 녹화 전 체크리스트를 만들어 브라우저 화면, 터미널 명령, 금지 claim, raw artifact 노출 여부를 점검하는 것이다.
+후속 gate `HD-DEMO-RECORDING-CHECKLIST-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-READINESS-001`이다. 목적은 push 자체가 아니라, public repo에 push하기 전 remote, branch, commit 범위, secret scan, private/large artifact 추적 여부를 재검증하는 것이다.

@@ -73,4 +73,4 @@ README 첫 화면은 60초 안에 프로젝트 목적, 포트폴리오 메시지
 
 후속 gate `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`도 완료했다. 목적은 새 기능 추가가 아니라 3분 화면 녹화 또는 면접 설명용 walkthrough script를 만드는 것이다.
 
-다음 gate는 `HD-DEMO-RECORDING-CHECKLIST-001`이다. 목적은 실제 녹화 전 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 것이다.
+후속 gate `HD-DEMO-RECORDING-CHECKLIST-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-READINESS-001`이다. 목적은 push 자체가 아니라, public repo에 push하기 전 remote, branch, commit 범위, secret scan, private/large artifact 추적 여부를 재검증하는 것이다.

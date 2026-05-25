@@ -151,4 +151,6 @@ rg -n "([A-Za-z]:\\|UPSTAGE_API_KEY\s*=|sk-[A-Za-z0-9]|private_data[/\\])" READM
 
 후속 제출 운영 문서로 `HD-README-LANDING-POLISH-001`과 `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`을 완료했다.
 
-후속 개발을 계속한다면 `HD-DEMO-RECORDING-CHECKLIST-001`을 권장한다. 실제 녹화 전 브라우저 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 작업이며, 새 기능이나 성능 claim은 추가하지 않는다.
+후속 제출 운영 문서로 `HD-DEMO-RECORDING-CHECKLIST-001`까지 완료했다. 실제 녹화 전 브라우저 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 기준이며, 새 기능이나 성능 claim은 추가하지 않았다.
+
+다음은 `HD-GITHUB-PUSH-READINESS-001`을 권장한다. push 자체가 아니라, public repo에 push하기 전 remote, branch, commit 범위, secret scan, private/large artifact 추적 여부를 재검증하는 작업이다.

@@ -62,4 +62,4 @@ README landing polish 이후 실제 면접/화면 녹화에서 따라갈 3분 wa
 
 ## 다음 Gate
 
-`HD-DEMO-RECORDING-CHECKLIST-001`을 권장한다. walkthrough script가 고정됐으므로 실제 녹화 전에 브라우저 화면, 터미널 출력, 금지 claim, private artifact 노출 여부를 점검하는 checklist가 필요하다.
+`HD-DEMO-RECORDING-CHECKLIST-001`은 완료됐다. 다음은 `HD-GITHUB-PUSH-READINESS-001`을 권장한다. push 자체가 아니라, public repo에 push하기 전 remote, branch, commit 범위, secret scan, private/large artifact 추적 여부를 재검증하는 readiness gate다.

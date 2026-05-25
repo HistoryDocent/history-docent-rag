@@ -1517,3 +1517,26 @@
 - [x] public raw audio/transcript leakage count 0
 - [x] production success claim count 0
 - [x] production voice app claim count 0
+
+## Demo Recording Checklist Gate
+
+- [x] work id `HD-DEMO-RECORDING-CHECKLIST-001`
+- [x] demo recording checklist document count 1
+- [x] demo recording checklist report count 1
+- [x] regression test file count 1
+- [x] recording screen sequence count 8
+- [x] terminal preflight check count 8
+- [x] allowed claim count 5
+- [x] forbidden claim count 13
+- [x] recording artifact created count 0
+- [x] live Solar call count 0
+- [x] retrieval execution count 0
+- [x] external provider call count 0
+- [x] external audio transmission count 0
+- [x] public private path leakage count 0
+- [x] public secret-like leakage count 0
+- [x] public env assignment leakage count 0
+- [x] public raw payload leakage count 0
+- [x] public raw audio/transcript leakage count 0
+- [x] production success claim count 0
+- [x] production voice app claim count 0

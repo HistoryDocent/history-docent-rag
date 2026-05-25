@@ -138,6 +138,7 @@
 | voice API local runtime route smoke | `HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001` | disabled-by-default local route smoke | default_disabled_pass_count / explicit_flag_contract_pass_count / external_provider_call_count | 1 / 1 / 0 | local voice route contract verified, production voice app not claimed |
 | README landing polish | `HD-README-LANDING-POLISH-001` | 60-second README first screen | top_summary_table_row_count / first_open_link_count / production_success_claim_count | 6 / 5 / 0 | landing polished |
 | portfolio walkthrough script | `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001` | 3-minute submission walkthrough | walkthrough_segment_count / demo_click_path_step_count / production_success_claim_count | 7 / 8 / 0 | walkthrough script ready |
+| demo recording checklist | `HD-DEMO-RECORDING-CHECKLIST-001` | recording preflight | recording_screen_sequence_count / terminal_preflight_check_count / production_success_claim_count | 8 / 8 / 0 | recording checklist ready |
 
 금지 claim:
 
@@ -201,6 +202,8 @@
 README 첫 화면 정리 결과는 [README Landing Polish](docs/README_LANDING_POLISH.md), [README Landing Polish Report](evals/reports/readme_landing_polish_report.md)를 기준으로 한다.
 
 포트폴리오 3분 walkthrough script는 [Portfolio Walkthrough Script](docs/PORTFOLIO_WALKTHROUGH_SCRIPT.md), [Portfolio Walkthrough Script Report](evals/reports/portfolio_walkthrough_script_report.md)를 기준으로 한다.
+
+포트폴리오 demo recording preflight는 [Demo Recording Checklist](docs/DEMO_RECORDING_CHECKLIST.md), [Demo Recording Checklist Report](evals/reports/demo_recording_checklist_report.md)를 기준으로 한다.
 
 무료 로컬 음성 스택 기준은 [Voice Local Free Stack Lock](docs/VOICE_LOCAL_FREE_STACK_LOCK.md), [Voice Local Free Stack Lock Report](evals/reports/voice_local_free_stack_lock_report.md)를 기준으로 한다.
 
@@ -378,7 +381,7 @@ PDF
 후속 구현 대상:
 
 ```text
-optional demo recording checklist
+optional GitHub push readiness
 optional whisper.cpp runtime/model install and rerun
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
@@ -722,6 +725,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [README Landing Polish Report](evals/reports/readme_landing_polish_report.md) | HD-README-LANDING-POLISH-001 정량/정성 landing polish 검증 |
 | [Portfolio Walkthrough Script](docs/PORTFOLIO_WALKTHROUGH_SCRIPT.md) | HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001 3분 면접/화면 녹화용 walkthrough 순서 |
 | [Portfolio Walkthrough Script Report](evals/reports/portfolio_walkthrough_script_report.md) | HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001 정량/정성 walkthrough 검증 |
+| [Demo Recording Checklist](docs/DEMO_RECORDING_CHECKLIST.md) | HD-DEMO-RECORDING-CHECKLIST-001 실제 녹화 전 화면, 터미널, 금지 claim preflight |
+| [Demo Recording Checklist Report](evals/reports/demo_recording_checklist_report.md) | HD-DEMO-RECORDING-CHECKLIST-001 정량/정성 recording preflight 검증 |
 | [Portfolio Rehearsal](docs/PORTFOLIO_REHEARSAL.md) | HD-PORTFOLIO-REHEARSAL-001 30초 요약, 3분 설명, 면접 답변, demo 순서, 금지 claim |
 | [Portfolio Rehearsal Report](evals/reports/portfolio_rehearsal_report.md) | HD-PORTFOLIO-REHEARSAL-001 정량/정성 설명 리허설 gate와 외부 감사 |
 | [Voice Provider Decision](docs/VOICE_PROVIDER_DECISION.md) | HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001 무료 로컬 STT/TTS 우선 전략과 managed optional paid comparison 경계 |

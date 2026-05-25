@@ -159,7 +159,18 @@
 | --- | --- |
 | `id` | `HD-DEMO-RECORDING-CHECKLIST-001` |
 | `depends_on` | `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001` |
-| `scope` | 실제 녹화 전 브라우저 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 checklist를 작성한다. |
-| `acceptance_tests` | checklist document 1, recording preflight item count, forbidden claim checklist 유지, private path/secret/raw audio public leakage 0 |
+| `status` | completed |
+| `scope` | 실제 녹화 전 브라우저 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 checklist를 작성했다. |
+| `acceptance_tests` | checklist document 1, recording screen sequence 8, terminal preflight check 8, forbidden claim checklist 유지, private path/secret/raw audio public leakage 0 |
+| `evidence` | `docs/DEMO_RECORDING_CHECKLIST.md`, `evals/reports/demo_recording_checklist_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-GITHUB-PUSH-READINESS-001` |
+| `depends_on` | `HD-DEMO-RECORDING-CHECKLIST-001` |
+| `scope` | push 전 remote, branch, commit 범위, secret scan, private/large artifact 추적 여부를 점검한다. |
+| `acceptance_tests` | read-only git remote/branch/status/log 확인, secret scan 0, push execution 0, private/raw artifact tracked count 0 |
 | `risk_level` | Low |
-| `rollback_plan` | recording checklist 문서와 관련 테스트만 revert한다. |
+| `rollback_plan` | readiness 문서와 관련 테스트만 revert한다. |
