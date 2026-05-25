@@ -1,10 +1,42 @@
 # History Docent RAG
 
-서울을 방문한 한국인과 외국인에게 한양의 역사 맥락을 설명하는 역사 관광 도슨트 서비스의 RAG 백엔드 프로젝트.
+서울/한양 관광 도슨트용 citation RAG 백엔드 프로젝트.
 
 원본 데이터는 `벌거벗은 한국사` 등 한국사 도서의 Upstage Parser 결과를 기반으로 한다.
 
-## 포트폴리오 결과 요약
+핵심은 “production 성능 개선 완료”가 아니라 “평가 기반 RAG 의사결정 구조”다.
+
+## 60초 요약
+
+| 질문 | 답 |
+| --- | --- |
+| 무엇을 만들었나 | 서울/한양 관광 도슨트용 place-aware citation RAG backend |
+| 왜 포트폴리오인가 | 청킹, 검색, 생성, 음성 demo 후보를 같은 gate로 비교하고 채택/보류/기각을 문서화했다. |
+| 현재 채택 | parent-child chunking, E5-small voice rewrite, P0 evidence packing, citation answer contract |
+| 음성 범위 | 무료 로컬 STT/TTS demo 후보와 local route smoke까지. production 음성 앱 아님 |
+| 제출 index | [Portfolio Final Package Index](docs/PORTFOLIO_FINAL_PACKAGE_INDEX.md) |
+| 최종 감사 | [Submission Refresh Audit V2](docs/SUBMISSION_REFRESH_AUDIT_V2.md) |
+
+## 바로 볼 문서
+
+| 순서 | 문서 | 용도 |
+| ---: | --- | --- |
+| 1 | [Portfolio Final Package Index](docs/PORTFOLIO_FINAL_PACKAGE_INDEX.md) | 제출 전체 경로 |
+| 2 | [Final Ablation Report](docs/FINAL_ABLATION_REPORT.md) | RAG 채택/보류/기각 |
+| 3 | [Portfolio Demo Runbook](docs/PORTFOLIO_DEMO_RUNBOOK.md) | local demo 순서 |
+| 4 | [Voice API Local Runtime Route Smoke](docs/VOICE_API_LOCAL_RUNTIME_ROUTE_SMOKE.md) | local voice route smoke |
+| 5 | [Submission Refresh Audit V2](docs/SUBMISSION_REFRESH_AUDIT_V2.md) | public-safe 감사 |
+
+## 현재 공개 가능한 결론
+
+- `C0 parent-child chunking`, `dense_multilingual_e5_small_voice_rewrite`, `P0_rank_order`를 현재 RAG 기준선으로 둔다.
+- GraphRAG-lite, RAPTOR-lite, HyDE, ColBERT-style late interaction은 실험했지만 기본 route로 채택하지 않는다.
+- 무료 로컬 음성은 demo 후보와 API route smoke까지 검증했다. production 음성 앱이나 STT/TTS final provider는 주장하지 않는다.
+- 원본 PDF, 전체 parser JSON, 전체 chunk text, vector index, raw eval payload, secret은 public repo에 포함하지 않는다.
+
+## 상세 결과 요약
+
+이 섹션은 기존 `포트폴리오 결과 요약`의 정량 수치와 의사결정 evidence를 보존한 상세 영역이다.
 
 현재 공개 가능한 결론은 “production 성능 개선 완료”가 아니라 “평가 기반 RAG 의사결정 구조를 구현했다”이다.
 
@@ -104,6 +136,7 @@
 | voice demo stack decision | `HD-VOICE-DEMO-STACK-DECISION-001` | local voice demo stack decision | primary_local_stt_candidate_count / tts_demo_candidate_count / tts_final_provider_count / external_provider_call_count | 1 / 1 / 0 / 0 | local STT and TTS demo candidate ready, production final not claimed |
 | voice demo playback smoke | `HD-VOICE-DEMO-PLAYBACK-SMOKE-001` | local voice demo playback smoke | private_audio_available_count / playback_ready_count / playback_device_call_count / external_provider_call_count | 5 / 5 / 0 / 0 | local demo playback-ready, automatic speaker playback not claimed |
 | voice API local runtime route smoke | `HD-VOICE-API-LOCAL-RUNTIME-ROUTE-SMOKE-001` | disabled-by-default local route smoke | default_disabled_pass_count / explicit_flag_contract_pass_count / external_provider_call_count | 1 / 1 / 0 | local voice route contract verified, production voice app not claimed |
+| README landing polish | `HD-README-LANDING-POLISH-001` | 60-second README first screen | top_summary_table_row_count / first_open_link_count / production_success_claim_count | 6 / 5 / 0 | landing polished |
 
 금지 claim:
 
@@ -163,6 +196,8 @@
 제출 전 공개 저장소 감사 v2 결과는 [Submission Refresh Audit V2](docs/SUBMISSION_REFRESH_AUDIT_V2.md), [Submission Refresh Audit V2 Report](evals/reports/submission_refresh_audit_v2_report.md)를 기준으로 한다.
 
 최종 제출 패키지 index는 [Portfolio Final Package Index](docs/PORTFOLIO_FINAL_PACKAGE_INDEX.md), [Portfolio Final Package Index Report](evals/reports/portfolio_final_package_index_report.md)를 기준으로 한다.
+
+README 첫 화면 정리 결과는 [README Landing Polish](docs/README_LANDING_POLISH.md), [README Landing Polish Report](evals/reports/readme_landing_polish_report.md)를 기준으로 한다.
 
 무료 로컬 음성 스택 기준은 [Voice Local Free Stack Lock](docs/VOICE_LOCAL_FREE_STACK_LOCK.md), [Voice Local Free Stack Lock Report](evals/reports/voice_local_free_stack_lock_report.md)를 기준으로 한다.
 
@@ -340,7 +375,7 @@ PDF
 후속 구현 대상:
 
 ```text
-optional README landing polish
+optional portfolio walkthrough script
 optional whisper.cpp runtime/model install and rerun
 optional MeloTTS Windows dependency fix
 optional paid managed provider smoke execution
@@ -680,6 +715,8 @@ Locked retrieval 검증 승인 계획, readiness dry-run runner, execution appro
 | [Submission Refresh Audit V2 Report](evals/reports/submission_refresh_audit_v2_report.md) | HD-SUBMISSION-REFRESH-AUDIT-V2-001 정량/정성 public-safe 재검증 결과 |
 | [Portfolio Final Package Index](docs/PORTFOLIO_FINAL_PACKAGE_INDEX.md) | HD-PORTFOLIO-FINAL-PACKAGE-INDEX-001 제출자가 열 문서, evidence map, 금지 claim을 한 화면에 정리 |
 | [Portfolio Final Package Index Report](evals/reports/portfolio_final_package_index_report.md) | HD-PORTFOLIO-FINAL-PACKAGE-INDEX-001 정량/정성 final package index 검증 |
+| [README Landing Polish](docs/README_LANDING_POLISH.md) | HD-README-LANDING-POLISH-001 README 첫 화면을 60초 요약과 제출 link 중심으로 재배치 |
+| [README Landing Polish Report](evals/reports/readme_landing_polish_report.md) | HD-README-LANDING-POLISH-001 정량/정성 landing polish 검증 |
 | [Portfolio Rehearsal](docs/PORTFOLIO_REHEARSAL.md) | HD-PORTFOLIO-REHEARSAL-001 30초 요약, 3분 설명, 면접 답변, demo 순서, 금지 claim |
 | [Portfolio Rehearsal Report](evals/reports/portfolio_rehearsal_report.md) | HD-PORTFOLIO-REHEARSAL-001 정량/정성 설명 리허설 gate와 외부 감사 |
 | [Voice Provider Decision](docs/VOICE_PROVIDER_DECISION.md) | HD-VOICE-STT-TTS-LOCAL-FIRST-STRATEGY-001 무료 로컬 STT/TTS 우선 전략과 managed optional paid comparison 경계 |

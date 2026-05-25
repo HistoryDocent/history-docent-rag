@@ -1475,3 +1475,22 @@
 - [x] public raw audio/transcript leakage count 0
 - [x] production success claim count 0
 - [x] production voice app claim count 0
+
+## README Landing Polish Gate
+
+- [x] work id `HD-README-LANDING-POLISH-001`
+- [x] readme landing polish document count 1
+- [x] readme landing polish report count 1
+- [x] regression test file count 1
+- [x] top summary table row count 6
+- [x] first open link count 5
+- [x] detailed metrics preserved count 1
+- [x] forbidden claim count 13
+- [x] required README link count 2
+- [x] public private path leakage count 0
+- [x] public secret-like leakage count 0
+- [x] public env assignment leakage count 0
+- [x] public raw payload leakage count 0
+- [x] public raw audio/transcript leakage count 0
+- [x] production success claim count 0
+- [x] production voice app claim count 0

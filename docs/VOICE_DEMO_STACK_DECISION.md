@@ -137,7 +137,18 @@
 | --- | --- |
 | `id` | `HD-README-LANDING-POLISH-001` |
 | `depends_on` | `HD-PORTFOLIO-FINAL-PACKAGE-INDEX-001` |
-| `scope` | README 첫 화면을 채용 담당자가 60초 안에 읽을 수 있도록 더 짧게 재배치한다. |
-| `acceptance_tests` | top summary under 1 screen, final package index linked, forbidden claim unchanged, private path/secret leakage 0, production success claim 0 |
+| `status` | completed |
+| `scope` | README 첫 화면을 60초 요약, 바로 볼 문서, 현재 공개 가능한 결론 중심으로 재배치했다. |
+| `acceptance_tests` | top summary table row 6, first open link 5, final package index linked, forbidden claim unchanged, private path/secret leakage 0, production success claim 0 |
+| `evidence` | `README.md`, `docs/README_LANDING_POLISH.md`, `evals/reports/readme_landing_polish_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001` |
+| `depends_on` | `HD-README-LANDING-POLISH-001` |
+| `scope` | 새 기능 추가 없이 3분 화면 녹화 또는 면접 walkthrough script를 작성한다. |
+| `acceptance_tests` | 3분 script 1개, demo click path 1개, forbidden claim checklist 유지, private path/secret/raw audio public leakage 0 |
 | `risk_level` | Low |
-| `rollback_plan` | README와 관련 테스트만 revert한다. |
+| `rollback_plan` | walkthrough 문서와 관련 테스트만 revert한다. |
