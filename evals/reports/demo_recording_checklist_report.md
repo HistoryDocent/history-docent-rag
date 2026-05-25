@@ -62,4 +62,4 @@
 
 ## 다음 Gate
 
-`HD-GITHUB-PUSH-READINESS-001`은 완료됐다. 다음은 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`을 권장한다. 실제 push 여부를 사용자가 명시 승인하는 gate다. 승인 전 push는 실행하지 않는다.
+`HD-GITHUB-PUSH-READINESS-001`과 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`은 완료됐다. 다음은 `HD-GITHUB-PUSH-EXECUTION-001`을 권장한다. 사용자가 명시적으로 `git push 실행 승인` 또는 동등한 문장으로 승인한 경우에만 진행한다.

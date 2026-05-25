@@ -126,4 +126,4 @@ git ls-files | rg -n "(^|/)(\.env|\.env\.|private_data|raw|audio|\.wav$|\.mp3$|\
 
 이 readiness gate는 push 직전 안전장치로 타당하다. remote와 branch가 의도한 public repository를 가리키는지 확인했고, push 전 private/raw/secret artifact 추적 여부를 점검했다.
 
-다음 gate는 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`이다. 목적은 실제 push 여부를 사용자가 명시 승인할지 결정하는 것이다. 승인 전 `git push`는 실행하지 않는다.
+후속 gate `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-EXECUTION-001`이다. 사용자가 명시적으로 `git push 실행 승인` 또는 동등한 문장으로 승인한 경우에만 진행한다.

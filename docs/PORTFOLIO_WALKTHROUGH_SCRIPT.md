@@ -113,4 +113,4 @@
 
 이 walkthrough는 제출 운영 문서로 타당하다. 기존 evidence를 새로 해석하거나 성능 개선을 주장하지 않고, 이미 통과한 final package index와 audit v2를 따라가는 설명 순서만 고정했다.
 
-후속 gate `HD-DEMO-RECORDING-CHECKLIST-001`과 `HD-GITHUB-PUSH-READINESS-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`이다. 목적은 실제 push 여부를 사용자가 명시 승인할지 결정하는 것이다.
+후속 gate `HD-DEMO-RECORDING-CHECKLIST-001`, `HD-GITHUB-PUSH-READINESS-001`, `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-EXECUTION-001`이다. 사용자가 명시적으로 `git push 실행 승인` 또는 동등한 문장으로 승인한 경우에만 진행한다.

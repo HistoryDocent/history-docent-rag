@@ -108,4 +108,4 @@
 
 이 checklist는 실제 녹화 전 마지막 안전장치로 타당하다. 새 기능이나 새 실험을 추가하지 않고, 이미 정리된 walkthrough script와 submission audit을 기준으로 화면/터미널 노출 리스크를 줄인다.
 
-후속 gate `HD-GITHUB-PUSH-READINESS-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`이다. 목적은 실제 push 여부를 사용자가 명시 승인할지 결정하는 것이다.
+후속 gate `HD-GITHUB-PUSH-READINESS-001`과 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-EXECUTION-001`이다. 사용자가 명시적으로 `git push 실행 승인` 또는 동등한 문장으로 승인한 경우에만 진행한다.

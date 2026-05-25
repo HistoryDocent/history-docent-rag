@@ -73,4 +73,4 @@ README 첫 화면은 60초 안에 프로젝트 목적, 포트폴리오 메시지
 
 후속 gate `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`도 완료했다. 목적은 새 기능 추가가 아니라 3분 화면 녹화 또는 면접 설명용 walkthrough script를 만드는 것이다.
 
-후속 gate `HD-DEMO-RECORDING-CHECKLIST-001`과 `HD-GITHUB-PUSH-READINESS-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`이다. 목적은 실제 push 여부를 사용자가 명시 승인할지 결정하는 것이다.
+후속 gate `HD-DEMO-RECORDING-CHECKLIST-001`, `HD-GITHUB-PUSH-READINESS-001`, `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`도 완료했다. 다음 gate는 `HD-GITHUB-PUSH-EXECUTION-001`이다. 사용자가 명시적으로 `git push 실행 승인` 또는 동등한 문장으로 승인한 경우에만 진행한다.

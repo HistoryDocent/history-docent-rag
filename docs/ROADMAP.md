@@ -115,6 +115,7 @@
 - portfolio walkthrough script에서 3분 면접/화면 녹화용 내레이션과 demo click path를 고정하고 새 성능 claim은 추가하지 않음
 - demo recording checklist에서 실제 녹화 전 화면 순서, 터미널 출력, 금지 claim, raw artifact 노출 방지 기준을 고정함
 - GitHub push readiness에서 remote, branch, commit 범위, tracked artifact, secret/private/raw 노출 여부를 점검하고 push는 실행하지 않음
+- GitHub push execution approval에서 실제 push는 명시 승인 전까지 실행하지 않는다는 gate를 고정함
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

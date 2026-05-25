@@ -181,7 +181,18 @@
 | --- | --- |
 | `id` | `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001` |
 | `depends_on` | `HD-GITHUB-PUSH-READINESS-001` |
-| `scope` | 실제 push 실행 여부를 사용자에게 승인받고, 승인 시 push 전후 status와 remote branch 상태를 확인한다. |
-| `acceptance_tests` | explicit user approval, pre-push status clean, secret scan 0, push command 1 이하, post-push status clean |
+| `status` | completed |
+| `scope` | 실제 push 실행은 명시 승인 필요로 고정했고, 승인 전 push는 실행하지 않았다. |
+| `acceptance_tests` | explicit push approval 0, push command execution 0, external state change 0, secret scan 0 |
+| `evidence` | `docs/GITHUB_PUSH_EXECUTION_APPROVAL.md`, `evals/reports/github_push_execution_approval_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-GITHUB-PUSH-EXECUTION-001` |
+| `depends_on` | `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001` |
+| `scope` | 사용자가 명시적으로 승인하면 `origin main`에 push하고 push 전후 status를 확인한다. |
+| `acceptance_tests` | explicit user approval, pre-push status clean, push execution success, post-push status clean, remote branch updated |
 | `risk_level` | Low |
-| `rollback_plan` | push 전이면 실행하지 않는다. push 후 문제 발생 시 새 revert commit을 별도 승인 후 만든다. |
+| `rollback_plan` | push 후 문제 발생 시 새 revert commit을 별도 승인 후 만든다. |

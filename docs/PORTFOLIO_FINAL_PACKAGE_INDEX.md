@@ -153,4 +153,4 @@ rg -n "([A-Za-z]:\\|UPSTAGE_API_KEY\s*=|sk-[A-Za-z0-9]|private_data[/\\])" READM
 
 후속 제출 운영 문서로 `HD-DEMO-RECORDING-CHECKLIST-001`까지 완료했다. 실제 녹화 전 브라우저 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 기준이며, 새 기능이나 성능 claim은 추가하지 않았다.
 
-후속 제출 운영 문서로 `HD-GITHUB-PUSH-READINESS-001`까지 완료했다. 다음은 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`을 권장한다. 실제 push 여부를 사용자가 명시 승인하는 작업이며, 승인 전 push는 실행하지 않는다.
+후속 제출 운영 문서로 `HD-GITHUB-PUSH-READINESS-001`과 `HD-GITHUB-PUSH-EXECUTION-APPROVAL-001`까지 완료했다. 다음은 `HD-GITHUB-PUSH-EXECUTION-001`을 권장한다. 사용자가 명시적으로 `git push 실행 승인` 또는 동등한 문장으로 승인한 경우에만 진행한다.

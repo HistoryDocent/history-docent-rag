@@ -205,7 +205,8 @@
 - [x] optional portfolio walkthrough script
 - [x] optional demo recording checklist
 - [x] optional GitHub push readiness
-- [ ] optional GitHub push execution approval
+- [x] optional GitHub push execution approval
+- [ ] optional GitHub push execution after explicit approval
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
