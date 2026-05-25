@@ -59,4 +59,4 @@ README 첫 화면은 채용 담당자가 60초 안에 프로젝트 목적, evide
 
 ## 다음 Gate
 
-`HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`을 권장한다. README와 제출 index가 정리됐으므로, 다음은 새 기능이 아니라 3분 walkthrough script와 녹화 순서를 고정하는 것이 적절하다.
+`HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`은 완료됐다. 다음은 `HD-DEMO-RECORDING-CHECKLIST-001`을 권장한다. 실제 녹화 전 브라우저 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 것이 적절하다.

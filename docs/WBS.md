@@ -159,3 +159,4 @@
 | 9.54 | public repository audit refresh v2 | `docs/SUBMISSION_REFRESH_AUDIT_V2.md`, report, test | `HD-SUBMISSION-REFRESH-AUDIT-V2-001`에서 최신 voice runbook 기준 README 링크, 산출물, 금지 claim, public-safe scan을 재검증 | `audit: 공개 저장소 제출 감사 v2 추가` |
 | 9.55 | portfolio final package index | `docs/PORTFOLIO_FINAL_PACKAGE_INDEX.md`, report, test | `HD-PORTFOLIO-FINAL-PACKAGE-INDEX-001`에서 제출자가 열 문서, evidence map, 면접 설명 순서, 금지 claim을 한 화면에 정리 | `docs: 포트폴리오 최종 제출 index 추가` |
 | 9.56 | README landing polish | `README.md`, `docs/README_LANDING_POLISH.md`, report, test | `HD-README-LANDING-POLISH-001`에서 README 첫 화면을 60초 요약, 바로 볼 문서, claim boundary 중심으로 재배치하고 상세 수치표를 보존 | `docs: README 첫 화면 정리` |
+| 9.57 | portfolio walkthrough script | `docs/PORTFOLIO_WALKTHROUGH_SCRIPT.md`, report, test | `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`에서 3분 설명 script와 demo click path를 고정하고 production claim을 추가하지 않음 | `docs: 포트폴리오 walkthrough 스크립트 추가` |

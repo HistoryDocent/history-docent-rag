@@ -148,7 +148,18 @@
 | --- | --- |
 | `id` | `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001` |
 | `depends_on` | `HD-README-LANDING-POLISH-001` |
-| `scope` | 새 기능 추가 없이 3분 화면 녹화 또는 면접 walkthrough script를 작성한다. |
+| `status` | completed |
+| `scope` | 새 기능 추가 없이 3분 화면 녹화 또는 면접 walkthrough script를 작성했다. |
 | `acceptance_tests` | 3분 script 1개, demo click path 1개, forbidden claim checklist 유지, private path/secret/raw audio public leakage 0 |
+| `evidence` | `docs/PORTFOLIO_WALKTHROUGH_SCRIPT.md`, `evals/reports/portfolio_walkthrough_script_report.md` |
+
+## 다음 작업 지시서
+
+| field | value |
+| --- | --- |
+| `id` | `HD-DEMO-RECORDING-CHECKLIST-001` |
+| `depends_on` | `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001` |
+| `scope` | 실제 녹화 전 브라우저 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 checklist를 작성한다. |
+| `acceptance_tests` | checklist document 1, recording preflight item count, forbidden claim checklist 유지, private path/secret/raw audio public leakage 0 |
 | `risk_level` | Low |
-| `rollback_plan` | walkthrough 문서와 관련 테스트만 revert한다. |
+| `rollback_plan` | recording checklist 문서와 관련 테스트만 revert한다. |

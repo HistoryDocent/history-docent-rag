@@ -1494,3 +1494,26 @@
 - [x] public raw audio/transcript leakage count 0
 - [x] production success claim count 0
 - [x] production voice app claim count 0
+
+## Portfolio Walkthrough Script Gate
+
+- [x] work id `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`
+- [x] portfolio walkthrough script document count 1
+- [x] portfolio walkthrough script report count 1
+- [x] regression test file count 1
+- [x] walkthrough segment count 7
+- [x] target duration seconds 180
+- [x] demo click path step count 8
+- [x] first open artifact count 8
+- [x] forbidden claim count 13
+- [x] recording artifact created count 0
+- [x] live Solar call count 0
+- [x] retrieval execution count 0
+- [x] external provider call count 0
+- [x] public private path leakage count 0
+- [x] public secret-like leakage count 0
+- [x] public env assignment leakage count 0
+- [x] public raw payload leakage count 0
+- [x] public raw audio/transcript leakage count 0
+- [x] production success claim count 0
+- [x] production voice app claim count 0

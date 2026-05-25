@@ -112,6 +112,7 @@
 - public repository audit refresh v2에서 최신 voice runbook 기준 README 링크, 산출물, 금지 claim, public-safe scan을 제출 직전 기준으로 재검증함
 - portfolio final package index에서 제출자가 열 문서, evidence map, 면접 설명 순서, 금지 claim을 한 화면에 정리함
 - README landing polish에서 첫 화면을 60초 요약, 바로 볼 문서, 현재 공개 가능한 결론 중심으로 재배치하고 상세 수치표는 보존함
+- portfolio walkthrough script에서 3분 면접/화면 녹화용 내레이션과 demo click path를 고정하고 새 성능 claim은 추가하지 않음
 - managed provider smoke approval에서 비용, region, retention, raw audio 전송 재승인 기준을 zero-call gate로 고정
 - managed provider smoke execution harness에서 dry-run default, credential preflight, call cap enforcement를 구현
 - managed provider smoke preflight에서 provider별 credential 존재 여부, source/region/retention/cost 재확인 필요성, 추천 provider 1개 이하를 zero-call gate로 검증

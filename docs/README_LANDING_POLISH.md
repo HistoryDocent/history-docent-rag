@@ -71,4 +71,6 @@ README 첫 화면은 60초 안에 프로젝트 목적, 포트폴리오 메시지
 
 이번 작업은 기능 개선이 아니라 제출 UX 개선이다. README가 길어진 문제를 첫 화면 요약으로 완화했고, 기존 evidence를 보존했기 때문에 포트폴리오 설명 일관성에 손상이 없다.
 
-다음 gate는 `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`이다. 목적은 새 기능 추가가 아니라 3분 화면 녹화 또는 면접 설명용 walkthrough script를 만드는 것이다.
+후속 gate `HD-PORTFOLIO-WALKTHROUGH-SCRIPT-001`도 완료했다. 목적은 새 기능 추가가 아니라 3분 화면 녹화 또는 면접 설명용 walkthrough script를 만드는 것이다.
+
+다음 gate는 `HD-DEMO-RECORDING-CHECKLIST-001`이다. 목적은 실제 녹화 전 화면, 터미널 출력, 금지 claim, raw artifact 노출 여부를 점검하는 것이다.

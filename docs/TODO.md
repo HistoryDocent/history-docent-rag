@@ -202,7 +202,8 @@
 - [x] optional public repository audit refresh v2 after voice runbook
 - [x] optional portfolio final package index
 - [x] optional README landing polish
-- [ ] optional portfolio walkthrough script
+- [x] optional portfolio walkthrough script
+- [ ] optional demo recording checklist
 - [ ] optional whisper.cpp runtime/model install and rerun
 - [ ] optional MeloTTS Windows dependency fix
 - [ ] optional voice STT/TTS managed provider smoke execution (optional paid comparison only)
